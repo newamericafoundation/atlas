@@ -1,0 +1,63 @@
+.static-content {
+
+	overflow: hidden;
+
+	ol {
+		a { display: inline-block; } 
+		list-style-type: decimal;
+	}
+
+	ul {
+		list-style-type: disc;
+		padding-left: 35px;
+	}
+
+	li {
+		display: list-item;
+	}
+
+	h1, h2, h3, th { font-family: 'SimplonNorm-Bold-WebS'; }
+
+	h1 { @include font-size(32px); }
+	h2 { @include font-size(26px); padding: 0; }
+	h3 { @include font-size(22px); }
+
+	h4 { 
+		display: inline-block;
+		color: rgba(51,50,50,0.45);
+		@include font-size(17px);
+		a {
+			border-bottom: 2px solid rgba(51,50,50,0.4);
+			color: rgba(51,50,50,0.4);
+			@include font-size(15px);
+			font-family: 'SimplonNorm-Regular-WebS';
+			opacity: 1; 
+		}
+	}
+
+	a { @include link; }
+
+	p, a, li {
+		font-family: MetaSerifWeb-Book; 
+		@include font-size(20px);
+	}
+
+	td {
+		font-family: 'SimplonNorm-Regular-WebS';
+	}
+	
+	
+
+	blockquote {
+	    font-size: 1.3em;
+	    border-left: 4px solid rgba(51, 50, 50, 0.9);
+	    margin-left: 25 px;
+	    padding-left: 25 px;
+	    padding-right: 25 px;
+	    font-style: italic;
+	    margin-top: 1em;
+	    margin-bottom: 1em;
+	    font-family: "MetaSerifWeb-Book", serif;
+	}
+
+}

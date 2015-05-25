@@ -1,0 +1,78 @@
+.toggle-button {
+
+    $icon-width: 40px;
+    $text-width: 85px;
+    $text-padding: 10px;
+    $width: $icon-width + $text-width + $text-padding;
+
+    $height: 50px;
+
+    width: $width;
+    height: $height;
+    cursor: pointer;
+    margin: 3px 5px 3px 0;
+    display: inline-block;
+    opacity: 0.9;
+    &:hover { opacity: 1; }
+    & > * { float: left; }
+
+    svg {
+        display: inline-block;
+        margin-top: ($height - $icon-width) / 2 - 2px;
+        height: $icon-width; 
+        width: $icon-width;
+        .toggle-button__icon {
+            stroke: none;
+        }
+        .toggle-button__yes { 
+            fill: map-get($palette, off-white);
+        }
+        .toggle-button__no { 
+            fill: none;
+        }
+    }
+
+    &--white svg {
+        .toggle-button__icon { fill: map-get($palette, off-white); }
+        .toggle-button__yes { fill: black; }
+    }
+
+    &--black svg {
+        .toggle-button__icon { fill: black; }
+        .toggle-button__yes { fill: map-get($palette, off-white); }
+    }
+
+    &--inactive svg {
+        .toggle-button__icon {
+            fill: none;
+            stroke-width: 5px;
+            stroke: #666;
+        }
+        .toggle-button__yes { fill: none; }
+        .toggle-button__no { fill: #666; }
+    }
+
+    &__text {
+
+        display: table;
+        width: $text-width + $text-padding;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: normal;//break-all;
+        height: 100%;
+        padding-left: $text-padding;
+
+        p {
+            line-height: 97%;
+            @include font-size(14px);
+            text-align: left;
+            width: $text-width;
+            height: auto;
+            display: table-cell;
+            text-overflow: ellipsis;
+            vertical-align: middle;
+        }
+
+    }
+
+}

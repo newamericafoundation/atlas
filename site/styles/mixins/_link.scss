@@ -1,0 +1,18 @@
+@mixin link() {
+
+	color: #333; 
+	border-bottom: 2px solid #333;
+	opacity: 0.4;
+	display: inline;
+
+	&:hover {
+		outline: 0; 
+		color: rgba(51,50,50,0.9); 
+		opacity: 1;
+	}
+
+}
+
+.link {
+	@include link;
+}

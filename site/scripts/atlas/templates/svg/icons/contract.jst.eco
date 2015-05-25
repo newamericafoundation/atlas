@@ -1,0 +1,7 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
+	<g>
+		<path d="M10,30v8h28V10h-8v15.8L10,5.9L5.9,10l19.9,20H10z M10,94.1l20-19.9V90h8V62H10v8h15.8L5.9,90L10,94.1z M70,74.2l20,19.9
+			l4.1-4.1L74.2,70H90v-8H62v28h8V74.2z M90,38v-8H74.2l19.9-20L90,5.9L70,25.8V10h-8v28H90z"/>
+	</g>
+</svg>

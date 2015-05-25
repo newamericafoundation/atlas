@@ -1,0 +1,84 @@
+.header {
+
+	height: $top-bar-height;
+	width: 100%;
+	position: fixed;
+	top: 0;
+	z-index: 100;
+
+	padding-right: 35px;
+
+	background-color: map-get(map-get($palette, grey), base);
+	.atl-route--welcome_index & { background: none; }
+
+	& > div, & > a { float: left; }
+
+	&__main {
+
+		width: calc(100% - #{$side-bar-width});
+		height: 100%;
+		padding-top: 8px;
+
+		h1, a { display: inline-block; }
+
+		h1, img { float: left; }
+
+		img { width: 30px; }
+
+		h1 {
+			@include font-size(20px);
+			font-family: 'Platform Web';
+			margin: 20px 0 0 0;
+			opacity: 1;
+		}
+
+		a {
+			margin: 22px 0 0 35px;
+			float: right;
+			font-family: 'SimplonNorm-Regular-WebS';
+			@include font-size(16px);
+			opacity: 1;
+			&:hover { opacity: 0.6; }
+		}
+
+	}
+
+	&__corner {
+
+		width: $side-bar-width;
+		height: 100%;
+		padding-top: 1px;
+
+		a, div {
+			width: $icon-size;
+			height: $icon-size;
+			$m: $top-bar-height / 2 - $icon-size / 2;
+			margin-left: $m;
+			margin-top: $m;
+		}
+		
+	}
+
+	&__nav-circles {
+		position: fixed;
+		top: 30px;
+		right: 10px;
+		margin: 0;
+		width: auto;
+
+		@include bp-show-sidebars {
+			left: calc(50% - 75px);
+		}
+	}
+
+	&__strip {
+		left: 0;
+		width: 100%;
+		height: 3px;
+		bottom: 0;
+		position: absolute;
+	}
+
+}
+
+

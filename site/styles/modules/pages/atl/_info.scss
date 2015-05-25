@@ -1,0 +1,40 @@
+.atl__info {
+
+	width: 300px;
+	line-height: 94%; 
+	height: 136px;
+
+	& > div, & > div p { margin: 0; }
+
+	& > div {
+		display: table;
+		p { display: table-cell; }
+	}
+
+	&__key {
+		height: 50px;
+		line-height: 100%; 
+
+		p { 
+			font-family: 'SimplonNorm-Bold-WebS';
+			vertical-align: bottom;
+		}
+	}
+
+	&__value {
+		padding: 2px 0px;
+		p { 
+			@include font-size(24px);
+			font-family: 'SimplonNorm-Bold-WebS';
+			vertical-align: middle;
+		}
+	}
+
+	&__items {
+		padding-top: 0px;
+		p { 
+			vertical-align: top;
+		}
+	}
+
+}

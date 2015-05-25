@@ -1,0 +1,42 @@
+.atl__right-bar {
+
+	display: none;
+	position: absolute;
+	width: $side-bar-width;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	height: 100%;
+
+	background: none;
+	@include transition(all, 0.5s);
+
+	.atl--light & {
+		@include transition(all, 0.5s);
+		background-color: #e0dbd3;
+	}
+	
+	.atl__info-box--active & {
+		@include transition(all, 0.5s);
+		background-color: rgba(200, 200, 200, 0.3);
+	}
+
+	@include bp-show-sidebars() {
+		display: table;
+	}
+
+	&--blur {
+		background: none;
+	}
+
+	&__button {
+		position: static;
+		padding: 0;
+		margin: 0;
+		width: 30px;
+		height: 30px;
+		display: table-cell;
+		text-align: center;
+		vertical-align: middle;
+	}
+}

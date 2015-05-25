@@ -1,0 +1,8 @@
+.atl__content-bar {
+	min-height: 800px;
+	padding-top: 22px;
+	@include bp-show-sidebars { 
+		padding-left: 75px;
+		margin-right: 75px;
+	}
+}

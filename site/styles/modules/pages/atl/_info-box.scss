@@ -1,0 +1,25 @@
+.atl__info-box {
+	overflow-y: scroll;
+	font-family: 'SimplonNorm-Regular-WebS';
+
+	&__close {
+
+		z-index: 10;
+		position: absolute;
+		cursor: pointer;
+		width: 50px;
+		height: 50px;
+
+		top: 40px;
+		right: 115px;
+
+		opacity: 0.7;
+		&:hover { opacity: 1; }
+
+		&--fixed {
+			position: fixed;
+			top: $top-bar-height+40px;
+		}
+
+	}
+}

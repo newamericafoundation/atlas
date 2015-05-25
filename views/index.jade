@@ -1,0 +1,16 @@
+doctype html
+html
+	head
+		title Atlas
+		meta(name='description', content="A policy analysis tool from New America's Education Program")
+		meta(charset='utf-8')
+		link(rel="stylesheet", type="text/css", href="/assets/styles/#{css['app.css']}")
+		script(src="/assets/scripts/#{js['app.js']}")
+	body
+
+		div(class="wrapper")
+			div(id="header", class="-id-header")
+			div(id="atl", class="-id-atl fill-parent")
+
+		script(type='text/javascript').
+			$(function() { Atlas.start(); });

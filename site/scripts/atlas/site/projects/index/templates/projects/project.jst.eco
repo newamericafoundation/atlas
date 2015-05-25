@@ -1,0 +1,14 @@
+<% style = if (@image_file? and @image_file.image_file? and @image_file.image_file.url?) then "style='background-image:url(#{@image_file.image_file.url})'" else '' %>
+
+<% initials = @title.substring(0, 1) + @title.substring(1, 2).toLowerCase() %>
+
+<div class="atl__project__background atl__project__background--unselected" <%= style %>>
+	<div class="center--content">
+		<p class="atl__project__background__initials"><%= if @image_file? then initials else '' %></p>
+	</div>
+</div>
+<div class="atl__project__text">
+	<div class="center--content">
+		<h1><%= @title %></h1>
+	</div>
+</div>

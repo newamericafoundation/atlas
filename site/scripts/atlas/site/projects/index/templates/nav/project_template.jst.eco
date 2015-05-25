@@ -1,0 +1,1 @@
+<p><%= if @display_name? then @display_name else @name %></p>

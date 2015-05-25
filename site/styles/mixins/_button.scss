@@ -1,0 +1,29 @@
+@mixin button($font-size: 17px, $extra-padding: 0px) {
+	position: static;
+    display: inline-block;
+    margin: 6px 6px 0px 0px;
+    padding: 5px+$extra-padding 5px+$extra-padding 3px+$extra-padding 5px+$extra-padding;
+    border: 2px solid map-get($palette, off-white);
+    border-radius: 7px;
+    opacity: 0.4;
+    cursor: pointer;
+    p {
+        @include font-size($font-size);
+        white-space: nowrap;
+        overflow: hidden;
+        text-align: center;
+        position: static;
+        width: 100%;
+        margin: 0 0 0 0;
+        pointer-events: none;
+        font-family: 'SimplonNorm-Regular-WebS' !important;
+    }
+    &:hover, &--active, .toc-active & { opacity: 0.9; }
+    .bg-c-off-white & {
+        border-color: map-get(map-get($palette, grey), base);
+        p { color: map-get(map-get($palette, grey), base); }
+    }
+}
+
+.button { @include button; }
+.large-button { @include button(26px, 8px); }

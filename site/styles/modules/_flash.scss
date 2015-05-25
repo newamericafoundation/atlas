@@ -1,0 +1,21 @@
+.flash {
+	position: fixed;
+	margin-left: calc(50% - 200px);
+	top: 100px;
+	width: 400px;
+	height: 55px;
+	display: table;
+	opacity: 1;
+	z-index: 15;
+	text-align: center;
+	p {
+		margin: 0;
+		padding: 0;
+		display: table-cell;
+		vertical-align: middle;
+		@include font-size(22px);
+
+	}
+	&--notice { background-color: #147D2F; }
+	&--error { background-color: #B2171E; }
+}

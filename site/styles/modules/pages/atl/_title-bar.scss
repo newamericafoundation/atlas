@@ -1,0 +1,52 @@
+.atl__title-bar {
+	position: relative;
+
+	@include bp-show-sidebars { 
+		width: calc(100% - #{$side-bar-width});
+		margin-right: $side-bar-width;
+	}
+	height: 300px;
+	display: table;
+
+	&::after {
+		content: "";
+		background: url('http://creativemusicschool.in/wp-content/uploads/2013/09/Kids-Playing.jpg');
+		opacity: 0.3;
+		background-size: cover;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		position: absolute;
+		z-index: 1; 
+	}
+
+	&__content {
+
+		position: relative;
+		@include bp-show-sidebars { left: 37.5px; }
+		width: 100%;
+		height: 100%;
+		display: table-cell;
+		vertical-align: middle;
+
+		.title {
+			margin: auto;
+			padding: 0;	
+		}
+
+		ul {
+			width: 100%;
+			text-align: center;
+			margin-top: 20px;
+			padding-top: 0;
+			li {
+				display: inline-block;
+				@include font-size(16px);
+				margin: auto 10px;
+			}
+		}
+
+		z-index: 2;
+	}
+}

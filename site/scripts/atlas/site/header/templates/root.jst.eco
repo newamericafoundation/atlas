@@ -1,0 +1,18 @@
+<div class="header__corner">
+	<a class="bg-img-naf--off-white" href="/welcome"></a>
+</div>
+
+<div class="header__main"><h1>ATLAS</h1></div>
+
+<div id="header__nav-circles">
+	<div class="header__nav-circles">
+		<ul class="nav-circles">
+			<li class="nav-circle"><a href="/welcome"></a></li>
+			<li class="nav-circle"><a href="/apps"></a></li>
+			<li class="nav-circle"><a href="/apps/pindrop"></a></li>
+			<li class="nav-circle"><a href="/about"></a></li>
+		</ul>
+	</div>
+</div>
+
+<div id="header__strip"></div>

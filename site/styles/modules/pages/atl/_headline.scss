@@ -1,0 +1,42 @@
+.atl__headline {
+
+	.atl--collapsed & { display: none; }
+
+	padding-bottom: 20px;
+
+	p {
+		display:none;
+		@include bp-show-sidebars { display: block; }
+		margin-top: 10px;
+		margin-bottom: 25px;
+		font-family: 'SimplonNorm-Regular-WebS';
+		text-transform: uppercase;
+		opacity: 0.4;
+		letter-spacing: 2px;
+	}
+
+	h1, h2 {
+		display: block;
+		width: 100%;
+	}
+
+	h1 { 
+		@include font-size(64px);
+		margin: 0;
+		line-height: 85%;
+		font-family: 'Platform Web';
+		font-weight: 700;
+		text-transform: uppercase;
+		@include bp-show-sidebars { font-size: auto; }
+	}
+
+	h2 { 
+		display:none;
+		@include bp-show-sidebars { display: block; }
+		margin: 25px 0 0 0 ;
+		padding: 0;
+		@include font-size(20px);
+		font-weight: 100;
+	}
+
+}

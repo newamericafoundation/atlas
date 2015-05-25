@@ -1,0 +1,43 @@
+.atlas-chart { 
+	ul { display: none; }
+
+	&__tooltip { 
+		background-color: #333; 
+		width: 200px;
+		height: 100px;
+		border-radius: 6px;
+		display: table;
+		& > div {
+			width: 100%;
+			display: table-cell;
+			vertical-align: middle;
+		}
+	}
+}
+
+.atlas-chart .atlas-chart__tooltip {
+	h1, p {
+		width: 100%;
+		text-align: center;
+		margin: 0;
+		color: map-get($palette, off-white);
+	}
+	h1 { @include font-size(18px); padding-top: 6px; }
+	p { @include font-size(18px); padding-top: 5px; }
+}
+
+.ct-chart {
+	width: 100%; 
+	padding: 0px; 
+	//height: 380px;
+	margin: 0px auto;
+}
+
+.ct-chart .ct-label { 
+	font-family: 'SimplonNorm-Regular-WebS';
+	opacity: 1;
+}
+
+.ct-chart .ct-label.ct-vertical { 
+	padding-top: 5px;
+}

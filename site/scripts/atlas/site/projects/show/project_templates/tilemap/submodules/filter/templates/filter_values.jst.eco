@@ -1,0 +1,2 @@
+<p><%= @long_description %></p>
+<ul></ul>

@@ -1,0 +1,54 @@
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    font-family: "SimplonNorm-Regular-WebS";
+    -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+}
+
+img {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    background-color: none;
+    &.atl-route--welcome_index { background-color: darken(map-get(map-get($palette, grey), base), 3); }
+    &.atl-route--projects_show { background-color: map-get(map-get($palette, grey), base); }
+    &.atl-route--projects_index { background-color: map-get($palette, off-white); }
+}
+
+ul {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+a { text-decoration: none; }
+
+table { color: rgba(51,50,50,0.9); }
+
+td, th { 
+    vertical-align: middle; 
+    background-color: #fffaef;
+    border: 1px solid rgba(51,50,50,0.1); 
+    border-width: 0px 0px 1px; 
+    text-align: left; 
+    padding: 20px 5px; 
+    font-size: 17px; 
+    font-weight: normal; 
+    color: rgba(51,50,50,0.9); 
+}

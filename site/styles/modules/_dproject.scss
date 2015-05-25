@@ -1,0 +1,76 @@
+.dproject-container {
+	width: 40%;
+	min-width: 500px;
+	margin: auto;
+}
+
+.dproject {
+	position: relative;
+	width: 100%;
+	margin: 30px auto;
+	font-family: inherit;
+	height: 300px;
+	display: inline-block;
+	opacity: 0.8;
+	&:hover { opacity: 1; }
+
+	&--empty {
+		background-color: lighten(map-get(map-get($palette, grey), base), 20);
+		img {
+			opacity: 0.6;
+			display: block;
+			margin: 130px auto auto auto;
+			width: 40px;
+			height: 40px;
+		}
+		opacity: 0.6;
+		&:hover { opacity: 1; }
+	}
+
+}
+
+.dproject__heading, .dproject__content {
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
+.dproject-delete {
+	position: absolute;
+	z-index: 1;
+	right: 40px;
+	top:   50px;
+	img { width: 30px; height: 30px; }
+	opacity: 0.6;
+	&:hover { opacity: 1; }
+}
+
+.dproject__heading {
+	width: 100%;
+	margin: 0;
+	height: 75px;
+	background-color: lighten(map-get(map-get($palette, grey), base), 5);
+	border-bottom: 3px solid rgb(79, 84, 177);
+	h1 {
+		margin: 24px 0 0 0;
+		float: left;
+		font-size: 24px;
+		width: 90%;
+		opacity: 0.8;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}
+
+.dproject__content {
+	min-height: 225px;
+	background-color: lighten(map-get(map-get($palette, grey), base), 2);
+	width: 100%;
+	padding-top: 20px;
+	padding-bottom: 10px;
+	padding-left: 15px;
+	p {
+		@include font-size(28px);
+		opacity: 1;
+	}
+}

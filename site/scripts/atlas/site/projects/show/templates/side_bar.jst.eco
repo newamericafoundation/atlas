@@ -1,0 +1,7 @@
+<div class="atl__side-bar__background"></div>
+<ul class="atl__side-bar__icons">
+	<li><a href="#" class="bg-img-grid--off-white" data-method="projects"></a></li>
+	<li><a href="#" class="bg-img-share--off-white"  data-method="share"></a></li>
+	<li><a href="#" class="bg-img-contract--off-white"  data-method="collapse"></a></li>
+	<li><a href="#" class="bg-img-build--off-white"  data-method="edit"></a></li>
+</ul>

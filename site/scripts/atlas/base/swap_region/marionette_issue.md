@@ -1,0 +1,3 @@
+I've looked at some implementations of animating the way a region changes views (one slides out, the other slides in). All of them seem to be overriding the show method on the Region. I implemented a way.
+
+However, Marionette.Region.show does so much already, and it would be a shame to throw that code away. Would it be possible to pass jQuery animation parameters to the views and have them coexist while these animations run? Essentially, this would mean postponing the destroy of the previous view until the sliding motion is complete.

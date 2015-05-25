@@ -1,0 +1,87 @@
+// http://zerosixthree.se/8-sass-mixins-you-must-have-in-your-toolbox/
+@function calculate-rem($size) {
+    $remSize: $size / 16px;
+    @return $remSize * 1rem;
+}
+
+@mixin font-size($size) {
+    font-size: $size;
+    font-size: calculate-rem($size);
+}
+
+%text-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@mixin bp-w($bp) {
+    @media only screen and (max-width: $bp) {
+        @content;
+    }
+}
+
+@mixin bp-h($bp) {
+    @media only screen and (max-height: $bp) {
+        @content;
+    }
+}
+
+@mixin bp-show-sidebars() {
+    @media only screen and (min-width: 640px) {
+        @content;
+    }
+}
+
+@mixin transition($transition-property, $transition-time, $method: ease-in-out) {
+    -webkit-transition: $transition-property $transition-time $method;
+    -moz-transition: $transition-property $transition-time $method;
+    -ms-transition: $transition-property $transition-time $method;
+    -o-transition: $transition-property $transition-time $method;
+    transition: $transition-property $transition-time $method;
+}
+
+@mixin keyframes($animation-name) {
+    @-webkit-keyframes #{$animation-name} {
+        @content;
+    }
+    @-moz-keyframes #{$animation-name} {
+        @content;
+    }
+    @-ms-keyframes #{$animation-name} {
+        @content;
+    }
+    @-o-keyframes #{$animation-name} {
+        @content;
+    }
+    @keyframes #{$animation-name} {
+        @content;
+    }
+}
+
+@mixin animation($str) {
+    -webkit-animation: #{$str};
+    -moz-animation: #{$str};
+    -ms-animation: #{$str};
+    -o-animation: #{$str};
+    animation: #{$str};
+}
+
+@include keyframes(bounce) {
+    $val: 0 2 3 2 0 -2 -3 -2 0;
+    @each $i in 1, 2, 3, 4, 5, 6, 7, 8, 9 {
+        #{percentage(($i - 1) / 8)} {
+            transform: translateY((nth($val, $i))+px);
+        }
+    }
+}
+
+@include keyframes(color) {
+    from { color: rgb(133, 2, 106); }
+    to   { color: rgb(50, 161, 217); }
+}
+
+@include keyframes(background-color) {
+    from { background-color: rgb(133, 2, 106); }
+    to   { background-color: rgb(50, 161, 217); }
+}

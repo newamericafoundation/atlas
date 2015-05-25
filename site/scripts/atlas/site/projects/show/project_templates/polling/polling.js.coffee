@@ -1,0 +1,1 @@
+@Atlas.Projects.Show.Polling = @Atlas.Projects.Show.Explainer

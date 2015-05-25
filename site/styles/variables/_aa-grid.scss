@@ -1,0 +1,11 @@
+$aag-main-width-large: 800px;
+$aag-main-width-small: 650px;
+
+$aag-side-width: 300px;
+
+$aag-margin: 2 * $side-bar-width; // how much space is there outside of the grid (for media queries)
+
+$aag-padding: 45px;
+
+$aag-bp-stack: $aag-margin + 2 * $aag-side-width + $aag-main-width-small;
+$aag-bp-spacious: $aag-margin + 2 * $aag-side-width + $aag-main-width-large;

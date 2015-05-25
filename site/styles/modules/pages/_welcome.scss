@@ -1,0 +1,107 @@
+.welcome {
+
+	@extend %pages-container;
+
+	&__title, &__subtitle, &__strip, &__main-nav {
+		position: relative;
+		z-index: 1;
+	}
+
+	&__title {
+
+		margin-top: 25vh;
+		text-align: center;
+
+		@include bp-h(600px) {
+			margin-top: 12vh;
+		}
+
+		&__name, &__alias {
+			line-height: 100%;
+			display: inline-block;
+			@include font-size(72px);
+			margin: 0;
+			padding: 0;
+			@include bp-show-sidebars {
+				@include font-size(102px);
+				margin: auto;
+				padding: auto;
+			}
+		}
+
+		&__name {
+			font-family: 'Platform Web';
+			text-align: center;
+		}
+
+		&__alias {
+			font-family: 'Platform Hairline';
+			@include animation(color 10s ease-in-out infinite alternate);
+		}
+
+	}
+
+	&__subtitle {
+		display: block;
+		margin: 0 auto 20px auto;
+		@include font-size(18px);
+		padding: 0 30px;
+		text-align: center;
+
+		@include bp-show-sidebars {
+			@include font-size(24px);
+		}
+	}
+
+	&__strip {
+		width: 100%;
+		height: 3px;
+		margin: 0px auto 20px auto;
+		@include animation(background-color 10s ease-in-out infinite alternate);
+		
+	}
+
+	&__main-nav {
+		display: block;
+		position: absolute;
+		bottom: 15%;
+		width: 100%;
+
+		a {
+			margin: auto;
+			width: 40px;
+			height: 40px;
+			opacity: 0.7;
+			&:hover { opacity: 1; }
+		}
+
+		p {
+			@include font-size(16px);
+			margin-top: 15px;
+			text-align: center;
+		}
+
+		@include bp-show-sidebars {
+			a { width: 50px; height: 50px; }
+			p { font-size: auto; }
+		}
+
+	}
+
+}
+
+.-id-welcome__terrain {
+	background-image: url("/assets/images/hex-bg.svg");
+	background-size: cover;
+	opacity: 0.2;
+	position: absolute;
+	pointer-events: none;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 0;
+	canvas {
+		pointer-events: none;
+	}
+}

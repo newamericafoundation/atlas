@@ -1,0 +1,30 @@
+@function divide-whole($a, $b) {
+
+	@return floor($a / $b);
+
+}
+
+@function divide-remainder($a, $b) {
+
+	@return $a - floor($a / $b) * $b;
+
+}
+
+@function is-even($a) {
+
+	@return divide-remainder($a, 2) == 0;
+
+}
+
+@function sqrt($a) {
+
+	@if $a == 0 { @return 0; }
+	@if $a == 1 { @return 1; }
+	@if $a == 2 { @return 1.41421356237; }
+	@if $a == 3 { @return 1.73205080757; }
+	@if $a == 4 { @return 2; }
+	@if $a == 5 { @return 2.2360679775; }
+
+	@return null;
+
+}

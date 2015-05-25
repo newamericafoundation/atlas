@@ -1,0 +1,4 @@
+<div class="atl__map-control">
+	<div id="atl__map-zoom-in"  class="bg-img-plus--off-white"></div>
+	<div id="atl__map-zoom-out" class="bg-img-minus--off-white"></div>
+</div>

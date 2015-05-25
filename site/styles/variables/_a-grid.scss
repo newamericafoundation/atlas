@@ -1,0 +1,9 @@
+$ag-width-2-3: 1000px;
+$ag-width-1-3: 300px;
+$ag-width-3-3: 300px;
+$ag-gutter: 45px;
+$ag-margin: $side-bar-width;
+
+$ag-total-width: $ag-width-1-3 + $ag-width-2-3 + $ag-width-3-3 + 4 * $ag-gutter;
+$ag-sides-width: $ag-width-1-3 + $ag-width-3-3 + 4 * $ag-gutter + 1px;
+$ag-breakpoint-width: $ag-total-width + $ag-margin;
