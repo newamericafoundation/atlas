@@ -1,5 +1,6 @@
 var gulp = require('gulp'),
     sass = require('gulp-sass'),
+    minifyCss = require('gulp-minify-css'),
     eco = require('gulp-eco'),
     concat = require('gulp-concat'),
     coffee = require('gulp-coffee'),
@@ -8,23 +9,21 @@ var gulp = require('gulp'),
     rename = require('gulp-rename'),
     nodemon = require('nodemon'),
     watch = require('gulp-watch'),
-    del = require('del');
+    del = require('del'),
+    copy = require('gulp-copy');
 
 var css = './site/styles/app.scss';
 
 var js = {
 
     vendor: [
-        //'./bower_components/requirejs/require.js',
         './bower_components/jquery/dist/jquery.js',
         './bower_components/marked/lib/marked.js',
         './bower_components/jquery-mousewheel/jquery.mousewheel.js',
         './bower_components/lodash/lodash.js',
         './bower_components/backbone/backbone.js',
         './bower_components/marionette/lib/backbone.marionette.js',
-        './bower_components/d3/d3.js',
         './bower_components/topojson/topojson.js',
-        //'./bower_components/mapbox.js/mapbox.uncompressed.js',
         './bower_components/chartist/dist/chartist.js',
         './bower_components/chartist-html/build/chartist-html.js',
         './bower_components/moment/moment.js',
@@ -61,6 +60,7 @@ gulp.task('css-clean', function(next) {
 gulp.task('css-build', ['css-clean'], function() {
     return gulp.src(css)
         .pipe(sass())
+        .pipe(minifyCss())
         .pipe(rename('app.css'))
         .pipe(gulp.dest('public/assets/styles/'))
         .pipe(rev())
@@ -105,6 +105,11 @@ gulp.task('js-build', ['js-build-template', 'js-build-source', 'js-build-vendor'
         .pipe(gulp.dest('public/assets/scripts'))
         .pipe(rev.manifest())
         .pipe(gulp.dest('public/assets/scripts'));
+});
+
+gulp.task('js-copy-vendor', function() {
+    return gulp.src([ './bower_components/d3/d3.min.js', './bower_components/mapbox.js/mapbox.js', './bower_components/requirejs/require.js' ])
+        .pipe(copy('public/assets/vendor', { prefix: 2 }));
 });
 
 gulp.task('default', ['js-build', 'css-build']);
