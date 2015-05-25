@@ -15,6 +15,4 @@ router.get('/*', function(req, res) {
 	res.render('index.jade', manifest);
 });
 
-
-
 module.exports = router;
