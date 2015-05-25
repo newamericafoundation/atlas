@@ -1,0 +1,53 @@
+{
+	"title": "Tilemap Template",
+	"short_description": "",
+	"body_text": "",
+	"data": {
+		"items": [
+			{
+				"name": "California",
+				"region": "west",
+				"population": 38000000
+			},
+			{
+				"name": "Georgia",
+				"region": "southeast",
+				"population": 10000000
+			},
+			{
+				"name": "Vermont",
+				"region": "northeast",
+				"population": 600000
+			}
+		],
+		"variables": [
+			{
+				"id": "region",
+				"display_title": "Region"
+			},
+			{
+				"id": "population",
+				"display_title": "Population"
+			}
+		],
+		"filters": [
+			{
+				"variable_id": "region",
+				"type": "categorical"
+			},
+			{
+				"variable_id": "population",
+				"type": "numerical",
+				"numerical_dividers": "|250000|1000000"
+			}
+		],
+		"infobox": [
+			{
+				"variable_id": "region"
+			},
+			{
+				"variable_id": "population"
+			}
+		]
+	}
+}

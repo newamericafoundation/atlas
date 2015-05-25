@@ -10,7 +10,8 @@ var gulp = require('gulp'),
     nodemon = require('nodemon'),
     watch = require('gulp-watch'),
     del = require('del'),
-    copy = require('gulp-copy');
+    copy = require('gulp-copy'),
+    gzip = require('gulp-gzip');
 
 var css = './site/styles/app.scss';
 
@@ -65,6 +66,8 @@ gulp.task('css-build', ['css-clean'], function() {
         .pipe(gulp.dest('public/assets/styles/'))
         .pipe(rev())
         .pipe(gulp.dest('public/assets/styles'))
+        //.pipe(gzip())
+        //.pipe(gulp.dest('public/assets/styles'))
         .pipe(rev.manifest())
         .pipe(gulp.dest('public/assets/styles'));
 });
@@ -103,6 +106,8 @@ gulp.task('js-build', ['js-build-template', 'js-build-source', 'js-build-vendor'
         .pipe(gulp.dest('public/assets/scripts'))
         .pipe(rev())
         .pipe(gulp.dest('public/assets/scripts'))
+        //.pipe(gzip())
+        //.pipe(gulp.dest('public/assets/scripts'))
         .pipe(rev.manifest())
         .pipe(gulp.dest('public/assets/scripts'));
 });

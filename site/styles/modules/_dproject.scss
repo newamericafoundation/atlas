@@ -16,12 +16,13 @@
 
 	&--empty {
 		background-color: lighten(map-get(map-get($palette, grey), base), 20);
-		img {
+		div {
 			opacity: 0.6;
 			display: block;
 			margin: 130px auto auto auto;
 			width: 40px;
 			height: 40px;
+			content: '';
 		}
 		opacity: 0.6;
 		&:hover { opacity: 1; }
@@ -51,6 +52,7 @@
 	background-color: lighten(map-get(map-get($palette, grey), base), 5);
 	border-bottom: 3px solid rgb(79, 84, 177);
 	h1 {
+		color: map-get($palette, off-white) !important;
 		margin: 24px 0 0 0;
 		float: left;
 		font-size: 24px;
