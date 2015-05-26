@@ -66,8 +66,8 @@ gulp.task('css-build', ['css-clean'], function() {
         .pipe(gulp.dest('public/assets/styles/'))
         .pipe(rev())
         .pipe(gulp.dest('public/assets/styles'))
-        //.pipe(gzip())
-        //.pipe(gulp.dest('public/assets/styles'))
+        .pipe(gzip())
+        .pipe(gulp.dest('public/assets/styles'))
         .pipe(rev.manifest())
         .pipe(gulp.dest('public/assets/styles'));
 });
@@ -106,8 +106,8 @@ gulp.task('js-build', ['js-build-template', 'js-build-source', 'js-build-vendor'
         .pipe(gulp.dest('public/assets/scripts'))
         .pipe(rev())
         .pipe(gulp.dest('public/assets/scripts'))
-        //.pipe(gzip())
-        //.pipe(gulp.dest('public/assets/scripts'))
+        .pipe(gzip())
+        .pipe(gulp.dest('public/assets/scripts'))
         .pipe(rev.manifest())
         .pipe(gulp.dest('public/assets/scripts'));
 });
