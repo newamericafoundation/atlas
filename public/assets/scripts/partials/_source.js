@@ -3884,16 +3884,18 @@
   this.Atlas.module('Projects.Show.Tilemap.Map', function(Map, App, Backbone, Marionette, $, _) {
     return Map.Controller = {
       show: function() {
-        Map.rootView = new Map.RootView().render();
-        return this.renderOverlayView();
+        var global;
+        global = typeof L !== "undefined" && L !== null ? L : void 0;
+        return this.fetchScript(global, '/assets/vendor/mapbox.js', this.showMain.bind(this));
       },
-      destroy: function() {
-        if ((Map.overlayView != null) && (Map.overlayView.destroy != null)) {
-          Map.overlayView.destroy();
-        }
-        if ((Map.mapView != null) && (Map.mapView.destroy != null)) {
-          return Map.mapView.destroy();
-        }
+      showMain: function() {
+        var global;
+        Map.rootView = new Map.RootView().render();
+        global = typeof d3 !== "undefined" && d3 !== null ? d3 : void 0;
+        return this.fetchScript(global, '/assets/vendor/d3.min.js', this.showOverlay.bind(this));
+      },
+      showOverlay: function() {
+        return this.renderOverlayView();
       },
       renderOverlayView: function() {
         var View, coll, itemType, items;
@@ -3909,6 +3911,25 @@
           return overlayView.render();
         });
         return this;
+      },
+      destroy: function() {
+        if ((Map.overlayView != null) && (Map.overlayView.destroy != null)) {
+          Map.overlayView.destroy();
+        }
+        if ((Map.mapView != null) && (Map.mapView.destroy != null)) {
+          return Map.mapView.destroy();
+        }
+      },
+      fetchScript: function(global, path, next) {
+        if (global != null) {
+          return next();
+        } else {
+          return $.ajax({
+            url: path,
+            dataType: 'script',
+            success: next
+          });
+        }
       }
     };
   });
