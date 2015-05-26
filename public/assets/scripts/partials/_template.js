@@ -2225,7 +2225,7 @@ window.JST_ATL["atlas/site/projects/index/templates/projects/project.jst"] = fun
     
       __out.push('>\n\t<div class="center--content">\n\t\t<p class="atl__project__background__initials">');
     
-      __out.push(__sanitize(this.image_file != null ? initials : ''));
+      __out.push(__sanitize(this.image_file != null ? '' : initials));
     
       __out.push('</p>\n\t</div>\n</div>\n<div class="atl__project__text">\n\t<div class="center--content">\n\t\t<h1>');
     
@@ -2455,7 +2455,7 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/templates/roo
   }
   (function() {
     (function() {
-      __out.push('<div class="atl__clear-side-bar">\n\t<div class="fill-parent" id="atl__map"></div>\n\t<div class="atl__settings-bar">\n\t\t<div id="atl__headline"></div>\n\t\t<div id="atl__search" class="-id-atl__search"></div>\n\t\t<div id="atl__filter" class="-id-atl__filter"></div>\n\t\t<div id="atl__display-toggle" class="-id-atl__display-toggle">\n\t\t\t<a href="#" class="atl__display-toggle__button atl__display-toggle__button--active bg-img-filter--off-white" id="atl__set-filter-display"></a>\n\t\t\t<a href="#" class="atl__display-toggle__button bg-img-search--off-white" id="atl__set-search-display"></a>\n\t\t</div>\n\t</div>\n\t<div id="atl__legend" class="-id-atl__legend"></div>\n\t<div id="atl__info" class="-id-atl__info"></div>\n\t<div id="atl__build" class="-id-atl__build"></div>\n\t<div id="atl__popup" class="-id-atl__popup"></div>\n</div>\n\n<div id="atl__info-box" class="-id-atl__info-box"></div>');
+      __out.push('<div class="atl__clear-side-bar">\n\t<div class="fill-parent" id="atl__map"></div>\n\t<div class="atl__settings-bar">\n\t\t<div id="atl__headline"></div>\n\t\t<div id="atl__search" class="-id-atl__search"></div>\n\t\t<div id="atl__filter" class="-id-atl__filter"></div>\n\n\t\t<div id="atl__display-toggle" class="-id-atl__display-toggle atl__binary-toggle">\n\n\t\t\t<div class="atl__binary-toggle__half">\n\t\t\t\t<a href="#" class="atl__binary-toggle__link atl__binary-toggle__link--active bg-img-filter--off-white" id="atl__set-filter-display"></a>\n\t\t\t</div>\n\n\t\t\t<div class="atl__binary-toggle__half">\n\t\t\t\t<a href="#" class="atl__binary-toggle__link bg-img-search--off-white" id="atl__set-search-display"></a>\n\t\t\t</div>\n\n\t\t</div>\n\n\t</div>\n\t<div id="atl__legend" class="-id-atl__legend"></div>\n\t<div id="atl__info" class="-id-atl__info"></div>\n\t<div id="atl__build" class="-id-atl__build"></div>\n\t<div id="atl__popup" class="-id-atl__popup"></div>\n</div>\n\n<div id="atl__info-box" class="-id-atl__info-box"></div>');
     
     }).call(this);
     
@@ -2507,69 +2507,6 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/templates/zoo
   (function() {
     (function() {
       __out.push('<div class="atl__map-control">\n\t<div id="atl__map-zoom-in"  class="bg-img-plus--off-white"></div>\n\t<div id="atl__map-zoom-out" class="bg-img-minus--off-white"></div>\n</div>');
-    
-    }).call(this);
-    
-  }).call(__obj);
-  __obj.safe = __objSafe, __obj.escape = __escape;
-  return __out.join('');
-};
-
-if (!window.JST_ATL) {
-  window.JST_ATL = {};
-}
-window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/headline/templates/root.jst"] = function (__obj) {
-  if (!__obj) __obj = {};
-  var __out = [], __capture = function(callback) {
-    var out = __out, result;
-    __out = [];
-    callback.call(this);
-    result = __out.join('');
-    __out = out;
-    return __safe(result);
-  }, __sanitize = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else if (typeof value !== 'undefined' && value != null) {
-      return __escape(value);
-    } else {
-      return '';
-    }
-  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
-  __safe = __obj.safe = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else {
-      if (!(typeof value !== 'undefined' && value != null)) value = '';
-      var result = new String(value);
-      result.ecoSafe = true;
-      return result;
-    }
-  };
-  if (!__escape) {
-    __escape = __obj.escape = function(value) {
-      return ('' + value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    };
-  }
-  (function() {
-    (function() {
-      __out.push('<p>');
-    
-      __out.push(__sanitize(this.project_section.name.toUpperCase()));
-    
-      __out.push('</p>\n<h1 class="title title--compact">');
-    
-      __out.push(__sanitize(this.title));
-    
-      __out.push('</h1>\n<h2>');
-    
-      __out.push(__sanitize(this.short_description));
-    
-      __out.push('</h2>');
     
     }).call(this);
     
@@ -2837,6 +2774,69 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/fi
   (function() {
     (function() {
       __out.push('<div id="filter__keys"></div>\n<div id="filter__values"></div>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+};
+
+if (!window.JST_ATL) {
+  window.JST_ATL = {};
+}
+window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/headline/templates/root.jst"] = function (__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+      __out.push('<p>');
+    
+      __out.push(__sanitize(this.project_section.name.toUpperCase()));
+    
+      __out.push('</p>\n<h1 class="title title--compact">');
+    
+      __out.push(__sanitize(this.title));
+    
+      __out.push('</h1>\n<h2>');
+    
+      __out.push(__sanitize(this.short_description));
+    
+      __out.push('</h2>');
     
     }).call(this);
     

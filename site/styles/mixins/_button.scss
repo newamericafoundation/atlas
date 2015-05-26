@@ -4,7 +4,9 @@
     display: inline-block;
 
     margin: 6px 6px 0px 0px;
-    padding: 5px+$extra-padding 5px+$extra-padding 3px+$extra-padding 5px+$extra-padding;
+    padding: 5px+$extra-padding 5px+$extra-padding 0px+$extra-padding 5px+$extra-padding;
+
+    border: 2px solid map-get($palette, off-white);
 
     border-radius: 7px;
     opacity: 0.4;

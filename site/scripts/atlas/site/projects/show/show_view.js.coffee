@@ -34,24 +34,25 @@
 			main: '#atl__main'
 
 		events: 
-			'click .atl__display-toggle__button': 'toggleDisplay'
+			'click .atl__binary-toggle__link': 'toggleDisplay'
 
 		toggleDisplay: (e) ->
+
 			e.preventDefault()
 			$target = $(e.target)
 			$app = $('.atl')
 
+			activate = (mode) ->
+				$('.atl__binary-toggle__link').removeClass 'atl__binary-toggle__link--active'
+				$target.addClass 'atl__binary-toggle__link--active'
+				App.commands.execute 'change:display:mode', mode
+
 			if $target.attr('id') is 'atl__set-filter-display'
-				$('.atl__display-toggle__button').removeClass 'atl__display-toggle__button--active'
-				$target.addClass 'atl__display-toggle__button--active'
-				App.commands.execute 'change:display:mode', 'filter'
+				activate('filter')
 				$app.addClass('atl--filter-display')
 				$app.removeClass('atl--search-display')
 
 			if $target.attr('id') is 'atl__set-search-display'
-
-				$('.atl__display-toggle__button').removeClass 'atl__display-toggle__button--active'
-				$target.addClass 'atl__display-toggle__button--active'
-				App.commands.execute 'change:display:mode', 'search'
+				activate('search')
 				$app.addClass('atl--search-display')
 				$app.removeClass('atl--filter-display')

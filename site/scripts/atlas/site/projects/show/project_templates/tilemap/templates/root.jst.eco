@@ -4,10 +4,19 @@
 		<div id="atl__headline"></div>
 		<div id="atl__search" class="-id-atl__search"></div>
 		<div id="atl__filter" class="-id-atl__filter"></div>
-		<div id="atl__display-toggle" class="-id-atl__display-toggle">
-			<a href="#" class="atl__display-toggle__button atl__display-toggle__button--active bg-img-filter--off-white" id="atl__set-filter-display"></a>
-			<a href="#" class="atl__display-toggle__button bg-img-search--off-white" id="atl__set-search-display"></a>
+
+		<div id="atl__display-toggle" class="-id-atl__display-toggle atl__binary-toggle">
+
+			<div class="atl__binary-toggle__half">
+				<a href="#" class="atl__binary-toggle__link atl__binary-toggle__link--active bg-img-filter--off-white" id="atl__set-filter-display"></a>
+			</div>
+
+			<div class="atl__binary-toggle__half">
+				<a href="#" class="atl__binary-toggle__link bg-img-search--off-white" id="atl__set-search-display"></a>
+			</div>
+
 		</div>
+
 	</div>
 	<div id="atl__legend" class="-id-atl__legend"></div>
 	<div id="atl__info" class="-id-atl__info"></div>

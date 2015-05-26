@@ -7,6 +7,7 @@
 		template: 'projects/index/templates/nav/project_template'
 		tagName: 'li'
 		className: 'icon-button'
+
 		activeSubclassName: 'icon-button--active'
 		events:
 			'click': 'toggle'

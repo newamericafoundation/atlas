@@ -1,6 +1,6 @@
 @Atlas.module 'Entities', (Entities, App, Backbone, Marionette, $, _) ->
 
-	class Entities.ProjectTemplateModel extends Marionette.Accountant.FilterModel
+	class Entities.ProjectTemplateModel extends Marionette.Accountant.FilterModel#
 		urlRoot: '/api/v1/project_templates'
 		parse: (resp) ->
 			resp

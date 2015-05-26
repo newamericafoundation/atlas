@@ -4,7 +4,7 @@
 
 <div class="atl__project__background atl__project__background--unselected" <%= style %>>
 	<div class="center--content">
-		<p class="atl__project__background__initials"><%= if @image_file? then initials else '' %></p>
+		<p class="atl__project__background__initials"><%= if @image_file? then '' else initials %></p>
 	</div>
 </div>
 <div class="atl__project__text">
