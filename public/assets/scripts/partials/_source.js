@@ -1,16 +1,4 @@
 (function() {
-  if (typeof ChartistHtml !== "undefined" && ChartistHtml !== null) {
-    ChartistHtml.config.baseClass = "atlas-chart";
-    ChartistHtml.config.colorSpectrum = ['#85026A', '#019fde'];
-    ChartistHtml.config.tooltipTemplate = function(data) {
-      return "<div><h1>" + data.label + "</h1><p>" + data.value + "</p></div>";
-    };
-    ChartistHtml.config.chartOptions.bar.options.base.seriesBarDistance = 28;
-  }
-
-}).call(this);
-
-(function() {
   if (typeof CKEDITOR !== "undefined" && CKEDITOR !== null) {
     CKEDITOR.config.allowedContent = true;
     CKEDITOR.config.format_tags = 'p;h1;h2;h3;h4';
@@ -22,6 +10,18 @@
     };
     CKEDITOR.config.toolbar = [['Source', '-', 'Undo', 'Redo', 'Cut', 'Copy', 'Paste', '-', 'Find', 'Replace'], ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'Link', 'Unlink', '-', 'Format', '-', 'TextColor', 'BGColor']];
     CKEDITOR.config.height = '500px';
+  }
+
+}).call(this);
+
+(function() {
+  if (typeof ChartistHtml !== "undefined" && ChartistHtml !== null) {
+    ChartistHtml.config.baseClass = "atlas-chart";
+    ChartistHtml.config.colorSpectrum = ['#85026A', '#019fde'];
+    ChartistHtml.config.tooltipTemplate = function(data) {
+      return "<div><h1>" + data.label + "</h1><p>" + data.value + "</p></div>";
+    };
+    ChartistHtml.config.chartOptions.bar.options.base.seriesBarDistance = 28;
   }
 
 }).call(this);
@@ -151,41 +151,34 @@
         Backbone.history.navigate('/welcome', {
           trigger: false
         });
-        App.commands.execute('apply:route:specific:styling', 'welcome_index');
-        this.history.add('welcome_index');
-        this._setCurrentAction('welcome_index');
-        this._stopRoutableModules();
+        this.navigate('welcome_index');
         return App.Welcome.start();
       },
       about_index: function() {
-        this.history.add('about_index');
-        this._setCurrentAction('about_index');
-        App.commands.execute('apply:route:specific:styling', 'about_index');
-        this._stopRoutableModules();
+        this.navigate('about_index');
         return App.About.start();
       },
       projects_index: function() {
-        this.history.add('projects_index');
-        this._setCurrentAction('projects_index');
-        App.commands.execute('apply:route:specific:styling', 'projects_index');
-        this._stopRoutableModules();
+        this.navigate('projects_index');
         App.Projects.start();
         return App.Projects.Index.start();
       },
       projects_show: function(atlas_url) {
-        this._setCurrentAction('projects_show');
-        App.commands.execute('apply:route:specific:styling', 'projects_show');
-        this._stopRoutableModules();
-        App.Projects.start();
-        if (atlas_url != null) {
-          this.atlas_url = atlas_url;
-        } else {
-          atlas_url = this.atlas_url;
-        }
-        this.history.add('projects_show', {
+        this.navigate('projects_show', {
           atlas_url: atlas_url
         });
+        if (atlas_url == null) {
+          atlas_url = this.atlas_url;
+        }
+        this.atlas_url = atlas_url;
+        App.Projects.start();
         return App.Projects.Show.start(atlas_url);
+      },
+      navigate: function(action, params) {
+        this.history.add(action, params);
+        this._setCurrentAction(action);
+        this._stopRoutableModules();
+        return App.commands.execute('apply:route:specific:styling', action);
       },
       _stopRoutableModules: function() {
         App.Welcome.stop();
@@ -1156,6 +1149,16 @@
         return this.urlRoot + ("?atlas_url=" + (this.get('atlas_url')));
       };
 
+      ProjectModel.prototype.exists = function() {
+        var json, key, keyCount;
+        keyCount = 0;
+        json = this.toJSON();
+        for (key in json) {
+          keyCount += 1;
+        }
+        return keyCount !== 1;
+      };
+
       ProjectModel.prototype.parse = function(resp) {
         resp = this._removeArrayWrapper(resp);
         resp = this._removeSpacesFromTemplateName(resp);
@@ -1217,7 +1220,7 @@
         }
         for (i = 0, len = integerKeys.length; i < len; i++) {
           key = integerKeys[i];
-          if (resp[key] != null) {
+          if ((resp != null) && (resp[key] != null)) {
             resp[key] = parseInt(resp[key], 10);
           }
         }
@@ -1582,12 +1585,12 @@
       RootView.prototype.template = 'header/templates/root';
 
       RootView.prototype.events = {
-        'click .bg-img-naf': 'navigate'
+        'click #header__welcome-link': 'navigate'
       };
 
       RootView.prototype.navigate = function(e) {
         e.preventDefault();
-        return Backbone.history.navigate('welcome', {
+        return Backbone.history.navigate('/welcome', {
           trigger: true
         });
       };
@@ -1600,6 +1603,32 @@
       return RootView;
 
     })(Marionette.LayoutView);
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show', function(Show, App, Backbone, Marionette, $, _) {
+    this.projectTemplates = {
+      "Tilemap": {
+        theme: 'dark'
+      },
+      "Explainer": {
+        theme: 'light'
+      },
+      "Policy Brief": {
+        theme: 'light'
+      },
+      "Polling": {
+        theme: 'light'
+      }
+    };
+    return this.getTheme = function() {
+      if (this.projectTemplates[this.currentProjectTemplate] != null) {
+        return this.projectTemplates[this.currentProjectTemplate].theme;
+      }
+      return 'dark';
+    };
   });
 
 }).call(this);
@@ -1851,32 +1880,6 @@
       return ProjectsView;
 
     })(Marionette.CollectionView);
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show', function(Show, App, Backbone, Marionette, $, _) {
-    this.projectTemplates = {
-      "Tilemap": {
-        theme: 'dark'
-      },
-      "Explainer": {
-        theme: 'light'
-      },
-      "Policy Brief": {
-        theme: 'light'
-      },
-      "Polling": {
-        theme: 'light'
-      }
-    };
-    return this.getTheme = function() {
-      if (this.projectTemplates[this.currentProjectTemplate] != null) {
-        return this.projectTemplates[this.currentProjectTemplate].theme;
-      }
-      return 'dark';
-    };
   });
 
 }).call(this);
@@ -4535,6 +4538,133 @@
 }).call(this);
 
 (function() {
+  this.Atlas.module('Projects.Show', function(Show, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    this.on('start', function(atlas_url) {
+      var project;
+      App.currentDisplayMode = 'filter';
+      App.commands.setHandler('change:display:mode', function(mode) {
+        App.currentDisplayMode = mode;
+        return App.vent.trigger('display:mode:change');
+      });
+      Show.Controller.show();
+      project = App.reqres.request('project:entity', atlas_url);
+      project.on('sync', (function(_this) {
+        return function() {
+          if (project.exists()) {
+            App.currentProjectData = project.toJSON();
+            App.currentProjectModel = project;
+            if (project.get('project_template_id') === 1) {
+              $('.atl').addClass('atl--light');
+            }
+            _this.currentProjectTemplate = App.currentProjectData.project_template.name;
+            return Show[_this.currentProjectTemplate].start();
+          }
+          return Backbone.history.navigate('welcome', {
+            trigger: true
+          });
+        };
+      })(this));
+      return this;
+    });
+    this.on('stop', function() {
+      return this.stopListening();
+    });
+    return this;
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show', function(Show, App, Backbone, Marionette, $, _) {
+    return Show.Controller = {
+      show: function() {
+        Show.rootView = this.getRootView();
+        App.contentRegion.show(Show.rootView, {
+          preventDestroy: true
+        });
+        Show.rootView.getRegion('sideBar').show(this.getSideBarView());
+        return App.appContentRegion = Show.rootView.getRegion('main');
+      },
+      getSideBarView: function() {
+        return new Show.SideBarView();
+      },
+      getRootView: function() {
+        return new Show.RootView();
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show', function(Show, App, Backbone, Marionette, $, _) {
+    Show.SideBarView = Marionette.ItemView.extend({
+      tagName: 'div',
+      className: 'atl__side-bar fill-parent',
+      template: 'projects/show/templates/side_bar',
+      events: {
+        'click a': 'navigate'
+      },
+      navigate: function(e) {
+        var entity, method;
+        e.preventDefault();
+        e.stopPropagation();
+        entity = $(e.currentTarget).attr('data-method');
+        method = this["_" + entity];
+        if (method != null) {
+          return method();
+        }
+      },
+      _projects: function() {
+        return Backbone.history.navigate('menu', {
+          trigger: true
+        });
+      },
+      _edit: function() {
+        Backbone.history.navigate('');
+        return window.location.href = "projects/" + App.currentProjectData.id + "/edit";
+      },
+      _collapse: function() {
+        return $('.atl').toggleClass('atl--collapsed');
+      }
+    });
+    return Show.RootView = Marionette.LayoutView.extend({
+      template: 'projects/show/templates/root',
+      className: 'atl atl--filter-display',
+      regions: {
+        sideBar: '#atl__side-bar',
+        main: '#atl__main'
+      },
+      events: {
+        'click .atl__display-toggle__button': 'toggleDisplay'
+      },
+      toggleDisplay: function(e) {
+        var $app, $target;
+        e.preventDefault();
+        $target = $(e.target);
+        $app = $('.atl');
+        if ($target.attr('id') === 'atl__set-filter-display') {
+          $('.atl__display-toggle__button').removeClass('atl__display-toggle__button--active');
+          $target.addClass('atl__display-toggle__button--active');
+          App.commands.execute('change:display:mode', 'filter');
+          $app.addClass('atl--filter-display');
+          $app.removeClass('atl--search-display');
+        }
+        if ($target.attr('id') === 'atl__set-search-display') {
+          $('.atl__display-toggle__button').removeClass('atl__display-toggle__button--active');
+          $target.addClass('atl__display-toggle__button--active');
+          App.commands.execute('change:display:mode', 'search');
+          $app.addClass('atl--search-display');
+          return $app.removeClass('atl--filter-display');
+        }
+      }
+    });
+  });
+
+}).call(this);
+
+(function() {
   this.Atlas.module('Projects.Index', function(Index, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     return this.on('start', function() {
@@ -4634,128 +4764,6 @@
       return RootView;
 
     })(Marionette.LayoutView);
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show', function(Show, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function(atlas_url) {
-      var project;
-      App.currentDisplayMode = 'filter';
-      App.commands.setHandler('change:display:mode', function(mode) {
-        App.currentDisplayMode = mode;
-        return App.vent.trigger('display:mode:change');
-      });
-      Show.Controller.show();
-      project = App.reqres.request('project:entity', atlas_url);
-      project.on('sync', (function(_this) {
-        return function() {
-          App.currentProjectData = project.toJSON();
-          App.currentProjectModel = project;
-          if (project.get('project_template_id') === 1) {
-            $('.atl').addClass('atl--light');
-          }
-          _this.currentProjectTemplate = App.currentProjectData.project_template.name;
-          return Show[_this.currentProjectTemplate].start();
-        };
-      })(this));
-      return this;
-    });
-    this.on('stop', function() {
-      return this.stopListening();
-    });
-    return this;
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show', function(Show, App, Backbone, Marionette, $, _) {
-    return Show.Controller = {
-      show: function() {
-        Show.rootView = this.getRootView();
-        App.contentRegion.show(Show.rootView, {
-          preventDestroy: true
-        });
-        Show.rootView.getRegion('sideBar').show(this.getSideBarView());
-        return App.appContentRegion = Show.rootView.getRegion('main');
-      },
-      getSideBarView: function() {
-        return new Show.SideBarView();
-      },
-      getRootView: function() {
-        return new Show.RootView();
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show', function(Show, App, Backbone, Marionette, $, _) {
-    Show.SideBarView = Marionette.ItemView.extend({
-      tagName: 'div',
-      className: 'atl__side-bar fill-parent',
-      template: 'projects/show/templates/side_bar',
-      events: {
-        'click a': 'navigate'
-      },
-      navigate: function(e) {
-        var entity, method;
-        e.preventDefault();
-        e.stopPropagation();
-        entity = $(e.currentTarget).attr('data-method');
-        method = this["_" + entity];
-        if (method != null) {
-          return method();
-        }
-      },
-      _projects: function() {
-        return Backbone.history.navigate('menu', {
-          trigger: true
-        });
-      },
-      _edit: function() {
-        Backbone.history.navigate('');
-        return window.location.href = "projects/" + App.currentProjectData.id + "/edit";
-      },
-      _collapse: function() {
-        return $('.atl').toggleClass('atl--collapsed');
-      }
-    });
-    return Show.RootView = Marionette.LayoutView.extend({
-      template: 'projects/show/templates/root',
-      className: 'atl atl--filter-display',
-      regions: {
-        sideBar: '#atl__side-bar',
-        main: '#atl__main'
-      },
-      events: {
-        'click .atl__display-toggle__button': 'toggleDisplay'
-      },
-      toggleDisplay: function(e) {
-        var $app, $target;
-        e.preventDefault();
-        $target = $(e.target);
-        $app = $('.atl');
-        if ($target.attr('id') === 'atl__set-filter-display') {
-          $('.atl__display-toggle__button').removeClass('atl__display-toggle__button--active');
-          $target.addClass('atl__display-toggle__button--active');
-          App.commands.execute('change:display:mode', 'filter');
-          $app.addClass('atl--filter-display');
-          $app.removeClass('atl--search-display');
-        }
-        if ($target.attr('id') === 'atl__set-search-display') {
-          $('.atl__display-toggle__button').removeClass('atl__display-toggle__button--active');
-          $target.addClass('atl__display-toggle__button--active');
-          App.commands.execute('change:display:mode', 'search');
-          $app.addClass('atl--search-display');
-          return $app.removeClass('atl--filter-display');
-        }
-      }
-    });
   });
 
 }).call(this);

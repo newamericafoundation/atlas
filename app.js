@@ -4,7 +4,8 @@ var express = require('express'),
 	app = express(),
 	router = require('./routes/index'),
 	basicAuth = require('basic-auth-connect'),
-	fs = require('fs');
+	fs = require('fs'),
+	port = process.env.PORT || 8081;
 
 var db_url = {
 	'dev': 'localhost',
@@ -36,7 +37,7 @@ app.use(basicAuth('nafed', 'nafed148'));
 
 app.use(router);
 
-app.listen(8081, function(err) { 
+app.listen(port, function(err) { 
 	if(err) { return console.log(err); }
-	console.log('Listening on port 8081.')
+	console.log('Listening on port ' + port + '.')
 });

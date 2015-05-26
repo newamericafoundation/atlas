@@ -398,7 +398,7 @@ window.JST_ATL["atlas/site/header/templates/root.jst"] = function (__obj) {
   }
   (function() {
     (function() {
-      __out.push('<div class="header__corner">\n\t<a class="bg-img-naf--off-white" href="/welcome"></a>\n</div>\n\n<div class="header__main"><h1>ATLAS</h1></div>\n\n<div id="header__nav-circles">\n\t<div class="header__nav-circles">\n\t\t<ul class="nav-circles">\n\t\t\t<li class="nav-circle"><a href="/welcome"></a></li>\n\t\t\t<li class="nav-circle"><a href="/apps"></a></li>\n\t\t\t<li class="nav-circle"><a href="/apps/pindrop"></a></li>\n\t\t\t<li class="nav-circle"><a href="/about"></a></li>\n\t\t</ul>\n\t</div>\n</div>\n\n<div id="header__strip"></div>');
+      __out.push('<div class="header__corner">\n\t<a class="bg-img-naf--off-white" id="header__welcome-link" href="/welcome"></a>\n</div>\n\n<div class="header__main"><h1>ATLAS</h1></div>\n\n<div id="header__nav-circles">\n\t<div class="header__nav-circles">\n\t</div>\n</div>\n\n<div id="header__strip"></div>');
     
     }).call(this);
     
@@ -2498,6 +2498,69 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/templates/zoo
 if (!window.JST_ATL) {
   window.JST_ATL = {};
 }
+window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/headline/templates/root.jst"] = function (__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+      __out.push('<p>');
+    
+      __out.push(__sanitize(this.project_section.name.toUpperCase()));
+    
+      __out.push('</p>\n<h1 class="title title--compact">');
+    
+      __out.push(__sanitize(this.title));
+    
+      __out.push('</h1>\n<h2>');
+    
+      __out.push(__sanitize(this.short_description));
+    
+      __out.push('</h2>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+};
+
+if (!window.JST_ATL) {
+  window.JST_ATL = {};
+}
 window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/filter/templates/filter_key.jst"] = function (__obj) {
   if (!__obj) __obj = {};
   var __out = [], __capture = function(callback) {
@@ -2754,69 +2817,6 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/fi
   (function() {
     (function() {
       __out.push('<div id="filter__keys"></div>\n<div id="filter__values"></div>');
-    
-    }).call(this);
-    
-  }).call(__obj);
-  __obj.safe = __objSafe, __obj.escape = __escape;
-  return __out.join('');
-};
-
-if (!window.JST_ATL) {
-  window.JST_ATL = {};
-}
-window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/headline/templates/root.jst"] = function (__obj) {
-  if (!__obj) __obj = {};
-  var __out = [], __capture = function(callback) {
-    var out = __out, result;
-    __out = [];
-    callback.call(this);
-    result = __out.join('');
-    __out = out;
-    return __safe(result);
-  }, __sanitize = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else if (typeof value !== 'undefined' && value != null) {
-      return __escape(value);
-    } else {
-      return '';
-    }
-  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
-  __safe = __obj.safe = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else {
-      if (!(typeof value !== 'undefined' && value != null)) value = '';
-      var result = new String(value);
-      result.ecoSafe = true;
-      return result;
-    }
-  };
-  if (!__escape) {
-    __escape = __obj.escape = function(value) {
-      return ('' + value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    };
-  }
-  (function() {
-    (function() {
-      __out.push('<p>');
-    
-      __out.push(__sanitize(this.project_section.name.toUpperCase()));
-    
-      __out.push('</p>\n<h1 class="title title--compact">');
-    
-      __out.push(__sanitize(this.title));
-    
-      __out.push('</h1>\n<h2>');
-    
-      __out.push(__sanitize(this.short_description));
-    
-      __out.push('</h2>');
     
     }).call(this);
     

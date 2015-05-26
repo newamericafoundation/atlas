@@ -11,11 +11,12 @@ var gulp = require('gulp'),
     watch = require('gulp-watch'),
     del = require('del'),
     copy = require('gulp-copy'),
-    gzip = require('gulp-gzip');
+    gzip = require('gulp-gzip'),
+    watch = require('gulp-watch');
 
-var css = './site/styles/app.scss';
+var cssSource = './site/styles/app.scss';
 
-var js = {
+var jsSource = {
 
     vendor: [
         './bower_components/jquery/dist/jquery.js',
@@ -59,7 +60,7 @@ gulp.task('css-clean', function(next) {
 });
 
 gulp.task('css-build', ['css-clean'], function() {
-    return gulp.src(css)
+    return gulp.src(cssSource)
         .pipe(sass())
         .pipe(minifyCss())
         .pipe(rename('app.css'))
@@ -77,30 +78,30 @@ gulp.task('js-clean', function(next) {
 });
 
 gulp.task('js-build-template', [ 'js-clean' ], function() {
-    return gulp.src(js.template)
+    return gulp.src(jsSource.template)
         .pipe(eco({
             basePath: 'site/scripts',
             namespace: 'JST_ATL'
         }))
-        .pipe(concat('_templates.js'))
+        .pipe(concat('_template.js'))
         .pipe(gulp.dest('public/assets/scripts/partials'));
 });
 
 gulp.task('js-build-source', [ 'js-clean' ], function() {
-    return gulp.src(js.source)
+    return gulp.src(jsSource.source)
         .pipe(coffee())
         .pipe(concat('_source.js'))
         .pipe(gulp.dest('public/assets/scripts/partials'));
 });
 
 gulp.task('js-build-vendor', [ 'js-clean' ], function() {
-    return gulp.src(js.vendor)
+    return gulp.src(jsSource.vendor)
         .pipe(concat('_vendor.js'))
         .pipe(gulp.dest('public/assets/scripts/partials'));
 });
 
 gulp.task('js-build', ['js-build-template', 'js-build-source', 'js-build-vendor'], function() {
-    return gulp.src(['public/assets/scripts/partials/_templates.js', 'public/assets/scripts/partials/_vendor.js', 'public/assets/scripts/partials/_source.js'])
+    return gulp.src(['public/assets/scripts/partials/_template.js', 'public/assets/scripts/partials/_vendor.js', 'public/assets/scripts/partials/_source.js'])
         .pipe(concat('app.js'))
         .pipe(uglify())
         .pipe(gulp.dest('public/assets/scripts'))
@@ -117,14 +118,18 @@ gulp.task('js-copy-vendor', function() {
         .pipe(copy('public/assets/vendor', { prefix: 2 }));
 });
 
+gulp.task('watch', function() {
+    gulp.watch([ '**/*.coffee', '**/*.scss', '**/*.eco' ], [ 'default' ]);
+});
+
 gulp.task('default', ['js-build', 'css-build']);
 
 gulp.task('dev', function() {
-    return nodemon({
+    nodemon({
         script: './app.js',
         ext: 'coffee eco scss jade',
-        tasks: [ 'default' ]
+        tasks: [ 'js-build', 'css-build' ]
     }).on('restart', function() {
-        console.log('restarted');
+        console.log('Server restarted.');
     });
 });

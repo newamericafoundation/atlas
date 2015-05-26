@@ -63,11 +63,11 @@
 		template: 'header/templates/root'
 
 		events:
-			'click .bg-img-naf': 'navigate'
+			'click #header__welcome-link': 'navigate'
 
 		navigate: (e) ->
 			e.preventDefault()
-			Backbone.history.navigate 'welcome', { trigger: true }
+			Backbone.history.navigate '/welcome', { trigger: true }
 
 		regions:
 			navCircles: '#header__nav-circles'

@@ -8,6 +8,14 @@
 		url: ->
 			@urlRoot + "?atlas_url=#{@get 'atlas_url'}"
 
+		# Checks if the project has the mandatory fields.
+		exists: ->
+			keyCount = 0
+			json = @toJSON()
+			for key of json
+				keyCount += 1
+			(keyCount isnt 1)
+
 		# Parses JSON response.
 		parse: (resp) ->
 			resp = @_removeArrayWrapper resp
@@ -71,7 +79,7 @@
 		# @returns {object} resp - Modified response.
 		_parseIntegerFields: (resp, integerKeys = []) ->
 			for key in integerKeys
-				resp[key] = parseInt(resp[key], 10) if resp[key]?
+				resp[key] = parseInt(resp[key], 10) if resp? and resp[key]?
 			resp
 
 
