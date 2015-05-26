@@ -12,7 +12,7 @@ var db_url = {
 	'prod': 'ec2-52-25-41-189.us-west-2.compute.amazonaws.com'
 };
 
-mongoose.connect('mongodb://' + db_url.dev + ':27017/mongoid', function(err) {
+mongoose.connect('mongodb://' + db_url.prod + ':27017/mongoid', function(err) {
 	if (err) { return console.dir(err); }
 });
 

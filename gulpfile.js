@@ -18,6 +18,11 @@ var cssSource = './site/styles/app.scss';
 
 var jsSource = {
 
+    vendorAsync: [
+        './bower_components/d3/d3.min.js', 
+        './bower_components/mapbox.js/mapbox.js'
+    ],
+
     vendor: [
         './bower_components/jquery/dist/jquery.js',
         './bower_components/marked/lib/marked.js',
@@ -54,6 +59,11 @@ var jsSource = {
     ]
 
 };
+
+gulp.task('js-copy-vendor', function() {
+    return gulp.src(jsSource.vendorAsync)
+        .pipe(copy('public/assets/vendor', { prefix: 2 }));
+});
 
 gulp.task('css-clean', function(next) {
 	return del([ 'public/assets/styles/**/*' ], next);
@@ -111,11 +121,6 @@ gulp.task('js-build', ['js-build-template', 'js-build-source', 'js-build-vendor'
         .pipe(gulp.dest('public/assets/scripts'))
         .pipe(rev.manifest())
         .pipe(gulp.dest('public/assets/scripts'));
-});
-
-gulp.task('js-copy-vendor', function() {
-    return gulp.src([ './bower_components/d3/d3.min.js', './bower_components/mapbox.js/mapbox.js', './bower_components/requirejs/require.js' ])
-        .pipe(copy('public/assets/vendor', { prefix: 2 }));
 });
 
 gulp.task('watch', function() {
