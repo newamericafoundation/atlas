@@ -5,8 +5,14 @@ var express = require('express'),
 	sections = require('../../../db/seeds/project_sections.json');
 
 router.get('/', function(req, res) {
-	var query = req.query;
-	return Model.find(query).lean().exec(function(err, models) {
+	var queryParameters = req.query,
+		query = Model.find(queryParameters);
+
+	if (typeof queryParameters.atlas_url === "undefined") {
+		query.select('-data -body_text');
+	}
+
+	return query.lean().exec(function(err, models) {
 		if (err) { return console.log(err); }
 
 		models.forEach(function(model) {
