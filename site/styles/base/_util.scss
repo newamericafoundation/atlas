@@ -103,20 +103,3 @@
 	filter: blur(3px);
 	-webkit-filter: blur(3px);
 }
-
-.icon-button {
-    $sz: 80px;
-    width: $sz;
-    height: $sz;
-    display: block;
-    margin: auto auto 30px auto;
-    svg {
-        width: $sz;
-        height: $sz;
-        fill: map-get($palette, off-white);
-    }
-    opacity: 0.6;
-    &:hover {
-        opacity: 1;
-    }
-}

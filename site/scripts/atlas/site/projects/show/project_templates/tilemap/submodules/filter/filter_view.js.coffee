@@ -12,7 +12,7 @@
 
 		onShow: ->
 			cls = @model.getBackgroundColorClass()
-			@$('.toggle-button__icon').attr 'class', "toggle-button__icon #{cls}"
+			@$('.toggle-button__background').attr 'class', "toggle-button__background #{cls}"
 
 		events: 
 			'click': 'triggerValueClick'

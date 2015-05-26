@@ -2030,7 +2030,7 @@ window.JST_ATL["atlas/site/projects/index/templates/nav/project_section.jst"] = 
   }
   (function() {
     (function() {
-      __out.push('<svg viewBox="0 0 100 100">\n\t<g class="toggle-button__icon">\n\t\t<path d="M86.9,77.3L56,94.4c-3.3,1.9-8.7,1.9-12.1,0L13.1,77.3c-3.3-1.9-6-6.4-6-10.2V32.9c0-3.8,2.7-8.3,6-10.2L44,5.6c3.3-1.9,8.7-1.9,12.1,0l30.9,17.2c3.3,1.9,6,6.4,6,10.2v34.1C93,70.8,90.3,75.4,86.9,77.3"/>\n\t</g>\n\t<g class="toggle-button__yes">\n\t\t<polygon points="70.3,31.9 44.3,57.8 30.1,43.6 22.5,51.2 36.7,65.4 36.7,65.4 44.3,73 77.9,39.5"/>\n\t</g>\n\t<g class="toggle-button__no">\n\t\t<polygon points="72,35.8 64.4,28.2 50.2,42.4 35.9,28.2 28.3,35.8 42.6,50 28.3,64.2 35.9,71.8 50.2,57.6 64.4,71.8 72,64.2,57.8,50"/>\n\t</g>\n</svg>\n<div class="toggle-button__text"><p>');
+      __out.push('<svg class="toggle-button__icon" viewBox="0 0 100 100">\n\t<g class="toggle-button__background">\n\t\t<path d="M86.9,77.3L56,94.4c-3.3,1.9-8.7,1.9-12.1,0L13.1,77.3c-3.3-1.9-6-6.4-6-10.2V32.9c0-3.8,2.7-8.3,6-10.2L44,5.6c3.3-1.9,8.7-1.9,12.1,0l30.9,17.2c3.3,1.9,6,6.4,6,10.2v34.1C93,70.8,90.3,75.4,86.9,77.3"/>\n\t</g>\n\t<g class="toggle-button__yes">\n\t\t<polygon points="70.3,31.9 44.3,57.8 30.1,43.6 22.5,51.2 36.7,65.4 36.7,65.4 44.3,73 77.9,39.5"/>\n\t</g>\n\t<g class="toggle-button__no">\n\t\t<polygon points="72,35.8 64.4,28.2 50.2,42.4 35.9,28.2 28.3,35.8 42.6,50 28.3,64.2 35.9,71.8 50.2,57.6 64.4,71.8 72,64.2,57.8,50"/>\n\t</g>\n</svg>\n<div class="toggle-button__text"><p>');
     
       __out.push(__sanitize(this.name));
     
@@ -2085,7 +2085,27 @@ window.JST_ATL["atlas/site/projects/index/templates/nav/project_template.jst"] =
   }
   (function() {
     (function() {
-      __out.push('<p>');
+      var icon;
+    
+      icon = 'plus';
+    
+      __out.push('\n');
+    
+      icon = this.name === 'Tilemap' ? 'map' : icon;
+    
+      __out.push('\n');
+    
+      icon = this.name === 'Explainer' ? 'dictionary' : icon;
+    
+      __out.push('\n');
+    
+      icon = this.name === 'Polling' ? 'graph' : icon;
+    
+      __out.push('\n\n<div class="icon-button__icon bg-img-');
+    
+      __out.push(__sanitize(icon));
+    
+      __out.push('--black">\n</div> \n<p class="icon-button__text">');
     
       __out.push(__sanitize(this.display_name != null ? this.display_name : this.name));
     
@@ -2706,7 +2726,7 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/fi
   }
   (function() {
     (function() {
-      __out.push('<svg viewBox="0 0 100 100">\n\t<g class="toggle-button__icon">\n\t\t<path d="M86.9,77.3L56,94.4c-3.3,1.9-8.7,1.9-12.1,0L13.1,77.3c-3.3-1.9-6-6.4-6-10.2V32.9c0-3.8,2.7-8.3,6-10.2L44,5.6c3.3-1.9,8.7-1.9,12.1,0l30.9,17.2c3.3,1.9,6,6.4,6,10.2v34.1C93,70.8,90.3,75.4,86.9,77.3"/>\n\t</g>\n\t<g class="toggle-button__yes">\n\t\t<polygon points="70.3,31.9 44.3,57.8 30.1,43.6 22.5,51.2 36.7,65.4 36.7,65.4 44.3,73 77.9,39.5 \t"/>\n\t</g>\n\t<g class="toggle-button__no">\n\t\t<polygon points="72,35.8 64.4,28.2 50.2,42.4 35.9,28.2 28.3,35.8 42.6,50 28.3,64.2 35.9,71.8 50.2,57.6 64.4,71.8 72,64.2,57.8,50"/>\n\t</g>\n</svg>\n\n<div class="toggle-button__text">\n   \t<p>');
+      __out.push('<svg class="toggle-button__icon" viewBox="0 0 100 100">\n\t<g class="toggle-button__background">\n\t\t<path d="M86.9,77.3L56,94.4c-3.3,1.9-8.7,1.9-12.1,0L13.1,77.3c-3.3-1.9-6-6.4-6-10.2V32.9c0-3.8,2.7-8.3,6-10.2L44,5.6c3.3-1.9,8.7-1.9,12.1,0l30.9,17.2c3.3,1.9,6,6.4,6,10.2v34.1C93,70.8,90.3,75.4,86.9,77.3"/>\n\t</g>\n\t<g class="toggle-button__yes">\n\t\t<polygon points="70.3,31.9 44.3,57.8 30.1,43.6 22.5,51.2 36.7,65.4 36.7,65.4 44.3,73 77.9,39.5 \t"/>\n\t</g>\n\t<g class="toggle-button__no">\n\t\t<polygon points="72,35.8 64.4,28.2 50.2,42.4 35.9,28.2 28.3,35.8 42.6,50 28.3,64.2 35.9,71.8 50.2,57.6 64.4,71.8 72,64.2,57.8,50"/>\n\t</g>\n</svg>\n\n<div class="toggle-button__text">\n   \t<p>');
     
       __out.push(__sanitize(this.value));
     

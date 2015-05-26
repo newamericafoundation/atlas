@@ -16,7 +16,7 @@
     &:hover { opacity: 1; }
     & > * { float: left; }
 
-    svg {
+    &__icon {
         display: inline-block;
         margin-top: ($height - $icon-width) / 2 - 2px;
         height: $icon-width; 
@@ -30,26 +30,27 @@
         .toggle-button__no { 
             fill: none;
         }
-    }
 
-    &--white svg {
-        .toggle-button__icon { fill: map-get($palette, off-white); }
-        .toggle-button__yes { fill: black; }
-    }
-
-    &--black svg {
-        .toggle-button__icon { fill: black; }
-        .toggle-button__yes { fill: map-get($palette, off-white); }
-    }
-
-    &--inactive svg {
-        .toggle-button__icon {
-            fill: none;
-            stroke-width: 5px;
-            stroke: #666;
+        .toggle-button--white & {
+            .toggle-button__background { fill: map-get($palette, off-white); }
+            .toggle-button__yes { fill: black; }
         }
-        .toggle-button__yes { fill: none; }
-        .toggle-button__no { fill: #666; }
+
+        .toggle-button--black & {
+            .toggle-button__background { fill: black; }
+            .toggle-button__yes { fill: map-get($palette, off-white); }
+        }
+
+        .toggle-button--inactive & {
+            .toggle-button__background {
+                fill: none;
+                stroke-width: 5px;
+                stroke: #666;
+            }
+            .toggle-button__yes { fill: none; }
+            .toggle-button__no { fill: #666; }
+        }
+
     }
 
     &__text {

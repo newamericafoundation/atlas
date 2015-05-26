@@ -1,7 +1,7 @@
 var fs = require('fs'),
 	css = "",
-	colors = { 'off-white': '#fffaef' },
-	path = '../../app/assets/images/icons/svg/',
+	colors = { 'off-white': '#fffaef', 'black': '#000' },
+	path = '../site/images/icons/svg/',
 	crap = [
 		//'<?xml version="1.0" encoding="utf-8"?>',
 		'<!-- Generator: Adobe Illustrator 18.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->',
@@ -11,7 +11,7 @@ var fs = require('fs'),
 	];
 
 var writeFile = function(css) {
-	fs.writeFile('../../app/assets/stylesheets/base/_bg-img.scss', css, 'utf8', function(err) {
+	fs.writeFile('../site/styles/base/_bg-img.scss', css, 'utf8', function(err) {
 		if(err) { return console.log(err); }
 		console.log('saved successfully!')
 	});

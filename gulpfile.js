@@ -127,7 +127,7 @@ gulp.task('default', ['js-build', 'css-build']);
 gulp.task('dev', function() {
     nodemon({
         script: './app.js',
-        ext: 'coffee eco scss jade',
+        ext: 'coffee eco scss jade js css gz',
         tasks: [ 'js-build', 'css-build' ]
     }).on('restart', function() {
         console.log('Server restarted.');

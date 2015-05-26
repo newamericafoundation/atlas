@@ -1,4 +1,16 @@
 (function() {
+  if (typeof ChartistHtml !== "undefined" && ChartistHtml !== null) {
+    ChartistHtml.config.baseClass = "atlas-chart";
+    ChartistHtml.config.colorSpectrum = ['#85026A', '#019fde'];
+    ChartistHtml.config.tooltipTemplate = function(data) {
+      return "<div><h1>" + data.label + "</h1><p>" + data.value + "</p></div>";
+    };
+    ChartistHtml.config.chartOptions.bar.options.base.seriesBarDistance = 28;
+  }
+
+}).call(this);
+
+(function() {
   if (typeof CKEDITOR !== "undefined" && CKEDITOR !== null) {
     CKEDITOR.config.allowedContent = true;
     CKEDITOR.config.format_tags = 'p;h1;h2;h3;h4';
@@ -10,18 +22,6 @@
     };
     CKEDITOR.config.toolbar = [['Source', '-', 'Undo', 'Redo', 'Cut', 'Copy', 'Paste', '-', 'Find', 'Replace'], ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'Link', 'Unlink', '-', 'Format', '-', 'TextColor', 'BGColor']];
     CKEDITOR.config.height = '500px';
-  }
-
-}).call(this);
-
-(function() {
-  if (typeof ChartistHtml !== "undefined" && ChartistHtml !== null) {
-    ChartistHtml.config.baseClass = "atlas-chart";
-    ChartistHtml.config.colorSpectrum = ['#85026A', '#019fde'];
-    ChartistHtml.config.tooltipTemplate = function(data) {
-      return "<div><h1>" + data.label + "</h1><p>" + data.value + "</p></div>";
-    };
-    ChartistHtml.config.chartOptions.bar.options.base.seriesBarDistance = 28;
   }
 
 }).call(this);
@@ -1733,9 +1733,9 @@
 
       ProjectTemplateView.prototype.tagName = 'li';
 
-      ProjectTemplateView.prototype.className = 'button';
+      ProjectTemplateView.prototype.className = 'icon-button';
 
-      ProjectTemplateView.prototype.activeSubclassName = 'button--active';
+      ProjectTemplateView.prototype.activeSubclassName = 'icon-button--active';
 
       ProjectTemplateView.prototype.events = {
         'click': 'toggle'
@@ -3163,7 +3163,7 @@
       onShow: function() {
         var cls;
         cls = this.model.getBackgroundColorClass();
-        return this.$('.toggle-button__icon').attr('class', "toggle-button__icon " + cls);
+        return this.$('.toggle-button__background').attr('class', "toggle-button__background " + cls);
       },
       events: {
         'click': 'triggerValueClick',
