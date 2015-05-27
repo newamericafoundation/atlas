@@ -1,14 +1,15 @@
 .atl__info-box {
+
 	overflow-y: scroll;
 	font-family: 'SimplonNorm-Regular-WebS';
 
-	&__close {
+	&__menu {
 
-		z-index: 10;
+		z-index: 100;
 		position: absolute;
 		cursor: pointer;
-		width: 50px;
-		height: 50px;
+		width: 80px;
+		height: 25px;
 
 		top: 40px;
 		right: 115px;
@@ -16,9 +17,12 @@
 		opacity: 0.7;
 		&:hover { opacity: 1; }
 
-		&--fixed {
-			position: fixed;
-			top: $top-bar-height+40px;
+		&__item {
+			content: '';
+			width: 25px;
+			height: 25px;
+			margin: 0 5px;
+			display: inline-block;
 		}
 
 	}

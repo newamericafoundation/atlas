@@ -3,7 +3,8 @@
 	@startWithParent = false
 
 	@on 'start', ->
-		@listenTo App.vent, 'item:activate strong:scroll:down', @Controller.createAndReveal
+		@listenTo App.vent, 'item:activate', @Controller.createAndReveal
+		# @listenTo App.vent, 'strong:scroll:down', @Controller.createAndReveal
 		# @listenTo App.vent, 'strong:scroll:up', @Controller.hideAndDestroy
 
 	@on 'stop', ->

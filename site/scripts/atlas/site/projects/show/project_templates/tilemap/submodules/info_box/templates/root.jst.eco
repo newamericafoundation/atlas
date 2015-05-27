@@ -1,6 +1,5 @@
-<div id='atl__info-box__close' class="atl__info-box__close bg-img-no--off-white"></div>
-
 <div class="atl__title-bar bg-c-off-white">
+
 	<div class="atl__title-bar__content">
 		<h1 class='title'><%= @name || @title %></h1>
 		<ul>
@@ -11,7 +10,14 @@
 			<li>tcgte.org</li>
 		</ul>
 	</div>
+
 </div>
+
+<div class='atl__info-box__menu'>
+	<div class="atl__info-box__menu__item bg-img-no--black" id="atl__info-box__close"></div> 
+	<div class="atl__info-box__menu__item bg-img-print--black" id="atl__info-box__print"></div> 
+</div>
+
 
 <div class="atl__content-bar bg-c-off-white">
 

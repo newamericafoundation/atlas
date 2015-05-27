@@ -2950,7 +2950,7 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/in
   }
   (function() {
     (function() {
-      __out.push('<div id=\'atl__info-box__close\' class="atl__info-box__close bg-img-no--off-white"></div>\n\n<div class="atl__title-bar bg-c-off-white">\n\t<div class="atl__title-bar__content">\n\t\t<h1 class=\'title\'>');
+      __out.push('<div class="atl__title-bar bg-c-off-white">\n\n\t<div class="atl__title-bar__content">\n\t\t<h1 class=\'title\'>');
     
       __out.push(__sanitize(this.name || this.title));
     
@@ -2958,7 +2958,7 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/in
     
       __out.push(__sanitize(this.updated_at != null ? (__out.push('\n\t\t\t\t<li>Updated: '), __out.push(__sanitize(moment(this.updated_at).format("MMMM Do YYYY"))), __out.push('</li>\n\t\t\t')) : void 0));
     
-      __out.push('\n\t\t\t<li>tcgte.org</li>\n\t\t</ul>\n\t</div>\n</div>\n\n<div class="atl__content-bar bg-c-off-white">\n\n\t<div class="atl-grid">\n\n\t\t<div class="atl-grid__1-3">\n\t\t\t<div class="atl__page-nav">\n\t\t\t\t<div class="atl__toc">\n\t\t\t\t\t<p>Page Contents</p>\n\t\t\t\t\t<div id="atl__toc__list"></div>\n\t\t\t\t</div>\n\t\t\t\t<div id="atl__related"></div>\n\t\t\t</div>\n\t\t</div>\n\n\t\t<div class="atl-grid__2-3">\n\t\t\t<div class="static-content">\n\t\t\t\t<ul id="atl__info-box__list"></ul>\n\t\t\t</div>\n\t\t</div>\n\n\t\t<div class="atl-grid__3-3">\n\t\t</div>\n\n\t</div>\n\n</div>\n\n<div class="atl__right-bar atl__right-bar--blur">\n\n\t<div class="atl__right-bar__button"></div>\n\n</div>');
+      __out.push('\n\t\t\t<li>tcgte.org</li>\n\t\t</ul>\n\t</div>\n\n</div>\n\n<div class=\'atl__info-box__menu\'>\n\t<div class="atl__info-box__menu__item bg-img-no--black" id="atl__info-box__close"></div> \n\t<div class="atl__info-box__menu__item bg-img-print--black" id="atl__info-box__print"></div> \n</div>\n\n\n<div class="atl__content-bar bg-c-off-white">\n\n\t<div class="atl-grid">\n\n\t\t<div class="atl-grid__1-3">\n\t\t\t<div class="atl__page-nav">\n\t\t\t\t<div class="atl__toc">\n\t\t\t\t\t<p>Page Contents</p>\n\t\t\t\t\t<div id="atl__toc__list"></div>\n\t\t\t\t</div>\n\t\t\t\t<div id="atl__related"></div>\n\t\t\t</div>\n\t\t</div>\n\n\t\t<div class="atl-grid__2-3">\n\t\t\t<div class="static-content">\n\t\t\t\t<ul id="atl__info-box__list"></ul>\n\t\t\t</div>\n\t\t</div>\n\n\t\t<div class="atl-grid__3-3">\n\t\t</div>\n\n\t</div>\n\n</div>\n\n<div class="atl__right-bar atl__right-bar--blur">\n\n\t<div class="atl__right-bar__button"></div>\n\n</div>');
     
     }).call(this);
     
@@ -45036,6 +45036,502 @@ jQuery.fn.toc.defaults = {
 }).call(this);
 
 (function() {
+  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    Entities.FilterModel = Backbone.Model.extend({
+      getVariableModel: function() {
+        var variables;
+        variables = App.reqres.request('variable:entities');
+        return variables.findWhere({
+          id: this.get('variable_id')
+        });
+      }
+    });
+    return Entities.FilterCollection = Backbone.Collection.extend({
+      model: Entities.FilterModel
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    return this.on('start', function() {
+      var data, filters;
+      data = App.currentProjectData.data;
+      if (data != null) {
+        filters = new Entities.FilterCollection(data.filters);
+      }
+      return App.reqres.setHandler('filter:entities', function() {
+        return filters;
+      });
+    });
+  });
+
+}).call(this);
+
+(function() {
+
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    return this.on('start', function() {
+      var data, infoBoxSections;
+      data = App.currentProjectData.data;
+      if (data != null) {
+        infoBoxSections = new Entities.ItemCollection(data.infobox_variables, {
+          parse: true
+        });
+      }
+      return App.reqres.setHandler('info:box:section:entities', function() {
+        return infoBoxSections;
+      });
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    return Entities.itemChecker = {
+      check: function(data) {},
+      findAndReplaceKey: function(data, standardKey, keyFormatList) {
+        var found, i, kf, len;
+        found = false;
+        if (keyFormatList == null) {
+          keyFormatList = [standardKey];
+        }
+        for (i = 0, len = keyFormatList.length; i < len; i++) {
+          kf = keyFormatList[i];
+          if (data[kf]) {
+            found = true;
+            if (kf !== standardKey) {
+              data[standardKey] = data[kf];
+              delete data[kf];
+            }
+          }
+        }
+        return found;
+      },
+      pindrop: function(data) {
+        var errors, foundLat, foundLong;
+        errors = [];
+        foundLat = this.findAndReplaceKey(data, 'lat', ['latitude', 'Latitude', 'lat', 'Lat']);
+        foundLong = this.findAndReplaceKey(data, 'long', ['longitude', 'Longitude', 'long', 'Long']);
+        if (foundLat && foundLong) {
+          data._itemType = 'pindrop';
+          return {
+            recognized: true,
+            errors: []
+          };
+        } else if (foundLat || foundLong) {
+          return {
+            recognized: true,
+            errors: ['Latitude or longitude not found.']
+          };
+        }
+        return {
+          recognized: false
+        };
+      },
+      state: function(data) {
+        var errors, stateData;
+        errors = [];
+        if (data.name != null) {
+          stateData = _.where(Atlas.Data.states, {
+            name: data.name
+          });
+          if ((stateData != null) && stateData.length > 0) {
+            data.id = stateData[0].id;
+            data.code = stateData[0].code;
+            data._itemType = 'state';
+          } else {
+            errors.push(data.name + ' not recognized as a state. Possibly a typo.');
+          }
+          return {
+            recognized: true,
+            errors: errors
+          };
+        }
+        return {
+          recognized: false
+        };
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    var RichGeoJson;
+    RichGeoJson = (function(superClass) {
+      extend(RichGeoJson, superClass);
+
+      function RichGeoJson() {
+        this.type = 'FeatureCollection';
+        this.features = [];
+      }
+
+      RichGeoJson.prototype.onReady = function(next) {
+        if (this.features.length > 0) {
+          next();
+          return;
+        }
+        return this.on('sync', next);
+      };
+
+      return RichGeoJson;
+
+    })(Marionette.Object);
+    return Entities.itemGeoJsonInjecters = {
+      pindrop: function(itemCollection) {
+        var i, item, len, ref, richGeoJson;
+        richGeoJson = new RichGeoJson();
+        ref = itemCollection.models;
+        for (i = 0, len = ref.length; i < len; i++) {
+          item = ref[i];
+          richGeoJson.features.push(item.toRichGeoJsonFeature());
+        }
+        richGeoJson.trigger('sync');
+        return richGeoJson;
+      },
+      state: function(itemCollection) {
+        var coreDatum, richGeoJson;
+        richGeoJson = new RichGeoJson();
+        coreDatum = App.reqres.request('core:datum:entity', 'us-states-10m');
+        coreDatum.on('sync', (function(_this) {
+          return function() {
+            var data, feature, i, item, len, ref;
+            data = coreDatum.get('data');
+            richGeoJson.features = topojson.feature(data, data.objects.states).features;
+            ref = richGeoJson.features;
+            for (i = 0, len = ref.length; i < len; i++) {
+              feature = ref[i];
+              item = itemCollection.findWhere({
+                id: feature.id
+              });
+              feature._model = item;
+            }
+            return richGeoJson.trigger('sync');
+          };
+        })(this));
+        return richGeoJson;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    Entities.ItemModel = Backbone.Model.extend({
+      parse: function(data) {
+        this._processValues(data);
+        Entities.itemChecker.pindrop(data);
+        Entities.itemChecker.state(data);
+        return data;
+      },
+      _processValues: function(data) {
+        var key, value;
+        for (key in data) {
+          value = data[key];
+          if ((value != null) && (value.indexOf != null) && (value.split != null) && (value.trim != null)) {
+            if ((value.indexOf("|") > -1) && (value.indexOf("\n") === -1)) {
+              value = value.split("|");
+              value = _.map(value, function(val) {
+                return val.trim();
+              });
+              data[key] = value;
+            } else {
+              data[key] = value.trim();
+            }
+          }
+        }
+        return data;
+      },
+      toLatLongPoint: function() {
+        var lat, long;
+        lat = this.get('lat');
+        long = this.get('long');
+        if (lat == null) {
+          lat = -37.8602828;
+        }
+        if (long == null) {
+          long = 145.0796161;
+        }
+        return [lat, long];
+      },
+      toLongLatPoint: function() {
+        return this.toLatLongPoint().reverse();
+      },
+      toRichGeoJsonFeature: function() {
+        var geoJson;
+        geoJson = {
+          type: 'Feature',
+          _model: this,
+          geometry: {
+            type: 'Point',
+            coordinates: this.toLongLatPoint()
+          }
+        };
+        return geoJson;
+      },
+      getLayerClasses: function(filter, valueHoverIndex, searchTerm, baseClass) {
+        var classNames, d, elementBaseClass, filterIndeces, highlightedClass, i, inactiveClass, isFiltered, j, k, layerClasses, len, neutralClass;
+        if (baseClass == null) {
+          baseClass = 'map-region';
+        }
+        highlightedClass = baseClass + '--highlighted';
+        inactiveClass = baseClass + '--inactive';
+        neutralClass = baseClass + '--neutral';
+        elementBaseClass = baseClass + '__element';
+        layerClasses = {
+          group: baseClass,
+          elementBase: elementBaseClass,
+          elements: []
+        };
+        classNames = [];
+        d = this.toJSON();
+        if (App.currentDisplayMode === 'filter') {
+          isFiltered = filter.test(d);
+          filterIndeces = filter.getValueIndeces(d);
+          k = filter.getValueCountOnActiveKey();
+          if (isFiltered && (filterIndeces != null)) {
+            for (j = 0, len = filterIndeces.length; j < len; j++) {
+              i = filterIndeces[j];
+              if ((i > -1) && isFiltered) {
+                layerClasses.elements.push(elementBaseClass + " " + (filter.getBackgroundColorClass(i)));
+              }
+              if (i === valueHoverIndex) {
+                layerClasses.group = baseClass + ' ' + highlightedClass;
+              }
+            }
+          } else {
+            layerClasses.group = baseClass + ' ' + inactiveClass;
+          }
+        } else if (App.currentDisplayMode === 'search') {
+          if (this.matchesSearchTerm(searchTerm)) {
+            layerClasses.group = baseClass + ' ' + neutralClass;
+            layerClasses.elements = [''];
+          } else {
+            layerClasses.group = baseClass + ' ' + inactiveClass;
+            layerClasses.elements = [''];
+          }
+        }
+        return layerClasses;
+      },
+      matchesSearchTerm: function(searchTerm) {
+        var name;
+        name = this.get('name');
+        if (!((searchTerm.toLowerCase != null) && (name.toLowerCase != null))) {
+          return false;
+        }
+        name = name.toLowerCase();
+        searchTerm = searchTerm.toLowerCase();
+        if (name === "") {
+          return false;
+        }
+        if (name.indexOf(searchTerm) === -1) {
+          return false;
+        }
+        return true;
+      }
+    });
+    return Entities.ItemCollection = Backbone.Collection.extend({
+      model: Entities.ItemModel,
+      getItemType: function() {
+        var itemType;
+        itemType = this.models[0].get('_itemType');
+        return itemType;
+      },
+      setActive: function(activeModel) {
+        var id;
+        if ((_.isObject(activeModel)) && (indexOf.call(this.models, activeModel) >= 0)) {
+          this.active = activeModel;
+        } else {
+          id = parseInt(activeModel, 10);
+          this.active = id === -1 ? void 0 : this.findWhere({
+            id: id
+          });
+        }
+        return this;
+      },
+      setHovered: function(hoveredModel) {
+        var id;
+        if ((_.isObject(hoveredModel)) && (indexOf.call(this.models, hoveredModel) >= 0)) {
+          this.hovered = hoveredModel;
+        } else {
+          id = parseInt(hoveredModel, 10);
+          this.hovered = id === -1 ? void 0 : this.findWhere({
+            id: id
+          });
+        }
+        return this;
+      },
+      getValueList: function(key) {
+        var j, l, len, len1, model, ref, val, value, valueList;
+        valueList = [];
+        ref = this.models;
+        for (j = 0, len = ref.length; j < len; j++) {
+          model = ref[j];
+          value = model.get(key);
+          if (_.isArray(value)) {
+            for (l = 0, len1 = value.length; l < len1; l++) {
+              val = value[l];
+              if (indexOf.call(valueList, val) < 0) {
+                valueList.push(val);
+              }
+            }
+          } else {
+            if (indexOf.call(valueList, value) < 0) {
+              valueList.push(value);
+            }
+          }
+        }
+        return valueList;
+      },
+      getSortedValueList: function(key) {},
+      getLatLongBounds: function() {
+        var j, lat, len, long, maxLat, maxLong, minLat, minLong, model, ref;
+        ref = this.models;
+        for (j = 0, len = ref.length; j < len; j++) {
+          model = ref[j];
+          lat = model.get('lat');
+          long = model.get('long');
+          if ((typeof minLat === "undefined" || minLat === null) || (minLat > lat)) {
+            minLat = lat;
+          }
+          if ((typeof maxLat === "undefined" || maxLat === null) || (maxLat < lat)) {
+            maxLat = lat;
+          }
+          if ((typeof minLong === "undefined" || minLong === null) || (minLong > long)) {
+            minLong = long;
+          }
+          if ((typeof maxLong === "undefined" || maxLong === null) || (maxLong < long)) {
+            maxLong = long;
+          }
+        }
+        return [[minLat, minLong], [maxLat, maxLong]];
+      },
+      toLatLongMultiPoint: function() {
+        var j, len, model, ref, res;
+        res = [];
+        ref = this.models;
+        for (j = 0, len = ref.length; j < len; j++) {
+          model = ref[j];
+          res.push(model.toLatLongPoint());
+        }
+        return res;
+      },
+      getRichGeoJson: function() {
+        var type;
+        type = this.getItemType();
+        return Entities.itemGeoJsonInjecters[type](this);
+      }
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    return this.on('start', function() {
+      var data, items, setHeaderStripColor;
+      data = App.currentProjectData.data;
+      if (data != null) {
+        items = new Entities.ItemCollection(data.items, {
+          parse: true
+        });
+      }
+      App.reqres.setHandler('item:entities', (function(_this) {
+        return function(query) {
+          var id;
+          if (items != null) {
+            if (_.isObject(query)) {
+              return items.findWhere(query);
+            }
+            if (query != null) {
+              id = parseInt(query, 10);
+              return items.findWhere({
+                id: id
+              });
+            }
+          }
+          return items;
+        };
+      })(this));
+      setHeaderStripColor = function() {
+        var cls, filter, hoveredItem, i;
+        items = App.reqres.request('item:entities');
+        filter = App.reqres.request('filter');
+        hoveredItem = items.hovered;
+        if (hoveredItem != null) {
+          i = filter.getValueIndeces(hoveredItem);
+          cls = filter.getBackgroundColorClass(i[0]);
+          return App.commands.execute('set:header:strip:color', {
+            className: cls
+          });
+        } else {
+          return App.commands.execute('set:header:strip:color', 'none');
+        }
+      };
+      this.listenTo(App.vent, 'item:activate', function(modelOrId) {
+        return items.setActive(modelOrId);
+      });
+      this.listenTo(App.vent, 'item:deactivate', function() {
+        return items.setActive(-1);
+      });
+      this.listenTo(App.vent, 'item:mouseover', function(modelOrId) {
+        items.setHovered(modelOrId);
+        return setHeaderStripColor();
+      });
+      return this.listenTo(App.vent, 'item:mouseout', function() {
+        items.setHovered(-1);
+        return setHeaderStripColor();
+      });
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    Entities.VariableModel = Backbone.Model.extend();
+    return Entities.VariableCollection = Backbone.Collection.extend({
+      model: Entities.VariableModel
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    return this.on('start', function() {
+      var data, variables;
+      data = App.currentProjectData.data;
+      if (data != null) {
+        variables = new Entities.VariableCollection(data.variables);
+      }
+      return App.reqres.setHandler('variable:entities', function(query) {
+        return variables;
+      });
+    });
+  });
+
+}).call(this);
+
+(function() {
   this.Atlas.module("Projects.Show.Tilemap.Filter", function(Filter, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     this.on('start', function() {
@@ -45729,362 +46225,6 @@ jQuery.fn.toc.defaults = {
 }).call(this);
 
 (function() {
-  this.Atlas.module('Projects.Show.Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      return this.listenTo(App.vent, 'item:activate strong:scroll:down', this.Controller.createAndReveal);
-    });
-    return this.on('stop', function() {
-      return this.stopListening();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
-    return InfoBox.Controller = {
-      createAndReveal: function() {
-        if (InfoBox.rootView == null) {
-          InfoBox.rootView = InfoBox.Controller.getRootView();
-          App.vent.trigger('subview:ready', {
-            'infoBox': InfoBox.rootView
-          });
-          return InfoBox.rootView.reveal();
-        }
-      },
-      hideAndDestroy: function() {
-        if (InfoBox.rootView != null) {
-          InfoBox.rootView.hideAndDestroy();
-          delete InfoBox.rootView;
-          return App.vent.trigger('item:deactivate');
-        }
-      },
-      getRootView: function() {
-        var activeItem, infoBoxModelObject, rootView;
-        activeItem = App.reqres.request('item:entities').active;
-        infoBoxModelObject = InfoBox.getModelObject(activeItem);
-        rootView = new InfoBox.RootView(infoBoxModelObject);
-        return rootView;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
-    InfoBox.SectionsCollection = Backbone.Collection.extend();
-    InfoBox.Model = Backbone.Model.extend({
-      defaults: {
-        name: 'General Project Info'
-      }
-    });
-    InfoBox.getModelObject = function(item) {
-      var collection, collectionData, model;
-      model = item != null ? item : App.currentProjectModel;
-      collectionData = item != null ? this.getItemSectionsCollection(item) : this.getSummaryCollection();
-      collection = new InfoBox.SectionsCollection(collectionData);
-      return {
-        model: model,
-        collection: collection
-      };
-      return new InfoBox.Model(modelData);
-    };
-    InfoBox.getItemSectionsCollection = function(item) {
-      var infoBoxSections, sections, variables;
-      infoBoxSections = App.reqres.request('info:box:section:entities');
-      variables = App.reqres.request('variable:entities');
-      return sections = _.map(infoBoxSections.models, function(infoBoxSection) {
-        var obj, text, variable, variableDisplayTitle, variableId;
-        variableId = infoBoxSection.get('variable_id');
-        variable = variables.findWhere({
-          id: variableId
-        });
-        variableDisplayTitle = variable != null ? variable.get('display_title') : "Section";
-        text = item.get(variableId);
-        if (text != null) {
-          if (_.isNumber(text)) {
-            text = text.toString();
-          }
-          if (!_.isArray(text)) {
-            text = marked(text);
-          }
-        }
-        obj = {
-          heading: variableDisplayTitle,
-          text: text
-        };
-        return obj;
-      });
-    };
-    return InfoBox.getSummaryCollection = function() {
-      var i, j, len, ref, sections;
-      sections = [];
-      ref = [1, 2, 3, 4];
-      for (j = 0, len = ref.length; j < len; j++) {
-        i = ref[j];
-        sections.push({
-          heading: 'Section ' + i,
-          text: 'Text for section.'
-        });
-      }
-      return sections;
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
-    var TocView;
-    InfoBox.SectionView = Marionette.CompositeView.extend({
-      tagName: 'li',
-      className: 'atl__info-box__item',
-      template: 'projects/show/project_templates/tilemap/submodules/info_box/templates/section'
-    });
-    TocView = Marionette.ItemView.extend({
-      el: '#atl__toc__list ul',
-      events: {
-        'click a': 'triggerScroll'
-      },
-      triggerScroll: function(e) {
-        return App.vent.trigger('scroll');
-      },
-      isEmpty: function() {
-        return this.$el.html() === "";
-      }
-    });
-    return InfoBox.RootView = Marionette.CompositeView.extend({
-      initialize: function() {
-        return this.listenTo(App.vent, 'scroll', function() {
-          return this._setStickyNavLayout();
-        });
-      },
-      tagName: 'div',
-      className: 'atl__info-box fill-parent',
-      template: 'projects/show/project_templates/tilemap/submodules/info_box/templates/root',
-      childView: InfoBox.SectionView,
-      childViewContainer: '#atl__info-box__list',
-      events: {
-        'click #atl__info-box__close': 'purgeView'
-      },
-      getHtml: function() {
-        var html;
-        html = "";
-        this.children.each(function(child) {
-          child.render();
-          return html += child.el.innerHTML;
-        });
-        return html;
-      },
-      onBeforeShow: function() {
-        return this.$('.static-content').html(this.getHtml());
-      },
-      onShow: function() {
-        this._buildToc();
-        return this._setStickyNavLayout();
-      },
-      onBeforeDestroy: function() {
-        if (this.tocView != null) {
-          return this.tocView.destroy();
-        }
-      },
-      _setStickyNavLayout: function(subClasses) {
-        var $elem, className, scrollTop;
-        scrollTop = $('.atl__info-box').scrollTop();
-        className = "atl__page-nav";
-        $elem = this.$("." + className);
-        if (scrollTop > $('.atl__title-bar').height()) {
-          return $elem.addClass(className + "--fixed");
-        } else {
-          return $elem.removeClass(className + "--fixed");
-        }
-      },
-      reveal: function() {
-        var $app;
-        $app = $('.atl');
-        $app.addClass('atl__info-box--active');
-        $('#atl__map').addClass('blur');
-        return this;
-      },
-      _buildToc: function() {
-        $('#atl__toc__list').toc({
-          selectors: 'h1,h2',
-          container: '.static-content',
-          templates: {
-            h2: _.template('<%= title %>'),
-            h3: _.template('<%= title %>')
-          }
-        });
-        this.tocView = new TocView();
-        if (this.tocView.isEmpty()) {
-          return $('.atl__toc').hide();
-        }
-      },
-      hide: function() {
-        var $app;
-        $app = $('.atl');
-        $app.removeClass('atl__info-box--active');
-        $('#atl__map').removeClass('blur');
-        return this;
-      },
-      hideAndDestroy: function() {
-        var $app;
-        $app = $('.atl');
-        $app.removeClass('atl__info-box--active');
-        $('#atl__map').removeClass('blur');
-        $app.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', (function(_this) {
-          return function(e) {
-            return _this.destroy();
-          };
-        })(this));
-        return this;
-      },
-      purgeView: function() {
-        return InfoBox.Controller.hideAndDestroy();
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Legend', function(Legend, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      var filter;
-      this.Controller.show();
-      App.reqres.setHandler('legend:value:hovered', function() {
-        return Legend.valueHoverIndex;
-      });
-      filter = App.reqres.request('filter');
-      return this.listenTo(App.vent, 'key:click', function() {
-        return Legend.rootView.collection.reset(filter.getActiveChild().children);
-      });
-    });
-    return this.on('stop', function() {
-      App.reqres.removeHandler('legend:value:hovered');
-      return this.stopListening();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Legend', function(Legend, App, Backbone, Marionette, $, _) {
-    return Legend.Controller = {
-      show: function() {
-        var rootView;
-        rootView = this.getRootView();
-        Legend.rootView = rootView;
-        return App.vent.trigger('subview:ready', {
-          'legend': rootView
-        });
-      },
-      getRootView: function() {
-        var coll, filter, rootView;
-        filter = App.reqres.request('filter');
-        coll = new Backbone.Collection(filter.getActiveChild().children);
-        rootView = new Legend.RootView({
-          collection: coll
-        });
-        return rootView;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
-
-  this.Atlas.module('Projects.Show.Tilemap.Legend', function(Legend, App, Backbone, Marionette, $, _) {
-    Legend.IconView = Marionette.ItemView.extend({
-      tagName: 'li',
-      className: 'atl__legend__icon',
-      template: 'projects/show/project_templates/tilemap/submodules/legend/templates/icon',
-      onShow: function() {
-        var cls;
-        cls = this.model.getBackgroundColorClass();
-        return this.$('.hexicon__hex').attr('class', "hexicon__hex " + cls);
-      },
-      events: {
-        'mouseenter': 'onMouseOver',
-        'mouseleave': 'onMouseOut',
-        'click': 'triggerValueClick'
-      },
-      highlight: function() {
-        return this.$el.addClass('atl__legend__icon--highlighted');
-      },
-      dehighlight: function() {
-        return this.$el.removeClass('atl__legend__icon--highlighted');
-      },
-      toggleActiveState: function() {
-        return this.$el.toggleClass('atl__legend__icon--inactive');
-      },
-      onMouseOver: function() {
-        var cls, filter, modelIndex;
-        modelIndex = this._getModelIndex();
-        Legend.valueHoverIndex = modelIndex;
-        App.vent.trigger('value:mouseover', modelIndex);
-        filter = App.reqres.request('filter');
-        cls = filter.getBackgroundColorClass(modelIndex);
-        return App.commands.execute('set:header:strip:color', {
-          className: cls
-        });
-      },
-      onMouseOut: function() {
-        App.commands.execute('set:header:strip:color', 'none');
-        Legend.valueHoverIndex = -1;
-        return App.vent.trigger('value:mouseout', -1);
-      },
-      triggerValueClick: function() {
-        var modelIndex;
-        modelIndex = this._getModelIndex();
-        return App.vent.trigger('value:click', modelIndex);
-      },
-      _getModelIndex: function() {
-        return this.model.collection.models.indexOf(this.model);
-      }
-    });
-    return Legend.RootView = Marionette.CollectionView.extend({
-      tagName: 'ul',
-      className: 'atl__legend',
-      template: 'projects/show/project_templates/tilemap/submodules/legend/templates/root',
-      childView: Legend.IconView,
-      initialize: function() {
-        this.listenTo(App.vent, 'value:click', this.setActiveState);
-        return this.listenTo(App.vent, 'item:mouseover item:mouseout value:mouseover value:mouseout', this.setHighlighting);
-      },
-      setActiveState: function(index) {
-        var child;
-        child = this.children.findByIndex(index);
-        return child.toggleActiveState();
-      },
-      setHighlighting: function() {
-        var filter, hoveredItem, indeces;
-        hoveredItem = App.reqres.request('item:entities').hovered;
-        filter = App.reqres.request('filter');
-        if (hoveredItem != null) {
-          indeces = filter.getValueIndeces(hoveredItem);
-        } else {
-          indeces = [App.reqres.request('filter:value:hovered')];
-        }
-        return this.children.each(function(child, childIndex) {
-          if (indexOf.call(indeces, childIndex) >= 0) {
-            return child.highlight();
-          } else {
-            return child.dehighlight();
-          }
-        });
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
   this.Atlas.module('Projects.Show.Tilemap.Map', function(Map, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     this.on('start', function() {
@@ -46460,129 +46600,43 @@ jQuery.fn.toc.defaults = {
 }).call(this);
 
 (function() {
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    Entities.FilterModel = Backbone.Model.extend({
-      getVariableModel: function() {
-        var variables;
-        variables = App.reqres.request('variable:entities');
-        return variables.findWhere({
-          id: this.get('variable_id')
-        });
-      }
-    });
-    return Entities.FilterCollection = Backbone.Collection.extend({
-      model: Entities.FilterModel
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
+  this.Atlas.module('Projects.Show.Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
-    return this.on('start', function() {
-      var data, filters;
-      data = App.currentProjectData.data;
-      if (data != null) {
-        filters = new Entities.FilterCollection(data.filters);
-      }
-      return App.reqres.setHandler('filter:entities', function() {
-        return filters;
-      });
+    this.on('start', function() {
+      return this.listenTo(App.vent, 'item:activate', this.Controller.createAndReveal);
+    });
+    return this.on('stop', function() {
+      return this.stopListening();
     });
   });
 
 }).call(this);
 
 (function() {
-
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    return this.on('start', function() {
-      var data, infoBoxSections;
-      data = App.currentProjectData.data;
-      if (data != null) {
-        infoBoxSections = new Entities.ItemCollection(data.infobox_variables, {
-          parse: true
-        });
-      }
-      return App.reqres.setHandler('info:box:section:entities', function() {
-        return infoBoxSections;
-      });
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    return Entities.itemChecker = {
-      check: function(data) {},
-      findAndReplaceKey: function(data, standardKey, keyFormatList) {
-        var found, i, kf, len;
-        found = false;
-        if (keyFormatList == null) {
-          keyFormatList = [standardKey];
-        }
-        for (i = 0, len = keyFormatList.length; i < len; i++) {
-          kf = keyFormatList[i];
-          if (data[kf]) {
-            found = true;
-            if (kf !== standardKey) {
-              data[standardKey] = data[kf];
-              delete data[kf];
-            }
-          }
-        }
-        return found;
-      },
-      pindrop: function(data) {
-        var errors, foundLat, foundLong;
-        errors = [];
-        foundLat = this.findAndReplaceKey(data, 'lat', ['latitude', 'Latitude', 'lat', 'Lat']);
-        foundLong = this.findAndReplaceKey(data, 'long', ['longitude', 'Longitude', 'long', 'Long']);
-        if (foundLat && foundLong) {
-          data._itemType = 'pindrop';
-          return {
-            recognized: true,
-            errors: []
-          };
-        } else if (foundLat || foundLong) {
-          return {
-            recognized: true,
-            errors: ['Latitude or longitude not found.']
-          };
-        }
-        return {
-          recognized: false
-        };
-      },
-      state: function(data) {
-        var errors, stateData;
-        errors = [];
-        if (data.name != null) {
-          stateData = _.where(Atlas.Data.states, {
-            name: data.name
+  this.Atlas.module('Projects.Show.Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
+    return InfoBox.Controller = {
+      createAndReveal: function() {
+        if (InfoBox.rootView == null) {
+          InfoBox.rootView = InfoBox.Controller.getRootView();
+          App.vent.trigger('subview:ready', {
+            'infoBox': InfoBox.rootView
           });
-          if ((stateData != null) && stateData.length > 0) {
-            data.id = stateData[0].id;
-            data.code = stateData[0].code;
-            data._itemType = 'state';
-          } else {
-            errors.push(data.name + ' not recognized as a state. Possibly a typo.');
-          }
-          return {
-            recognized: true,
-            errors: errors
-          };
+          return InfoBox.rootView.reveal();
         }
-        return {
-          recognized: false
-        };
+      },
+      hideAndDestroy: function() {
+        if (InfoBox.rootView != null) {
+          InfoBox.rootView.hideAndDestroy();
+          delete InfoBox.rootView;
+          return App.vent.trigger('item:deactivate');
+        }
+      },
+      getRootView: function() {
+        var activeItem, infoBoxModelObject, rootView;
+        activeItem = App.reqres.request('item:entities').active;
+        infoBoxModelObject = InfoBox.getModelObject(activeItem);
+        rootView = new InfoBox.RootView(infoBoxModelObject);
+        return rootView;
       }
     };
   });
@@ -46590,63 +46644,234 @@ jQuery.fn.toc.defaults = {
 }).call(this);
 
 (function() {
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    var RichGeoJson;
-    RichGeoJson = (function(superClass) {
-      extend(RichGeoJson, superClass);
-
-      function RichGeoJson() {
-        this.type = 'FeatureCollection';
-        this.features = [];
+  this.Atlas.module('Projects.Show.Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
+    InfoBox.SectionsCollection = Backbone.Collection.extend();
+    InfoBox.Model = Backbone.Model.extend({
+      defaults: {
+        name: 'General Project Info'
       }
-
-      RichGeoJson.prototype.onReady = function(next) {
-        if (this.features.length > 0) {
-          next();
-          return;
-        }
-        return this.on('sync', next);
+    });
+    InfoBox.getModelObject = function(item) {
+      var collection, collectionData, model;
+      model = item != null ? item : App.currentProjectModel;
+      collectionData = item != null ? this.getItemSectionsCollection(item) : this.getSummaryCollection();
+      collection = new InfoBox.SectionsCollection(collectionData);
+      return {
+        model: model,
+        collection: collection
       };
-
-      return RichGeoJson;
-
-    })(Marionette.Object);
-    return Entities.itemGeoJsonInjecters = {
-      pindrop: function(itemCollection) {
-        var i, item, len, ref, richGeoJson;
-        richGeoJson = new RichGeoJson();
-        ref = itemCollection.models;
-        for (i = 0, len = ref.length; i < len; i++) {
-          item = ref[i];
-          richGeoJson.features.push(item.toRichGeoJsonFeature());
+      return new InfoBox.Model(modelData);
+    };
+    InfoBox.getItemSectionsCollection = function(item) {
+      var infoBoxSections, sections, variables;
+      infoBoxSections = App.reqres.request('info:box:section:entities');
+      variables = App.reqres.request('variable:entities');
+      return sections = _.map(infoBoxSections.models, function(infoBoxSection) {
+        var obj, text, variable, variableDisplayTitle, variableId;
+        variableId = infoBoxSection.get('variable_id');
+        variable = variables.findWhere({
+          id: variableId
+        });
+        variableDisplayTitle = variable != null ? variable.get('display_title') : "Section";
+        text = item.get(variableId);
+        if (text != null) {
+          if (_.isNumber(text)) {
+            text = text.toString();
+          }
+          if (!_.isArray(text)) {
+            text = marked(text);
+          }
         }
-        richGeoJson.trigger('sync');
-        return richGeoJson;
+        obj = {
+          heading: variableDisplayTitle,
+          text: text
+        };
+        return obj;
+      });
+    };
+    return InfoBox.getSummaryCollection = function() {
+      var i, j, len, ref, sections;
+      sections = [];
+      ref = [1, 2, 3, 4];
+      for (j = 0, len = ref.length; j < len; j++) {
+        i = ref[j];
+        sections.push({
+          heading: 'Section ' + i,
+          text: 'Text for section.'
+        });
+      }
+      return sections;
+    };
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
+    var TocView;
+    InfoBox.SectionView = Marionette.CompositeView.extend({
+      tagName: 'li',
+      className: 'atl__info-box__item',
+      template: 'projects/show/project_templates/tilemap/submodules/info_box/templates/section'
+    });
+    TocView = Marionette.ItemView.extend({
+      el: '#atl__toc__list ul',
+      events: {
+        'click a': 'triggerScroll'
       },
-      state: function(itemCollection) {
-        var coreDatum, richGeoJson;
-        richGeoJson = new RichGeoJson();
-        coreDatum = App.reqres.request('core:datum:entity', 'us-states-10m');
-        coreDatum.on('sync', (function(_this) {
-          return function() {
-            var data, feature, i, item, len, ref;
-            data = coreDatum.get('data');
-            richGeoJson.features = topojson.feature(data, data.objects.states).features;
-            ref = richGeoJson.features;
-            for (i = 0, len = ref.length; i < len; i++) {
-              feature = ref[i];
-              item = itemCollection.findWhere({
-                id: feature.id
-              });
-              feature._model = item;
-            }
-            return richGeoJson.trigger('sync');
+      triggerScroll: function(e) {
+        return App.vent.trigger('scroll');
+      },
+      isEmpty: function() {
+        return this.$el.html() === "";
+      }
+    });
+    return InfoBox.RootView = Marionette.CompositeView.extend({
+      initialize: function() {
+        return this.listenTo(App.vent, 'scroll', function() {
+          return this._setStickyNavLayout();
+        });
+      },
+      tagName: 'div',
+      className: 'atl__info-box fill-parent',
+      template: 'projects/show/project_templates/tilemap/submodules/info_box/templates/root',
+      childView: InfoBox.SectionView,
+      childViewContainer: '#atl__info-box__list',
+      events: {
+        'click #atl__info-box__close': 'purgeView',
+        'click #atl__info-box__print': 'print'
+      },
+      getHtml: function() {
+        var html;
+        html = "";
+        this.children.each(function(child) {
+          child.render();
+          return html += child.el.innerHTML;
+        });
+        return html;
+      },
+      onBeforeShow: function() {
+        return this.$('.static-content').html(this.getHtml());
+      },
+      onShow: function() {
+        this._buildToc();
+        return this._setStickyNavLayout();
+      },
+      onBeforeDestroy: function() {
+        if (this.tocView != null) {
+          return this.tocView.destroy();
+        }
+      },
+      _setStickyNavLayout: function(subClasses) {
+        var $elem, className, scrollTop;
+        scrollTop = $('.atl__info-box').scrollTop();
+        className = "atl__page-nav";
+        $elem = this.$("." + className);
+        if (scrollTop > $('.atl__title-bar').height()) {
+          return $elem.addClass(className + "--fixed");
+        } else {
+          return $elem.removeClass(className + "--fixed");
+        }
+      },
+      reveal: function() {
+        var $app;
+        $app = $('.atl');
+        $app.addClass('atl__info-box--active');
+        $('#atl__map').addClass('blur');
+        return this;
+      },
+      _buildToc: function() {
+        $('#atl__toc__list').toc({
+          selectors: 'h1,h2',
+          container: '.static-content',
+          templates: {
+            h2: _.template('<%= title %>'),
+            h3: _.template('<%= title %>')
+          }
+        });
+        this.tocView = new TocView();
+        if (this.tocView.isEmpty()) {
+          return $('.atl__toc').hide();
+        }
+      },
+      hide: function() {
+        var $app;
+        $app = $('.atl');
+        $app.removeClass('atl__info-box--active');
+        $('#atl__map').removeClass('blur');
+        return this;
+      },
+      hideAndDestroy: function() {
+        var $app;
+        $app = $('.atl');
+        $app.removeClass('atl__info-box--active');
+        $('#atl__map').removeClass('blur');
+        $app.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', (function(_this) {
+          return function(e) {
+            return _this.destroy();
           };
         })(this));
-        return richGeoJson;
+        return this;
+      },
+      purgeView: function() {
+        return InfoBox.Controller.hideAndDestroy();
+      },
+      print: function() {
+        return $.ajax({
+          url: '/print',
+          type: 'post',
+          data: {
+            title: this.model.get('name'),
+            content: this.getHtml()
+          }
+        });
+      }
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Legend', function(Legend, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    this.on('start', function() {
+      var filter;
+      this.Controller.show();
+      App.reqres.setHandler('legend:value:hovered', function() {
+        return Legend.valueHoverIndex;
+      });
+      filter = App.reqres.request('filter');
+      return this.listenTo(App.vent, 'key:click', function() {
+        return Legend.rootView.collection.reset(filter.getActiveChild().children);
+      });
+    });
+    return this.on('stop', function() {
+      App.reqres.removeHandler('legend:value:hovered');
+      return this.stopListening();
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Legend', function(Legend, App, Backbone, Marionette, $, _) {
+    return Legend.Controller = {
+      show: function() {
+        var rootView;
+        rootView = this.getRootView();
+        Legend.rootView = rootView;
+        return App.vent.trigger('subview:ready', {
+          'legend': rootView
+        });
+      },
+      getRootView: function() {
+        var coll, filter, rootView;
+        filter = App.reqres.request('filter');
+        coll = new Backbone.Collection(filter.getActiveChild().children);
+        rootView = new Legend.RootView({
+          collection: coll
+        });
+        return rootView;
       }
     };
   });
@@ -46656,300 +46881,86 @@ jQuery.fn.toc.defaults = {
 (function() {
   var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    Entities.ItemModel = Backbone.Model.extend({
-      parse: function(data) {
-        this._processValues(data);
-        Entities.itemChecker.pindrop(data);
-        Entities.itemChecker.state(data);
-        return data;
+  this.Atlas.module('Projects.Show.Tilemap.Legend', function(Legend, App, Backbone, Marionette, $, _) {
+    Legend.IconView = Marionette.ItemView.extend({
+      tagName: 'li',
+      className: 'atl__legend__icon',
+      template: 'projects/show/project_templates/tilemap/submodules/legend/templates/icon',
+      onShow: function() {
+        var cls;
+        cls = this.model.getBackgroundColorClass();
+        return this.$('.hexicon__hex').attr('class', "hexicon__hex " + cls);
       },
-      _processValues: function(data) {
-        var key, value;
-        for (key in data) {
-          value = data[key];
-          if ((value != null) && (value.indexOf != null) && (value.split != null) && (value.trim != null)) {
-            if ((value.indexOf("|") > -1) && (value.indexOf("\n") === -1)) {
-              value = value.split("|");
-              value = _.map(value, function(val) {
-                return val.trim();
-              });
-              data[key] = value;
-            } else {
-              data[key] = value.trim();
-            }
-          }
-        }
-        return data;
+      events: {
+        'mouseenter': 'onMouseOver',
+        'mouseleave': 'onMouseOut',
+        'click': 'triggerValueClick'
       },
-      toLatLongPoint: function() {
-        var lat, long;
-        lat = this.get('lat');
-        long = this.get('long');
-        if (lat == null) {
-          lat = -37.8602828;
-        }
-        if (long == null) {
-          long = 145.0796161;
-        }
-        return [lat, long];
+      highlight: function() {
+        return this.$el.addClass('atl__legend__icon--highlighted');
       },
-      toLongLatPoint: function() {
-        return this.toLatLongPoint().reverse();
+      dehighlight: function() {
+        return this.$el.removeClass('atl__legend__icon--highlighted');
       },
-      toRichGeoJsonFeature: function() {
-        var geoJson;
-        geoJson = {
-          type: 'Feature',
-          _model: this,
-          geometry: {
-            type: 'Point',
-            coordinates: this.toLongLatPoint()
-          }
-        };
-        return geoJson;
+      toggleActiveState: function() {
+        return this.$el.toggleClass('atl__legend__icon--inactive');
       },
-      getLayerClasses: function(filter, valueHoverIndex, searchTerm, baseClass) {
-        var classNames, d, elementBaseClass, filterIndeces, highlightedClass, i, inactiveClass, isFiltered, j, k, layerClasses, len, neutralClass;
-        if (baseClass == null) {
-          baseClass = 'map-region';
-        }
-        highlightedClass = baseClass + '--highlighted';
-        inactiveClass = baseClass + '--inactive';
-        neutralClass = baseClass + '--neutral';
-        elementBaseClass = baseClass + '__element';
-        layerClasses = {
-          group: baseClass,
-          elementBase: elementBaseClass,
-          elements: []
-        };
-        classNames = [];
-        d = this.toJSON();
-        if (App.currentDisplayMode === 'filter') {
-          isFiltered = filter.test(d);
-          filterIndeces = filter.getValueIndeces(d);
-          k = filter.getValueCountOnActiveKey();
-          if (isFiltered && (filterIndeces != null)) {
-            for (j = 0, len = filterIndeces.length; j < len; j++) {
-              i = filterIndeces[j];
-              if ((i > -1) && isFiltered) {
-                layerClasses.elements.push(elementBaseClass + " " + (filter.getBackgroundColorClass(i)));
-              }
-              if (i === valueHoverIndex) {
-                layerClasses.group = baseClass + ' ' + highlightedClass;
-              }
-            }
-          } else {
-            layerClasses.group = baseClass + ' ' + inactiveClass;
-          }
-        } else if (App.currentDisplayMode === 'search') {
-          if (this.matchesSearchTerm(searchTerm)) {
-            layerClasses.group = baseClass + ' ' + neutralClass;
-            layerClasses.elements = [''];
-          } else {
-            layerClasses.group = baseClass + ' ' + inactiveClass;
-            layerClasses.elements = [''];
-          }
-        }
-        return layerClasses;
+      onMouseOver: function() {
+        var cls, filter, modelIndex;
+        modelIndex = this._getModelIndex();
+        Legend.valueHoverIndex = modelIndex;
+        App.vent.trigger('value:mouseover', modelIndex);
+        filter = App.reqres.request('filter');
+        cls = filter.getBackgroundColorClass(modelIndex);
+        return App.commands.execute('set:header:strip:color', {
+          className: cls
+        });
       },
-      matchesSearchTerm: function(searchTerm) {
-        var name;
-        name = this.get('name');
-        if (!((searchTerm.toLowerCase != null) && (name.toLowerCase != null))) {
-          return false;
-        }
-        name = name.toLowerCase();
-        searchTerm = searchTerm.toLowerCase();
-        if (name === "") {
-          return false;
-        }
-        if (name.indexOf(searchTerm) === -1) {
-          return false;
-        }
-        return true;
+      onMouseOut: function() {
+        App.commands.execute('set:header:strip:color', 'none');
+        Legend.valueHoverIndex = -1;
+        return App.vent.trigger('value:mouseout', -1);
+      },
+      triggerValueClick: function() {
+        var modelIndex;
+        modelIndex = this._getModelIndex();
+        return App.vent.trigger('value:click', modelIndex);
+      },
+      _getModelIndex: function() {
+        return this.model.collection.models.indexOf(this.model);
       }
     });
-    return Entities.ItemCollection = Backbone.Collection.extend({
-      model: Entities.ItemModel,
-      getItemType: function() {
-        var itemType;
-        itemType = this.models[0].get('_itemType');
-        return itemType;
+    return Legend.RootView = Marionette.CollectionView.extend({
+      tagName: 'ul',
+      className: 'atl__legend',
+      template: 'projects/show/project_templates/tilemap/submodules/legend/templates/root',
+      childView: Legend.IconView,
+      initialize: function() {
+        this.listenTo(App.vent, 'value:click', this.setActiveState);
+        return this.listenTo(App.vent, 'item:mouseover item:mouseout value:mouseover value:mouseout', this.setHighlighting);
       },
-      setActive: function(activeModel) {
-        var id;
-        if ((_.isObject(activeModel)) && (indexOf.call(this.models, activeModel) >= 0)) {
-          this.active = activeModel;
+      setActiveState: function(index) {
+        var child;
+        child = this.children.findByIndex(index);
+        return child.toggleActiveState();
+      },
+      setHighlighting: function() {
+        var filter, hoveredItem, indeces;
+        hoveredItem = App.reqres.request('item:entities').hovered;
+        filter = App.reqres.request('filter');
+        if (hoveredItem != null) {
+          indeces = filter.getValueIndeces(hoveredItem);
         } else {
-          id = parseInt(activeModel, 10);
-          this.active = id === -1 ? void 0 : this.findWhere({
-            id: id
-          });
+          indeces = [App.reqres.request('filter:value:hovered')];
         }
-        return this;
-      },
-      setHovered: function(hoveredModel) {
-        var id;
-        if ((_.isObject(hoveredModel)) && (indexOf.call(this.models, hoveredModel) >= 0)) {
-          this.hovered = hoveredModel;
-        } else {
-          id = parseInt(hoveredModel, 10);
-          this.hovered = id === -1 ? void 0 : this.findWhere({
-            id: id
-          });
-        }
-        return this;
-      },
-      getValueList: function(key) {
-        var j, l, len, len1, model, ref, val, value, valueList;
-        valueList = [];
-        ref = this.models;
-        for (j = 0, len = ref.length; j < len; j++) {
-          model = ref[j];
-          value = model.get(key);
-          if (_.isArray(value)) {
-            for (l = 0, len1 = value.length; l < len1; l++) {
-              val = value[l];
-              if (indexOf.call(valueList, val) < 0) {
-                valueList.push(val);
-              }
-            }
+        return this.children.each(function(child, childIndex) {
+          if (indexOf.call(indeces, childIndex) >= 0) {
+            return child.highlight();
           } else {
-            if (indexOf.call(valueList, value) < 0) {
-              valueList.push(value);
-            }
+            return child.dehighlight();
           }
-        }
-        return valueList;
-      },
-      getSortedValueList: function(key) {},
-      getLatLongBounds: function() {
-        var j, lat, len, long, maxLat, maxLong, minLat, minLong, model, ref;
-        ref = this.models;
-        for (j = 0, len = ref.length; j < len; j++) {
-          model = ref[j];
-          lat = model.get('lat');
-          long = model.get('long');
-          if ((typeof minLat === "undefined" || minLat === null) || (minLat > lat)) {
-            minLat = lat;
-          }
-          if ((typeof maxLat === "undefined" || maxLat === null) || (maxLat < lat)) {
-            maxLat = lat;
-          }
-          if ((typeof minLong === "undefined" || minLong === null) || (minLong > long)) {
-            minLong = long;
-          }
-          if ((typeof maxLong === "undefined" || maxLong === null) || (maxLong < long)) {
-            maxLong = long;
-          }
-        }
-        return [[minLat, minLong], [maxLat, maxLong]];
-      },
-      toLatLongMultiPoint: function() {
-        var j, len, model, ref, res;
-        res = [];
-        ref = this.models;
-        for (j = 0, len = ref.length; j < len; j++) {
-          model = ref[j];
-          res.push(model.toLatLongPoint());
-        }
-        return res;
-      },
-      getRichGeoJson: function() {
-        var type;
-        type = this.getItemType();
-        return Entities.itemGeoJsonInjecters[type](this);
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    return this.on('start', function() {
-      var data, items, setHeaderStripColor;
-      data = App.currentProjectData.data;
-      if (data != null) {
-        items = new Entities.ItemCollection(data.items, {
-          parse: true
         });
       }
-      App.reqres.setHandler('item:entities', (function(_this) {
-        return function(query) {
-          var id;
-          if (items != null) {
-            if (_.isObject(query)) {
-              return items.findWhere(query);
-            }
-            if (query != null) {
-              id = parseInt(query, 10);
-              return items.findWhere({
-                id: id
-              });
-            }
-          }
-          return items;
-        };
-      })(this));
-      setHeaderStripColor = function() {
-        var cls, filter, hoveredItem, i;
-        items = App.reqres.request('item:entities');
-        filter = App.reqres.request('filter');
-        hoveredItem = items.hovered;
-        if (hoveredItem != null) {
-          i = filter.getValueIndeces(hoveredItem);
-          cls = filter.getBackgroundColorClass(i[0]);
-          return App.commands.execute('set:header:strip:color', {
-            className: cls
-          });
-        } else {
-          return App.commands.execute('set:header:strip:color', 'none');
-        }
-      };
-      this.listenTo(App.vent, 'item:activate', function(modelOrId) {
-        return items.setActive(modelOrId);
-      });
-      this.listenTo(App.vent, 'item:deactivate', function() {
-        return items.setActive(-1);
-      });
-      this.listenTo(App.vent, 'item:mouseover', function(modelOrId) {
-        items.setHovered(modelOrId);
-        return setHeaderStripColor();
-      });
-      return this.listenTo(App.vent, 'item:mouseout', function() {
-        items.setHovered(-1);
-        return setHeaderStripColor();
-      });
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    Entities.VariableModel = Backbone.Model.extend();
-    return Entities.VariableCollection = Backbone.Collection.extend({
-      model: Entities.VariableModel
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    return this.on('start', function() {
-      var data, variables;
-      data = App.currentProjectData.data;
-      if (data != null) {
-        variables = new Entities.VariableCollection(data.variables);
-      }
-      return App.reqres.setHandler('variable:entities', function(query) {
-        return variables;
-      });
     });
   });
 

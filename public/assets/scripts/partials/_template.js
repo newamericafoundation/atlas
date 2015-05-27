@@ -2950,7 +2950,7 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/in
   }
   (function() {
     (function() {
-      __out.push('<div id=\'atl__info-box__close\' class="atl__info-box__close bg-img-no--off-white"></div>\n\n<div class="atl__title-bar bg-c-off-white">\n\t<div class="atl__title-bar__content">\n\t\t<h1 class=\'title\'>');
+      __out.push('<div class="atl__title-bar bg-c-off-white">\n\n\t<div class="atl__title-bar__content">\n\t\t<h1 class=\'title\'>');
     
       __out.push(__sanitize(this.name || this.title));
     
@@ -2958,7 +2958,7 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/in
     
       __out.push(__sanitize(this.updated_at != null ? (__out.push('\n\t\t\t\t<li>Updated: '), __out.push(__sanitize(moment(this.updated_at).format("MMMM Do YYYY"))), __out.push('</li>\n\t\t\t')) : void 0));
     
-      __out.push('\n\t\t\t<li>tcgte.org</li>\n\t\t</ul>\n\t</div>\n</div>\n\n<div class="atl__content-bar bg-c-off-white">\n\n\t<div class="atl-grid">\n\n\t\t<div class="atl-grid__1-3">\n\t\t\t<div class="atl__page-nav">\n\t\t\t\t<div class="atl__toc">\n\t\t\t\t\t<p>Page Contents</p>\n\t\t\t\t\t<div id="atl__toc__list"></div>\n\t\t\t\t</div>\n\t\t\t\t<div id="atl__related"></div>\n\t\t\t</div>\n\t\t</div>\n\n\t\t<div class="atl-grid__2-3">\n\t\t\t<div class="static-content">\n\t\t\t\t<ul id="atl__info-box__list"></ul>\n\t\t\t</div>\n\t\t</div>\n\n\t\t<div class="atl-grid__3-3">\n\t\t</div>\n\n\t</div>\n\n</div>\n\n<div class="atl__right-bar atl__right-bar--blur">\n\n\t<div class="atl__right-bar__button"></div>\n\n</div>');
+      __out.push('\n\t\t\t<li>tcgte.org</li>\n\t\t</ul>\n\t</div>\n\n</div>\n\n<div class=\'atl__info-box__menu\'>\n\t<div class="atl__info-box__menu__item bg-img-no--black" id="atl__info-box__close"></div> \n\t<div class="atl__info-box__menu__item bg-img-print--black" id="atl__info-box__print"></div> \n</div>\n\n\n<div class="atl__content-bar bg-c-off-white">\n\n\t<div class="atl-grid">\n\n\t\t<div class="atl-grid__1-3">\n\t\t\t<div class="atl__page-nav">\n\t\t\t\t<div class="atl__toc">\n\t\t\t\t\t<p>Page Contents</p>\n\t\t\t\t\t<div id="atl__toc__list"></div>\n\t\t\t\t</div>\n\t\t\t\t<div id="atl__related"></div>\n\t\t\t</div>\n\t\t</div>\n\n\t\t<div class="atl-grid__2-3">\n\t\t\t<div class="static-content">\n\t\t\t\t<ul id="atl__info-box__list"></ul>\n\t\t\t</div>\n\t\t</div>\n\n\t\t<div class="atl-grid__3-3">\n\t\t</div>\n\n\t</div>\n\n</div>\n\n<div class="atl__right-bar atl__right-bar--blur">\n\n\t<div class="atl__right-bar__button"></div>\n\n</div>');
     
     }).call(this);
     

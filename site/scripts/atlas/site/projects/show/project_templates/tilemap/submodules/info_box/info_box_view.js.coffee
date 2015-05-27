@@ -30,6 +30,7 @@
 
 		events:
 			'click #atl__info-box__close': 'purgeView'
+			'click #atl__info-box__print': 'print'
 
 		# Get concatenated html of all children.
 		getHtml: ->
@@ -94,3 +95,11 @@
 		# Destroys the view through the controller, making sure that the view references are removed.
 		purgeView: ->
 			InfoBox.Controller.hideAndDestroy()
+
+		print: ->
+			$.ajax
+				url: '/print'
+				type: 'post'
+				data:
+					title: @model.get 'name'
+					content: @getHtml()
