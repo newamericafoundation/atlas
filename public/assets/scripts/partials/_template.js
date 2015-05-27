@@ -2243,6 +2243,108 @@ window.JST_ATL["atlas/site/projects/index/templates/projects/project.jst"] = fun
 if (!window.JST_ATL) {
   window.JST_ATL = {};
 }
+window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/templates/root.jst"] = function (__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+      __out.push('<div class="atl__clear-side-bar">\n\t<div class="fill-parent" id="atl__map"></div>\n\t<div class="atl__settings-bar">\n\t\t<div id="atl__headline"></div>\n\t\t<div id="atl__search" class="-id-atl__search"></div>\n\t\t<div id="atl__filter" class="-id-atl__filter"></div>\n\n\t\t<div id="atl__display-toggle" class="-id-atl__display-toggle atl__binary-toggle">\n\n\t\t\t<div class="atl__binary-toggle__half">\n\t\t\t\t<a href="#" class="atl__binary-toggle__link atl__binary-toggle__link--active bg-img-filter--off-white" id="atl__set-filter-display"></a>\n\t\t\t</div>\n\n\t\t\t<div class="atl__binary-toggle__half">\n\t\t\t\t<a href="#" class="atl__binary-toggle__link bg-img-search--off-white" id="atl__set-search-display"></a>\n\t\t\t</div>\n\n\t\t</div>\n\n\t</div>\n\t<div class="atl__base-layer"></div>\n\t<div id="atl__legend" class="-id-atl__legend"></div>\n\t<div id="atl__info" class="-id-atl__info"></div>\n\t<div id="atl__build" class="-id-atl__build"></div>\n\t<div id="atl__popup" class="-id-atl__popup"></div>\n</div>\n\n<div id="atl__info-box" class="-id-atl__info-box"></div>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+};
+
+if (!window.JST_ATL) {
+  window.JST_ATL = {};
+}
+window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/templates/zoom_bar.jst"] = function (__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+      __out.push('<div class="atl__map-control">\n\t<div id="atl__map-zoom-in"  class="bg-img-plus--off-white"></div>\n\t<div id="atl__map-zoom-out" class="bg-img-minus--off-white"></div>\n</div>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+};
+
+if (!window.JST_ATL) {
+  window.JST_ATL = {};
+}
 window.JST_ATL["atlas/site/projects/show/project_templates/explainer/templates/related_page.jst"] = function (__obj) {
   if (!__obj) __obj = {};
   var __out = [], __capture = function(callback) {
@@ -2405,108 +2507,6 @@ window.JST_ATL["atlas/site/projects/show/project_templates/explainer/templates/r
       __out.push(this.body_text);
     
       __out.push('\n\t\t\t</div>\n\t\t\t<div id="atl__related">\n\t\t\t</div>\n\t\t</div>\n\n\t\t<div class="atl-grid__3-3">\n\t\t\t\n\t\t</div>\n\n\t</div>\n\n</div>\n\n<div class="atl__right-bar">\n\n\t<div class="atl__right-bar__button"></div>\n\n</div>');
-    
-    }).call(this);
-    
-  }).call(__obj);
-  __obj.safe = __objSafe, __obj.escape = __escape;
-  return __out.join('');
-};
-
-if (!window.JST_ATL) {
-  window.JST_ATL = {};
-}
-window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/templates/root.jst"] = function (__obj) {
-  if (!__obj) __obj = {};
-  var __out = [], __capture = function(callback) {
-    var out = __out, result;
-    __out = [];
-    callback.call(this);
-    result = __out.join('');
-    __out = out;
-    return __safe(result);
-  }, __sanitize = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else if (typeof value !== 'undefined' && value != null) {
-      return __escape(value);
-    } else {
-      return '';
-    }
-  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
-  __safe = __obj.safe = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else {
-      if (!(typeof value !== 'undefined' && value != null)) value = '';
-      var result = new String(value);
-      result.ecoSafe = true;
-      return result;
-    }
-  };
-  if (!__escape) {
-    __escape = __obj.escape = function(value) {
-      return ('' + value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    };
-  }
-  (function() {
-    (function() {
-      __out.push('<div class="atl__clear-side-bar">\n\t<div class="fill-parent" id="atl__map"></div>\n\t<div class="atl__settings-bar">\n\t\t<div id="atl__headline"></div>\n\t\t<div id="atl__search" class="-id-atl__search"></div>\n\t\t<div id="atl__filter" class="-id-atl__filter"></div>\n\n\t\t<div id="atl__display-toggle" class="-id-atl__display-toggle atl__binary-toggle">\n\n\t\t\t<div class="atl__binary-toggle__half">\n\t\t\t\t<a href="#" class="atl__binary-toggle__link atl__binary-toggle__link--active bg-img-filter--off-white" id="atl__set-filter-display"></a>\n\t\t\t</div>\n\n\t\t\t<div class="atl__binary-toggle__half">\n\t\t\t\t<a href="#" class="atl__binary-toggle__link bg-img-search--off-white" id="atl__set-search-display"></a>\n\t\t\t</div>\n\n\t\t</div>\n\n\t</div>\n\t<div id="atl__legend" class="-id-atl__legend"></div>\n\t<div id="atl__info" class="-id-atl__info"></div>\n\t<div id="atl__build" class="-id-atl__build"></div>\n\t<div id="atl__popup" class="-id-atl__popup"></div>\n</div>\n\n<div id="atl__info-box" class="-id-atl__info-box"></div>');
-    
-    }).call(this);
-    
-  }).call(__obj);
-  __obj.safe = __objSafe, __obj.escape = __escape;
-  return __out.join('');
-};
-
-if (!window.JST_ATL) {
-  window.JST_ATL = {};
-}
-window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/templates/zoom_bar.jst"] = function (__obj) {
-  if (!__obj) __obj = {};
-  var __out = [], __capture = function(callback) {
-    var out = __out, result;
-    __out = [];
-    callback.call(this);
-    result = __out.join('');
-    __out = out;
-    return __safe(result);
-  }, __sanitize = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else if (typeof value !== 'undefined' && value != null) {
-      return __escape(value);
-    } else {
-      return '';
-    }
-  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
-  __safe = __obj.safe = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else {
-      if (!(typeof value !== 'undefined' && value != null)) value = '';
-      var result = new String(value);
-      result.ecoSafe = true;
-      return result;
-    }
-  };
-  if (!__escape) {
-    __escape = __obj.escape = function(value) {
-      return ('' + value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    };
-  }
-  (function() {
-    (function() {
-      __out.push('<div class="atl__map-control">\n\t<div id="atl__map-zoom-in"  class="bg-img-plus--off-white"></div>\n\t<div id="atl__map-zoom-out" class="bg-img-minus--off-white"></div>\n</div>');
     
     }).call(this);
     

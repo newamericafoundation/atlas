@@ -2262,6 +2262,30 @@
 }).call(this);
 
 (function() {
+
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    return this.on('start', function() {
+      var data, infoBoxSections;
+      data = App.currentProjectData.data;
+      if (data != null) {
+        infoBoxSections = new Entities.ItemCollection(data.infobox_variables, {
+          parse: true
+        });
+      }
+      return App.reqres.setHandler('info:box:section:entities', function() {
+        return infoBoxSections;
+      });
+    });
+  });
+
+}).call(this);
+
+(function() {
   this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
     Entities.FilterModel = Backbone.Model.extend({
       getVariableModel: function() {
@@ -2290,30 +2314,6 @@
       }
       return App.reqres.setHandler('filter:entities', function() {
         return filters;
-      });
-    });
-  });
-
-}).call(this);
-
-(function() {
-
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    return this.on('start', function() {
-      var data, infoBoxSections;
-      data = App.currentProjectData.data;
-      if (data != null) {
-        infoBoxSections = new Entities.ItemCollection(data.infobox_variables, {
-          parse: true
-        });
-      }
-      return App.reqres.setHandler('info:box:section:entities', function() {
-        return infoBoxSections;
       });
     });
   });
@@ -3980,7 +3980,7 @@
         var zoomLevel;
         zoomLevel = this._getZoomLevel();
         L.mapbox.accessToken = 'pk.eyJ1Ijoicm9zc3ZhbmRlcmxpbmRlIiwiYSI6ImRxc0hRR28ifQ.XwCYSPHrGbRvofTV-CIUqw';
-        this.map = L.mapbox.map(this.elId, 'rossvanderlinde.9d7bb969', {
+        this.map = L.mapbox.map(this.elId, 'rossvanderlinde.874ab107', {
           attributionControl: false,
           maxBounds: L.latLngBounds(L.latLng(-90, -270), L.latLng(+90, +270)),
           zoomControl: false,
@@ -3991,7 +3991,11 @@
         _.extend(this.map, Map.control);
         this.map.ignoreNextClick = false;
         this.map.on('dragend', (function(_this) {
-          return function(e) {};
+          return function(e) {
+            if (e.distance > 15) {
+              return _this.map.ignoreNextClick = true;
+            }
+          };
         })(this));
         Map.map = this.map;
         this.addControl();

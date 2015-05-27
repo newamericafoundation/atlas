@@ -40,7 +40,7 @@
 		render: ->
 			zoomLevel = @_getZoomLevel()
 			L.mapbox.accessToken = 'pk.eyJ1Ijoicm9zc3ZhbmRlcmxpbmRlIiwiYSI6ImRxc0hRR28ifQ.XwCYSPHrGbRvofTV-CIUqw'
-			@map = L.mapbox.map @elId, 'rossvanderlinde.9d7bb969',
+			@map = L.mapbox.map @elId, 'rossvanderlinde.874ab107',
 				attributionControl: false
 				#maxZoom: 8
 				#minZoom: 4
@@ -59,9 +59,9 @@
 			@map.on 'dragend', (e) =>
 				# use functionality only if there is sufficient drag
 				#   as Leaflet sometimes detects slightly imperfect clicks as drags
-				#if e.distance > 15
-				#	@map.ignoreNextClick = true
-				#	App.commands.execute 'destroy:popup'
+				if e.distance > 15
+					@map.ignoreNextClick = true#
+					# App.commands.execute 'destroy:popup'
 				
 
 			# expose map
