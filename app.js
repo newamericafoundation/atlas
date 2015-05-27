@@ -21,12 +21,13 @@ app.set('view engine', 'jade');
 
 // Serve gzip if it is available
 app.get([ '*.js' ], function(req, res, next) {
-	var gzipUrl = 'public' + req.url + '.gz';
+	var url = (req.url.indexOf('?') > -1) ? req.url.slice(0, req.url.indexOf('?')) : req.url,
+		gzipUrl = 'public' + url + '.gz';
 	fs.readFile(gzipUrl, function(err) { 
 		if (err) { return next(); }
-		req.url = req.url + '.gz';
+		req.url = url + '.gz';
 		res.set('Content-Encoding', 'gzip');
-		console.log('Found and served gzip version for: ' + req.url)
+		console.log('Found and served gzip version for: ' + url)
 		next();
 	});
 });

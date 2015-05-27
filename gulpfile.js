@@ -1,4 +1,5 @@
 var gulp = require('gulp'),
+    util = require('gulp-util'),
     sass = require('gulp-sass'),
     minifyCss = require('gulp-minify-css'),
     eco = require('gulp-eco'),
@@ -13,6 +14,10 @@ var gulp = require('gulp'),
     copy = require('gulp-copy'),
     gzip = require('gulp-gzip'),
     watch = require('gulp-watch');
+
+var config = {
+    production: !!util.env.production
+};
 
 var cssSource = './site/styles/app.scss';
 
@@ -62,7 +67,15 @@ var jsSource = {
 
 gulp.task('js-copy-vendor', function() {
     return gulp.src(jsSource.vendorAsync)
-        .pipe(copy('public/assets/vendor', { prefix: 2 }));
+        .pipe(copy('public/assets/vendor', { prefix: 2 }))
+        .pipe(gzip())
+        .pipe(gulp.dest('public/assets/vendor'));
+});
+
+gulp.task('js-gzip-vendor', function() {
+    return gulp.src('public/assets/vendor/*.js')
+        .pipe(gzip())
+        .pipe(gulp.dest('public/assets/vendor'));
 });
 
 gulp.task('css-clean', function(next) {
@@ -113,11 +126,9 @@ gulp.task('js-build-vendor', [ 'js-clean' ], function() {
 gulp.task('js-build', ['js-build-template', 'js-build-source', 'js-build-vendor'], function() {
     return gulp.src(['public/assets/scripts/partials/_template.js', 'public/assets/scripts/partials/_vendor.js', 'public/assets/scripts/partials/_source.js'])
         .pipe(concat('app.js'))
-        .pipe(uglify())
-        .pipe(gulp.dest('public/assets/scripts'))
+        .pipe(config.production ? uglify() : util.noop())
         .pipe(rev())
-        .pipe(gulp.dest('public/assets/scripts'))
-        .pipe(gzip())
+        .pipe(config.production ? gzip() : util.noop())
         .pipe(gulp.dest('public/assets/scripts'))
         .pipe(rev.manifest())
         .pipe(gulp.dest('public/assets/scripts'));
