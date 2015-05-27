@@ -34,8 +34,8 @@
 
 .map-region {
 	fill-opacity: 0.85;
-	stroke-width: 0.3px;
-	stroke: black;
+	stroke-width: 1px;
+	stroke: map-get($palette, off-white);
 	&:hover, &--highlighted { @include overlay-highlighted(); }
 	&--inactive { @include overlay-inactive(); }
 	&--neutral {
@@ -52,7 +52,7 @@
 
 .map-pin {
 	&__outer { fill: none; stroke: none; }
-	&__inner { fill: black; stroke: none; }
+	&__inner { fill: map-get($palette, off-white); stroke: none; }
 	&--neutral {
 		.map-pin {
 			&__1-of-2, &__2-of-2, &__1-of-3, &__2-of-3, &__3-of-3 { stroke: none; fill: none; }

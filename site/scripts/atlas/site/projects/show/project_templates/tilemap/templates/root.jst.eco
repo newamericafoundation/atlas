@@ -1,28 +1,26 @@
-<div class="atl__clear-side-bar">
-	<div class="fill-parent" id="atl__map"></div>
-	<div class="atl__settings-bar">
-		<div id="atl__headline"></div>
-		<div id="atl__search" class="-id-atl__search"></div>
-		<div id="atl__filter" class="-id-atl__filter"></div>
+<div class="fill-parent" id="atl__map"></div>
+<div class="atl__base-layer"></div>
+<div class="atl__settings-bar">
+	<div id="atl__headline"></div>
+	<div id="atl__search" class="-id-atl__search"></div>
+	<div id="atl__filter" class="-id-atl__filter"></div>
 
-		<div id="atl__display-toggle" class="-id-atl__display-toggle atl__binary-toggle">
+	<div id="atl__display-toggle" class="-id-atl__display-toggle atl__binary-toggle">
 
-			<div class="atl__binary-toggle__half">
-				<a href="#" class="atl__binary-toggle__link atl__binary-toggle__link--active bg-img-filter--off-white" id="atl__set-filter-display"></a>
-			</div>
+		<div class="atl__binary-toggle__half">
+			<a href="#" class="atl__binary-toggle__link atl__binary-toggle__link--active bg-img-filter--off-white" id="atl__set-filter-display"></a>
+		</div>
 
-			<div class="atl__binary-toggle__half">
-				<a href="#" class="atl__binary-toggle__link bg-img-search--off-white" id="atl__set-search-display"></a>
-			</div>
-
+		<div class="atl__binary-toggle__half">
+			<a href="#" class="atl__binary-toggle__link bg-img-search--off-white" id="atl__set-search-display"></a>
 		</div>
 
 	</div>
-	<div class="atl__base-layer"></div>
-	<div id="atl__legend" class="-id-atl__legend"></div>
-	<div id="atl__info" class="-id-atl__info"></div>
-	<div id="atl__build" class="-id-atl__build"></div>
-	<div id="atl__popup" class="-id-atl__popup"></div>
+
 </div>
+<div id="atl__legend" class="-id-atl__legend"></div>
+<div id="atl__info" class="-id-atl__info"></div>
+<div id="atl__build" class="-id-atl__build"></div>
+<div id="atl__popup" class="-id-atl__popup"></div>
 
 <div id="atl__info-box" class="-id-atl__info-box"></div>

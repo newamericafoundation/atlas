@@ -11,15 +11,17 @@
 		height: 100%;
 		pointer-events: none;
 		background: none;
-		@include transition(all, 0.5s);
-		.atl--light &, .atl__info-box--active & {
+		/*.atl--light &, .atl__info-box--active & {
 			@include transition(all, 0.5s);
 			background-color: map-get(map-get($palette, grey), light);
 			opacity: 0.15; 
 		}
 		.atl-route--projects_index & {
 			background-color: #c3bdb8;
-		}
+		}*/
+		@include transition(all, 0.5s);
+		background-color: map-get(map-get($palette, grey), light);
+		opacity: 0.15;
 	}
 
 	li {
