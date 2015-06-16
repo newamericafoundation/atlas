@@ -7,9 +7,6 @@
 
 
 	TocView = Marionette.ItemView.extend
-
-		initialize: ->
-			console.log 'initialized'
 		events:
 			'click a': 'triggerScroll'
 		triggerScroll: (e) ->

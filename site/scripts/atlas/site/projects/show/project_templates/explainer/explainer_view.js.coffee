@@ -63,7 +63,6 @@
 				$bg.css('background-color', color)
 
 		_setStickyNavLayout: (subClasses) ->
-			console.log 'settings sticky scroll layout'
 			# TODO - optimize title bar height check so it is not performed all the time
 			scrollTop = $('#atl__main').scrollTop()
 			className = "atl__page-nav"
