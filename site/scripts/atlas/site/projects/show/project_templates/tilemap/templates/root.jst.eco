@@ -1,0 +1,28 @@
+<div class="fill-parent" id="atl__map"></div>
+
+<div class="atl__base-layer"></div>
+<div class="atl__settings-bar">
+	
+	<div class="atl__headline"></div>
+	<div class="atl__search"></div>
+	<div class="atl__filter"></div>
+
+	<div id="atl__display-toggle" class="-id-atl__display-toggle atl__binary-toggle">
+
+		<div class="atl__binary-toggle__half">
+			<a href="#" class="atl__binary-toggle__link atl__binary-toggle__link--active bg-img-filter--off-white" id="atl__set-filter-display"></a>
+		</div>
+
+		<div class="atl__binary-toggle__half">
+			<a href="#" class="atl__binary-toggle__link bg-img-search--off-white" id="atl__set-search-display"></a>
+		</div>
+
+	</div>
+
+</div>
+
+<div class="atl__legend"></div>
+<div class="atl__info"></div>
+<div class="atl__popup"></div>
+
+<div id="atl__info-box" class="-id-atl__info-box"></div>

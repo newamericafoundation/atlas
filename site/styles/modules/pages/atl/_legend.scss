@@ -1,0 +1,75 @@
+.atl__legend {
+
+	position: absolute;
+	$n: $legend-bar-grid-size;
+	$w: $legend-icon-size + 2 * $legend-icon-padding;
+	$width: ($n + 1) * $w;
+	width: $width;
+	height: $width;
+	overflow: auto;
+	padding: 0;
+	float: left;
+
+	&__icon {
+
+		position: absolute;
+
+		cursor: pointer;
+
+		width: $legend-icon-size;
+		height: $legend-icon-size;
+
+		@for $i from 1 through 20 {
+
+			&:nth-child(#{$i}) {
+
+				$row-pair-index: divide-whole($i - 1, 7);
+				$row-pair-position: divide-remainder($i - 1, 7);
+
+				$row-index: $row-pair-index * 2;
+				$column-index: 0;
+
+				@if ($row-pair-position > 2) { 
+
+					$row-index: $row-index + 1; 
+					$column-index: $row-pair-position - 3;
+
+				} @else {
+
+					$column-index: $row-pair-position + 0.5;
+
+				}
+
+				$top: $legend-container-size * $row-index * sqrt(3) / 2;
+				$left: $legend-container-size * $column-index;
+
+				top: $top;
+				left: $left;
+
+			}
+
+		}
+
+		svg {
+			width: 100%;
+			height: 100%;
+			position: relative;
+			border-radius: 3px/1.5px;
+			.hexicon__no { fill: none; }
+			.hexicon__yes { fill: none; }
+		}
+
+		&--highlighted svg, &:hover svg { 
+			.hexicon__hex { stroke: white; stroke-width: 8px; }
+		}
+
+		&--inactive svg {
+			.hexicon__hex { fill: none; stroke: #666; stroke-width: 4.5px; }
+			.hexicon__no { fill: #666; }
+		}
+
+
+	}
+
+}
+

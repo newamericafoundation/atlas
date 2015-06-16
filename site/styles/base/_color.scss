@@ -1,0 +1,25 @@
+@for $i from 1 through 15 {
+
+	.bg-c-#{$i} {
+		$color: nth(map-get($palette, scheme), $i);
+		background-color: $color;
+		fill: $color;
+	}
+
+	.c-#{$i} {
+		$color: nth(map-get($palette, scheme), $i);
+		color: $color;
+		stroke: $color;
+	}
+
+}
+
+.bg-c-off-white {
+	$color: map-get($palette, off-white);
+	background-color: $color;
+}
+
+.c-off-white {
+	$color: map-get($palette, off-white);
+	color: $color;
+}

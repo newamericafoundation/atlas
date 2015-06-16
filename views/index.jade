@@ -1,0 +1,16 @@
+extend layout
+
+block content
+
+	div(class="wrapper")
+		div(id="header", class="-id-header")
+		div(id="atl", class="-id-atl fill-parent")
+			div(class="loading-icon")
+				div Loading...
+
+	script(src="/assets/scripts/#{js}")
+	script(type='text/javascript').
+		$(function() { 
+			//setTimeout(function() { Atlas.start(); }, 3000);
+			Atlas.start();
+		});

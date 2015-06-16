@@ -1,0 +1,152 @@
+.atl {
+
+	@extend %pages-container;
+	
+	&__clear-side-bar {
+		width: 100%;
+		height: 100%;
+		@include bp-show-sidebars() {
+			padding-left: $side-bar-width;
+		}
+		position: relative;
+	}
+
+	&__toc, &__related {
+		& > p {
+			font-family: 'SimplonNorm-Bold-WebS'; 
+			@include font-size(21px);
+		}
+		a {
+			@include link;
+			font-family: 'SimplonNorm-Bold-WebS'; 
+			@include font-size(17px);
+		}
+	}
+
+	&__toc {
+		padding-top: 15px;
+		padding-bottom: 15px;
+		@include bp-atl-grid-unstack {
+			ul { max-width: 300px; }
+			padding-bottom: 0;
+			padding-top: 0;
+		}
+		@media print { display: none; }
+		li {
+			&.toc-h1 { padding-left: 0; }
+			&.toc-h2 { padding-left: 20px; }
+		}
+	}
+
+	#atl__related li, &__toc li { margin: 15px 0; line-height: 110%; }
+
+	&__page-nav {
+
+		position: static;
+		&--fixed {
+			position: static;
+		}
+
+		@include bp-atl-grid-unstack {
+			position: relative;
+			top: 0px;
+			&--fixed {
+				position: absolute;
+				top: 0px;
+			}
+		}
+	}
+
+	&--filter-display .atl__search { display: none; }
+	&--search-display .-id-atl__filter { display: none; }
+	&--search-display .atl__legend { display: none; }
+
+	&--collapsed .atl__search { 
+		position: absolute; 
+		left: 40px;
+		top: 75px;
+		width: 250px; 
+	}
+
+	&__main {
+		position: relative;
+		top: 0;
+		height: 100%;
+		overflow: hidden;
+		@include transition(all, 0.5s, ease-in-out);
+
+		.atl-route--projects_index & {
+			overflow-y: scroll;
+			@include bp-unstack-listings-page {
+				overflow-y: hidden;
+			}
+		}
+
+	}
+
+	&__search {
+		opacity: 0.8;
+	}
+
+}
+
+.-id-atl {
+
+	overflow: hidden;
+
+	&__side-bar {
+		position: absolute;
+		z-index: 10;
+		width: $side-bar-width;
+		top: 0;
+		bottom: 0;
+		left: 0;
+	}
+
+	&__main {
+		width: 100%;
+		overflow: hidden;
+		.atl--explainer &, .atl--polling & { overflow-y: scroll; }
+
+
+	}
+	
+}
+
+.atl__main {
+	position: relative;
+	top: 0;
+	height: 100%;
+	overflow: hidden;
+	@include transition(all, 0.5s, ease-in-out);
+
+	.atl-route--projects_index & {
+		overflow-y: scroll;
+		@include bp-unstack-listings-page {
+			overflow-y: hidden;
+		}
+	}
+
+}
+
+.-id-atl__display-toggle {
+	position: absolute;
+	top: 32px;
+	right: 5px;
+	.atl--collapsed & {
+		left: 30px;
+	}
+}
+
+.atl__legend {
+	display: none;
+	@include bp-unstack-map-settings-bar { display: block; }
+	position: absolute;
+	bottom: 100px;
+	right: 25px;
+	@include bp-show-sidebars {
+		bottom: 5px;
+		right: 338px;
+	}
+	.atl__info-box--active &, .atl--search-display & { display: none; }
+}

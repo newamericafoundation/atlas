@@ -1,0 +1,1 @@
+<a class="link" href="/<%= @atlas_url %>"><%= @title %></div>

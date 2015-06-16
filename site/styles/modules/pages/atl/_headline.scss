@@ -1,0 +1,48 @@
+.atl__headline {
+
+	.atl--collapsed & { display: none; }
+
+	padding-bottom: 20px;
+
+	p {
+		@include font-size(16px);
+		@include bp-show-sidebars { display: block; }
+		margin: 14px auto 25px auto;
+		font-family: 'SimplonNorm-Regular-WebS';
+		text-transform: uppercase;
+		opacity: 0.4;
+		letter-spacing: 2px;
+	}
+
+	.link {
+		color: map-get($palette, off-white);
+		border-bottom: 2px solid map-get($palette, off-white);
+	}
+
+	h1, h2 {
+		display: block;
+		width: 100%;
+	}
+
+	h1 { 
+		@include font-size(42px);
+		margin: 0;
+		padding-right: 50px;
+		line-height: 85%;
+		font-family: 'Platform Web';
+		text-transform: uppercase;
+		@include bp-show-sidebars { 
+			font-size: auto; 
+		}
+	}
+
+	h2 { 
+		display:none;
+		@include bp-show-sidebars { display: block; }
+		margin: 25px 0 0 0 ;
+		padding: 0;
+		@include font-size(17px);
+		line-height: 110%;
+	}
+
+}

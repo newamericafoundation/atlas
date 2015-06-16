@@ -1,0 +1,11 @@
+<div class="atl__info__key">
+	<p><%= @key %></p>
+</div>
+
+<div class="atl__info__value">
+	<p><%= @value %></p>
+</div>
+
+<div class="atl__info__items">
+	<p><%= @items %></p>
+</div>

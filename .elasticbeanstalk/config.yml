@@ -1,0 +1,10 @@
+branch-defaults:
+  master:
+    environment: atlas-new-dev
+global:
+  application_name: atlas-new
+  default_ec2_keyname: atlas
+  default_platform: Node.js
+  default_region: us-west-2
+  profile: eb-cli
+  sc: git

@@ -1,0 +1,19 @@
+<div id="welcome__terrain" class="-id-welcome__terrain"></div>
+
+<div class="welcome__title">
+	<h1 class="welcome__title__name">ATLAS</h1>
+	<h1 class="welcome__title__alias c-2-0">=ANALYSIS</strong></h1>
+</div>
+
+<div class="welcome__strip bg-c-2-0"></div>
+
+<div class="welcome__subtitle">
+	A policy analysis tool from New America's Education Program
+</div>
+
+<div class="welcome__main-nav">
+
+	<a href="/apps" class="bg-img-grid--off-white" id="welcome__main-nav__button"></a>
+	<p class="center">View All Projects</p>
+
+</div>

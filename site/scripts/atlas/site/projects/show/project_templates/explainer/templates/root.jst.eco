@@ -1,0 +1,41 @@
+<div class="atl__title-bar atl__title-bar--solid bg-c-off-white">
+	<div class="atl__title-bar__background"></div>
+	<div class="atl__title-bar__content">
+		<h1 class='title'><%= @title %></h1>
+		<ul>
+			<li>Updated: <%= moment(@updated_at).format("MMMM Do YYYY") %></li>
+		</ul>
+	</div>
+</div>
+
+<div class="atl__content-bar bg-c-off-white">
+
+	<div class="atl-grid">
+
+		<div class="atl-grid__1-3">
+			<div class="atl__page-nav">
+				<div class="atl__toc">
+					<p>Page Contents</p>
+					<div id="atl__toc__list">
+						<div class="loading-icon"><div></div></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="atl-grid__2-3">
+			<div class="static-content">
+				<%- @body_text %>
+			</div>
+			<div id="atl__related">
+				<div class="loading-icon"><div></div></div>
+			</div>
+		</div>
+
+		<div class="atl-grid__3-3">
+			
+		</div>
+
+	</div>
+
+</div>

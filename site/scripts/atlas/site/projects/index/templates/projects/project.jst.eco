@@ -1,0 +1,12 @@
+<% initials = (@title.substring(0, 1) + @title.substring(1, 2).toLowerCase()) if @title? %>
+
+<div class="atl__project__background atl__project__background--unselected">
+	<div class="center--content">
+		<p class="atl__project__background__initials"><%= initials %></p>
+	</div>
+</div>
+<div class="atl__project__text">
+	<div class="center--content">
+		<h1><%= @title %></h1>
+	</div>
+</div>

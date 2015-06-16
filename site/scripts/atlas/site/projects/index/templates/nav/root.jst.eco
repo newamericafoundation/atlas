@@ -1,0 +1,7 @@
+<h1 class="title title--compact">Explore Atlas</h1>
+<div id="atl__project-template-filter">
+	<div class="loading-icon"><div>Loading...</div></div>
+</div>
+<div id="atl__project-section-filter">
+	<div class="loading-icon"><div>Loading...</div></div>
+</div>

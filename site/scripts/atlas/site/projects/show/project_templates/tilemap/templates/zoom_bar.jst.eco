@@ -1,0 +1,5 @@
+<div class="atl__map-control">
+	<div id="atl__map-attribution" class="bg-img-info--black"></div> 
+	<div id="atl__map-zoom-in"  class="bg-img-plus--black"></div>
+	<div id="atl__map-zoom-out" class="bg-img-minus--black"></div>
+</div>

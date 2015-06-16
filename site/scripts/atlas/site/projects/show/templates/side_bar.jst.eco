@@ -1,0 +1,32 @@
+<div class="atl__side-bar__background"></div>
+
+<ul class="atl__side-bar__icons">
+
+	<li>
+		<a href="#" class="bg-img-grid--off-white" data-method="projects"></a>
+	</li>
+
+	<li>
+		<a href="#" class="bg-img-share--off-white"  data-method="share"></a>
+	</li>
+
+	<li>
+		<a href="#" class="bg-img-contract--off-white"  data-method="collapse"></a>
+	</li>
+
+	<!-- <li>
+		<a href="#" class="bg-img-build--off-white"  data-method="edit" target="_blank"></a>
+	</li> -->
+
+	<li>
+		<a href="#" class="bg-img-print--off-white"  data-method="print" target="_blank"></a>
+	</li>
+
+	<li class='atl__side-bar__icons__download'>
+		<form class="form--compact bg-img-download--off-white" action='/api/v1/projects/print' method='post'> 
+			<input type="hidden" name="atlas_url" value="<%= @atlas_url %>">
+			<input type="submit" value="">
+		</form>
+	</li>
+
+</ul>

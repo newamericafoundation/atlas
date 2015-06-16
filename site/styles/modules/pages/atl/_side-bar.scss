@@ -1,0 +1,42 @@
+.atl__side-bar {
+
+	display: none;
+	@include bp-show-sidebars {
+		display: block;
+	}
+
+	&__background {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+		background: none;
+		@include transition(all, 0.5s);
+		background-color: map-get(map-get($palette, grey), light);
+		opacity: 0.25;
+	}
+
+	li {
+		@include atl-icons();
+		background-color: rgba(27, 27, 27, 0.85);
+	}
+
+	&__icons {
+
+		&__download {
+			display: none;
+			.atl--tilemap & { display: block; }
+		}
+
+	}
+
+	svg { 
+		width: 100%; height: 100%;
+		fill: map-get($palette, off-white);
+	}
+
+}
+
+.atl--collapsed .-id-filter__keys {
+	width: 350px;
+}

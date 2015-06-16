@@ -1,0 +1,7 @@
+{
+	"dbUrl": {
+		"development": "localhost",
+		"production": "ec2-52-25-41-189.us-west-2.compute.amazonaws.com",
+		"productionBackup": ""
+	}
+}
