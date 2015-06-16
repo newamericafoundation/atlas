@@ -47,6 +47,9 @@
 					colorCls = colorCls.replace('black', 'off-white')
 					$el.addClass colorCls
 
+		_help: (e) ->
+			$('.atl').toggleClass('atl--help')
+
 		_print: ->
 			window.print()
 

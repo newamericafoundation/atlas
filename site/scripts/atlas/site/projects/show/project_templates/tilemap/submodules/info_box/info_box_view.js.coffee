@@ -39,15 +39,15 @@
 					view = new InfoBox.SectionView
 						model: model
 					view.render()
-					html += view.el.innerHTML#
+					html += view.el.innerHTML
 				html
 
 		onRender: ->
+			@$('.static-content').html(@getCollectionHtml())
 			@_buildToc()
 			@_setStickyNavLayout()
 			@_setImage()
 			@_setThemeBackground() unless @collection?
-			@$('.static-content').html(@getCollectionHtml())
 
 		onBeforeDestroy: ->
 			@attributionView.destroy() if @attributionView?
@@ -79,6 +79,7 @@
 
 		# Build table of contents.
 		_buildToc: ->
+			console.log $('.static-content').html() 
 			$('#atl__toc__list').toc
 				selectors: 'h1,h2'
 				container: '.static-content'

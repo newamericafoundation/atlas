@@ -14,9 +14,9 @@
 		<a href="#" class="bg-img-contract--off-white"  data-method="collapse"></a>
 	</li>
 
-	<!-- <li>
-		<a href="#" class="bg-img-build--off-white"  data-method="edit" target="_blank"></a>
-	</li> -->
+	<li>
+		<a href="#" class="bg-img-help--off-white"  data-method="help" target="_blank"></a>
+	</li>
 
 	<li>
 		<a href="#" class="bg-img-print--off-white"  data-method="print" target="_blank"></a>

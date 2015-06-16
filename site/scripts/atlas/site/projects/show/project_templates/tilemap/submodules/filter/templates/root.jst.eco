@@ -1,2 +1,5 @@
 <div id="filter__keys" class="-id-filter__keys"></div>
 <div id="filter__values"></div>
+<div class='atl__help'>
+	This is a filter. 
+</div>

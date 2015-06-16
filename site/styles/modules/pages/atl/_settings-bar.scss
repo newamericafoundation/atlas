@@ -3,8 +3,10 @@
 	height: 225px;
 	position: absolute;
 	padding: 20px;
-
 	top: 0;
+
+	overflow-x: visible !important;
+	
 	@include bp-show-sidebars {
 		padding: 20px;
 		padding-left: $side-bar-width + 20px;
@@ -19,7 +21,7 @@
 	background-color: rgba(27,27,27,0.83); 
 	opacity: 1;
 	overflow-y: scroll;
-	overflow-x: hidden;
+	overflow-x: hidden; 
 	transition: 0.2s;
 	.atl--collapsed & {
 		overflow: visible;
