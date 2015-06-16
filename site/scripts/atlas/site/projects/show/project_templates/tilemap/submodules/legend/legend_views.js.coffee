@@ -50,12 +50,13 @@
 			@model.collection.models.indexOf @model
 
 
-	Legend.RootView = Marionette.CollectionView.extend
+	Legend.RootView = Marionette.CompositeView.extend
 
-		tagName: 'ul'
+		tagName: 'div'
 		className: 'atl__legend'
 		template: 'projects/show/project_templates/tilemap/submodules/legend/templates/root'
 		childView: Legend.IconView
+		childViewContainer: 'ul'
 
 		initialize: ->
 			@listenTo App.vent, 'value:click', @setActiveState

@@ -43,6 +43,7 @@
 	&__page-nav {
 
 		position: static;
+		
 		&--fixed {
 			position: static; 
 		}
@@ -89,14 +90,26 @@
 	}
 
 	&__help {
+		padding: 20px;
+		border-radius: 8px; 
 		position: absolute;
 		right: -150px;
 		top: 0;
+		@include font-size(18px);
+		line-height: 110%;
 		width: 180px;
-		height: 150px;
+		height: 120px;
 		overflow-x: hidden; 
 		overflow-y: scroll;
 		background-color: map-get(map-get($palette, grey), base);
+
+		&--right {
+			right: -220px;
+		}
+
+		&--left {
+			left: -220px;
+		}
 
 		display: none;
 		.atl--help & {
@@ -124,8 +137,6 @@
 		width: 100%;
 		overflow: hidden;
 		.atl--explainer &, .atl--polling & { overflow-y: scroll; }
-
-
 	}
 	
 }

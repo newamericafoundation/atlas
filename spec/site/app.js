@@ -2563,7 +2563,7 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/templates/roo
   }
   (function() {
     (function() {
-      __out.push('<div class="fill-parent" id="atl__map"></div>\n\n<div class="atl__base-layer"></div>\n<div class="atl__settings-bar">\n\t\n\t<div class="atl__headline"></div>\n\t<div class="atl__search"></div>\n\t<div class="atl__filter"></div>\n\n\t<div id="atl__display-toggle" class="-id-atl__display-toggle atl__binary-toggle">\n\n\t\t<div class="atl__binary-toggle__half">\n\t\t\t<a href="#" class="atl__binary-toggle__link atl__binary-toggle__link--active bg-img-filter--off-white" id="atl__set-filter-display"></a>\n\t\t</div>\n\n\t\t<div class="atl__binary-toggle__half">\n\t\t\t<a href="#" class="atl__binary-toggle__link bg-img-search--off-white" id="atl__set-search-display"></a>\n\t\t</div>\n\n\t</div>\n\n</div>\n\n<div class="atl__legend"></div>\n<div class="atl__info"></div>\n<div class="atl__popup"></div>\n\n<div class="atl__info-box"></div>');
+      __out.push('<div class="fill-parent" id="atl__map"></div>\n\n<div class="atl__base-layer"></div>\n<div class="atl__settings-bar">\n\n\t<div class=\'atl__help atl__help--right\'>\n\t\tThis is a help tooltip to provide info the settings bar.\n\t</div>\n\t\n\t<div class="atl__headline"></div>\n\t<div class="atl__search"></div>\n\t<div class="atl__filter"></div>\n\n\t<div id="atl__display-toggle" class="-id-atl__display-toggle atl__binary-toggle">\n\n\t\t<div class="atl__binary-toggle__half">\n\t\t\t<a href="#" class="atl__binary-toggle__link atl__binary-toggle__link--active bg-img-filter--off-white" id="atl__set-filter-display"></a>\n\t\t</div>\n\n\t\t<div class="atl__binary-toggle__half">\n\t\t\t<a href="#" class="atl__binary-toggle__link bg-img-search--off-white" id="atl__set-search-display"></a>\n\t\t</div>\n\n\t</div>\n\n</div>\n\n<div class="atl__legend"></div>\n<div class="atl__info"></div>\n<div class="atl__popup"></div>\n\n<div class="atl__info-box"></div>');
     
     }).call(this);
     
@@ -2614,7 +2614,7 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/templates/zoo
   }
   (function() {
     (function() {
-      __out.push('<div class="atl__map-control">\n\t<div id="atl__map-attribution" class="bg-img-info--black"></div> \n\t<div id="atl__map-zoom-in"  class="bg-img-plus--black"></div>\n\t<div id="atl__map-zoom-out" class="bg-img-minus--black"></div>\n</div>');
+      __out.push('<div class="atl__map-control">\n\t<div id="atl__map-attribution" class="atl__map-control__button bg-img-info--black"></div> \n\t<div id="atl__map-zoom-in"  class="atl__map-control__button bg-img-plus--black"></div>\n\t<div id="atl__map-zoom-out" class="atl__map-control__button bg-img-minus--black"></div>\n\t<div class=\'atl__help atl__help--left\'>\n\t\tThis is a help tooltip to provide info on map control.\n\t</div>\n</div>');
     
     }).call(this);
     
@@ -2879,7 +2879,7 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/fi
   }
   (function() {
     (function() {
-      __out.push('<div id="filter__keys" class="-id-filter__keys"></div>\n<div id="filter__values"></div>\n<div class=\'atl__help\'>\n\tThis is a filter. \n</div>');
+      __out.push('<div id="filter__keys" class="-id-filter__keys"></div>\n<div id="filter__values"></div>\n<div class=\'atl__help atl__help--right\'>\n\tThis is a filter. \n</div>');
     
     }).call(this);
     
@@ -3243,7 +3243,7 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/le
   }
   (function() {
     (function() {
-      __out.push('<ul class="legend-icons"></ul>');
+      __out.push('<ul class="legend-icons"></ul>\n<div class=\'atl__help atl__help--left\'>\n\tThis is a help tooltip to provide info on the legend icons.\n</div>');
     
     }).call(this);
     
@@ -42971,6 +42971,27 @@ jQuery.fn.toc.defaults = {
 }).call(this);
 
 (function() {
+  Marionette.Renderer.render = function(template, data) {
+    var i, len, path, paths;
+    if (window.JST == null) {
+      window.JST = {};
+    }
+    if (window.JST_ATL == null) {
+      window.JST_ATL = {};
+    }
+    paths = [JST_ATL['atlas/site/' + template + '.jst'], JST_ATL['atlas/' + template + '.jst']];
+    for (i = 0, len = paths.length; i < len; i++) {
+      path = paths[i];
+      if (path) {
+        return path(data);
+      }
+    }
+    throw "Template " + template + " not found!";
+  };
+
+}).call(this);
+
+(function() {
   if (!Function.prototype.bind) {
     Function.prototype.bind = function(oThis) {
       var aArgs, fBound, fNOP, fToBind;
@@ -42990,27 +43011,6 @@ jQuery.fn.toc.defaults = {
       return fBound;
     };
   }
-
-}).call(this);
-
-(function() {
-  Marionette.Renderer.render = function(template, data) {
-    var i, len, path, paths;
-    if (window.JST == null) {
-      window.JST = {};
-    }
-    if (window.JST_ATL == null) {
-      window.JST_ATL = {};
-    }
-    paths = [JST_ATL['atlas/site/' + template + '.jst'], JST_ATL['atlas/' + template + '.jst']];
-    for (i = 0, len = paths.length; i < len; i++) {
-      path = paths[i];
-      if (path) {
-        return path(data);
-      }
-    }
-    throw "Template " + template + " not found!";
-  };
 
 }).call(this);
 
@@ -45357,7 +45357,6 @@ jQuery.fn.toc.defaults = {
       }
     });
     TocView = Marionette.ItemView.extend({
-      el: '#atl__toc__list ul',
       events: {
         'click a': 'triggerScroll'
       },
@@ -45406,6 +45405,7 @@ jQuery.fn.toc.defaults = {
       },
       _setStickyNavLayout: function(subClasses) {
         var $elem, className, scrollTop;
+        console.log('settings sticky scroll layout');
         scrollTop = $('#atl__main').scrollTop();
         className = "atl__page-nav";
         $elem = this.$("." + className);
@@ -45433,7 +45433,9 @@ jQuery.fn.toc.defaults = {
             return $(target).smoothScroll();
           }
         });
-        this.tocView = new TocView();
+        this.tocView = new TocView({
+          el: $('#atl__toc__list ul')
+        });
         if (this.tocView.isEmpty()) {
           return $('.atl__toc').hide();
         }
@@ -45539,33 +45541,6 @@ jQuery.fn.toc.defaults = {
 }).call(this);
 
 (function() {
-
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      var data, infoBoxSections;
-      data = App.currentProjectModel.get('data');
-      if (data != null) {
-        infoBoxSections = new Entities.ItemCollection(data.infobox_variables, {
-          parse: true
-        });
-      }
-      return App.reqres.setHandler('info:box:section:entities', function() {
-        return infoBoxSections;
-      });
-    });
-    return this.on('stop', function() {
-      return App.reqres.removeHandler('info:box:section:entities');
-    });
-  });
-
-}).call(this);
-
-(function() {
   this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
     Entities.FilterModel = Backbone.Model.extend({
       getVariableModel: function() {
@@ -45595,6 +45570,33 @@ jQuery.fn.toc.defaults = {
       return App.reqres.setHandler('filter:entities', function() {
         return filters;
       });
+    });
+  });
+
+}).call(this);
+
+(function() {
+
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    this.on('start', function() {
+      var data, infoBoxSections;
+      data = App.currentProjectModel.get('data');
+      if (data != null) {
+        infoBoxSections = new Entities.ItemCollection(data.infobox_variables, {
+          parse: true
+        });
+      }
+      return App.reqres.setHandler('info:box:section:entities', function() {
+        return infoBoxSections;
+      });
+    });
+    return this.on('stop', function() {
+      return App.reqres.removeHandler('info:box:section:entities');
     });
   });
 
@@ -46897,7 +46899,9 @@ jQuery.fn.toc.defaults = {
       template: 'projects/show/project_templates/tilemap/submodules/info_box/templates/section'
     });
     TocView = Marionette.ItemView.extend({
-      el: '#atl__toc__list ul',
+      initialize: function() {
+        return console.log('initialized');
+      },
       events: {
         'click a': 'triggerScroll'
       },
@@ -46985,7 +46989,6 @@ jQuery.fn.toc.defaults = {
         return $(e.target).toggleClass('atl__attribution--active');
       },
       _buildToc: function() {
-        console.log($('.static-content').html());
         $('#atl__toc__list').toc({
           selectors: 'h1,h2',
           container: '.static-content',
@@ -46994,7 +46997,9 @@ jQuery.fn.toc.defaults = {
             h3: _.template('<%= title %>')
           }
         });
-        this.tocView = new TocView();
+        this.tocView = new TocView({
+          el: $('#atl__toc__list ul')
+        });
         if (this.tocView.isEmpty()) {
           return $('.atl__toc').hide();
         }
@@ -47157,11 +47162,12 @@ jQuery.fn.toc.defaults = {
         return this.model.collection.models.indexOf(this.model);
       }
     });
-    return Legend.RootView = Marionette.CollectionView.extend({
-      tagName: 'ul',
+    return Legend.RootView = Marionette.CompositeView.extend({
+      tagName: 'div',
       className: 'atl__legend',
       template: 'projects/show/project_templates/tilemap/submodules/legend/templates/root',
       childView: Legend.IconView,
+      childViewContainer: 'ul',
       initialize: function() {
         this.listenTo(App.vent, 'value:click', this.setActiveState);
         this.listenTo(App.vent, 'item:mouseover item:mouseout value:mouseover value:mouseout', this.setHighlighting);
@@ -47428,62 +47434,6 @@ jQuery.fn.toc.defaults = {
 }).call(this);
 
 (function() {
-  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      this.Controller.show();
-      App.searchTerm = "";
-      return App.reqres.setHandler('search:term', function() {
-        return App.searchTerm;
-      });
-    });
-    return this.on('stop', function() {
-      this.Controller.destroy();
-      return this.stopListening();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
-    return Search.Controller = {
-      show: function() {
-        Search.view = new App.Base.SearchView({
-          el: $('.atl__search'),
-          model: new Backbone.Model({
-            placeholder: 'Search Project'
-          })
-        });
-        return Search.view.render();
-      },
-      destroy: function() {
-        return Search.view.destroy();
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
-    return Search.RootView = Marionette.ItemView.extend({
-      tagName: 'div',
-      className: 'atl__search',
-      template: 'projects/show/project_templates/tilemap/submodules/search/templates/root',
-      events: {
-        'keyup input': 'changeSearchTerm'
-      },
-      changeSearchTerm: function(e) {
-        Search.term = $(e.target)[0].value;
-        return App.vent.trigger('search:term:change');
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
   this.Atlas.module('Projects.Show.Tilemap.Popup', function(Popup, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     this.on('start', function() {
@@ -47593,6 +47543,62 @@ jQuery.fn.toc.defaults = {
       },
       preventDefault: function(e) {
         return e.preventDefault();
+      }
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    this.on('start', function() {
+      this.Controller.show();
+      App.searchTerm = "";
+      return App.reqres.setHandler('search:term', function() {
+        return App.searchTerm;
+      });
+    });
+    return this.on('stop', function() {
+      this.Controller.destroy();
+      return this.stopListening();
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
+    return Search.Controller = {
+      show: function() {
+        Search.view = new App.Base.SearchView({
+          el: $('.atl__search'),
+          model: new Backbone.Model({
+            placeholder: 'Search Project'
+          })
+        });
+        return Search.view.render();
+      },
+      destroy: function() {
+        return Search.view.destroy();
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
+    return Search.RootView = Marionette.ItemView.extend({
+      tagName: 'div',
+      className: 'atl__search',
+      template: 'projects/show/project_templates/tilemap/submodules/search/templates/root',
+      events: {
+        'keyup input': 'changeSearchTerm'
+      },
+      changeSearchTerm: function(e) {
+        Search.term = $(e.target)[0].value;
+        return App.vent.trigger('search:term:change');
       }
     });
   });

@@ -2,6 +2,10 @@
 
 <div class="atl__base-layer"></div>
 <div class="atl__settings-bar">
+
+	<div class='atl__help atl__help--right'>
+		This is a help tooltip to provide info the settings bar.
+	</div>
 	
 	<div class="atl__headline"></div>
 	<div class="atl__search"></div>

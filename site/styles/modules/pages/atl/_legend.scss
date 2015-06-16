@@ -6,7 +6,7 @@
 	$width: ($n + 1) * $w;
 	width: $width;
 	height: $width;
-	overflow: auto;
+	overflow: visible;
 	padding: 0;
 	float: left;
 

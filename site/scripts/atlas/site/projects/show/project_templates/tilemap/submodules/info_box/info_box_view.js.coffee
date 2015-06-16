@@ -7,7 +7,9 @@
 
 
 	TocView = Marionette.ItemView.extend
-		el: '#atl__toc__list ul'
+
+		initialize: ->
+			console.log 'initialized'
 		events:
 			'click a': 'triggerScroll'
 		triggerScroll: (e) ->
@@ -79,7 +81,6 @@
 
 		# Build table of contents.
 		_buildToc: ->
-			console.log $('.static-content').html() 
 			$('#atl__toc__list').toc
 				selectors: 'h1,h2'
 				container: '.static-content'
@@ -87,7 +88,9 @@
 					h2: _.template('<%= title %>')
 					h3: _.template('<%= title %>')
 
-			@tocView = new TocView()
+			@tocView = new TocView
+				el: $('#atl__toc__list ul')
+
 			if @tocView.isEmpty()
 				$('.atl__toc').hide()
 

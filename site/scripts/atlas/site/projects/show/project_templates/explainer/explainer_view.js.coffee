@@ -23,7 +23,6 @@
 
 
 	TocView = Marionette.ItemView.extend
-		el: '#atl__toc__list ul'
 		events:
 			'click a': 'triggerScroll'
 		triggerScroll: (e) ->
@@ -64,6 +63,7 @@
 				$bg.css('background-color', color)
 
 		_setStickyNavLayout: (subClasses) ->
+			console.log 'settings sticky scroll layout'
 			# TODO - optimize title bar height check so it is not performed all the time
 			scrollTop = $('#atl__main').scrollTop()
 			className = "atl__page-nav"
@@ -88,6 +88,7 @@
 				smoothScrolling: (target, options, callback) ->
 					$(target).smoothScroll();
 
-			@tocView = new TocView()
+			@tocView = new TocView
+				el: $('#atl__toc__list ul')
 			if @tocView.isEmpty()
 				$('.atl__toc').hide()
