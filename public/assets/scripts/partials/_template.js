@@ -2563,7 +2563,7 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/templates/roo
   }
   (function() {
     (function() {
-      __out.push('<div class="fill-parent" id="atl__map"></div>\n\n<div class="atl__base-layer"></div>\n<div class="atl__settings-bar">\n\t\n\t<div class="atl__headline"></div>\n\t<div class="atl__search"></div>\n\t<div class="atl__filter"></div>\n\n\t<div id="atl__display-toggle" class="-id-atl__display-toggle atl__binary-toggle">\n\n\t\t<div class="atl__binary-toggle__half">\n\t\t\t<a href="#" class="atl__binary-toggle__link atl__binary-toggle__link--active bg-img-filter--off-white" id="atl__set-filter-display"></a>\n\t\t</div>\n\n\t\t<div class="atl__binary-toggle__half">\n\t\t\t<a href="#" class="atl__binary-toggle__link bg-img-search--off-white" id="atl__set-search-display"></a>\n\t\t</div>\n\n\t</div>\n\n</div>\n\n<div class="atl__legend"></div>\n<div class="atl__info"></div>\n<div class="atl__popup"></div>\n\n<div id="atl__info-box" class="-id-atl__info-box"></div>');
+      __out.push('<div class="fill-parent" id="atl__map"></div>\n\n<div class="atl__base-layer"></div>\n<div class="atl__settings-bar">\n\t\n\t<div class="atl__headline"></div>\n\t<div class="atl__search"></div>\n\t<div class="atl__filter"></div>\n\n\t<div id="atl__display-toggle" class="-id-atl__display-toggle atl__binary-toggle">\n\n\t\t<div class="atl__binary-toggle__half">\n\t\t\t<a href="#" class="atl__binary-toggle__link atl__binary-toggle__link--active bg-img-filter--off-white" id="atl__set-filter-display"></a>\n\t\t</div>\n\n\t\t<div class="atl__binary-toggle__half">\n\t\t\t<a href="#" class="atl__binary-toggle__link bg-img-search--off-white" id="atl__set-search-display"></a>\n\t\t</div>\n\n\t</div>\n\n</div>\n\n<div class="atl__legend"></div>\n<div class="atl__info"></div>\n<div class="atl__popup"></div>\n\n<div class="atl__info-box"></div>');
     
     }).call(this);
     
@@ -3062,7 +3062,7 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/in
     (function() {
       var website;
     
-      __out.push('<a href="#" class="bg-img-no--black -id-atl__info-box__close" id="atl__info-box__close"></a>\n\n<div class="atl__title-bar atl__title-bar--image bg-c-off-white">\n\n\t<div class="atl__title-bar__background"></div>\n\n\t<div class="atl__title-bar__content">\n\t\t<h1 class=\'title\'>');
+      __out.push('<a href="#" class="bg-img-no--black atl__info-box__close"></a>\n\n<div class="atl__title-bar atl__title-bar--image bg-c-off-white">\n\n\t<div class="atl__title-bar__background"></div>\n\n\t<div class="atl__title-bar__content">\n\t\t<h1 class=\'title\'>');
     
       __out.push(__sanitize(this.name || this.title));
     

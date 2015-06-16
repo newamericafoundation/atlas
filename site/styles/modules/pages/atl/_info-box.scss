@@ -1,4 +1,5 @@
-.-id-atl__info-box {
+.atl__info-box {
+
 	width: 100%;
 	height: 0%;
 	position: absolute;
@@ -22,9 +23,6 @@
 		opacity: 0.6;
 		&:hover { opacity: 1; }
 	}
-}
-
-.atl__info-box {
 
 	overflow-y: scroll;
 	font-family: 'SimplonNorm-Regular-WebS';

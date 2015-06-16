@@ -25,4 +25,4 @@
 <div class="atl__info"></div>
 <div class="atl__popup"></div>
 
-<div id="atl__info-box" class="-id-atl__info-box"></div>
+<div class="atl__info-box"></div>

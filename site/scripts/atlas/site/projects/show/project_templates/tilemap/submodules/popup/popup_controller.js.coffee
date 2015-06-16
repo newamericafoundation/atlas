@@ -17,12 +17,15 @@
 			hoveredItem = items.hovered
 			popupModel = Popup.getModel hoveredItem
 
-			$atl = $('.atl')
-
-			if $atl.find('.atl__popup').length is 0
-				$atl.append('<div class="atl__popup"></div>')
+			@_ensureContainer()
 
 			rootView = new Popup.RootView
 				model: hoveredItem
 				el: '.atl__popup'
 			rootView
+
+		# Ensure that the container exists.
+		_ensureContainer: () ->
+			$atl = $('.atl__main')
+			if $atl.find('.atl__popup').length is 0
+				$atl.append('<div class="atl__popup"></div>')

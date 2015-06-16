@@ -3,8 +3,8 @@
 	@startWithParent = false
 
 	@on 'start', ->
-		@listenTo App.vent, 'item:activate', @Controller.createAndReveal
-		App.commands.setHandler 'activate:info:box', @Controller.createAndReveal
+		@listenTo App.vent, 'item:activate', @Controller.updateAndReveal
+		App.commands.setHandler 'activate:info:box', @Controller.updateAndReveal
 
 	@on 'stop', ->
 		@stopListening()

@@ -3818,8 +3818,8 @@
   this.Atlas.module('Projects.Show.Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     this.on('start', function() {
-      this.listenTo(App.vent, 'item:activate', this.Controller.createAndReveal);
-      return App.commands.setHandler('activate:info:box', this.Controller.createAndReveal);
+      this.listenTo(App.vent, 'item:activate', this.Controller.updateAndReveal);
+      return App.commands.setHandler('activate:info:box', this.Controller.updateAndReveal);
     });
     return this.on('stop', function() {
       this.stopListening();
@@ -3832,35 +3832,52 @@
 (function() {
   this.Atlas.module('Projects.Show.Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
     return InfoBox.Controller = {
-      createAndReveal: function() {
-        if (InfoBox.rootView == null) {
-          InfoBox.rootView = InfoBox.Controller.getRootView();
-          console.log(InfoBox.rootView);
-          App.vent.trigger('subview:ready', {
-            'infoBox': InfoBox.rootView
-          });
-          return InfoBox.rootView.reveal();
-        }
+      create: function() {
+        InfoBox.rootView = this._getRootView();
+        return InfoBox.rootView.render();
       },
-      hideAndDestroy: function() {
-        if (InfoBox.rootView != null) {
-          InfoBox.rootView.hideAndDestroy();
-          delete InfoBox.rootView;
-          return App.vent.trigger('item:deactivate');
-        }
+      updateAndReveal: function() {
+        this.Controller.update();
+        return this.Controller.reveal();
       },
-      getRootView: function() {
-        var activeItem, infoBoxModelObject, rootView;
-        activeItem = App.reqres.request('item:entities').active;
-        infoBoxModelObject = InfoBox.getModelObject(activeItem);
-        rootView = new InfoBox.RootView(infoBoxModelObject);
-        return rootView;
+      update: function() {
+        this.destroy();
+        this._ensureContainer();
+        return this.create();
+      },
+      reveal: function() {
+        return InfoBox.rootView.reveal();
+      },
+      hide: function() {
+        InfoBox.rootView.hide();
+        return App.vent.trigger('item:deactivate');
       },
       destroy: function() {
         if (InfoBox.rootView != null) {
-          InfoBox.rootView.destroy();
-          return delete InfoBox.rootView;
+          return InfoBox.rootView.destroy();
         }
+      },
+      _ensureContainer: function() {
+        var $atl;
+        $atl = $('.atl__main');
+        if ($atl.find('.atl__info-box').length === 0) {
+          return $atl.append('<div class="atl__info-box"></div>');
+        }
+      },
+      _getRootView: function() {
+        var rootView;
+        rootView = new InfoBox.RootView({
+          model: this._getModel().model,
+          collection: this._getModel().collection,
+          el: '.atl__info-box'
+        });
+        return rootView;
+      },
+      _getModel: function() {
+        var activeItem, model;
+        activeItem = App.reqres.request('item:entities').active;
+        model = InfoBox.getModelObject(activeItem);
+        return model;
       }
     };
   });
@@ -3951,8 +3968,7 @@
       className: 'atl__info-box fill-parent',
       template: 'projects/show/project_templates/tilemap/submodules/info_box/templates/root',
       events: {
-        'click #atl__info-box__close': 'purgeView',
-        'click #atl__info-box__print': 'print'
+        'click .atl__info-box__close': 'purgeView'
       },
       templateHelpers: App.Util.formatters,
       getCollectionHtml: function() {
@@ -3972,16 +3988,14 @@
           return html;
         }
       },
-      onBeforeShow: function() {
-        return this.$('.static-content').html(this.getCollectionHtml());
-      },
-      onShow: function() {
+      onRender: function() {
         this._buildToc();
         this._setStickyNavLayout();
         this._setImage();
         if (this.collection == null) {
-          return this._setThemeBackground();
+          this._setThemeBackground();
         }
+        return this.$('.static-content').html(this.getCollectionHtml());
       },
       onBeforeDestroy: function() {
         if (this.attributionView != null) {
@@ -3993,6 +4007,7 @@
       },
       reveal: function() {
         var $app;
+        console.log('revealing');
         $app = $('.atl');
         $app.addClass('atl__info-box--active');
         return this;
@@ -4015,7 +4030,7 @@
         return this;
       },
       purgeView: function() {
-        return InfoBox.Controller.hideAndDestroy();
+        return InfoBox.Controller.hide();
       },
       showAttributionLink: function(e) {
         return $(e.target).toggleClass('atl__attribution--active');
@@ -4499,19 +4514,23 @@
         }
       },
       getRootView: function() {
-        var $atl, hoveredItem, items, popupModel, rootView;
+        var hoveredItem, items, popupModel, rootView;
         items = App.reqres.request('item:entities');
         hoveredItem = items.hovered;
         popupModel = Popup.getModel(hoveredItem);
-        $atl = $('.atl');
-        if ($atl.find('.atl__popup').length === 0) {
-          $atl.append('<div class="atl__popup"></div>');
-        }
+        this._ensureContainer();
         rootView = new Popup.RootView({
           model: hoveredItem,
           el: '.atl__popup'
         });
         return rootView;
+      },
+      _ensureContainer: function() {
+        var $atl;
+        $atl = $('.atl__main');
+        if ($atl.find('.atl__popup').length === 0) {
+          return $atl.append('<div class="atl__popup"></div>');
+        }
       }
     };
   });

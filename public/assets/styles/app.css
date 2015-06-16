@@ -3245,7 +3245,7 @@ input[type="radio"] {
     .atl__legend__icon--inactive svg .hexicon__no {
       fill: #666; }
 
-.-id-atl__info-box {
+.atl__info-box {
   width: 100%;
   height: 0%;
   position: absolute;
@@ -3256,15 +3256,17 @@ input[type="radio"] {
   -moz-transition: all 0.5s ease-in-out;
   -ms-transition: all 0.5s ease-in-out;
   -o-transition: all 0.5s ease-in-out;
-  transition: all 0.5s ease-in-out; }
-  .atl__info-box--active .-id-atl__info-box {
+  transition: all 0.5s ease-in-out;
+  overflow-y: scroll;
+  font-family: 'SimplonNorm-Regular-WebS'; }
+  .atl__info-box--active .atl__info-box {
     height: 100%;
     -webkit-transition: all 0.5s ease-in-out;
     -moz-transition: all 0.5s ease-in-out;
     -ms-transition: all 0.5s ease-in-out;
     -o-transition: all 0.5s ease-in-out;
     transition: all 0.5s ease-in-out; }
-  .-id-atl__info-box__close {
+  .atl__info-box__close {
     z-index: 10;
     position: absolute;
     top: 30px;
@@ -3272,12 +3274,8 @@ input[type="radio"] {
     width: 25px;
     height: 25px;
     opacity: 0.6; }
-    .-id-atl__info-box__close:hover {
+    .atl__info-box__close:hover {
       opacity: 1; }
-
-.atl__info-box {
-  overflow-y: scroll;
-  font-family: 'SimplonNorm-Regular-WebS'; }
   .atl__info-box__menu {
     z-index: 100;
     position: absolute;

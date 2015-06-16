@@ -51,10 +51,7 @@ app.get([ '*.js' ], function(req, res, next) {
 	// check if file exists
 	fs.readFile(gzipUrl, function(err) {
 		// if not, continue with unmodified response
-		if (err) { 
-			//return setTimeout(next, 5000);
-			return next();
-		}
+		if (err) { return next(); }
 		// change response url and encoding for gzipped files
 		req.url = url + '.gz';
 		res.set('Content-Encoding', 'gzip');
@@ -64,11 +61,6 @@ app.get([ '*.js' ], function(req, res, next) {
 });
 
 app.use(express.static('public'));
-
-// Basic password protection - remove upon site launch.
-/* if (env === 'production') {
-	app.use(basicAuth('nafed', 'nafed148'));
-} */
 
 // Use router (see ./routes directory).
 app.use(router);

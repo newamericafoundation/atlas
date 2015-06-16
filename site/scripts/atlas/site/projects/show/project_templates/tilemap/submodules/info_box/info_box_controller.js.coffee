@@ -2,26 +2,44 @@
 
 	InfoBox.Controller =
 
-		createAndReveal: () ->
-			if not InfoBox.rootView?
-				InfoBox.rootView = InfoBox.Controller.getRootView()
-				console.log InfoBox.rootView
-				App.vent.trigger 'subview:ready', { 'infoBox': InfoBox.rootView }
-				InfoBox.rootView.reveal()
+		create: () ->
+			InfoBox.rootView = @_getRootView()
+			InfoBox.rootView.render()
 
-		hideAndDestroy: () ->
-			if InfoBox.rootView?
-				InfoBox.rootView.hideAndDestroy()
-				delete InfoBox.rootView
-				App.vent.trigger 'item:deactivate'
+		updateAndReveal: () ->
+			@Controller.update()
+			@Controller.reveal()
 
-		getRootView: () ->
-			activeItem = App.reqres.request('item:entities').active
-			infoBoxModelObject = InfoBox.getModelObject activeItem
-			rootView = new InfoBox.RootView infoBoxModelObject
-			rootView
+		update: () ->
+			@destroy()
+			@_ensureContainer()
+			@create()
+
+		reveal: () ->
+			InfoBox.rootView.reveal()
+
+		hide: () ->
+			InfoBox.rootView.hide()
+			App.vent.trigger 'item:deactivate'
 
 		destroy: () ->
 			if InfoBox.rootView?
 				InfoBox.rootView.destroy()
-				delete InfoBox.rootView
+
+		# Ensure that the container exists.
+		_ensureContainer: () ->
+			$atl = $('.atl__main')
+			if $atl.find('.atl__info-box').length is 0
+				$atl.append('<div class="atl__info-box"></div>')
+
+		_getRootView: () ->
+			rootView = new InfoBox.RootView 
+				model: @_getModel().model
+				collection: @_getModel().collection
+				el: '.atl__info-box'
+			rootView
+
+		_getModel: () ->
+			activeItem = App.reqres.request('item:entities').active
+			model = InfoBox.getModelObject activeItem
+			model

@@ -2563,7 +2563,7 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/templates/roo
   }
   (function() {
     (function() {
-      __out.push('<div class="fill-parent" id="atl__map"></div>\n\n<div class="atl__base-layer"></div>\n<div class="atl__settings-bar">\n\t\n\t<div class="atl__headline"></div>\n\t<div class="atl__search"></div>\n\t<div class="atl__filter"></div>\n\n\t<div id="atl__display-toggle" class="-id-atl__display-toggle atl__binary-toggle">\n\n\t\t<div class="atl__binary-toggle__half">\n\t\t\t<a href="#" class="atl__binary-toggle__link atl__binary-toggle__link--active bg-img-filter--off-white" id="atl__set-filter-display"></a>\n\t\t</div>\n\n\t\t<div class="atl__binary-toggle__half">\n\t\t\t<a href="#" class="atl__binary-toggle__link bg-img-search--off-white" id="atl__set-search-display"></a>\n\t\t</div>\n\n\t</div>\n\n</div>\n\n<div class="atl__legend"></div>\n<div class="atl__info"></div>\n<div class="atl__popup"></div>\n\n<div id="atl__info-box" class="-id-atl__info-box"></div>');
+      __out.push('<div class="fill-parent" id="atl__map"></div>\n\n<div class="atl__base-layer"></div>\n<div class="atl__settings-bar">\n\t\n\t<div class="atl__headline"></div>\n\t<div class="atl__search"></div>\n\t<div class="atl__filter"></div>\n\n\t<div id="atl__display-toggle" class="-id-atl__display-toggle atl__binary-toggle">\n\n\t\t<div class="atl__binary-toggle__half">\n\t\t\t<a href="#" class="atl__binary-toggle__link atl__binary-toggle__link--active bg-img-filter--off-white" id="atl__set-filter-display"></a>\n\t\t</div>\n\n\t\t<div class="atl__binary-toggle__half">\n\t\t\t<a href="#" class="atl__binary-toggle__link bg-img-search--off-white" id="atl__set-search-display"></a>\n\t\t</div>\n\n\t</div>\n\n</div>\n\n<div class="atl__legend"></div>\n<div class="atl__info"></div>\n<div class="atl__popup"></div>\n\n<div class="atl__info-box"></div>');
     
     }).call(this);
     
@@ -3062,7 +3062,7 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/in
     (function() {
       var website;
     
-      __out.push('<a href="#" class="bg-img-no--black -id-atl__info-box__close" id="atl__info-box__close"></a>\n\n<div class="atl__title-bar atl__title-bar--image bg-c-off-white">\n\n\t<div class="atl__title-bar__background"></div>\n\n\t<div class="atl__title-bar__content">\n\t\t<h1 class=\'title\'>');
+      __out.push('<a href="#" class="bg-img-no--black atl__info-box__close"></a>\n\n<div class="atl__title-bar atl__title-bar--image bg-c-off-white">\n\n\t<div class="atl__title-bar__background"></div>\n\n\t<div class="atl__title-bar__content">\n\t\t<h1 class=\'title\'>');
     
       __out.push(__sanitize(this.name || this.title));
     
@@ -46673,8 +46673,8 @@ jQuery.fn.toc.defaults = {
   this.Atlas.module('Projects.Show.Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     this.on('start', function() {
-      this.listenTo(App.vent, 'item:activate', this.Controller.createAndReveal);
-      return App.commands.setHandler('activate:info:box', this.Controller.createAndReveal);
+      this.listenTo(App.vent, 'item:activate', this.Controller.updateAndReveal);
+      return App.commands.setHandler('activate:info:box', this.Controller.updateAndReveal);
     });
     return this.on('stop', function() {
       this.stopListening();
@@ -46687,35 +46687,52 @@ jQuery.fn.toc.defaults = {
 (function() {
   this.Atlas.module('Projects.Show.Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
     return InfoBox.Controller = {
-      createAndReveal: function() {
-        if (InfoBox.rootView == null) {
-          InfoBox.rootView = InfoBox.Controller.getRootView();
-          console.log(InfoBox.rootView);
-          App.vent.trigger('subview:ready', {
-            'infoBox': InfoBox.rootView
-          });
-          return InfoBox.rootView.reveal();
-        }
+      create: function() {
+        InfoBox.rootView = this._getRootView();
+        return InfoBox.rootView.render();
       },
-      hideAndDestroy: function() {
-        if (InfoBox.rootView != null) {
-          InfoBox.rootView.hideAndDestroy();
-          delete InfoBox.rootView;
-          return App.vent.trigger('item:deactivate');
-        }
+      updateAndReveal: function() {
+        this.Controller.update();
+        return this.Controller.reveal();
       },
-      getRootView: function() {
-        var activeItem, infoBoxModelObject, rootView;
-        activeItem = App.reqres.request('item:entities').active;
-        infoBoxModelObject = InfoBox.getModelObject(activeItem);
-        rootView = new InfoBox.RootView(infoBoxModelObject);
-        return rootView;
+      update: function() {
+        this.destroy();
+        this._ensureContainer();
+        return this.create();
+      },
+      reveal: function() {
+        return InfoBox.rootView.reveal();
+      },
+      hide: function() {
+        InfoBox.rootView.hide();
+        return App.vent.trigger('item:deactivate');
       },
       destroy: function() {
         if (InfoBox.rootView != null) {
-          InfoBox.rootView.destroy();
-          return delete InfoBox.rootView;
+          return InfoBox.rootView.destroy();
         }
+      },
+      _ensureContainer: function() {
+        var $atl;
+        $atl = $('.atl__main');
+        if ($atl.find('.atl__info-box').length === 0) {
+          return $atl.append('<div class="atl__info-box"></div>');
+        }
+      },
+      _getRootView: function() {
+        var rootView;
+        rootView = new InfoBox.RootView({
+          model: this._getModel().model,
+          collection: this._getModel().collection,
+          el: '.atl__info-box'
+        });
+        return rootView;
+      },
+      _getModel: function() {
+        var activeItem, model;
+        activeItem = App.reqres.request('item:entities').active;
+        model = InfoBox.getModelObject(activeItem);
+        return model;
       }
     };
   });
@@ -46806,8 +46823,7 @@ jQuery.fn.toc.defaults = {
       className: 'atl__info-box fill-parent',
       template: 'projects/show/project_templates/tilemap/submodules/info_box/templates/root',
       events: {
-        'click #atl__info-box__close': 'purgeView',
-        'click #atl__info-box__print': 'print'
+        'click .atl__info-box__close': 'purgeView'
       },
       templateHelpers: App.Util.formatters,
       getCollectionHtml: function() {
@@ -46827,16 +46843,14 @@ jQuery.fn.toc.defaults = {
           return html;
         }
       },
-      onBeforeShow: function() {
-        return this.$('.static-content').html(this.getCollectionHtml());
-      },
-      onShow: function() {
+      onRender: function() {
         this._buildToc();
         this._setStickyNavLayout();
         this._setImage();
         if (this.collection == null) {
-          return this._setThemeBackground();
+          this._setThemeBackground();
         }
+        return this.$('.static-content').html(this.getCollectionHtml());
       },
       onBeforeDestroy: function() {
         if (this.attributionView != null) {
@@ -46848,6 +46862,7 @@ jQuery.fn.toc.defaults = {
       },
       reveal: function() {
         var $app;
+        console.log('revealing');
         $app = $('.atl');
         $app.addClass('atl__info-box--active');
         return this;
@@ -46870,7 +46885,7 @@ jQuery.fn.toc.defaults = {
         return this;
       },
       purgeView: function() {
-        return InfoBox.Controller.hideAndDestroy();
+        return InfoBox.Controller.hide();
       },
       showAttributionLink: function(e) {
         return $(e.target).toggleClass('atl__attribution--active');
@@ -47354,19 +47369,23 @@ jQuery.fn.toc.defaults = {
         }
       },
       getRootView: function() {
-        var $atl, hoveredItem, items, popupModel, rootView;
+        var hoveredItem, items, popupModel, rootView;
         items = App.reqres.request('item:entities');
         hoveredItem = items.hovered;
         popupModel = Popup.getModel(hoveredItem);
-        $atl = $('.atl');
-        if ($atl.find('.atl__popup').length === 0) {
-          $atl.append('<div class="atl__popup"></div>');
-        }
+        this._ensureContainer();
         rootView = new Popup.RootView({
           model: hoveredItem,
           el: '.atl__popup'
         });
         return rootView;
+      },
+      _ensureContainer: function() {
+        var $atl;
+        $atl = $('.atl__main');
+        if ($atl.find('.atl__popup').length === 0) {
+          return $atl.append('<div class="atl__popup"></div>');
+        }
       }
     };
   });

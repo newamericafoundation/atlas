@@ -27,8 +27,7 @@
 		template: 'projects/show/project_templates/tilemap/submodules/info_box/templates/root'
 
 		events:
-			'click #atl__info-box__close': 'purgeView'
-			'click #atl__info-box__print': 'print'
+			'click .atl__info-box__close': 'purgeView'
 
 		templateHelpers: App.Util.formatters
 
@@ -43,20 +42,19 @@
 					html += view.el.innerHTML#
 				html
 
-		onBeforeShow: ->
-			@$('.static-content').html(@getCollectionHtml())
-
-		onShow: ->
+		onRender: ->
 			@_buildToc()
 			@_setStickyNavLayout()
 			@_setImage()
 			@_setThemeBackground() unless @collection?
+			@$('.static-content').html(@getCollectionHtml())
 
 		onBeforeDestroy: ->
 			@attributionView.destroy() if @attributionView?
 			@tocView.destroy() if @tocView?
 
 		reveal: ->
+			console.log 'revealing'
 			$app = $('.atl')
 			$app.addClass 'atl__info-box--active'
 			@
@@ -75,7 +73,7 @@
 
 		# Destroys the view through the controller, making sure that the view references are removed.
 		purgeView: ->
-			InfoBox.Controller.hideAndDestroy()
+			InfoBox.Controller.hide()
 
 		showAttributionLink: (e) ->
 			$(e.target).toggleClass 'atl__attribution--active'
