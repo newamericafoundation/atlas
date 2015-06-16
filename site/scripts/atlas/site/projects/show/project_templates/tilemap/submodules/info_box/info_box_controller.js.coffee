@@ -7,8 +7,8 @@
 			InfoBox.rootView.render()
 
 		updateAndReveal: () ->
-			@Controller.update()
-			@Controller.reveal()
+			@update()
+			@reveal()
 
 		update: () ->
 			@destroy()

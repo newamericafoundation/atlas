@@ -54,7 +54,6 @@
 			@tocView.destroy() if @tocView?
 
 		reveal: ->
-			console.log 'revealing'
 			$app = $('.atl')
 			$app.addClass 'atl__info-box--active'
 			@
