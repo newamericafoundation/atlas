@@ -2590,33 +2590,6 @@
 }).call(this);
 
 (function() {
-
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      var data, infoBoxSections;
-      data = App.currentProjectModel.get('data');
-      if (data != null) {
-        infoBoxSections = new Entities.ItemCollection(data.infobox_variables, {
-          parse: true
-        });
-      }
-      return App.reqres.setHandler('info:box:section:entities', function() {
-        return infoBoxSections;
-      });
-    });
-    return this.on('stop', function() {
-      return App.reqres.removeHandler('info:box:section:entities');
-    });
-  });
-
-}).call(this);
-
-(function() {
   this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
     Entities.FilterModel = Backbone.Model.extend({
       getVariableModel: function() {
@@ -2646,6 +2619,33 @@
       return App.reqres.setHandler('filter:entities', function() {
         return filters;
       });
+    });
+  });
+
+}).call(this);
+
+(function() {
+
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    this.on('start', function() {
+      var data, infoBoxSections;
+      data = App.currentProjectModel.get('data');
+      if (data != null) {
+        infoBoxSections = new Entities.ItemCollection(data.infobox_variables, {
+          parse: true
+        });
+      }
+      return App.reqres.setHandler('info:box:section:entities', function() {
+        return infoBoxSections;
+      });
+    });
+    return this.on('stop', function() {
+      return App.reqres.removeHandler('info:box:section:entities');
     });
   });
 
@@ -3628,6 +3628,59 @@
 }).call(this);
 
 (function() {
+  this.Atlas.module('Projects.Show.Tilemap.Headline', function(Headline, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    this.on('start', function() {
+      return this.Controller.show();
+    });
+    return this.on('stop', function() {
+      this.Controller.destroy();
+      return this.stopListening();
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Headline', function(Headline, App, Backbone, Marionette, $, _) {
+    return Headline.Controller = {
+      show: function() {
+        Headline.rootView = this.getRootView();
+        return Headline.rootView.render();
+      },
+      destroy: function() {
+        return Headline.rootView.destroy();
+      },
+      getRootView: function() {
+        var rootView;
+        rootView = new Headline.RootView({
+          el: '.atl__headline',
+          model: App.currentProjectModel
+        });
+        return rootView;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Headline', function(Headline, App, Backbone, Marionette, $, _) {
+    return Headline.RootView = Marionette.ItemView.extend({
+      template: 'projects/show/project_templates/tilemap/submodules/headline/templates/root',
+      className: 'atl__headline',
+      events: {
+        'click .link': 'openInfoBox'
+      },
+      openInfoBox: function() {
+        return App.commands.execute('activate:info:box');
+      }
+    });
+  });
+
+}).call(this);
+
+(function() {
   this.Atlas.module('Projects.Show.Tilemap.Info', function(Info, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     this.on('start', function() {
@@ -3756,59 +3809,6 @@
           this.model.update(index);
           return this.render();
         });
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Headline', function(Headline, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      return this.Controller.show();
-    });
-    return this.on('stop', function() {
-      this.Controller.destroy();
-      return this.stopListening();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Headline', function(Headline, App, Backbone, Marionette, $, _) {
-    return Headline.Controller = {
-      show: function() {
-        Headline.rootView = this.getRootView();
-        return Headline.rootView.render();
-      },
-      destroy: function() {
-        return Headline.rootView.destroy();
-      },
-      getRootView: function() {
-        var rootView;
-        rootView = new Headline.RootView({
-          el: '.atl__headline',
-          model: App.currentProjectModel
-        });
-        return rootView;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Headline', function(Headline, App, Backbone, Marionette, $, _) {
-    return Headline.RootView = Marionette.ItemView.extend({
-      template: 'projects/show/project_templates/tilemap/submodules/headline/templates/root',
-      className: 'atl__headline',
-      events: {
-        'click .link': 'openInfoBox'
-      },
-      openInfoBox: function() {
-        return App.commands.execute('activate:info:box');
       }
     });
   });

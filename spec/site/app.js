@@ -1897,6 +1897,112 @@ window.JST_ATL["atlas/templates/svg/icons/yes.jst"] = function (__obj) {
 if (!window.JST_ATL) {
   window.JST_ATL = {};
 }
+window.JST_ATL["atlas/site/projects/show/templates/root.jst"] = function (__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+      __out.push('<div id="atl__side-bar" class="-id-atl__side-bar">\n\t<div class="loading-icon"><div>Loading...</div></div>\n</div>\n<div id="atl__main" class="-id-atl__main fill-parent">\n\t<div class="loading-icon"><div>Loading...</div></div>\n</div>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+};
+
+if (!window.JST_ATL) {
+  window.JST_ATL = {};
+}
+window.JST_ATL["atlas/site/projects/show/templates/side_bar.jst"] = function (__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+      __out.push('<div class="atl__side-bar__background"></div>\n\n<ul class="atl__side-bar__icons">\n\n\t<li>\n\t\t<a href="#" class="bg-img-grid--off-white" data-method="projects"></a>\n\t</li>\n\n\t<li>\n\t\t<a href="#" class="bg-img-share--off-white"  data-method="share"></a>\n\t</li>\n\n\t<li>\n\t\t<a href="#" class="bg-img-contract--off-white"  data-method="collapse"></a>\n\t</li>\n\n\t<li>\n\t\t<a href="#" class="bg-img-help--off-white"  data-method="help" target="_blank"></a>\n\t</li>\n\n\t<li>\n\t\t<a href="#" class="bg-img-print--off-white"  data-method="print" target="_blank"></a>\n\t</li>\n\n\t<li class=\'atl__side-bar__icons__download\'>\n\t\t<form class="form--compact bg-img-download--off-white" action=\'/api/v1/projects/print\' method=\'post\'> \n\t\t\t<input type="hidden" name="atlas_url" value="');
+    
+      __out.push(__sanitize(this.atlas_url));
+    
+      __out.push('">\n\t\t\t<input type="submit" value="">\n\t\t</form>\n\t</li>\n\n</ul>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+};
+
+if (!window.JST_ATL) {
+  window.JST_ATL = {};
+}
 window.JST_ATL["atlas/site/projects/index/templates/root.jst"] = function (__obj) {
   if (!__obj) __obj = {};
   var __out = [], __capture = function(callback) {
@@ -1999,7 +2105,7 @@ window.JST_ATL["atlas/site/projects/index/templates/side_bar.jst"] = function (_
 if (!window.JST_ATL) {
   window.JST_ATL = {};
 }
-window.JST_ATL["atlas/site/projects/show/templates/root.jst"] = function (__obj) {
+window.JST_ATL["atlas/site/projects/index/templates/projects/project.jst"] = function (__obj) {
   if (!__obj) __obj = {};
   var __out = [], __capture = function(callback) {
     var out = __out, result;
@@ -2038,62 +2144,21 @@ window.JST_ATL["atlas/site/projects/show/templates/root.jst"] = function (__obj)
   }
   (function() {
     (function() {
-      __out.push('<div id="atl__side-bar" class="-id-atl__side-bar">\n\t<div class="loading-icon"><div>Loading...</div></div>\n</div>\n<div id="atl__main" class="-id-atl__main fill-parent">\n\t<div class="loading-icon"><div>Loading...</div></div>\n</div>');
+      var initials;
     
-    }).call(this);
+      if (this.title != null) {
+        initials = this.title.substring(0, 1) + this.title.substring(1, 2).toLowerCase();
+      }
     
-  }).call(__obj);
-  __obj.safe = __objSafe, __obj.escape = __escape;
-  return __out.join('');
-};
-
-if (!window.JST_ATL) {
-  window.JST_ATL = {};
-}
-window.JST_ATL["atlas/site/projects/show/templates/side_bar.jst"] = function (__obj) {
-  if (!__obj) __obj = {};
-  var __out = [], __capture = function(callback) {
-    var out = __out, result;
-    __out = [];
-    callback.call(this);
-    result = __out.join('');
-    __out = out;
-    return __safe(result);
-  }, __sanitize = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else if (typeof value !== 'undefined' && value != null) {
-      return __escape(value);
-    } else {
-      return '';
-    }
-  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
-  __safe = __obj.safe = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else {
-      if (!(typeof value !== 'undefined' && value != null)) value = '';
-      var result = new String(value);
-      result.ecoSafe = true;
-      return result;
-    }
-  };
-  if (!__escape) {
-    __escape = __obj.escape = function(value) {
-      return ('' + value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    };
-  }
-  (function() {
-    (function() {
-      __out.push('<div class="atl__side-bar__background"></div>\n\n<ul class="atl__side-bar__icons">\n\n\t<li>\n\t\t<a href="#" class="bg-img-grid--off-white" data-method="projects"></a>\n\t</li>\n\n\t<li>\n\t\t<a href="#" class="bg-img-share--off-white"  data-method="share"></a>\n\t</li>\n\n\t<li>\n\t\t<a href="#" class="bg-img-contract--off-white"  data-method="collapse"></a>\n\t</li>\n\n\t<li>\n\t\t<a href="#" class="bg-img-help--off-white"  data-method="help" target="_blank"></a>\n\t</li>\n\n\t<li>\n\t\t<a href="#" class="bg-img-print--off-white"  data-method="print" target="_blank"></a>\n\t</li>\n\n\t<li class=\'atl__side-bar__icons__download\'>\n\t\t<form class="form--compact bg-img-download--off-white" action=\'/api/v1/projects/print\' method=\'post\'> \n\t\t\t<input type="hidden" name="atlas_url" value="');
+      __out.push('\n\n<div class="atl__project__background atl__project__background--unselected">\n\t<div class="center--content">\n\t\t<p class="atl__project__background__initials">');
     
-      __out.push(__sanitize(this.atlas_url));
+      __out.push(__sanitize(initials));
     
-      __out.push('">\n\t\t\t<input type="submit" value="">\n\t\t</form>\n\t</li>\n\n</ul>');
+      __out.push('</p>\n\t</div>\n</div>\n<div class="atl__project__text">\n\t<div class="center--content">\n\t\t<h1>');
+    
+      __out.push(__sanitize(this.title));
+    
+      __out.push('</h1>\n\t</div>\n</div>');
     
     }).call(this);
     
@@ -2275,71 +2340,6 @@ window.JST_ATL["atlas/site/projects/index/templates/nav/root.jst"] = function (_
   (function() {
     (function() {
       __out.push('<h1 class="title title--compact">Explore Atlas</h1>\n<div id="atl__project-template-filter">\n\t<div class="loading-icon"><div>Loading...</div></div>\n</div>\n<div id="atl__project-section-filter">\n\t<div class="loading-icon"><div>Loading...</div></div>\n</div>');
-    
-    }).call(this);
-    
-  }).call(__obj);
-  __obj.safe = __objSafe, __obj.escape = __escape;
-  return __out.join('');
-};
-
-if (!window.JST_ATL) {
-  window.JST_ATL = {};
-}
-window.JST_ATL["atlas/site/projects/index/templates/projects/project.jst"] = function (__obj) {
-  if (!__obj) __obj = {};
-  var __out = [], __capture = function(callback) {
-    var out = __out, result;
-    __out = [];
-    callback.call(this);
-    result = __out.join('');
-    __out = out;
-    return __safe(result);
-  }, __sanitize = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else if (typeof value !== 'undefined' && value != null) {
-      return __escape(value);
-    } else {
-      return '';
-    }
-  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
-  __safe = __obj.safe = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else {
-      if (!(typeof value !== 'undefined' && value != null)) value = '';
-      var result = new String(value);
-      result.ecoSafe = true;
-      return result;
-    }
-  };
-  if (!__escape) {
-    __escape = __obj.escape = function(value) {
-      return ('' + value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    };
-  }
-  (function() {
-    (function() {
-      var initials;
-    
-      if (this.title != null) {
-        initials = this.title.substring(0, 1) + this.title.substring(1, 2).toLowerCase();
-      }
-    
-      __out.push('\n\n<div class="atl__project__background atl__project__background--unselected">\n\t<div class="center--content">\n\t\t<p class="atl__project__background__initials">');
-    
-      __out.push(__sanitize(initials));
-    
-      __out.push('</p>\n\t</div>\n</div>\n<div class="atl__project__text">\n\t<div class="center--content">\n\t\t<h1>');
-    
-      __out.push(__sanitize(this.title));
-    
-      __out.push('</h1>\n\t</div>\n</div>');
     
     }).call(this);
     
@@ -2563,7 +2563,7 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/templates/roo
   }
   (function() {
     (function() {
-      __out.push('<div class="fill-parent" id="atl__map"></div>\n\n<div class="atl__base-layer"></div>\n<div class="atl__settings-bar">\n\n\t<div class=\'atl__help atl__help--right\'>\n\t\tThis is a help tooltip to provide info the settings bar.\n\t</div>\n\t\n\t<div class="atl__headline"></div>\n\t<div class="atl__search"></div>\n\t<div class="atl__filter"></div>\n\n\t<div id="atl__display-toggle" class="-id-atl__display-toggle atl__binary-toggle">\n\n\t\t<div class="atl__binary-toggle__half">\n\t\t\t<a href="#" class="atl__binary-toggle__link atl__binary-toggle__link--active bg-img-filter--off-white" id="atl__set-filter-display"></a>\n\t\t</div>\n\n\t\t<div class="atl__binary-toggle__half">\n\t\t\t<a href="#" class="atl__binary-toggle__link bg-img-search--off-white" id="atl__set-search-display"></a>\n\t\t</div>\n\n\t</div>\n\n</div>\n\n<div class="atl__legend"></div>\n<div class="atl__info"></div>\n<div class="atl__popup"></div>\n\n<div class="atl__info-box"></div>');
+      __out.push('<div class="fill-parent" id="atl__map"></div>\n\n<div class="atl__base-layer"></div>\n<div class="atl__settings-bar">\n\n\t<div class=\'atl__help atl__help--right\'>\n\t\tUse filters or search for a specific record.\n\t</div>\n\t\n\t<div class="atl__headline"></div>\n\t<div class="atl__search"></div>\n\t<div class="atl__filter"></div>\n\n\t<div id="atl__display-toggle" class="-id-atl__display-toggle atl__binary-toggle">\n\n\t\t<div class="atl__binary-toggle__half">\n\t\t\t<a href="#" class="atl__binary-toggle__link atl__binary-toggle__link--active bg-img-filter--off-white" id="atl__set-filter-display"></a>\n\t\t</div>\n\n\t\t<div class="atl__binary-toggle__half">\n\t\t\t<a href="#" class="atl__binary-toggle__link bg-img-search--off-white" id="atl__set-search-display"></a>\n\t\t</div>\n\n\t</div>\n\n</div>\n\n<div class="atl__legend"></div>\n<div class="atl__info"></div>\n<div class="atl__popup"></div>\n\n<div class="atl__info-box"></div>');
     
     }).call(this);
     
@@ -2614,7 +2614,7 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/templates/zoo
   }
   (function() {
     (function() {
-      __out.push('<div class="atl__map-control">\n\t<div id="atl__map-attribution" class="atl__map-control__button bg-img-info--black"></div> \n\t<div id="atl__map-zoom-in"  class="atl__map-control__button bg-img-plus--black"></div>\n\t<div id="atl__map-zoom-out" class="atl__map-control__button bg-img-minus--black"></div>\n\t<div class=\'atl__help atl__help--left\'>\n\t\tThis is a help tooltip to provide info on map control.\n\t</div>\n</div>');
+      __out.push('<div class="atl__map-control">\n\t<div id="atl__map-attribution" class="atl__map-control__button bg-img-info--black"></div> \n\t<div id="atl__map-zoom-in"  class="atl__map-control__button bg-img-plus--black"></div>\n\t<div id="atl__map-zoom-out" class="atl__map-control__button bg-img-minus--black"></div>\n\t<div class=\'atl__help atl__help--left\'>\n\t\tZoom in and out of the map, and view map copyright links. \n\t</div>\n</div>');
     
     }).call(this);
     
@@ -2879,7 +2879,7 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/fi
   }
   (function() {
     (function() {
-      __out.push('<div id="filter__keys" class="-id-filter__keys"></div>\n<div id="filter__values"></div>\n<div class=\'atl__help atl__help--right\'>\n\tThis is a filter. \n</div>');
+      __out.push('<div id="filter__keys" class="-id-filter__keys"></div>\n<div id="filter__values"></div>\n<div class=\'atl__help atl__help--right\'>\n\tSelect the variable you want to filter by.\n</div>');
     
     }).call(this);
     
@@ -3010,6 +3010,108 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/in
       __out.push(__sanitize(this.items));
     
       __out.push('</p>\n</div>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+};
+
+if (!window.JST_ATL) {
+  window.JST_ATL = {};
+}
+window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/legend/templates/icon.jst"] = function (__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+      __out.push('<svg viewBox="0 0 100 100">\n\t<g class="hexicon__hex">\n\t\t<path d="M86.9,77.3L56,94.4c-3.3,1.9-8.7,1.9-12.1,0L13.1,77.3c-3.3-1.9-6-6.4-6-10.2V32.9c0-3.8,2.7-8.3,6-10.2\n\t\tL44,5.6c3.3-1.9,8.7-1.9,12.1,0l30.9,17.2c3.3,1.9,6,6.4,6,10.2v34.1C93,70.8,90.3,75.4,86.9,77.3"/>\n\t</g>\n\t<g class="hexicon__yes">\n\t\t<polygon points="70.3,31.9 44.3,57.8 30.1,43.6 22.5,51.2 36.7,65.4 36.7,65.4 44.3,73 77.9,39.5 \t"/>\n\t</g>\n\t<g class="hexicon__no">\n\t\t<polygon points="72,35.8 64.4,28.2 50.2,42.4 35.9,28.2 28.3,35.8 42.6,50 28.3,64.2 35.9,71.8 50.2,57.6 64.4,71.8 72,64.2 \n\t\t57.8,50"/>\n\t</g>\n</svg>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+};
+
+if (!window.JST_ATL) {
+  window.JST_ATL = {};
+}
+window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/legend/templates/root.jst"] = function (__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+      __out.push('<ul class="legend-icons"></ul>\n<div class=\'atl__help atl__help--left\'>\n\tThis is a help tooltip to provide info on the legend icons.\n</div>');
     
     }).call(this);
     
@@ -3153,7 +3255,7 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/in
 if (!window.JST_ATL) {
   window.JST_ATL = {};
 }
-window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/legend/templates/icon.jst"] = function (__obj) {
+window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/search/templates/root.jst"] = function (__obj) {
   if (!__obj) __obj = {};
   var __out = [], __capture = function(callback) {
     var out = __out, result;
@@ -3192,58 +3294,7 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/le
   }
   (function() {
     (function() {
-      __out.push('<svg viewBox="0 0 100 100">\n\t<g class="hexicon__hex">\n\t\t<path d="M86.9,77.3L56,94.4c-3.3,1.9-8.7,1.9-12.1,0L13.1,77.3c-3.3-1.9-6-6.4-6-10.2V32.9c0-3.8,2.7-8.3,6-10.2\n\t\tL44,5.6c3.3-1.9,8.7-1.9,12.1,0l30.9,17.2c3.3,1.9,6,6.4,6,10.2v34.1C93,70.8,90.3,75.4,86.9,77.3"/>\n\t</g>\n\t<g class="hexicon__yes">\n\t\t<polygon points="70.3,31.9 44.3,57.8 30.1,43.6 22.5,51.2 36.7,65.4 36.7,65.4 44.3,73 77.9,39.5 \t"/>\n\t</g>\n\t<g class="hexicon__no">\n\t\t<polygon points="72,35.8 64.4,28.2 50.2,42.4 35.9,28.2 28.3,35.8 42.6,50 28.3,64.2 35.9,71.8 50.2,57.6 64.4,71.8 72,64.2 \n\t\t57.8,50"/>\n\t</g>\n</svg>');
-    
-    }).call(this);
-    
-  }).call(__obj);
-  __obj.safe = __objSafe, __obj.escape = __escape;
-  return __out.join('');
-};
-
-if (!window.JST_ATL) {
-  window.JST_ATL = {};
-}
-window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/legend/templates/root.jst"] = function (__obj) {
-  if (!__obj) __obj = {};
-  var __out = [], __capture = function(callback) {
-    var out = __out, result;
-    __out = [];
-    callback.call(this);
-    result = __out.join('');
-    __out = out;
-    return __safe(result);
-  }, __sanitize = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else if (typeof value !== 'undefined' && value != null) {
-      return __escape(value);
-    } else {
-      return '';
-    }
-  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
-  __safe = __obj.safe = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else {
-      if (!(typeof value !== 'undefined' && value != null)) value = '';
-      var result = new String(value);
-      result.ecoSafe = true;
-      return result;
-    }
-  };
-  if (!__escape) {
-    __escape = __obj.escape = function(value) {
-      return ('' + value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    };
-  }
-  (function() {
-    (function() {
-      __out.push('<ul class="legend-icons"></ul>\n<div class=\'atl__help atl__help--left\'>\n\tThis is a help tooltip to provide info on the legend icons.\n</div>');
+      __out.push('<input type="text" placeholder="Search Project">');
     
     }).call(this);
     
@@ -3350,57 +3401,6 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/po
       __out.push(__sanitize(this.name));
     
       __out.push('</p>\n\t\t</div>\n\t</div>\n</div>');
-    
-    }).call(this);
-    
-  }).call(__obj);
-  __obj.safe = __objSafe, __obj.escape = __escape;
-  return __out.join('');
-};
-
-if (!window.JST_ATL) {
-  window.JST_ATL = {};
-}
-window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/search/templates/root.jst"] = function (__obj) {
-  if (!__obj) __obj = {};
-  var __out = [], __capture = function(callback) {
-    var out = __out, result;
-    __out = [];
-    callback.call(this);
-    result = __out.join('');
-    __out = out;
-    return __safe(result);
-  }, __sanitize = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else if (typeof value !== 'undefined' && value != null) {
-      return __escape(value);
-    } else {
-      return '';
-    }
-  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
-  __safe = __obj.safe = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else {
-      if (!(typeof value !== 'undefined' && value != null)) value = '';
-      var result = new String(value);
-      result.ecoSafe = true;
-      return result;
-    }
-  };
-  if (!__escape) {
-    __escape = __obj.escape = function(value) {
-      return ('' + value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    };
-  }
-  (function() {
-    (function() {
-      __out.push('<input type="text" placeholder="Search Project">');
     
     }).call(this);
     
@@ -45450,11 +45450,6 @@ jQuery.fn.toc.defaults = {
 }).call(this);
 
 (function() {
-  this.Atlas.Projects.Show.Polling = this.Atlas.Projects.Show.Explainer;
-
-}).call(this);
-
-(function() {
   this.Atlas.module('Projects.Show.Tilemap', function(Tilemap, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     Tilemap.submoduleKeys = ['Entities', 'Filter', 'Search', 'Legend', 'Info', 'Headline', 'Map', 'InfoBox', 'Popup'];
@@ -45520,6 +45515,11 @@ jQuery.fn.toc.defaults = {
       }
     });
   });
+
+}).call(this);
+
+(function() {
+  this.Atlas.Projects.Show.Polling = this.Atlas.Projects.Show.Explainer;
 
 }).call(this);
 
@@ -47201,6 +47201,122 @@ jQuery.fn.toc.defaults = {
 }).call(this);
 
 (function() {
+  this.Atlas.module('Projects.Show.Tilemap.Popup', function(Popup, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    this.on('start', function() {
+      this.listenTo(App.vent, 'item:mouseover', this.Controller.create);
+      this.listenTo(App.vent, 'item:mouseout', this.Controller.destroy);
+      return App.commands.setHandler('destroy:popup', (function(_this) {
+        return function() {
+          return _this.Controller.destroy();
+        };
+      })(this));
+    });
+    return this.on('stop', function() {
+      App.commands.removeHandler('destroy:popup');
+      this.Controller.destroy();
+      return this.stopListening();
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Popup', function(Popup, App, Backbone, Marionette, $, _) {
+    return Popup.Controller = {
+      create: function() {
+        if (Popup.rootView == null) {
+          Popup.rootView = Popup.Controller.getRootView();
+          return Popup.rootView.render();
+        }
+      },
+      destroy: function() {
+        if (Popup.rootView != null) {
+          Popup.rootView.destroy();
+          return delete Popup.rootView;
+        }
+      },
+      getRootView: function() {
+        var hoveredItem, items, popupModel, rootView;
+        items = App.reqres.request('item:entities');
+        hoveredItem = items.hovered;
+        popupModel = Popup.getModel(hoveredItem);
+        this._ensureContainer();
+        rootView = new Popup.RootView({
+          model: hoveredItem,
+          el: '.atl__popup'
+        });
+        return rootView;
+      },
+      _ensureContainer: function() {
+        var $atl;
+        $atl = $('.atl__main');
+        if ($atl.find('.atl__popup').length === 0) {
+          return $atl.append('<div class="atl__popup"></div>');
+        }
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Popup', function(Popup, App, Backbone, Marionette, $, _) {
+    Popup.Model = Backbone.Model.extend({
+      defaults: {
+        name: 'something'
+      }
+    });
+    return Popup.getModel = function(item) {
+      return new Popup.Model({
+        name: item.get('name')
+      });
+    };
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Popup', function(Popup, App, Backbone, Marionette, $, _) {
+    return Popup.RootView = Marionette.ItemView.extend({
+      tagName: 'a',
+      className: 'atl__popup',
+      template: 'projects/show/project_templates/tilemap/submodules/popup/templates/root',
+      events: {
+        'click': 'activateModel',
+        'hover': 'preventDefault',
+        'mouseover': 'preventDefault',
+        'mouseout': 'preventDefault'
+      },
+      activateModel: function() {
+        return App.vent.trigger('item:activate', this.model);
+      },
+      onRender: function() {
+        var pos;
+        if (this.model.get('_itemType') === 'state') {
+          this.$el.addClass('atl__popup--center');
+        }
+        pos = App.reqres.request('item:map:position', this.model);
+        this.$el.css({
+          top: pos.y,
+          left: pos.x
+        });
+        return this._renderLogo();
+      },
+      _renderLogo: function() {
+        var html;
+        html = Marionette.Renderer.render("projects/show/project_templates/tilemap/submodules/popup/templates/logo");
+        return this.$('#atl__popup__content__logo').html(html);
+      },
+      preventDefault: function(e) {
+        return e.preventDefault();
+      }
+    });
+  });
+
+}).call(this);
+
+(function() {
   this.Atlas.module('Projects.Show.Tilemap.Map', function(Map, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     this.on('start', function() {
@@ -47423,122 +47539,6 @@ jQuery.fn.toc.defaults = {
           this.map.remove();
         }
         return this;
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Popup', function(Popup, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      this.listenTo(App.vent, 'item:mouseover', this.Controller.create);
-      this.listenTo(App.vent, 'item:mouseout', this.Controller.destroy);
-      return App.commands.setHandler('destroy:popup', (function(_this) {
-        return function() {
-          return _this.Controller.destroy();
-        };
-      })(this));
-    });
-    return this.on('stop', function() {
-      App.commands.removeHandler('destroy:popup');
-      this.Controller.destroy();
-      return this.stopListening();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Popup', function(Popup, App, Backbone, Marionette, $, _) {
-    return Popup.Controller = {
-      create: function() {
-        if (Popup.rootView == null) {
-          Popup.rootView = Popup.Controller.getRootView();
-          return Popup.rootView.render();
-        }
-      },
-      destroy: function() {
-        if (Popup.rootView != null) {
-          Popup.rootView.destroy();
-          return delete Popup.rootView;
-        }
-      },
-      getRootView: function() {
-        var hoveredItem, items, popupModel, rootView;
-        items = App.reqres.request('item:entities');
-        hoveredItem = items.hovered;
-        popupModel = Popup.getModel(hoveredItem);
-        this._ensureContainer();
-        rootView = new Popup.RootView({
-          model: hoveredItem,
-          el: '.atl__popup'
-        });
-        return rootView;
-      },
-      _ensureContainer: function() {
-        var $atl;
-        $atl = $('.atl__main');
-        if ($atl.find('.atl__popup').length === 0) {
-          return $atl.append('<div class="atl__popup"></div>');
-        }
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Popup', function(Popup, App, Backbone, Marionette, $, _) {
-    Popup.Model = Backbone.Model.extend({
-      defaults: {
-        name: 'something'
-      }
-    });
-    return Popup.getModel = function(item) {
-      return new Popup.Model({
-        name: item.get('name')
-      });
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Popup', function(Popup, App, Backbone, Marionette, $, _) {
-    return Popup.RootView = Marionette.ItemView.extend({
-      tagName: 'a',
-      className: 'atl__popup',
-      template: 'projects/show/project_templates/tilemap/submodules/popup/templates/root',
-      events: {
-        'click': 'activateModel',
-        'hover': 'preventDefault',
-        'mouseover': 'preventDefault',
-        'mouseout': 'preventDefault'
-      },
-      activateModel: function() {
-        return App.vent.trigger('item:activate', this.model);
-      },
-      onRender: function() {
-        var pos;
-        if (this.model.get('_itemType') === 'state') {
-          this.$el.addClass('atl__popup--center');
-        }
-        pos = App.reqres.request('item:map:position', this.model);
-        this.$el.css({
-          top: pos.y,
-          left: pos.x
-        });
-        return this._renderLogo();
-      },
-      _renderLogo: function() {
-        var html;
-        html = Marionette.Renderer.render("projects/show/project_templates/tilemap/submodules/popup/templates/logo");
-        return this.$('#atl__popup__content__logo').html(html);
-      },
-      preventDefault: function(e) {
-        return e.preventDefault();
       }
     });
   });
@@ -47989,6 +47989,101 @@ jQuery.fn.toc.defaults = {
 }).call(this);
 
 (function() {
+  this.Atlas.module('Projects.Index', function(Index, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    return this.on('start', function() {
+      return this.Controller.showIndex();
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Index', function(Index, App, Backbone, Marionette, $, _) {
+    return Index.Controller = {
+      showIndex: function() {
+        var navView, projectsView, rootView;
+        rootView = new Index.RootView();
+        App.contentRegion.show(rootView);
+        projectsView = this.getProjectsView();
+        navView = new Index.NavView();
+        rootView.getRegion('banner').show(navView);
+        rootView.getRegion('projects').show(projectsView);
+        rootView.getRegion('sideBar').show(new Index.SideBarView());
+        navView.getRegion('sectionFilter').show(this.getProjectSectionsView());
+        return navView.getRegion('templateFilter').show(this.getProjectTemplatesView());
+      },
+      getProjectsView: function() {
+        var projects;
+        projects = App.request("project:entities", {
+          cache: true
+        });
+        return new Index.ProjectsView({
+          collection: projects
+        });
+      },
+      getProjectSectionsView: function() {
+        var projectSections;
+        projectSections = App.request("project:section:entities", {
+          cache: true
+        });
+        return new Index.ProjectSectionsView({
+          collection: projectSections
+        });
+      },
+      getProjectTemplatesView: function() {
+        var projectTemplates;
+        projectTemplates = App.request("project:template:entities", {
+          cache: true
+        });
+        return new Index.ProjectTemplatesView({
+          collection: projectTemplates
+        });
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  this.Atlas.module('Projects.Index', function(Index, App, Backbone, Marionette, $, _) {
+    Index.SideBarView = Marionette.ItemView.extend({
+      tagName: 'div',
+      className: 'atl__side-bar fill-parent',
+      template: 'projects/index/templates/side_bar'
+    });
+    return Index.RootView = (function(superClass) {
+      extend(RootView, superClass);
+
+      function RootView() {
+        return RootView.__super__.constructor.apply(this, arguments);
+      }
+
+      RootView.prototype.tagName = 'div';
+
+      RootView.prototype.className = 'atl fill-parent';
+
+      RootView.prototype.template = 'projects/index/templates/root';
+
+      RootView.prototype.childViewContainer = '.project-container';
+
+      RootView.prototype.regions = {
+        banner: '#atl__nav',
+        projects: '#atl__projects',
+        sideBar: '#atl__side-bar'
+      };
+
+      return RootView;
+
+    })(Marionette.LayoutView);
+  });
+
+}).call(this);
+
+(function() {
   this.Atlas.module('Projects.Show', function(Show, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     this.on('start', function(atlas_url) {
@@ -48159,101 +48254,6 @@ jQuery.fn.toc.defaults = {
         }
       }
     });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Index', function(Index, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    return this.on('start', function() {
-      return this.Controller.showIndex();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Index', function(Index, App, Backbone, Marionette, $, _) {
-    return Index.Controller = {
-      showIndex: function() {
-        var navView, projectsView, rootView;
-        rootView = new Index.RootView();
-        App.contentRegion.show(rootView);
-        projectsView = this.getProjectsView();
-        navView = new Index.NavView();
-        rootView.getRegion('banner').show(navView);
-        rootView.getRegion('projects').show(projectsView);
-        rootView.getRegion('sideBar').show(new Index.SideBarView());
-        navView.getRegion('sectionFilter').show(this.getProjectSectionsView());
-        return navView.getRegion('templateFilter').show(this.getProjectTemplatesView());
-      },
-      getProjectsView: function() {
-        var projects;
-        projects = App.request("project:entities", {
-          cache: true
-        });
-        return new Index.ProjectsView({
-          collection: projects
-        });
-      },
-      getProjectSectionsView: function() {
-        var projectSections;
-        projectSections = App.request("project:section:entities", {
-          cache: true
-        });
-        return new Index.ProjectSectionsView({
-          collection: projectSections
-        });
-      },
-      getProjectTemplatesView: function() {
-        var projectTemplates;
-        projectTemplates = App.request("project:template:entities", {
-          cache: true
-        });
-        return new Index.ProjectTemplatesView({
-          collection: projectTemplates
-        });
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  this.Atlas.module('Projects.Index', function(Index, App, Backbone, Marionette, $, _) {
-    Index.SideBarView = Marionette.ItemView.extend({
-      tagName: 'div',
-      className: 'atl__side-bar fill-parent',
-      template: 'projects/index/templates/side_bar'
-    });
-    return Index.RootView = (function(superClass) {
-      extend(RootView, superClass);
-
-      function RootView() {
-        return RootView.__super__.constructor.apply(this, arguments);
-      }
-
-      RootView.prototype.tagName = 'div';
-
-      RootView.prototype.className = 'atl fill-parent';
-
-      RootView.prototype.template = 'projects/index/templates/root';
-
-      RootView.prototype.childViewContainer = '.project-container';
-
-      RootView.prototype.regions = {
-        banner: '#atl__nav',
-        projects: '#atl__projects',
-        sideBar: '#atl__side-bar'
-      };
-
-      return RootView;
-
-    })(Marionette.LayoutView);
   });
 
 }).call(this);

@@ -7,7 +7,7 @@
 	border-radius: 6px;
 	position: absolute;
 	right: -150px;
-	top: 0;
+	top: 0px;
 	@include font-size(17px);
 	line-height: 100%;
 	width: $width;
@@ -16,7 +16,6 @@
 	background-color: map-get($palette, off-white);
 	opacity: 1;
 	color: #333333;
-
 	
 
 	@mixin pointy() {
@@ -47,7 +46,8 @@
 			@include pointy();
 			margin-left: 0;
 			right: - $tip-size + 2px; 
-			border-left-color: map-get($palette, off-white); 
+			border-left-color: map-get($palette, off-white);
+			z-index: 10; 
 		}
 	}
 

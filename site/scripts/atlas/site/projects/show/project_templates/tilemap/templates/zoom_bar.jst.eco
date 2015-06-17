@@ -3,6 +3,6 @@
 	<div id="atl__map-zoom-in"  class="atl__map-control__button bg-img-plus--black"></div>
 	<div id="atl__map-zoom-out" class="atl__map-control__button bg-img-minus--black"></div>
 	<div class='atl__help atl__help--left'>
-		This is a help tooltip to provide info on map control.
+		Zoom in and out of the map, and view map copyright links. 
 	</div>
 </div>

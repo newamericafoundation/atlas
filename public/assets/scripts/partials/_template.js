@@ -2563,7 +2563,7 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/templates/roo
   }
   (function() {
     (function() {
-      __out.push('<div class="fill-parent" id="atl__map"></div>\n\n<div class="atl__base-layer"></div>\n<div class="atl__settings-bar">\n\n\t<div class=\'atl__help atl__help--right\'>\n\t\tThis is a help tooltip to provide info the settings bar.\n\t</div>\n\t\n\t<div class="atl__headline"></div>\n\t<div class="atl__search"></div>\n\t<div class="atl__filter"></div>\n\n\t<div id="atl__display-toggle" class="-id-atl__display-toggle atl__binary-toggle">\n\n\t\t<div class="atl__binary-toggle__half">\n\t\t\t<a href="#" class="atl__binary-toggle__link atl__binary-toggle__link--active bg-img-filter--off-white" id="atl__set-filter-display"></a>\n\t\t</div>\n\n\t\t<div class="atl__binary-toggle__half">\n\t\t\t<a href="#" class="atl__binary-toggle__link bg-img-search--off-white" id="atl__set-search-display"></a>\n\t\t</div>\n\n\t</div>\n\n</div>\n\n<div class="atl__legend"></div>\n<div class="atl__info"></div>\n<div class="atl__popup"></div>\n\n<div class="atl__info-box"></div>');
+      __out.push('<div class="fill-parent" id="atl__map"></div>\n\n<div class="atl__base-layer"></div>\n<div class="atl__settings-bar">\n\n\t<div class=\'atl__help atl__help--right\'>\n\t\tUse filters or search for a specific record.\n\t</div>\n\t\n\t<div class="atl__headline"></div>\n\t<div class="atl__search"></div>\n\t<div class="atl__filter"></div>\n\n\t<div id="atl__display-toggle" class="-id-atl__display-toggle atl__binary-toggle">\n\n\t\t<div class="atl__binary-toggle__half">\n\t\t\t<a href="#" class="atl__binary-toggle__link atl__binary-toggle__link--active bg-img-filter--off-white" id="atl__set-filter-display"></a>\n\t\t</div>\n\n\t\t<div class="atl__binary-toggle__half">\n\t\t\t<a href="#" class="atl__binary-toggle__link bg-img-search--off-white" id="atl__set-search-display"></a>\n\t\t</div>\n\n\t</div>\n\n</div>\n\n<div class="atl__legend"></div>\n<div class="atl__info"></div>\n<div class="atl__popup"></div>\n\n<div class="atl__info-box"></div>');
     
     }).call(this);
     
@@ -2614,7 +2614,7 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/templates/zoo
   }
   (function() {
     (function() {
-      __out.push('<div class="atl__map-control">\n\t<div id="atl__map-attribution" class="atl__map-control__button bg-img-info--black"></div> \n\t<div id="atl__map-zoom-in"  class="atl__map-control__button bg-img-plus--black"></div>\n\t<div id="atl__map-zoom-out" class="atl__map-control__button bg-img-minus--black"></div>\n\t<div class=\'atl__help atl__help--left\'>\n\t\tThis is a help tooltip to provide info on map control.\n\t</div>\n</div>');
+      __out.push('<div class="atl__map-control">\n\t<div id="atl__map-attribution" class="atl__map-control__button bg-img-info--black"></div> \n\t<div id="atl__map-zoom-in"  class="atl__map-control__button bg-img-plus--black"></div>\n\t<div id="atl__map-zoom-out" class="atl__map-control__button bg-img-minus--black"></div>\n\t<div class=\'atl__help atl__help--left\'>\n\t\tZoom in and out of the map, and view map copyright links. \n\t</div>\n</div>');
     
     }).call(this);
     
@@ -2879,7 +2879,7 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/fi
   }
   (function() {
     (function() {
-      __out.push('<div id="filter__keys" class="-id-filter__keys"></div>\n<div id="filter__values"></div>\n<div class=\'atl__help atl__help--right\'>\n\tThis is a filter. \n</div>');
+      __out.push('<div id="filter__keys" class="-id-filter__keys"></div>\n<div id="filter__values"></div>\n<div class=\'atl__help atl__help--right\'>\n\tSelect the variable you want to filter by.\n</div>');
     
     }).call(this);
     
@@ -3021,6 +3021,108 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/in
 if (!window.JST_ATL) {
   window.JST_ATL = {};
 }
+window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/legend/templates/icon.jst"] = function (__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+      __out.push('<svg viewBox="0 0 100 100">\n\t<g class="hexicon__hex">\n\t\t<path d="M86.9,77.3L56,94.4c-3.3,1.9-8.7,1.9-12.1,0L13.1,77.3c-3.3-1.9-6-6.4-6-10.2V32.9c0-3.8,2.7-8.3,6-10.2\n\t\tL44,5.6c3.3-1.9,8.7-1.9,12.1,0l30.9,17.2c3.3,1.9,6,6.4,6,10.2v34.1C93,70.8,90.3,75.4,86.9,77.3"/>\n\t</g>\n\t<g class="hexicon__yes">\n\t\t<polygon points="70.3,31.9 44.3,57.8 30.1,43.6 22.5,51.2 36.7,65.4 36.7,65.4 44.3,73 77.9,39.5 \t"/>\n\t</g>\n\t<g class="hexicon__no">\n\t\t<polygon points="72,35.8 64.4,28.2 50.2,42.4 35.9,28.2 28.3,35.8 42.6,50 28.3,64.2 35.9,71.8 50.2,57.6 64.4,71.8 72,64.2 \n\t\t57.8,50"/>\n\t</g>\n</svg>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+};
+
+if (!window.JST_ATL) {
+  window.JST_ATL = {};
+}
+window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/legend/templates/root.jst"] = function (__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+      __out.push('<ul class="legend-icons"></ul>\n<div class=\'atl__help atl__help--left\'>\n\tThis is a help tooltip to provide info on the legend icons.\n</div>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+};
+
+if (!window.JST_ATL) {
+  window.JST_ATL = {};
+}
 window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/info_box/templates/root.jst"] = function (__obj) {
   if (!__obj) __obj = {};
   var __out = [], __capture = function(callback) {
@@ -3142,108 +3244,6 @@ window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/in
       __out.push(this.text);
     
       __out.push('</p>');
-    
-    }).call(this);
-    
-  }).call(__obj);
-  __obj.safe = __objSafe, __obj.escape = __escape;
-  return __out.join('');
-};
-
-if (!window.JST_ATL) {
-  window.JST_ATL = {};
-}
-window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/legend/templates/icon.jst"] = function (__obj) {
-  if (!__obj) __obj = {};
-  var __out = [], __capture = function(callback) {
-    var out = __out, result;
-    __out = [];
-    callback.call(this);
-    result = __out.join('');
-    __out = out;
-    return __safe(result);
-  }, __sanitize = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else if (typeof value !== 'undefined' && value != null) {
-      return __escape(value);
-    } else {
-      return '';
-    }
-  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
-  __safe = __obj.safe = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else {
-      if (!(typeof value !== 'undefined' && value != null)) value = '';
-      var result = new String(value);
-      result.ecoSafe = true;
-      return result;
-    }
-  };
-  if (!__escape) {
-    __escape = __obj.escape = function(value) {
-      return ('' + value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    };
-  }
-  (function() {
-    (function() {
-      __out.push('<svg viewBox="0 0 100 100">\n\t<g class="hexicon__hex">\n\t\t<path d="M86.9,77.3L56,94.4c-3.3,1.9-8.7,1.9-12.1,0L13.1,77.3c-3.3-1.9-6-6.4-6-10.2V32.9c0-3.8,2.7-8.3,6-10.2\n\t\tL44,5.6c3.3-1.9,8.7-1.9,12.1,0l30.9,17.2c3.3,1.9,6,6.4,6,10.2v34.1C93,70.8,90.3,75.4,86.9,77.3"/>\n\t</g>\n\t<g class="hexicon__yes">\n\t\t<polygon points="70.3,31.9 44.3,57.8 30.1,43.6 22.5,51.2 36.7,65.4 36.7,65.4 44.3,73 77.9,39.5 \t"/>\n\t</g>\n\t<g class="hexicon__no">\n\t\t<polygon points="72,35.8 64.4,28.2 50.2,42.4 35.9,28.2 28.3,35.8 42.6,50 28.3,64.2 35.9,71.8 50.2,57.6 64.4,71.8 72,64.2 \n\t\t57.8,50"/>\n\t</g>\n</svg>');
-    
-    }).call(this);
-    
-  }).call(__obj);
-  __obj.safe = __objSafe, __obj.escape = __escape;
-  return __out.join('');
-};
-
-if (!window.JST_ATL) {
-  window.JST_ATL = {};
-}
-window.JST_ATL["atlas/site/projects/show/project_templates/tilemap/submodules/legend/templates/root.jst"] = function (__obj) {
-  if (!__obj) __obj = {};
-  var __out = [], __capture = function(callback) {
-    var out = __out, result;
-    __out = [];
-    callback.call(this);
-    result = __out.join('');
-    __out = out;
-    return __safe(result);
-  }, __sanitize = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else if (typeof value !== 'undefined' && value != null) {
-      return __escape(value);
-    } else {
-      return '';
-    }
-  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
-  __safe = __obj.safe = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else {
-      if (!(typeof value !== 'undefined' && value != null)) value = '';
-      var result = new String(value);
-      result.ecoSafe = true;
-      return result;
-    }
-  };
-  if (!__escape) {
-    __escape = __obj.escape = function(value) {
-      return ('' + value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    };
-  }
-  (function() {
-    (function() {
-      __out.push('<ul class="legend-icons"></ul>\n<div class=\'atl__help atl__help--left\'>\n\tThis is a help tooltip to provide info on the legend icons.\n</div>');
     
     }).call(this);
     

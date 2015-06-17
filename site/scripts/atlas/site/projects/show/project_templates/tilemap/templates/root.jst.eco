@@ -4,7 +4,7 @@
 <div class="atl__settings-bar">
 
 	<div class='atl__help atl__help--right'>
-		This is a help tooltip to provide info the settings bar.
+		Use filters or search for a specific record.
 	</div>
 	
 	<div class="atl__headline"></div>
