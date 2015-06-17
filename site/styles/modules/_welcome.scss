@@ -1,6 +1,6 @@
 .welcome {
 
-	@extend %pages-container;
+	@extend %page-container;
 
 	&__title, &__subtitle, &__strip, &__main-nav {
 		position: relative;

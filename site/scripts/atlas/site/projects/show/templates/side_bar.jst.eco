@@ -2,25 +2,13 @@
 
 <ul class="atl__side-bar__icons">
 
-	<li>
-		<a href="#" class="bg-img-grid--off-white" data-method="projects"></a>
-	</li>
+	<% for option in [ ['projects', 'grid'], ['share', 'share'], ['collapse', 'contract'], ['help', 'help', true], ['print', 'print', true] ]: %>
 
-	<li>
-		<a href="#" class="bg-img-share--off-white"  data-method="share"></a>
-	</li>
+		<li>
+			<a href="#" class="bg-img-<%= option[1] %>--off-white" data-method="<%= option[0] %>" target="<%= if option[2] then '_blank' else '' %>"></a>
+		</li>
 
-	<li>
-		<a href="#" class="bg-img-contract--off-white"  data-method="collapse"></a>
-	</li>
-
-	<li>
-		<a href="#" class="bg-img-help--off-white"  data-method="help" target="_blank"></a>
-	</li>
-
-	<li>
-		<a href="#" class="bg-img-print--off-white"  data-method="print" target="_blank"></a>
-	</li>
+	<% end %>
 
 	<li class='atl__side-bar__icons__download'>
 		<form class="form--compact bg-img-download--off-white" action='/api/v1/projects/print' method='post'> 

@@ -1,6 +1,6 @@
 .atl {
 
-	@extend %pages-container;
+	@extend %page-container;
 	
 	&__clear-side-bar {
 		width: 100%;
@@ -88,6 +88,7 @@
 
 	&__search {
 		opacity: 0.8;
+		padding: 0 20px;
 	}
 
 }
@@ -135,6 +136,12 @@
 	right: 5px;
 	.atl--collapsed & {
 		left: 30px;
+		@include bp-show-sidebars() {
+			left: $side-bar-width + 30px;
+		}
+		@include bp-unstack-map-settings-bar() {
+			left: 30px;
+		}
 	}
 }
 

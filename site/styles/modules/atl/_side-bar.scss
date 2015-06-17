@@ -17,22 +17,13 @@
 	}
 
 	li {
-		@include atl-icons();
+		@include atl-icon();
 		background-color: rgba(27, 27, 27, 0.85);
 	}
 
-	&__icons {
-
-		&__download {
-			display: none;
-			.atl--tilemap & { display: block; }
-		}
-
-	}
-
-	svg { 
-		width: 100%; height: 100%;
-		fill: map-get($palette, off-white);
+	&__icons__download {
+		display: none;
+		.atl--tilemap & { display: block; }
 	}
 
 }

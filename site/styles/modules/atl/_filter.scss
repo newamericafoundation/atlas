@@ -1,0 +1,57 @@
+.atl__filter {
+    
+    position: relative;
+
+    &__keys {
+        position: relative;
+        padding: 10px 20px;
+        @mixin collapsed {
+            padding-left: 40px;
+            padding-top: 50px;
+            @include bp-show-sidebars {
+                padding-left: 20px;
+            }
+            @include bp-unstack-map-settings-bar {
+                padding-left: 40px;
+            }
+        }
+        @mixin expanded {
+            padding: 10px 20px 10px 20px;
+        }
+        @include collapsed;
+        .atl--collapsed & { @include collapsed; } 
+        @include bp-unstack-map-settings-bar { @include expanded; }
+
+        /*.button {
+            border-color: map-get(map-get($palette, grey), base);
+            p { color: map-get(map-get($palette, grey), base); }
+            @include bp-unstack-map-settings-bar { 
+                border: 2px solid map-get($palette, off-white);
+                p { color: map-get(map-get($palette, grey), off-white); }
+            }
+        }*/
+
+    }
+
+    &__values {
+        position: relative;
+        padding: 10px 20px;
+        display: none;
+        @include bp-unstack-map-settings-bar { display: block; }
+        .atl--collapsed & { display: none; }
+        & > p {
+            @include font-size(16px);
+            font-family: 'MetaSerifWeb-Book'; 
+            opacity: 0.7;
+        }
+        a {
+            @include link;
+            @include font-size(16px);
+            color: map-get($palette, off-white);
+            border-bottom: 2px solid map-get($palette, off-white);
+            font-family: 'SimplonNorm-Regular-WebS';
+        }
+        opacity: 1;
+    }
+
+}

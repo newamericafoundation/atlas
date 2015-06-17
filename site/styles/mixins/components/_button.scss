@@ -45,4 +45,4 @@
 }
 
 .button { @include button; }
-.large-button { @include button(26px, 8px); }
+.button--large { @include button(26px, 8px); }

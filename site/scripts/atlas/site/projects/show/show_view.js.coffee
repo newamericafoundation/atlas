@@ -61,7 +61,7 @@
 	Show.RootView = Marionette.LayoutView.extend
 
 		template: 'projects/show/templates/root'
-		className: 'atl atl--filter-display'
+		className: 'atl atl--filter-display' 
 		regions:
 			sideBar: '#atl__side-bar'
 			main: '#atl__main'

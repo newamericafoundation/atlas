@@ -1,8 +1,12 @@
 .atl__headline {
 
+	display: none;
+
 	.atl--collapsed & { display: none; }
 
-	padding-bottom: 20px;
+	@include bp-unstack-map-settings-bar { display: block; }
+
+	padding: 0 20px 20px 20px;
 
 	p {
 		@include font-size(16px);

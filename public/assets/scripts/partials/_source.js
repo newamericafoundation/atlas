@@ -2549,7 +2549,7 @@
       className: 'atl__main fill-parent',
       template: 'projects/show/project_templates/tilemap/templates/root',
       initialize: function() {
-        return this.listenTo(App.vent, 'subview:ready', function(subviewHash) {
+        this.listenTo(App.vent, 'subview:ready', function(subviewHash) {
           var key, results, value;
           results = [];
           for (key in subviewHash) {
@@ -2558,6 +2558,14 @@
           }
           return results;
         });
+        return $(window).on('resize', function() {
+          return console.log('resized window');
+        });
+      },
+      collapseIfSettingsBarIsOverflowing: function() {
+        var h1, h2;
+        h1 = $('.atl__headline').height() + $('.atl__filter').height();
+        return h2 = $('.atl__settings-bar').height();
       },
       regions: {
         infoBox: '#atl__info-box',
@@ -3561,7 +3569,7 @@
     });
     Filter.ValuesView = Marionette.CompositeView.extend({
       tagName: 'div',
-      className: 'atl__filter-values',
+      className: 'atl__filter__values',
       template: 'projects/show/project_templates/tilemap/submodules/filter/templates/filter_values',
       childView: Filter.ValueView,
       childViewContainer: 'ul',
@@ -3609,7 +3617,7 @@
     });
     Filter.KeysView = Marionette.CompositeView.extend({
       tagName: 'div',
-      className: '',
+      className: 'atl__filter__keys',
       template: 'projects/show/project_templates/tilemap/submodules/filter/templates/filter_keys',
       childView: Filter.KeyView,
       childViewContainer: 'ul'
@@ -3619,8 +3627,8 @@
       className: 'atl__filter',
       template: 'projects/show/project_templates/tilemap/submodules/filter/templates/root',
       regions: {
-        keys: '#filter__keys',
-        values: '#filter__values'
+        keys: '#atl__filter__keys',
+        values: '#atl__filter__values'
       }
     });
   });

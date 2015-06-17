@@ -11,6 +11,13 @@
 				for key, value of subviewHash
 					@getRegion(key).show(value)
 
+			$(window).on 'resize', ->
+				console.log 'resized window' 
+
+		collapseIfSettingsBarIsOverflowing: ->
+			h1 = $('.atl__headline').height() + $('.atl__filter').height()
+			h2 = $('.atl__settings-bar').height()
+
 		regions:
 			infoBox:  '#atl__info-box'
 			map:      '#atl__map'
@@ -19,3 +26,4 @@
 
 		preventDefault: (e) ->
 			e.preventDefault()
+

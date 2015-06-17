@@ -53,7 +53,7 @@
 	Filter.ValuesView = Marionette.CompositeView.extend
 
 		tagName: 'div'
-		className: 'atl__filter-values'
+		className: 'atl__filter__values'
 		template: 'projects/show/project_templates/tilemap/submodules/filter/templates/filter_values'
 		childView: Filter.ValueView
 		childViewContainer: 'ul'
@@ -103,7 +103,7 @@
 	Filter.KeysView = Marionette.CompositeView.extend
 
 		tagName: 'div'
-		className: ''
+		className: 'atl__filter__keys'
 		template: 'projects/show/project_templates/tilemap/submodules/filter/templates/filter_keys'
 		childView: Filter.KeyView
 		childViewContainer: 'ul'
@@ -117,5 +117,5 @@
 		template: 'projects/show/project_templates/tilemap/submodules/filter/templates/root'
 		
 		regions:
-			keys: '#filter__keys'
-			values: '#filter__values'
+			keys: '#atl__filter__keys'
+			values: '#atl__filter__values'

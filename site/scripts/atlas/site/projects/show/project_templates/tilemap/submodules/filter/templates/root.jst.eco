@@ -1,5 +1,2 @@
-<div id="filter__keys" class="-id-filter__keys"></div>
-<div id="filter__values"></div>
-<div class='atl__help atl__help--right'>
-	Select the variable you want to filter by.
-</div>
+<div id="atl__filter__keys" class="-id-atl__filter__keys"></div>
+<div id="atl__filter__values"></div>

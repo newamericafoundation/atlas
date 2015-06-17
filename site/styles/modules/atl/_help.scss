@@ -33,7 +33,7 @@
 		right: - ($width + $tip-size / 2);
 		&:before {
 			@include pointy();
-			margin-left: - $tip-size;
+			margin-left: -$tip-size;
 			left: +2px;  
 			border-right-color: map-get($palette, off-white);
 			z-index: 10; 
@@ -45,7 +45,7 @@
 		&:after {
 			@include pointy();
 			margin-left: 0;
-			right: - $tip-size + 2px; 
+			right: -$tip-size+2px;
 			border-left-color: map-get($palette, off-white);
 			z-index: 10; 
 		}
