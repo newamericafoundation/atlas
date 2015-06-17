@@ -1,5 +1,8 @@
 .atl__help {
 
+	$tip-size: 25px;
+	$width: 210px;
+
 	padding: 20px;
 	border-radius: 6px;
 	position: absolute;
@@ -7,41 +10,43 @@
 	top: 0;
 	@include font-size(17px);
 	line-height: 100%;
-	width: 210px;
+	width: $width;
 	overflow-x: visible;
 	overflow-y: visible;
 	background-color: map-get($palette, off-white);
 	opacity: 1;
 	color: #333333;
 
+	
+
 	@mixin pointy() {
 		content: ' ';
 		height: 0; 
 		position: absolute; 
 		width: 0; 
-		
-		border: 15px solid transparent; 
+		border: #{$tip-size / 2} solid transparent; 
 		top: 27%;
 		overflow: visible; 
 		line-height: 100%;
 	}
 
 	&--right {
-		right: -225px;
+		right: - ($width + $tip-size / 2);
 		&:before {
 			@include pointy();
-			margin-left: -30px;
-			left: 0px;  
+			margin-left: - $tip-size;
+			left: +2px;  
 			border-right-color: map-get($palette, off-white);
+			z-index: 10; 
 		}
 	}
 
 	&--left {
-		left: -225px;
+		left: - ($width + $tip-size / 2);
 		&:after {
 			@include pointy();
 			margin-left: 0;
-			right: -30px;
+			right: - $tip-size + 2px; 
 			border-left-color: map-get($palette, off-white); 
 		}
 	}
