@@ -52,8 +52,9 @@
 			position: relative;
 			top: 0px;
 			&--fixed {
-				position: absolute;
-				top: 20px;
+				position: fixed;
+				left: $side-bar-width + 45px; 
+				top: $top-bar-height + 20px;
 			}
 		}
 	}
@@ -87,35 +88,6 @@
 
 	&__search {
 		opacity: 0.8;
-	}
-
-	&__help {
-		padding: 20px;
-		border-radius: 8px; 
-		position: absolute;
-		right: -150px;
-		top: 0;
-		@include font-size(18px);
-		line-height: 110%;
-		width: 180px;
-		height: 120px;
-		overflow-x: hidden; 
-		overflow-y: scroll;
-		background-color: map-get(map-get($palette, grey), base);
-
-		&--right {
-			right: -220px;
-		}
-
-		&--left {
-			left: -220px;
-		}
-
-		display: none;
-		.atl--help & {
-			display: block;
-		}
-
 	}
 
 }

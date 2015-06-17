@@ -45405,7 +45405,6 @@ jQuery.fn.toc.defaults = {
       },
       _setStickyNavLayout: function(subClasses) {
         var $elem, className, scrollTop;
-        console.log('settings sticky scroll layout');
         scrollTop = $('#atl__main').scrollTop();
         className = "atl__page-nav";
         $elem = this.$("." + className);
@@ -45541,6 +45540,33 @@ jQuery.fn.toc.defaults = {
 }).call(this);
 
 (function() {
+
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    this.on('start', function() {
+      var data, infoBoxSections;
+      data = App.currentProjectModel.get('data');
+      if (data != null) {
+        infoBoxSections = new Entities.ItemCollection(data.infobox_variables, {
+          parse: true
+        });
+      }
+      return App.reqres.setHandler('info:box:section:entities', function() {
+        return infoBoxSections;
+      });
+    });
+    return this.on('stop', function() {
+      return App.reqres.removeHandler('info:box:section:entities');
+    });
+  });
+
+}).call(this);
+
+(function() {
   this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
     Entities.FilterModel = Backbone.Model.extend({
       getVariableModel: function() {
@@ -45570,33 +45596,6 @@ jQuery.fn.toc.defaults = {
       return App.reqres.setHandler('filter:entities', function() {
         return filters;
       });
-    });
-  });
-
-}).call(this);
-
-(function() {
-
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      var data, infoBoxSections;
-      data = App.currentProjectModel.get('data');
-      if (data != null) {
-        infoBoxSections = new Entities.ItemCollection(data.infobox_variables, {
-          parse: true
-        });
-      }
-      return App.reqres.setHandler('info:box:section:entities', function() {
-        return infoBoxSections;
-      });
-    });
-    return this.on('stop', function() {
-      return App.reqres.removeHandler('info:box:section:entities');
     });
   });
 
@@ -46899,9 +46898,6 @@ jQuery.fn.toc.defaults = {
       template: 'projects/show/project_templates/tilemap/submodules/info_box/templates/section'
     });
     TocView = Marionette.ItemView.extend({
-      initialize: function() {
-        return console.log('initialized');
-      },
       events: {
         'click a': 'triggerScroll'
       },

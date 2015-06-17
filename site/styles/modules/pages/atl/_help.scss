@@ -1,0 +1,54 @@
+.atl__help {
+
+	padding: 20px;
+	border-radius: 6px;
+	position: absolute;
+	right: -150px;
+	top: 0;
+	@include font-size(17px);
+	line-height: 100%;
+	width: 210px;
+	overflow-x: visible;
+	overflow-y: visible;
+	background-color: map-get($palette, off-white);
+	opacity: 1;
+	color: #333333;
+
+	@mixin pointy() {
+		content: ' ';
+		height: 0; 
+		position: absolute; 
+		width: 0; 
+		
+		border: 15px solid transparent; 
+		top: 27%;
+		overflow: visible; 
+		line-height: 100%;
+	}
+
+	&--right {
+		right: -225px;
+		&:before {
+			@include pointy();
+			margin-left: -30px;
+			left: 0px;  
+			border-right-color: map-get($palette, off-white);
+		}
+	}
+
+	&--left {
+		left: -225px;
+		&:after {
+			@include pointy();
+			margin-left: 0;
+			right: -30px;
+			border-left-color: map-get($palette, off-white); 
+		}
+	}
+
+	display: none;
+	.atl--help & {
+		display: block;
+	}
+
+}

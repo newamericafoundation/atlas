@@ -2455,7 +2455,6 @@
       },
       _setStickyNavLayout: function(subClasses) {
         var $elem, className, scrollTop;
-        console.log('settings sticky scroll layout');
         scrollTop = $('#atl__main').scrollTop();
         className = "atl__page-nav";
         $elem = this.$("." + className);
@@ -2497,11 +2496,6 @@
 
 (function() {
   this.Atlas.Projects.Show.PolicyBrief = this.Atlas.Projects.Show.Explainer;
-
-}).call(this);
-
-(function() {
-  this.Atlas.Projects.Show.Polling = this.Atlas.Projects.Show.Explainer;
 
 }).call(this);
 
@@ -2575,6 +2569,11 @@
 }).call(this);
 
 (function() {
+  this.Atlas.Projects.Show.Polling = this.Atlas.Projects.Show.Explainer;
+
+}).call(this);
+
+(function() {
   this.Atlas.module('Projects.Show.Tilemap.Submodules', function(Submodules, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     return App.reqres.setHandler('value:hovered', function() {
@@ -2620,33 +2619,6 @@
       return App.reqres.setHandler('filter:entities', function() {
         return filters;
       });
-    });
-  });
-
-}).call(this);
-
-(function() {
-
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      var data, infoBoxSections;
-      data = App.currentProjectModel.get('data');
-      if (data != null) {
-        infoBoxSections = new Entities.ItemCollection(data.infobox_variables, {
-          parse: true
-        });
-      }
-      return App.reqres.setHandler('info:box:section:entities', function() {
-        return infoBoxSections;
-      });
-    });
-    return this.on('stop', function() {
-      return App.reqres.removeHandler('info:box:section:entities');
     });
   });
 
@@ -3101,6 +3073,33 @@
     });
     return this.on('stop', function() {
       return App.reqres.removeHandler('variable:entities');
+    });
+  });
+
+}).call(this);
+
+(function() {
+
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    this.on('start', function() {
+      var data, infoBoxSections;
+      data = App.currentProjectModel.get('data');
+      if (data != null) {
+        infoBoxSections = new Entities.ItemCollection(data.infobox_variables, {
+          parse: true
+        });
+      }
+      return App.reqres.setHandler('info:box:section:entities', function() {
+        return infoBoxSections;
+      });
+    });
+    return this.on('stop', function() {
+      return App.reqres.removeHandler('info:box:section:entities');
     });
   });
 
@@ -3949,9 +3948,6 @@
       template: 'projects/show/project_templates/tilemap/submodules/info_box/templates/section'
     });
     TocView = Marionette.ItemView.extend({
-      initialize: function() {
-        return console.log('initialized');
-      },
       events: {
         'click a': 'triggerScroll'
       },
@@ -5043,101 +5039,6 @@
 }).call(this);
 
 (function() {
-  this.Atlas.module('Projects.Index', function(Index, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    return this.on('start', function() {
-      return this.Controller.showIndex();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Index', function(Index, App, Backbone, Marionette, $, _) {
-    return Index.Controller = {
-      showIndex: function() {
-        var navView, projectsView, rootView;
-        rootView = new Index.RootView();
-        App.contentRegion.show(rootView);
-        projectsView = this.getProjectsView();
-        navView = new Index.NavView();
-        rootView.getRegion('banner').show(navView);
-        rootView.getRegion('projects').show(projectsView);
-        rootView.getRegion('sideBar').show(new Index.SideBarView());
-        navView.getRegion('sectionFilter').show(this.getProjectSectionsView());
-        return navView.getRegion('templateFilter').show(this.getProjectTemplatesView());
-      },
-      getProjectsView: function() {
-        var projects;
-        projects = App.request("project:entities", {
-          cache: true
-        });
-        return new Index.ProjectsView({
-          collection: projects
-        });
-      },
-      getProjectSectionsView: function() {
-        var projectSections;
-        projectSections = App.request("project:section:entities", {
-          cache: true
-        });
-        return new Index.ProjectSectionsView({
-          collection: projectSections
-        });
-      },
-      getProjectTemplatesView: function() {
-        var projectTemplates;
-        projectTemplates = App.request("project:template:entities", {
-          cache: true
-        });
-        return new Index.ProjectTemplatesView({
-          collection: projectTemplates
-        });
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  this.Atlas.module('Projects.Index', function(Index, App, Backbone, Marionette, $, _) {
-    Index.SideBarView = Marionette.ItemView.extend({
-      tagName: 'div',
-      className: 'atl__side-bar fill-parent',
-      template: 'projects/index/templates/side_bar'
-    });
-    return Index.RootView = (function(superClass) {
-      extend(RootView, superClass);
-
-      function RootView() {
-        return RootView.__super__.constructor.apply(this, arguments);
-      }
-
-      RootView.prototype.tagName = 'div';
-
-      RootView.prototype.className = 'atl fill-parent';
-
-      RootView.prototype.template = 'projects/index/templates/root';
-
-      RootView.prototype.childViewContainer = '.project-container';
-
-      RootView.prototype.regions = {
-        banner: '#atl__nav',
-        projects: '#atl__projects',
-        sideBar: '#atl__side-bar'
-      };
-
-      return RootView;
-
-    })(Marionette.LayoutView);
-  });
-
-}).call(this);
-
-(function() {
   this.Atlas.module('Projects.Show', function(Show, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     this.on('start', function(atlas_url) {
@@ -5308,6 +5209,101 @@
         }
       }
     });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Index', function(Index, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    return this.on('start', function() {
+      return this.Controller.showIndex();
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Index', function(Index, App, Backbone, Marionette, $, _) {
+    return Index.Controller = {
+      showIndex: function() {
+        var navView, projectsView, rootView;
+        rootView = new Index.RootView();
+        App.contentRegion.show(rootView);
+        projectsView = this.getProjectsView();
+        navView = new Index.NavView();
+        rootView.getRegion('banner').show(navView);
+        rootView.getRegion('projects').show(projectsView);
+        rootView.getRegion('sideBar').show(new Index.SideBarView());
+        navView.getRegion('sectionFilter').show(this.getProjectSectionsView());
+        return navView.getRegion('templateFilter').show(this.getProjectTemplatesView());
+      },
+      getProjectsView: function() {
+        var projects;
+        projects = App.request("project:entities", {
+          cache: true
+        });
+        return new Index.ProjectsView({
+          collection: projects
+        });
+      },
+      getProjectSectionsView: function() {
+        var projectSections;
+        projectSections = App.request("project:section:entities", {
+          cache: true
+        });
+        return new Index.ProjectSectionsView({
+          collection: projectSections
+        });
+      },
+      getProjectTemplatesView: function() {
+        var projectTemplates;
+        projectTemplates = App.request("project:template:entities", {
+          cache: true
+        });
+        return new Index.ProjectTemplatesView({
+          collection: projectTemplates
+        });
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  this.Atlas.module('Projects.Index', function(Index, App, Backbone, Marionette, $, _) {
+    Index.SideBarView = Marionette.ItemView.extend({
+      tagName: 'div',
+      className: 'atl__side-bar fill-parent',
+      template: 'projects/index/templates/side_bar'
+    });
+    return Index.RootView = (function(superClass) {
+      extend(RootView, superClass);
+
+      function RootView() {
+        return RootView.__super__.constructor.apply(this, arguments);
+      }
+
+      RootView.prototype.tagName = 'div';
+
+      RootView.prototype.className = 'atl fill-parent';
+
+      RootView.prototype.template = 'projects/index/templates/root';
+
+      RootView.prototype.childViewContainer = '.project-container';
+
+      RootView.prototype.regions = {
+        banner: '#atl__nav',
+        projects: '#atl__projects',
+        sideBar: '#atl__side-bar'
+      };
+
+      return RootView;
+
+    })(Marionette.LayoutView);
   });
 
 }).call(this);
