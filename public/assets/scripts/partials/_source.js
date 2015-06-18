@@ -1098,69 +1098,75 @@
 }).call(this);
 
 (function() {
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  this.Atlas.module('Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    var entityManager;
-    Entities.CoreDatumModel = (function(superClass) {
-      extend(CoreDatumModel, superClass);
-
-      function CoreDatumModel() {
-        return CoreDatumModel.__super__.constructor.apply(this, arguments);
+  this.Atlas.module('Models', function(Models, App, Backbone, Marionette, $, _) {
+    Models.BaseModel = Backbone.Model.extend({
+      _findAndReplaceKey: function(data, standardKey, keyFormatList) {
+        var found, i, kf, len;
+        found = false;
+        if (keyFormatList == null) {
+          keyFormatList = [standardKey];
+        }
+        for (i = 0, len = keyFormatList.length; i < len; i++) {
+          kf = keyFormatList[i];
+          if (data[kf]) {
+            found = true;
+            if (kf !== standardKey) {
+              data[standardKey] = data[kf];
+              delete data[kf];
+            }
+          }
+        }
+        return found;
       }
+    });
+    return Models.BaseCollection = Backbone.Collection.extend({
+      model: Models.BaseModel
+    });
+  });
 
-      CoreDatumModel.prototype.urlRoot = '/api/v1/core_data';
+}).call(this);
 
-      CoreDatumModel.prototype.url = function() {
+(function() {
+  this.Atlas.module('Models', function(Models, App, Backbone, Marionette, $, _) {
+    Models.CoreDatum = Models.BaseModel.extend({
+      urlRoot: '/api/v1/core_data',
+      url: function() {
         return this.urlRoot + "?" + $.param({
           name: this.get('name')
         });
-      };
-
-      CoreDatumModel.prototype.parse = function(resp) {
-        return resp = this._getFirstModel(resp);
-      };
-
-      CoreDatumModel.prototype._getFirstModel = function(resp) {
+      },
+      parse: function(resp) {
+        return resp = this._removeArrayWrapper(resp);
+      },
+      _removeArrayWrapper: function(resp) {
         if (_.isArray(resp)) {
           resp = resp[0];
         }
         return resp;
-      };
-
-      return CoreDatumModel;
-
-    })(Backbone.Model);
-    Entities.CoreDatumCollection = (function(superClass) {
-      extend(CoreDatumCollection, superClass);
-
-      function CoreDatumCollection() {
-        return CoreDatumCollection.__super__.constructor.apply(this, arguments);
       }
-
-      CoreDatumCollection.prototype.model = Entities.CoreDatumModel;
-
-      CoreDatumCollection.prototype.url = 'api/v1/core_data';
-
-      return CoreDatumCollection;
-
-    })(Backbone.Collection);
-    entityManager = new App.Base.EntityManager({
-      entityConstructor: Entities.CoreDatumModel,
-      entitiesConstructor: Entities.CoreDatumCollection
     });
-    App.reqres.setHandler('core:datum:entities', function() {
-      return entityManager.getEntities({
-        cache: true
-      });
+    return Models.CoreData = Models.BaseCollection.extend({
+      model: Models.CoreDatum,
+      url: 'api/v1/core_data'
     });
-    return App.reqres.setHandler('core:datum:entity', function(name) {
-      return entityManager.getEntity({
-        name: name
-      }, {
-        cache: false
-      });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Models', function(Models, App, Backbone, Marionette, $, _) {
+    Models.Filter = Models.BaseModel.extend({
+      getVariableModel: function(variables) {
+        if (variables == null) {
+          variables = App.reqres.request('variable:entities');
+        }
+        return variables.findWhere({
+          id: this.get('variable_id')
+        });
+      }
+    });
+    return Models.Filters = Models.BaseCollection.extend({
+      model: Models.Filter
     });
   });
 
@@ -1170,22 +1176,21 @@
   var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
-  this.Atlas.module('Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    var entityManager;
-    Entities.ImageModel = (function(superClass) {
-      extend(ImageModel, superClass);
+  this.Atlas.module('Models', function(Models, App, Backbone, Marionette, $, _) {
+    Models.Image = (function(superClass) {
+      extend(Image, superClass);
 
-      function ImageModel() {
-        return ImageModel.__super__.constructor.apply(this, arguments);
+      function Image() {
+        return Image.__super__.constructor.apply(this, arguments);
       }
 
-      ImageModel.prototype.urlRoot = '/api/v1/images';
+      Image.prototype.urlRoot = '/api/v1/images';
 
-      ImageModel.prototype.url = function() {
+      Image.prototype.url = function() {
         return this.urlRoot + ("?name=" + (this.get('name')));
       };
 
-      ImageModel.prototype.parse = function(resp) {
+      Image.prototype.parse = function(resp) {
         var parsers;
         parsers = App.Util.parsers;
         resp = parsers.removeArrayWrapper(resp);
@@ -1193,7 +1198,7 @@
         return resp;
       };
 
-      ImageModel.prototype.getBackgroundImageCss = function() {
+      Image.prototype.getBackgroundImageCss = function() {
         var encoded;
         encoded = this.get('encoded');
         if (encoded != null) {
@@ -1201,7 +1206,7 @@
         }
       };
 
-      ImageModel.prototype.getAttributionHtml = function() {
+      Image.prototype.getAttributionHtml = function() {
         var $html, credit;
         credit = this.get('credit');
         if (credit != null) {
@@ -1211,90 +1216,589 @@
         }
       };
 
-      return ImageModel;
+      return Image;
 
-    })(Marionette.Accountant.FilterModel);
-    Entities.ImageCollection = (function(superClass) {
-      extend(ImageCollection, superClass);
+    })(Backbone.Model);
+    return Models.Images = (function(superClass) {
+      extend(Images, superClass);
 
-      function ImageCollection() {
-        return ImageCollection.__super__.constructor.apply(this, arguments);
+      function Images() {
+        return Images.__super__.constructor.apply(this, arguments);
       }
 
-      ImageCollection.prototype.model = Entities.ProjectSectionModel;
+      Images.prototype.model = Models.Image;
 
-      ImageCollection.prototype.url = '/api/v1/images';
+      Images.prototype.url = '/api/v1/images';
 
-      return ImageCollection;
+      return Images;
 
-    })(Marionette.Accountant.FilterCollection);
-    entityManager = new App.Base.EntityManager({
-      entityConstructor: Entities.ImageModel,
-      entitiesConstructor: Entities.ImageCollection
-    });
-    App.reqres.setHandler('image:entities', function(options) {
-      return entityManager.getEntities(options);
-    });
-    return App.reqres.setHandler('image:entity', function(name) {
-      return entityManager.getEntity({
-        name: name
-      });
-    });
+    })(Backbone.Collection);
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Models', function(Models, App, Backbone, Marionette, $, _) {
+    Models.InfoBoxSection = App.Models.BaseModel.extend();
+    return Models.InfoBoxSections = App.Models.BaseCollection.extend();
   });
 
 }).call(this);
 
 (function() {
   var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
+    hasProp = {}.hasOwnProperty,
+    indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-  this.Atlas.module('Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    var coll, entityManager;
-    Entities.ProjectSectionModel = (function(superClass) {
-      extend(ProjectSectionModel, superClass);
+  this.Atlas.module('Models', function(Models, App, Backbone, Marionette, $, _) {
+    var RichGeoJson, itemGeoJsonInjecters;
+    RichGeoJson = (function(superClass) {
+      extend(RichGeoJson, superClass);
 
-      function ProjectSectionModel() {
-        return ProjectSectionModel.__super__.constructor.apply(this, arguments);
+      function RichGeoJson() {
+        this.type = 'FeatureCollection';
+        this.features = [];
       }
 
-      ProjectSectionModel.prototype.urlRoot = '/api/v1/project_sections';
-
-      ProjectSectionModel.prototype.parse = function(resp) {
-        resp.id = String(resp.id);
-        return resp;
+      RichGeoJson.prototype.onReady = function(next) {
+        if (this.features.length > 0) {
+          next();
+          return;
+        }
+        return this.on('sync', next);
       };
 
-      return ProjectSectionModel;
+      return RichGeoJson;
 
-    })(Marionette.Accountant.FilterModel);
-    Entities.ProjectSectionCollection = (function(superClass) {
-      extend(ProjectSectionCollection, superClass);
-
-      function ProjectSectionCollection() {
-        return ProjectSectionCollection.__super__.constructor.apply(this, arguments);
+    })(Marionette.Object);
+    itemGeoJsonInjecters = {
+      pindrop: function(itemCollection) {
+        var item, j, len, ref, richGeoJson;
+        richGeoJson = new RichGeoJson();
+        ref = itemCollection.models;
+        for (j = 0, len = ref.length; j < len; j++) {
+          item = ref[j];
+          richGeoJson.features.push(item.toRichGeoJsonFeature());
+        }
+        richGeoJson.trigger('sync');
+        return richGeoJson;
+      },
+      state: function(itemCollection) {
+        var data, richGeoJson, setup;
+        richGeoJson = new RichGeoJson();
+        setup = function(data) {
+          var feature, item, j, len, ref;
+          richGeoJson.features = topojson.feature(data, data.objects.states).features;
+          ref = richGeoJson.features;
+          for (j = 0, len = ref.length; j < len; j++) {
+            feature = ref[j];
+            item = itemCollection.findWhere({
+              id: feature.id
+            });
+            feature._model = item;
+          }
+          return richGeoJson.trigger('sync');
+        };
+        data = App['us-states-10m'];
+        if (data != null) {
+          setup(data);
+        } else {
+          $.ajax({
+            url: '/data/us-states-10m.js',
+            dataType: 'script',
+            success: function() {
+              return setup(App['us-states-10m']);
+            }
+          });
+        }
+        return richGeoJson;
       }
+    };
+    Models.Item = Models.BaseModel.extend({
+      parse: function(data) {
+        this._processValues(data);
+        this._checkPindrop(data);
+        this._checkState(data);
+        return data;
+      },
+      _processValues: function(data) {
+        var key, value;
+        for (key in data) {
+          value = data[key];
+          if (_.isString(value)) {
+            if ((value.indexOf("|") > -1) && (value.indexOf("\n") === -1)) {
+              data[key] = App.Util.formatters.atlasArrayToArray(value);
+            } else {
+              data[key] = value.trim();
+            }
+          }
+        }
+        return data;
+      },
+      _checkPindrop: function(data) {
+        var errors, foundLat, foundLong;
+        errors = [];
+        foundLat = this._findAndReplaceKey(data, 'lat', ['latitude', 'Latitude', 'lat', 'Lat']);
+        foundLong = this._findAndReplaceKey(data, 'long', ['longitude', 'Longitude', 'long', 'Long']);
+        if (foundLat && foundLong) {
+          data._itemType = 'pindrop';
+          return {
+            recognized: true,
+            errors: []
+          };
+        } else if (foundLat || foundLong) {
+          return {
+            recognized: true,
+            errors: ['Latitude or longitude not found.']
+          };
+        }
+        return {
+          recognized: false
+        };
+      },
+      _checkState: function(data) {
+        var errors, stateData;
+        errors = [];
+        if (data.name != null) {
+          stateData = _.where(Atlas.Data.states, {
+            name: data.name
+          });
+          if ((stateData != null) && stateData.length > 0) {
+            data.id = stateData[0].id;
+            data.code = stateData[0].code;
+            data._itemType = 'state';
+          } else {
+            errors.push(data.name + ' not recognized as a state. Possibly a typo.');
+          }
+          return {
+            recognized: true,
+            errors: errors
+          };
+        }
+        return {
+          recognized: false
+        };
+      },
+      getImageName: function() {
+        if (this.get('image') != null) {
+          return this.get('image');
+        }
+        return this.get('name').replace(/(\r\n|\n|\r)/gm, "").toLowerCase();
+      },
+      toLatLongPoint: function() {
+        var lat, long;
+        lat = this.get('lat');
+        long = this.get('long');
+        if (lat == null) {
+          lat = -37.8602828;
+        }
+        if (long == null) {
+          long = 145.0796161;
+        }
+        return [lat, long];
+      },
+      toLongLatPoint: function() {
+        return this.toLatLongPoint().reverse();
+      },
+      toRichGeoJsonFeature: function() {
+        var geoJson;
+        geoJson = {
+          type: 'Feature',
+          _model: this,
+          geometry: {
+            type: 'Point',
+            coordinates: this.toLongLatPoint()
+          }
+        };
+        return geoJson;
+      },
+      getLayerClasses: function(filter, valueHoverIndex, searchTerm, baseClass) {
+        var classNames, d, elementBaseClass, filterIndeces, highlightedClass, i, inactiveClass, isFiltered, j, k, layerClasses, len, neutralClass;
+        if (baseClass == null) {
+          baseClass = 'map-region';
+        }
+        highlightedClass = baseClass + '--highlighted';
+        inactiveClass = baseClass + '--inactive';
+        neutralClass = baseClass + '--neutral';
+        elementBaseClass = baseClass + '__element';
+        layerClasses = {
+          group: baseClass,
+          elementBase: elementBaseClass,
+          elements: []
+        };
+        classNames = [];
+        d = this.toJSON();
+        if (App.currentDisplayMode === 'filter') {
+          isFiltered = filter.test(d);
+          filterIndeces = filter.getValueIndeces(d);
+          k = filter.getValueCountOnActiveKey();
+          if (isFiltered && (filterIndeces != null)) {
+            for (j = 0, len = filterIndeces.length; j < len; j++) {
+              i = filterIndeces[j];
+              if ((i > -1) && isFiltered) {
+                layerClasses.elements.push(elementBaseClass + " " + (filter.getBackgroundColorClass(i)));
+              }
+              if (i === valueHoverIndex) {
+                layerClasses.group = baseClass + ' ' + highlightedClass;
+              }
+            }
+          } else {
+            layerClasses.group = baseClass + ' ' + inactiveClass;
+          }
+        } else if (App.currentDisplayMode === 'search') {
+          if (this.matchesSearchTerm(searchTerm)) {
+            layerClasses.group = baseClass + ' ' + neutralClass;
+            layerClasses.elements = [''];
+          } else {
+            layerClasses.group = baseClass + ' ' + inactiveClass;
+            layerClasses.elements = [''];
+          }
+        }
+        return layerClasses;
+      },
+      matchesSearchTerm: function(searchTerm) {
+        var name;
+        name = this.get('name');
+        if (!((searchTerm.toLowerCase != null) && (name.toLowerCase != null))) {
+          return false;
+        }
+        name = name.toLowerCase();
+        searchTerm = searchTerm.toLowerCase();
+        if (name === "") {
+          return false;
+        }
+        if (name.indexOf(searchTerm) === -1) {
+          return false;
+        }
+        return true;
+      }
+    });
+    return Models.Items = Backbone.Collection.extend({
+      model: Models.Item,
+      getItemType: function() {
+        var itemType;
+        itemType = this.models[0].get('_itemType');
+        return itemType;
+      },
+      setActive: function(activeModel) {
+        var id;
+        if ((_.isObject(activeModel)) && (indexOf.call(this.models, activeModel) >= 0)) {
+          this.active = activeModel;
+        } else {
+          id = parseInt(activeModel, 10);
+          this.active = id === -1 ? void 0 : this.findWhere({
+            id: id
+          });
+        }
+        return this;
+      },
+      setHovered: function(hoveredModel) {
+        var id;
+        if ((_.isObject(hoveredModel)) && (indexOf.call(this.models, hoveredModel) >= 0)) {
+          this.hovered = hoveredModel;
+        } else {
+          id = parseInt(hoveredModel, 10);
+          this.hovered = id === -1 ? void 0 : this.findWhere({
+            id: id
+          });
+        }
+        return this;
+      },
+      getValueList: function(key) {
+        var j, l, len, len1, model, ref, val, value, valueList;
+        valueList = [];
+        ref = this.models;
+        for (j = 0, len = ref.length; j < len; j++) {
+          model = ref[j];
+          value = model.get(key);
+          if (_.isArray(value)) {
+            for (l = 0, len1 = value.length; l < len1; l++) {
+              val = value[l];
+              if (indexOf.call(valueList, val) < 0) {
+                valueList.push(val);
+              }
+            }
+          } else {
+            if (indexOf.call(valueList, value) < 0) {
+              valueList.push(value);
+            }
+          }
+        }
+        return valueList;
+      },
+      getSortedValueList: function(key) {},
+      getLatLongBounds: function() {
+        var j, lat, len, long, maxLat, maxLong, minLat, minLong, model, ref;
+        ref = this.models;
+        for (j = 0, len = ref.length; j < len; j++) {
+          model = ref[j];
+          lat = model.get('lat');
+          long = model.get('long');
+          if ((typeof minLat === "undefined" || minLat === null) || (minLat > lat)) {
+            minLat = lat;
+          }
+          if ((typeof maxLat === "undefined" || maxLat === null) || (maxLat < lat)) {
+            maxLat = lat;
+          }
+          if ((typeof minLong === "undefined" || minLong === null) || (minLong > long)) {
+            minLong = long;
+          }
+          if ((typeof maxLong === "undefined" || maxLong === null) || (maxLong < long)) {
+            maxLong = long;
+          }
+        }
+        return [[minLat, minLong], [maxLat, maxLong]];
+      },
+      toLatLongMultiPoint: function() {
+        var j, len, model, ref, res;
+        res = [];
+        ref = this.models;
+        for (j = 0, len = ref.length; j < len; j++) {
+          model = ref[j];
+          res.push(model.toLatLongPoint());
+        }
+        return res;
+      },
+      getRichGeoJson: function() {
+        var type;
+        type = this.getItemType();
+        return itemGeoJsonInjecters[type](this);
+      }
+    });
+  });
 
-      ProjectSectionCollection.prototype.model = Entities.ProjectSectionModel;
+}).call(this);
 
-      ProjectSectionCollection.prototype.url = '/api/v1/project_sections';
+(function() {
+  this.Atlas.module('Models', function(Models, App, Backbone, Marionette, $, _) {
+    Models.Project = Models.BaseModel.extend({
+      urlRoot: '/api/v1/projects',
+      url: function() {
+        return this.urlRoot + ("?atlas_url=" + (this.get('atlas_url')));
+      },
+      buildUrl: function() {
+        return "http://build.atlas.newamerica.org/projects/" + (this.get('id')) + "/edit";
+      },
+      exists: function() {
+        var json, key, keyCount;
+        keyCount = 0;
+        json = this.toJSON();
+        for (key in json) {
+          keyCount += 1;
+        }
+        return keyCount !== 1;
+      },
+      parse: function(resp) {
+        var parsers;
+        parsers = App.Util.parsers;
+        resp = parsers.removeArrayWrapper(resp);
+        resp = parsers.removeSpaces(resp, 'template_name');
+        resp = parsers.processStaticHtml(resp, 'body_text');
+        return resp;
+      },
+      compositeFilter: function(projectSections, projectTemplates) {
+        var filter, sectionsFilter, templatesFilter;
+        sectionsFilter = this.filter(projectSections, 'project_section');
+        templatesFilter = this.filter(projectTemplates, 'project_template');
+        filter = sectionsFilter && templatesFilter;
+        this.trigger('visibility:change', filter);
+        return filter;
+      },
+      filter: function(collection, foreignKey) {
+        if ((collection != null) && (collection.test != null)) {
+          return collection.test(this, foreignKey);
+        }
+        return true;
+      },
+      getImageAttributionHtml: function() {
+        var $html, credit;
+        credit = this.get('image_credit');
+        if (credit != null) {
+          $html = $(marked(credit));
+          $html.find('a').attr('target', '_blank');
+          return $html.html();
+        }
+      },
+      buildData: function() {}
+    });
+    return Models.Projects = Models.BaseCollection.extend({
+      initialize: function() {
+        return this.on('reset', this.filter);
+      },
+      model: Models.Project,
+      url: function() {
+        var base;
+        base = '/api/v1/projects';
+        if (this.queryString != null) {
+          return base + "?" + this.queryString;
+        }
+        return base;
+      },
+      comparator: function(model1, model2) {
+        var i1, i2;
+        i1 = model1.get('is_section_overview') === 'Yes' ? 10 : 0;
+        i2 = model2.get('is_section_overview') === 'Yes' ? 10 : 0;
+        if (model1.get('title') < model2.get('title')) {
+          i1 += 1;
+        } else {
+          i2 += 1;
+        }
+        return i2 - i1;
+      },
+      filter: function(projectSections, projectTemplates) {
+        var i, len, model, ref;
+        if (projectSections == null) {
+          projectSections = App.reqres.request('project:section:entities');
+        }
+        if (projectTemplates == null) {
+          projectTemplates = App.reqres.request('project:template:entities');
+        }
+        if ((projectSections.models == null) || (projectSections.models.length === 0)) {
+          return;
+        }
+        if ((projectTemplates.models == null) || (projectTemplates.models.length === 0)) {
+          return;
+        }
+        if (this.models.length === 0) {
+          return;
+        }
+        ref = this.models;
+        for (i = 0, len = ref.length; i < len; i++) {
+          model = ref[i];
+          model.compositeFilter(projectSections, projectTemplates);
+        }
+        return this;
+      }
+    });
+  });
 
-      ProjectSectionCollection.prototype.hasSingleActiveChild = false;
+}).call(this);
 
-      ProjectSectionCollection.prototype.initializeActiveStatesOnReset = true;
-
-      ProjectSectionCollection.prototype.initialize = function() {
+(function() {
+  this.Atlas.module('Models', function(Models, App, Backbone, Marionette, $, _) {
+    Models.ProjectSection = Marionette.Accountant.FilterModel.extend({
+      urlRoot: '/api/v1/project_sections',
+      parse: function(resp) {
+        resp.id = String(resp.id);
+        return resp;
+      }
+    });
+    return Models.ProjectSections = Marionette.Accountant.FilterCollection.extend({
+      model: Models.ProjectSection,
+      url: '/api/v1/project_sections',
+      hasSingleActiveChild: false,
+      initializeActiveStatesOnReset: true,
+      initialize: function() {
         return this.on('initialize:active:states', function() {
           return App.vent.trigger('project:filter:change', this);
         });
-      };
-
-      return ProjectSectionCollection;
-
-    })(Marionette.Accountant.FilterCollection);
-    entityManager = new App.Base.EntityManager({
-      entitiesConstructor: Entities.ProjectSectionCollection
+      }
     });
-    coll = new Entities.ProjectSectionCollection([
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Models', function(Models, App, Backbone, Marionette, $, _) {
+    Models.ProjectTemplate = Marionette.Accountant.FilterModel.extend({
+      urlRoot: '/api/v1/project_templates'
+    });
+    return Models.ProjectTemplates = Marionette.Accountant.FilterCollection.extend({
+      model: Models.ProjectTemplate,
+      url: '/api/v1/project_templates',
+      hasSingleActiveChild: true,
+      initializeActiveStatesOnReset: true,
+      comparator: 'order',
+      initialize: function() {
+        return this.on('initialize:active:states', function() {
+          return App.vent.trigger('project:filter:change', this);
+        });
+      }
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Models', function(Models, App, Backbone, Marionette, $, _) {
+    Models.Researcher = Models.BaseModel.extend();
+    return Models.Researchers = Models.BaseCollection.extend({
+      model: Models.Researcher
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Models', function(Models, App, Backbone, Marionette, $, _) {
+    Models.Variable = Models.BaseModel.extend();
+    return Models.Variables = Models.BaseCollection.extend({
+      model: Models.Variable
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    var entityManager;
+    entityManager = new App.Base.EntityManager({
+      entityConstructor: App.Models.CoreDatum,
+      entitiesConstructor: App.Models.CoreData
+    });
+    App.reqres.setHandler('core:datum:entities', function() {
+      return entityManager.getEntities({
+        cache: true
+      });
+    });
+    return App.reqres.setHandler('core:datum:entity', function(query) {
+      return entityManager.getEntity(query);
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    var entityManager;
+    entityManager = new App.Base.EntityManager({
+      entityConstructor: App.Models.Image,
+      entitiesConstructor: App.Models.Images
+    });
+    App.reqres.setHandler('image:entities', function(options) {
+      return entityManager.getEntities(options);
+    });
+    return App.reqres.setHandler('image:entity', function(query) {
+      return entityManager.getEntity(query);
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    var entityManager;
+    entityManager = new App.Base.EntityManager({
+      entityConstructor: App.Models.Project,
+      entitiesConstructor: App.Models.Projects
+    });
+    App.reqres.setHandler('project:entities', function(options) {
+      return entityManager.getEntities(options);
+    });
+    return App.reqres.setHandler('project:entity', function(query) {
+      return entityManager.getEntity(query);
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    var coll, entityManager;
+    entityManager = new App.Base.EntityManager({
+      entitiesConstructor: App.Models.ProjectSections
+    });
+    coll = new App.Models.ProjectSections([
       {
         "id": "0",
         "name": "Early Education"
@@ -1330,53 +1834,12 @@
 }).call(this);
 
 (function() {
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
   this.Atlas.module('Entities', function(Entities, App, Backbone, Marionette, $, _) {
     var coll, entityManager;
-    Entities.ProjectTemplateModel = (function(superClass) {
-      extend(ProjectTemplateModel, superClass);
-
-      function ProjectTemplateModel() {
-        return ProjectTemplateModel.__super__.constructor.apply(this, arguments);
-      }
-
-      ProjectTemplateModel.prototype.urlRoot = '/api/v1/project_templates';
-
-      return ProjectTemplateModel;
-
-    })(Marionette.Accountant.FilterModel);
-    Entities.ProjectTemplateCollection = (function(superClass) {
-      extend(ProjectTemplateCollection, superClass);
-
-      function ProjectTemplateCollection() {
-        return ProjectTemplateCollection.__super__.constructor.apply(this, arguments);
-      }
-
-      ProjectTemplateCollection.prototype.model = Entities.ProjectTemplateModel;
-
-      ProjectTemplateCollection.prototype.url = '/api/v1/project_templates';
-
-      ProjectTemplateCollection.prototype.hasSingleActiveChild = true;
-
-      ProjectTemplateCollection.prototype.initializeActiveStatesOnReset = true;
-
-      ProjectTemplateCollection.prototype.comparator = 'order';
-
-      ProjectTemplateCollection.prototype.initialize = function() {
-        return this.on('initialize:active:states', function() {
-          return App.vent.trigger('project:filter:change', this);
-        });
-      };
-
-      return ProjectTemplateCollection;
-
-    })(Marionette.Accountant.FilterCollection);
     entityManager = new App.Base.EntityManager({
-      entitiesConstructor: Entities.ProjectTemplateCollection
+      entitiesConstructor: App.Models.ProjectTemplates
     });
-    coll = new Entities.ProjectTemplateCollection([
+    coll = new App.Models.ProjectTemplates([
       {
         "id": "0",
         "order": 0,
@@ -1404,155 +1867,6 @@
     return App.reqres.setHandler('project:template:entities', function() {
       return entityManager.getEntities({
         cache: true
-      });
-    });
-  });
-
-}).call(this);
-
-(function() {
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  this.Atlas.module('Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    var entityManager;
-    Entities.ProjectModel = (function(superClass) {
-      extend(ProjectModel, superClass);
-
-      function ProjectModel() {
-        return ProjectModel.__super__.constructor.apply(this, arguments);
-      }
-
-      ProjectModel.prototype.urlRoot = '/api/v1/projects';
-
-      ProjectModel.prototype.url = function() {
-        return this.urlRoot + ("?atlas_url=" + (this.get('atlas_url')));
-      };
-
-      ProjectModel.prototype.buildUrl = function() {
-        return "http://build.atlas.newamerica.org/projects/" + (this.get('id')) + "/edit";
-      };
-
-      ProjectModel.prototype.exists = function() {
-        var json, key, keyCount;
-        keyCount = 0;
-        json = this.toJSON();
-        for (key in json) {
-          keyCount += 1;
-        }
-        return keyCount !== 1;
-      };
-
-      ProjectModel.prototype.parse = function(resp) {
-        var parsers;
-        parsers = App.Util.parsers;
-        resp = parsers.removeArrayWrapper(resp);
-        resp = parsers.removeSpaces(resp, 'template_name');
-        resp = parsers.processStaticHtml(resp, 'body_text');
-        return resp;
-      };
-
-      ProjectModel.prototype.compositeFilter = function(projectSections, projectTemplates) {
-        var filter, sectionsFilter, templatesFilter;
-        sectionsFilter = this.filter(projectSections, 'project_section');
-        templatesFilter = this.filter(projectTemplates, 'project_template');
-        filter = sectionsFilter && templatesFilter;
-        this.trigger('visibility:change', filter);
-        return filter;
-      };
-
-      ProjectModel.prototype.filter = function(collection, foreignKey) {
-        if ((collection != null) && (collection.test != null)) {
-          return collection.test(this, foreignKey);
-        }
-        return true;
-      };
-
-      ProjectModel.prototype.getImageAttributionHtml = function() {
-        var $html, credit;
-        credit = this.get('image_credit');
-        if (credit != null) {
-          $html = $(marked(credit));
-          $html.find('a').attr('target', '_blank');
-          return $html.html();
-        }
-      };
-
-      return ProjectModel;
-
-    })(Backbone.Model);
-    Entities.ProjectCollection = (function(superClass) {
-      extend(ProjectCollection, superClass);
-
-      function ProjectCollection() {
-        return ProjectCollection.__super__.constructor.apply(this, arguments);
-      }
-
-      ProjectCollection.prototype.initialize = function() {
-        return this.on('reset', this.filter);
-      };
-
-      ProjectCollection.prototype.model = Entities.ProjectModel;
-
-      ProjectCollection.prototype.url = function() {
-        var base;
-        base = '/api/v1/projects';
-        if (this.queryString != null) {
-          return base + "?" + this.queryString;
-        }
-        return base;
-      };
-
-      ProjectCollection.prototype.comparator = function(model1, model2) {
-        var i1, i2;
-        i1 = model1.get('is_section_overview') === 'Yes' ? 10 : 0;
-        i2 = model2.get('is_section_overview') === 'Yes' ? 10 : 0;
-        if (model1.get('title') < model2.get('title')) {
-          i1 += 1;
-        } else {
-          i2 += 1;
-        }
-        return i2 - i1;
-      };
-
-      ProjectCollection.prototype.filter = function(projectSections, projectTemplates) {
-        var i, len, model, ref;
-        if (projectSections == null) {
-          projectSections = App.reqres.request('project:section:entities');
-        }
-        if (projectTemplates == null) {
-          projectTemplates = App.reqres.request('project:template:entities');
-        }
-        if ((projectSections.models == null) || (projectSections.models.length === 0)) {
-          return;
-        }
-        if ((projectTemplates.models == null) || (projectTemplates.models.length === 0)) {
-          return;
-        }
-        if (this.models.length === 0) {
-          return;
-        }
-        ref = this.models;
-        for (i = 0, len = ref.length; i < len; i++) {
-          model = ref[i];
-          model.compositeFilter(projectSections, projectTemplates);
-        }
-        return this;
-      };
-
-      return ProjectCollection;
-
-    })(Backbone.Collection);
-    entityManager = new App.Base.EntityManager({
-      entityConstructor: Entities.ProjectModel,
-      entitiesConstructor: Entities.ProjectCollection
-    });
-    App.reqres.setHandler('project:entities', function(options) {
-      return entityManager.getEntities(options);
-    });
-    return App.reqres.setHandler('project:entity', function(atlas_url) {
-      return entityManager.getEntity({
-        atlas_url: atlas_url
       });
     });
   });
@@ -2516,16 +2830,6 @@
 }).call(this);
 
 (function() {
-  this.Atlas.Projects.Show.Polling = this.Atlas.Projects.Show.Explainer;
-
-}).call(this);
-
-(function() {
-  this.Atlas.Projects.Show.PolicyBrief = this.Atlas.Projects.Show.Explainer;
-
-}).call(this);
-
-(function() {
   this.Atlas.module('Projects.Show.Tilemap', function(Tilemap, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     Tilemap.submoduleKeys = ['Entities', 'Filter', 'Search', 'Legend', 'Info', 'Headline', 'Map', 'InfoBox', 'Popup'];
@@ -2601,6 +2905,16 @@
 }).call(this);
 
 (function() {
+  this.Atlas.Projects.Show.PolicyBrief = this.Atlas.Projects.Show.Explainer;
+
+}).call(this);
+
+(function() {
+  this.Atlas.Projects.Show.Polling = this.Atlas.Projects.Show.Explainer;
+
+}).call(this);
+
+(function() {
   this.Atlas.module('Projects.Show.Tilemap.Submodules', function(Submodules, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     return App.reqres.setHandler('value:hovered', function() {
@@ -2617,38 +2931,12 @@
 }).call(this);
 
 (function() {
-
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      var data, infoBoxSections;
-      data = App.currentProjectModel.get('data');
-      if (data != null) {
-        infoBoxSections = new Entities.ItemCollection(data.infobox_variables, {
-          parse: true
-        });
-      }
-      return App.reqres.setHandler('info:box:section:entities', function() {
-        return infoBoxSections;
-      });
-    });
-    return this.on('stop', function() {
-      return App.reqres.removeHandler('info:box:section:entities');
-    });
-  });
-
-}).call(this);
-
-(function() {
   this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
     Entities.FilterModel = Backbone.Model.extend({
-      getVariableModel: function() {
-        var variables;
-        variables = App.reqres.request('variable:entities');
+      getVariableModel: function(variables) {
+        if (variables == null) {
+          variables = App.reqres.request('variable:entities');
+        }
         return variables.findWhere({
           id: this.get('variable_id')
         });
@@ -2668,7 +2956,7 @@
       var data, filters;
       data = App.currentProjectModel.get('data');
       if (data != null) {
-        filters = new Entities.FilterCollection(data.filters);
+        filters = new App.Models.Filters(data.filters);
       }
       return App.reqres.setHandler('filter:entities', function() {
         return filters;
@@ -2680,357 +2968,21 @@
 
 (function() {
   this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    return Entities.itemChecker = {
-      check: function(data) {},
-      findAndReplaceKey: function(data, standardKey, keyFormatList) {
-        var found, i, kf, len;
-        found = false;
-        if (keyFormatList == null) {
-          keyFormatList = [standardKey];
-        }
-        for (i = 0, len = keyFormatList.length; i < len; i++) {
-          kf = keyFormatList[i];
-          if (data[kf]) {
-            found = true;
-            if (kf !== standardKey) {
-              data[standardKey] = data[kf];
-              delete data[kf];
-            }
-          }
-        }
-        return found;
-      },
-      pindrop: function(data) {
-        var errors, foundLat, foundLong;
-        errors = [];
-        foundLat = this.findAndReplaceKey(data, 'lat', ['latitude', 'Latitude', 'lat', 'Lat']);
-        foundLong = this.findAndReplaceKey(data, 'long', ['longitude', 'Longitude', 'long', 'Long']);
-        if (foundLat && foundLong) {
-          data._itemType = 'pindrop';
-          return {
-            recognized: true,
-            errors: []
-          };
-        } else if (foundLat || foundLong) {
-          return {
-            recognized: true,
-            errors: ['Latitude or longitude not found.']
-          };
-        }
-        return {
-          recognized: false
-        };
-      },
-      state: function(data) {
-        var errors, stateData;
-        errors = [];
-        if (data.name != null) {
-          stateData = _.where(Atlas.Data.states, {
-            name: data.name
-          });
-          if ((stateData != null) && stateData.length > 0) {
-            data.id = stateData[0].id;
-            data.code = stateData[0].code;
-            data._itemType = 'state';
-          } else {
-            errors.push(data.name + ' not recognized as a state. Possibly a typo.');
-          }
-          return {
-            recognized: true,
-            errors: errors
-          };
-        }
-        return {
-          recognized: false
-        };
+    this.startWithParent = false;
+    this.on('start', function() {
+      var data, infoBoxSections;
+      data = App.currentProjectModel.get('data');
+      if (data != null) {
+        infoBoxSections = new App.Models.InfoBoxSections(data.infobox_variables, {
+          parse: true
+        });
       }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    var RichGeoJson;
-    RichGeoJson = (function(superClass) {
-      extend(RichGeoJson, superClass);
-
-      function RichGeoJson() {
-        this.type = 'FeatureCollection';
-        this.features = [];
-      }
-
-      RichGeoJson.prototype.onReady = function(next) {
-        if (this.features.length > 0) {
-          next();
-          return;
-        }
-        return this.on('sync', next);
-      };
-
-      return RichGeoJson;
-
-    })(Marionette.Object);
-    return Entities.itemGeoJsonInjecters = {
-      pindrop: function(itemCollection) {
-        var i, item, len, ref, richGeoJson;
-        richGeoJson = new RichGeoJson();
-        ref = itemCollection.models;
-        for (i = 0, len = ref.length; i < len; i++) {
-          item = ref[i];
-          richGeoJson.features.push(item.toRichGeoJsonFeature());
-        }
-        richGeoJson.trigger('sync');
-        return richGeoJson;
-      },
-      state: function(itemCollection) {
-        var data, richGeoJson, setup;
-        richGeoJson = new RichGeoJson();
-        setup = function(data) {
-          var feature, i, item, len, ref;
-          richGeoJson.features = topojson.feature(data, data.objects.states).features;
-          ref = richGeoJson.features;
-          for (i = 0, len = ref.length; i < len; i++) {
-            feature = ref[i];
-            item = itemCollection.findWhere({
-              id: feature.id
-            });
-            feature._model = item;
-          }
-          return richGeoJson.trigger('sync');
-        };
-        data = App['us-states-10m'];
-        if (data != null) {
-          setup(data);
-        } else {
-          $.ajax({
-            url: '/data/us-states-10m.js',
-            dataType: 'script',
-            success: function() {
-              return setup(App['us-states-10m']);
-            }
-          });
-        }
-        return richGeoJson;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
-
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    Entities.ItemModel = Backbone.Model.extend({
-      parse: function(data) {
-        this._processValues(data);
-        Entities.itemChecker.pindrop(data);
-        Entities.itemChecker.state(data);
-        return data;
-      },
-      _processValues: function(data) {
-        var key, value;
-        for (key in data) {
-          value = data[key];
-          if (_.isString(value)) {
-            if ((value.indexOf("|") > -1) && (value.indexOf("\n") === -1)) {
-              data[key] = App.Util.formatters.atlasArrayToArray(value);
-            } else {
-              data[key] = value.trim();
-            }
-          }
-        }
-        return data;
-      },
-      getImageName: function() {
-        if (this.get('image') != null) {
-          return this.get('image');
-        }
-        return this.get('name').replace(/(\r\n|\n|\r)/gm, "").toLowerCase();
-      },
-      toLatLongPoint: function() {
-        var lat, long;
-        lat = this.get('lat');
-        long = this.get('long');
-        if (lat == null) {
-          lat = -37.8602828;
-        }
-        if (long == null) {
-          long = 145.0796161;
-        }
-        return [lat, long];
-      },
-      toLongLatPoint: function() {
-        return this.toLatLongPoint().reverse();
-      },
-      toRichGeoJsonFeature: function() {
-        var geoJson;
-        geoJson = {
-          type: 'Feature',
-          _model: this,
-          geometry: {
-            type: 'Point',
-            coordinates: this.toLongLatPoint()
-          }
-        };
-        return geoJson;
-      },
-      getLayerClasses: function(filter, valueHoverIndex, searchTerm, baseClass) {
-        var classNames, d, elementBaseClass, filterIndeces, highlightedClass, i, inactiveClass, isFiltered, j, k, layerClasses, len, neutralClass;
-        if (baseClass == null) {
-          baseClass = 'map-region';
-        }
-        highlightedClass = baseClass + '--highlighted';
-        inactiveClass = baseClass + '--inactive';
-        neutralClass = baseClass + '--neutral';
-        elementBaseClass = baseClass + '__element';
-        layerClasses = {
-          group: baseClass,
-          elementBase: elementBaseClass,
-          elements: []
-        };
-        classNames = [];
-        d = this.toJSON();
-        if (App.currentDisplayMode === 'filter') {
-          isFiltered = filter.test(d);
-          filterIndeces = filter.getValueIndeces(d);
-          k = filter.getValueCountOnActiveKey();
-          if (isFiltered && (filterIndeces != null)) {
-            for (j = 0, len = filterIndeces.length; j < len; j++) {
-              i = filterIndeces[j];
-              if ((i > -1) && isFiltered) {
-                layerClasses.elements.push(elementBaseClass + " " + (filter.getBackgroundColorClass(i)));
-              }
-              if (i === valueHoverIndex) {
-                layerClasses.group = baseClass + ' ' + highlightedClass;
-              }
-            }
-          } else {
-            layerClasses.group = baseClass + ' ' + inactiveClass;
-          }
-        } else if (App.currentDisplayMode === 'search') {
-          if (this.matchesSearchTerm(searchTerm)) {
-            layerClasses.group = baseClass + ' ' + neutralClass;
-            layerClasses.elements = [''];
-          } else {
-            layerClasses.group = baseClass + ' ' + inactiveClass;
-            layerClasses.elements = [''];
-          }
-        }
-        return layerClasses;
-      },
-      matchesSearchTerm: function(searchTerm) {
-        var name;
-        name = this.get('name');
-        if (!((searchTerm.toLowerCase != null) && (name.toLowerCase != null))) {
-          return false;
-        }
-        name = name.toLowerCase();
-        searchTerm = searchTerm.toLowerCase();
-        if (name === "") {
-          return false;
-        }
-        if (name.indexOf(searchTerm) === -1) {
-          return false;
-        }
-        return true;
-      }
+      return App.reqres.setHandler('info:box:section:entities', function() {
+        return infoBoxSections;
+      });
     });
-    return Entities.ItemCollection = Backbone.Collection.extend({
-      model: Entities.ItemModel,
-      getItemType: function() {
-        var itemType;
-        itemType = this.models[0].get('_itemType');
-        return itemType;
-      },
-      setActive: function(activeModel) {
-        var id;
-        if ((_.isObject(activeModel)) && (indexOf.call(this.models, activeModel) >= 0)) {
-          this.active = activeModel;
-        } else {
-          id = parseInt(activeModel, 10);
-          this.active = id === -1 ? void 0 : this.findWhere({
-            id: id
-          });
-        }
-        return this;
-      },
-      setHovered: function(hoveredModel) {
-        var id;
-        if ((_.isObject(hoveredModel)) && (indexOf.call(this.models, hoveredModel) >= 0)) {
-          this.hovered = hoveredModel;
-        } else {
-          id = parseInt(hoveredModel, 10);
-          this.hovered = id === -1 ? void 0 : this.findWhere({
-            id: id
-          });
-        }
-        return this;
-      },
-      getValueList: function(key) {
-        var j, l, len, len1, model, ref, val, value, valueList;
-        valueList = [];
-        ref = this.models;
-        for (j = 0, len = ref.length; j < len; j++) {
-          model = ref[j];
-          value = model.get(key);
-          if (_.isArray(value)) {
-            for (l = 0, len1 = value.length; l < len1; l++) {
-              val = value[l];
-              if (indexOf.call(valueList, val) < 0) {
-                valueList.push(val);
-              }
-            }
-          } else {
-            if (indexOf.call(valueList, value) < 0) {
-              valueList.push(value);
-            }
-          }
-        }
-        return valueList;
-      },
-      getSortedValueList: function(key) {},
-      getLatLongBounds: function() {
-        var j, lat, len, long, maxLat, maxLong, minLat, minLong, model, ref;
-        ref = this.models;
-        for (j = 0, len = ref.length; j < len; j++) {
-          model = ref[j];
-          lat = model.get('lat');
-          long = model.get('long');
-          if ((typeof minLat === "undefined" || minLat === null) || (minLat > lat)) {
-            minLat = lat;
-          }
-          if ((typeof maxLat === "undefined" || maxLat === null) || (maxLat < lat)) {
-            maxLat = lat;
-          }
-          if ((typeof minLong === "undefined" || minLong === null) || (minLong > long)) {
-            minLong = long;
-          }
-          if ((typeof maxLong === "undefined" || maxLong === null) || (maxLong < long)) {
-            maxLong = long;
-          }
-        }
-        return [[minLat, minLong], [maxLat, maxLong]];
-      },
-      toLatLongMultiPoint: function() {
-        var j, len, model, ref, res;
-        res = [];
-        ref = this.models;
-        for (j = 0, len = ref.length; j < len; j++) {
-          model = ref[j];
-          res.push(model.toLatLongPoint());
-        }
-        return res;
-      },
-      getRichGeoJson: function() {
-        var type;
-        type = this.getItemType();
-        return Entities.itemGeoJsonInjecters[type](this);
-      }
+    return this.on('stop', function() {
+      return App.reqres.removeHandler('info:box:section:entities');
     });
   });
 
@@ -3043,7 +2995,7 @@
       var data, items, setHeaderStripColor;
       data = App.currentProjectModel.get('data');
       if (data != null) {
-        items = new Entities.ItemCollection(data.items, {
+        items = new App.Models.Items(data.items, {
           parse: true
         });
       }
@@ -3104,22 +3056,12 @@
 
 (function() {
   this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    Entities.VariableModel = Backbone.Model.extend();
-    return Entities.VariableCollection = Backbone.Collection.extend({
-      model: Entities.VariableModel
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     this.on('start', function() {
       var data, variables;
       data = App.currentProjectModel.get('data');
       if (data != null) {
-        variables = new Entities.VariableCollection(data.variables);
+        variables = new App.Models.Variables(data.variables);
       }
       return App.reqres.setHandler('variable:entities', function(query) {
         return variables;
@@ -4097,7 +4039,9 @@
         }
         imageName = this.model.getImageName();
         if (imageName != null) {
-          img = App.reqres.request('image:entity', imageName);
+          img = App.reqres.request('image:entity', {
+            name: imageName
+          });
           return img.on('sync', (function(_this) {
             return function() {
               var backgroundImageCss;
@@ -4507,62 +4451,6 @@
 }).call(this);
 
 (function() {
-  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      this.Controller.show();
-      App.searchTerm = "";
-      return App.reqres.setHandler('search:term', function() {
-        return App.searchTerm;
-      });
-    });
-    return this.on('stop', function() {
-      this.Controller.destroy();
-      return this.stopListening();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
-    return Search.Controller = {
-      show: function() {
-        Search.view = new App.Base.SearchView({
-          el: $('.atl__search'),
-          model: new Backbone.Model({
-            placeholder: 'Search Project'
-          })
-        });
-        return Search.view.render();
-      },
-      destroy: function() {
-        return Search.view.destroy();
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
-    return Search.RootView = Marionette.ItemView.extend({
-      tagName: 'div',
-      className: 'atl__search',
-      template: 'projects/show/project_templates/tilemap/submodules/search/templates/root',
-      events: {
-        'keyup input': 'changeSearchTerm'
-      },
-      changeSearchTerm: function(e) {
-        Search.term = $(e.target)[0].value;
-        return App.vent.trigger('search:term:change');
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
   this.Atlas.module('Projects.Show.Tilemap.Popup', function(Popup, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     this.on('start', function() {
@@ -4672,6 +4560,62 @@
       },
       preventDefault: function(e) {
         return e.preventDefault();
+      }
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    this.on('start', function() {
+      this.Controller.show();
+      App.searchTerm = "";
+      return App.reqres.setHandler('search:term', function() {
+        return App.searchTerm;
+      });
+    });
+    return this.on('stop', function() {
+      this.Controller.destroy();
+      return this.stopListening();
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
+    return Search.Controller = {
+      show: function() {
+        Search.view = new App.Base.SearchView({
+          el: $('.atl__search'),
+          model: new Backbone.Model({
+            placeholder: 'Search Project'
+          })
+        });
+        return Search.view.render();
+      },
+      destroy: function() {
+        return Search.view.destroy();
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
+    return Search.RootView = Marionette.ItemView.extend({
+      tagName: 'div',
+      className: 'atl__search',
+      template: 'projects/show/project_templates/tilemap/submodules/search/templates/root',
+      events: {
+        'keyup input': 'changeSearchTerm'
+      },
+      changeSearchTerm: function(e) {
+        Search.term = $(e.target)[0].value;
+        return App.vent.trigger('search:term:change');
       }
     });
   });
@@ -5123,39 +5067,23 @@
 }).call(this);
 
 (function() {
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
   this.Atlas.module('Projects.Index', function(Index, App, Backbone, Marionette, $, _) {
     Index.SideBarView = Marionette.ItemView.extend({
       tagName: 'div',
       className: 'atl__side-bar fill-parent',
       template: 'projects/index/templates/side_bar'
     });
-    return Index.RootView = (function(superClass) {
-      extend(RootView, superClass);
-
-      function RootView() {
-        return RootView.__super__.constructor.apply(this, arguments);
-      }
-
-      RootView.prototype.tagName = 'div';
-
-      RootView.prototype.className = 'atl fill-parent';
-
-      RootView.prototype.template = 'projects/index/templates/root';
-
-      RootView.prototype.childViewContainer = '.project-container';
-
-      RootView.prototype.regions = {
+    return Index.RootView = Marionette.LayoutView.extend({
+      tagName: 'div',
+      className: 'atl fill-parent',
+      template: 'projects/index/templates/root',
+      childViewContainer: '.project-container',
+      regions: {
         banner: '#atl__nav',
         projects: '#atl__projects',
         sideBar: '#atl__side-bar'
-      };
-
-      return RootView;
-
-    })(Marionette.LayoutView);
+      }
+    });
   });
 
 }).call(this);
@@ -5171,7 +5099,9 @@
         App.currentDisplayMode = mode;
         return App.vent.trigger('display:mode:change');
       });
-      project = App.reqres.request('project:entity', atlas_url);
+      project = App.reqres.request('project:entity', {
+        atlas_url: atlas_url
+      });
       project.on('sync', (function(_this) {
         return function() {
           var templateName;

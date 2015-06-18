@@ -16,13 +16,14 @@ var path = require('path'),
     shell = require('gulp-shell'),
     mocha = require('gulp-mocha'),
     mochaPhantomJs = require('gulp-mocha-phantomjs'),
-    argv = require('yargs').argv;
+    argv = require('yargs').argv,
+    liveReload = require('gulp-livereload');
 
 var config = {
     production: !!util.env.production
 };
 
-var cssSource = './site/styles/app.scss';
+var cssSource = './app/assets/styles/app.scss';
 
 var jsSource = {
 
@@ -44,26 +45,27 @@ var jsSource = {
         './bower_components/moment/moment.js',
         './bower_components/numeral/numeral.js',
         './bower_components/accountant/dist/marionette.accountant.js',
-        './site/scripts/vendor/**/*.js'
+        './app/assets/scripts/vendor/**/*.js'
     ],
 
     source: [
-        './site/scripts/config/**/*.js.coffee',
-        './site/scripts/atlas/atlas.js.coffee',
-        './site/scripts/atlas/routes/**/*.js.coffee',
-        './site/scripts/atlas/base/**/*.js.coffee',
-        './site/scripts/atlas/util/**/*.js.coffee',
-        './site/scripts/atlas/components/**/*.js.coffee',
-        './site/scripts/atlas/entities/**/*.js.coffee',
-        './site/scripts/atlas/site/site.js.coffee',
-        './site/scripts/atlas/site/welcome/**/*.js.coffee',
-        './site/scripts/atlas/site/header/**/*.js.coffee',
-        './site/scripts/atlas/site/projects/**/*.js.coffee',
-        './site/scripts/atlas/site/about/**/*.js.coffee'
+        './app/assets/scripts/config/**/*.js.coffee',
+        './app/assets/scripts/atlas/atlas.js.coffee',
+        './app/assets/scripts/atlas/routes/**/*.js.coffee',
+        './app/assets/scripts/atlas/base/**/*.js.coffee',
+        './app/assets/scripts/atlas/util/**/*.js.coffee',
+        './app/assets/scripts/atlas/components/**/*.js.coffee',
+        './app/assets/scripts/atlas/models/**/*.js.coffee',
+        './app/assets/scripts/atlas/entities/**/*.js.coffee',
+        './app/assets/scripts/atlas/site/site.js.coffee',
+        './app/assets/scripts/atlas/site/welcome/**/*.js.coffee',
+        './app/assets/scripts/atlas/site/header/**/*.js.coffee',
+        './app/assets/scripts/atlas/site/projects/**/*.js.coffee',
+        './app/assets/scripts/atlas/site/about/**/*.js.coffee'
     ],
 
     template: [
-        './site/scripts/**/*.jst.eco'
+        './app/assets/scripts/**/*.jst.eco'
     ]
 
 };
@@ -112,7 +114,7 @@ gulp.task('js-clean', function(next) {
 gulp.task('js-build-template', [ 'js-clean' ], function() {
     return gulp.src(jsSource.template)
         .pipe(eco({
-            basePath: 'site/scripts',
+            basePath: 'app/assets/scripts',
             namespace: 'JST_ATL'
         }))
         .pipe(concat('_template.js'))
@@ -148,6 +150,7 @@ gulp.task('js-build', ['js-build-template', 'js-build-source', 'js-build-vendor'
 gulp.task('default', ['js-build', 'css-build']);
 
 gulp.task('dev', function() {
+    liveReload.listen();
     nodemon({
         script: './app.js',
         ext: 'js css gz jade scss coffee eco',
@@ -155,8 +158,9 @@ gulp.task('dev', function() {
             return [ 'default' ];
         } 
     })
-    .on('restart', function() {
-        console.log('Server restarted.');
+    .on('restart', function() { 
+        gulp.src('./app.js')
+            .pipe(liveReload());
     });
 });
 

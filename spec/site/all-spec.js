@@ -29,26 +29,237 @@
 }).call(this);
 
 (function() {
-  describe('Atlas.Entities.Project', function() {
-    var model;
-    model = void 0;
-    beforeEach(function() {
-      return model = new Atlas.Entities.ProjectModel();
-    });
-    return describe('parse', function() {
-      return it('parses response data, making use of all sub-methods', function() {
-        var parsedResp, resp;
-        resp = [
+  describe('Atlas.Models.Items', function() {
+    var Models;
+    Models = Atlas.Models.Items;
+    describe('getValueList', function() {
+      return it('returns value list for a given data key, removing duplicates', function() {
+        var coll, json;
+        json = [
           {
-            template_name: 'Policy Brief',
-            id: 5
+            key: 'value1'
+          }, {
+            key: 'value2'
+          }, {
+            key: 'value1'
+          }, {
+            key: 'value3'
+          }, {
+            key: 'value2'
+          }, {
+            key: 'value2'
           }
         ];
-        parsedResp = {
-          template_name: 'PolicyBrief',
-          id: 5
+        coll = new Models(json);
+        return coll.getValueList('key').should.eql(['value1', 'value2', 'value3']);
+      });
+    });
+    describe('getLatLongBounds', function() {
+      return it('returns latLng bounds as array of arrays', function() {
+        var coll, json;
+        json = [
+          {
+            lat: -40,
+            long: +80
+          }, {
+            lat: +79,
+            long: +80
+          }, {
+            lat: +40,
+            long: +80
+          }, {
+            lat: +80,
+            long: +40
+          }
+        ];
+        coll = new Models(json);
+        return coll.getLatLongBounds().should.eql([[-40, 40], [80, 80]]);
+      });
+    });
+    return describe('toLatLongMultiPoint', function() {
+      return it('returns latLng multipoint object', function() {
+        var coll, json;
+        json = [
+          {
+            lat: -40,
+            long: 80
+          }, {
+            lat: +79,
+            long: 80
+          }
+        ];
+        coll = new Models(json);
+        return coll.toLatLongMultiPoint().should.eql([[-40, 80], [79, 80]]);
+      });
+    });
+  });
+
+  describe('Atlas.Projects.Show.Tilemap.Entities.itemChecker', function() {
+    var data, model;
+    data = void 0;
+    model = new Atlas.Models.Item();
+    describe('findAndReplaceKey', function() {
+      it('recognizes data having a standard key', function() {
+        data = {
+          lat: 100,
+          long: 150
         };
-        return model.parse(resp, 'numerical_data').should.eql(parsedResp);
+        (model._findAndReplaceKey(data, 'lat')).should.eql(true);
+        return data.should.eql({
+          lat: 100,
+          long: 150
+        });
+      });
+      return it('recognizes data with a key that is listed in the key format list', function() {
+        data = {
+          latitude: 100,
+          long: 150
+        };
+        (model._findAndReplaceKey(data, 'lat', ['lat', 'latitude'])).should.eql(true);
+        return data.should.eql({
+          lat: 100,
+          long: 150
+        });
+      });
+    });
+    describe('pindrop', function() {
+      it('recognizes and validates data with a latitude and longitude value; standardizes lat and long fields', function() {
+        data = {
+          latitude: 100,
+          long: 150
+        };
+        (model._checkPindrop(data)).should.eql({
+          recognized: true,
+          errors: []
+        });
+        return data.should.eql({
+          lat: 100,
+          long: 150,
+          _itemType: 'pindrop'
+        });
+      });
+      return it('recognizes and returns error for data with either latitude or longitude missing.', function() {
+        data = {
+          latitudezz: 100,
+          long: 150
+        };
+        return (model._checkPindrop(data)).should.eql({
+          recognized: true,
+          errors: ['Latitude or longitude not found.']
+        });
+      });
+    });
+    return describe('state', function() {
+      it('recognizes and does not give errors for data with a state key and a correct state name in capitalized case; completes fields', function() {
+        data = {
+          name: 'New Jersey'
+        };
+        (model._checkState(data)).should.eql({
+          recognized: true,
+          errors: []
+        });
+        return data.should.eql({
+          name: 'New Jersey',
+          code: 'NJ',
+          id: 34,
+          _itemType: 'state'
+        });
+      });
+      it('recognizes and returns error for data with a state key but incorrect state name or case', function() {
+        data = {
+          name: 'new Jersey'
+        };
+        return (model._checkState(data)).should.eql({
+          recognized: true,
+          errors: ['new Jersey not recognized as a state. Possibly a typo.']
+        });
+      });
+      return it('does not recognize data without a name key', function() {
+        data = {
+          stateName: 'new Jersey'
+        };
+        return (model._checkState(data)).should.eql({
+          recognized: false
+        });
+      });
+    });
+  });
+
+  describe('Atlas.Models.Item', function() {
+    var Model;
+    Model = Atlas.Models.Item;
+    describe('toRichGeoFeature', function() {
+      it('returns a GeoJSON point feature using lat and long attributes as coordinates', function() {
+        var json, model;
+        json = {
+          lat: 1,
+          long: 2,
+          name: 'some name',
+          attribute: 'some attribute'
+        };
+        model = new Model(json);
+        return model.toRichGeoJsonFeature().should.eql({
+          type: 'Feature',
+          _model: model,
+          geometry: {
+            type: 'Point',
+            coordinates: [2, 1]
+          }
+        });
+      });
+      return it('use default values Melbourne, Australia values if either latitude or longitude are not defined', function() {
+        var json, model;
+        json = {
+          name: 'some name',
+          attribute: 'some attribute'
+        };
+        model = new Model(json);
+        return model.toRichGeoJsonFeature().should.eql({
+          type: 'Feature',
+          _model: model,
+          geometry: {
+            type: 'Point',
+            coordinates: [145.0796161, -37.8602828]
+          }
+        });
+      });
+    });
+    describe('_processValues', function() {
+      var data;
+      data = fixtures.tilemap_pindrop;
+      it('removes leading and trailing whitespaces', function() {
+        console.log(data.data.items[0]);
+        return Model.prototype._processValues(data.data.items[0]).should.eql({
+          "name": "California",
+          "region": "west",
+          "population": 38000000,
+          "weather": "Excellent"
+        });
+      });
+      it('breaks by | character and removes leading and trailing whitespaces', function() {
+        return Model.prototype._processValues(data.data.items[1]).should.eql({
+          "name": "Georgia",
+          "region": "southeast",
+          "population": 10000000,
+          "weather": ["Good", "Ok"]
+        });
+      });
+      return it('does not break by | character if there is a return character (\n), which indicates Markdown syntax.', function() {
+        return Model.prototype._processValues(data.data.items[2]).should.eql({
+          "name": "Vermont",
+          "region": "northeast",
+          "population": 600000,
+          "weather": "Ok|Nice when things are\njolly"
+        });
+      });
+    });
+    return describe('matchesSearchTerm', function() {
+      return it('matches search term on the name attribute', function() {
+        var m;
+        m = new Model({
+          name: 'Fancy Name'
+        });
+        return m.matchesSearchTerm('ncy n').should.equal(true);
       });
     });
   });
@@ -56,9 +267,9 @@
 }).call(this);
 
 (function() {
-  describe('Atlas.Entities.ProjectCollection', function() {
+  describe('Atlas.Models.Projects', function() {
     var Coll;
-    Coll = Atlas.Entities.ProjectCollection;
+    Coll = Atlas.Models.Projects;
     return describe('#comparator', function() {
       var modelData1, modelData2, modelData3, modelData4;
       modelData1 = void 0;
@@ -255,248 +466,6 @@
         return it('starts the module', function() {
           return true.should.equal(true);
         });
-      });
-    });
-  });
-
-}).call(this);
-
-(function() {
-  describe('Atlas.Projects.Show.Tilemap.Entities.itemChecker', function() {
-    var checker, data;
-    data = void 0;
-    checker = Atlas.Projects.Show.Tilemap.Entities.itemChecker;
-    describe('findAndReplaceKey', function() {
-      it('recognizes data having a standard key', function() {
-        data = {
-          lat: 100,
-          long: 150
-        };
-        (checker.findAndReplaceKey(data, 'lat')).should.eql(true);
-        return data.should.eql({
-          lat: 100,
-          long: 150
-        });
-      });
-      return it('recognizes data with a key that is listed in the key format list', function() {
-        data = {
-          latitude: 100,
-          long: 150
-        };
-        (checker.findAndReplaceKey(data, 'lat', ['lat', 'latitude'])).should.eql(true);
-        return data.should.eql({
-          lat: 100,
-          long: 150
-        });
-      });
-    });
-    describe('pindrop', function() {
-      it('recognizes and validates data with a latitude and longitude value; standardizes lat and long fields', function() {
-        data = {
-          latitude: 100,
-          long: 150
-        };
-        (checker.pindrop(data)).should.eql({
-          recognized: true,
-          errors: []
-        });
-        return data.should.eql({
-          lat: 100,
-          long: 150,
-          _itemType: 'pindrop'
-        });
-      });
-      return it('recognizes and returns error for data with either latitude or longitude missing.', function() {
-        data = {
-          latitudezz: 100,
-          long: 150
-        };
-        return (checker.pindrop(data)).should.eql({
-          recognized: true,
-          errors: ['Latitude or longitude not found.']
-        });
-      });
-    });
-    return describe('state', function() {
-      it('recognizes and does not give errors for data with a state key and a correct state name in capitalized case; completes fields', function() {
-        data = {
-          name: 'New Jersey'
-        };
-        (checker.state(data)).should.eql({
-          recognized: true,
-          errors: []
-        });
-        return data.should.eql({
-          name: 'New Jersey',
-          code: 'NJ',
-          id: 34,
-          _itemType: 'state'
-        });
-      });
-      it('recognizes and returns error for data with a state key but incorrect state name or case', function() {
-        data = {
-          name: 'new Jersey'
-        };
-        return (checker.state(data)).should.eql({
-          recognized: true,
-          errors: ['new Jersey not recognized as a state. Possibly a typo.']
-        });
-      });
-      return it('does not recognize data without a name key', function() {
-        data = {
-          stateName: 'new Jersey'
-        };
-        return (checker.state(data)).should.eql({
-          recognized: false
-        });
-      });
-    });
-  });
-
-}).call(this);
-
-(function() {
-  describe('Atlas.Projects.Show.Tilemap.Entities.Model.ItemCollection', function() {
-    describe('getValueList', function() {
-      return it('returns value list for a given data key, removing duplicates', function() {
-        var coll, json;
-        json = [
-          {
-            key: 'value1'
-          }, {
-            key: 'value2'
-          }, {
-            key: 'value1'
-          }, {
-            key: 'value3'
-          }, {
-            key: 'value2'
-          }, {
-            key: 'value2'
-          }
-        ];
-        coll = new Atlas.Projects.Show.Tilemap.Entities.ItemCollection(json);
-        return coll.getValueList('key').should.eql(['value1', 'value2', 'value3']);
-      });
-    });
-    describe('getLatLongBounds', function() {
-      return it('returns latLng bounds as array of arrays', function() {
-        var coll, json;
-        json = [
-          {
-            lat: -40,
-            long: +80
-          }, {
-            lat: +79,
-            long: +80
-          }, {
-            lat: +40,
-            long: +80
-          }, {
-            lat: +80,
-            long: +40
-          }
-        ];
-        coll = new Atlas.Projects.Show.Tilemap.Entities.ItemCollection(json);
-        return coll.getLatLongBounds().should.eql([[-40, 40], [80, 80]]);
-      });
-    });
-    return describe('toLatLongMultiPoint', function() {
-      return it('returns latLng multipoint object', function() {
-        var coll, json;
-        json = [
-          {
-            lat: -40,
-            long: 80
-          }, {
-            lat: +79,
-            long: 80
-          }
-        ];
-        coll = new Atlas.Projects.Show.Tilemap.Entities.ItemCollection(json);
-        return coll.toLatLongMultiPoint().should.eql([[-40, 80], [79, 80]]);
-      });
-    });
-  });
-
-}).call(this);
-
-(function() {
-  describe('Atlas.Projects.Show.Tilemap.Entities.ItemModel', function() {
-    var Model;
-    Model = Atlas.Projects.Show.Tilemap.Entities.ItemModel;
-    describe('toRichGeoFeature', function() {
-      it('returns a GeoJSON point feature using lat and long attributes as coordinates', function() {
-        var json, model;
-        json = {
-          lat: 1,
-          long: 2,
-          name: 'some name',
-          attribute: 'some attribute'
-        };
-        model = new Model(json);
-        return model.toRichGeoJsonFeature().should.eql({
-          type: 'Feature',
-          _model: model,
-          geometry: {
-            type: 'Point',
-            coordinates: [2, 1]
-          }
-        });
-      });
-      return it('use default values Melbourne, Australia values if either latitude or longitude are not defined', function() {
-        var json, model;
-        json = {
-          name: 'some name',
-          attribute: 'some attribute'
-        };
-        model = new Model(json);
-        return model.toRichGeoJsonFeature().should.eql({
-          type: 'Feature',
-          _model: model,
-          geometry: {
-            type: 'Point',
-            coordinates: [145.0796161, -37.8602828]
-          }
-        });
-      });
-    });
-    describe('_processValues', function() {
-      var data;
-      data = fixtures.tilemap_pindrop;
-      it('removes leading and trailing whitespaces', function() {
-        console.log(data.data.items[0]);
-        return Model.prototype._processValues(data.data.items[0]).should.eql({
-          "name": "California",
-          "region": "west",
-          "population": 38000000,
-          "weather": "Excellent"
-        });
-      });
-      it('breaks by | character and removes leading and trailing whitespaces', function() {
-        return Model.prototype._processValues(data.data.items[1]).should.eql({
-          "name": "Georgia",
-          "region": "southeast",
-          "population": 10000000,
-          "weather": ["Good", "Ok"]
-        });
-      });
-      return it('does not break by | character if there is a return character (\n), which indicates Markdown syntax.', function() {
-        return Model.prototype._processValues(data.data.items[2]).should.eql({
-          "name": "Vermont",
-          "region": "northeast",
-          "population": 600000,
-          "weather": "Ok|Nice when things are\njolly"
-        });
-      });
-    });
-    return describe('matchesSearchTerm', function() {
-      return it('matches search term on the name attribute', function() {
-        var m;
-        m = new Model({
-          name: 'Fancy Name'
-        });
-        return m.matchesSearchTerm('ncy n').should.equal(true);
       });
     });
   });

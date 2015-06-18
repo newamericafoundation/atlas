@@ -20,6 +20,7 @@
     "gulp-eco": "0.0.2",
     "gulp-gzip": "^1.1.0",
     "gulp-jasmine": "^2.0.1",
+    "gulp-livereload": "^3.8.0",
     "gulp-minify-css": "^1.1.1",
     "gulp-mocha": "^2.1.0",
     "gulp-mocha-phantomjs": "^0.6.1",

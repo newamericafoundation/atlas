@@ -5,6 +5,22 @@ Policy analysis tool for New America's Education Policy Program.
 Url: http://atlas.newamerica.org/welcome
 Related Url: http://build.atlas.newamerica.org/
 
+## Basics
+
+Main entry point: ``./app.js``.
+
+Folder structure:
+* ``./app`` - models, views, routes and assets in development.
+* ``./config`` - configuration variables.
+* ``./db`` - database ``/seeds`` and batch database update ``/utilities``.
+* ``./public`` - public data.
+* ``./spec`` - specs for client- and server-side code.
+
+Additional files:
+* ``bower.json`` - client-side dependencies.
+* ``package.json`` - package definition and server-side dependencies.
+* ``gulpfile.js`` - build scripts.
+
 ## Development Environment
 
 Atlas is currently deployed on Node version 0.12.2 (see .ebextensions/00_general.config for corresponding setting).

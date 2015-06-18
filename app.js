@@ -2,18 +2,18 @@ var express = require('express'),
 	mongoose = require('mongoose'),
 	bodyParser = require('body-parser'),
 	app = express(),
-	router = require('./routes/index'),
+	router = require('./app/routes/index'),
 	basicAuth = require('basic-auth-connect'),
 	fs = require('fs'),
 	port = process.env.PORT || 8081,
-	config = require('./atlas_config.json'),
+	config = require('./config/index.json'),
 	env = app.get('env'),
 	json2csv = require('nice-json2csv');
 
 // Basic configuration.
 app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(json2csv.expressDecorator);
-app.set('views', __dirname + '/views');
+app.set('views', __dirname + '/app/views');
 app.set('view engine', 'jade');
 
 // Connect to DB, with automatic retry after 5s.
