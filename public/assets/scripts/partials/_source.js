@@ -1619,7 +1619,50 @@
           return $html.html();
         }
       },
-      buildData: function() {}
+      buildData: function() {
+        var data;
+        data = this.get('data');
+        if (data != null) {
+          data.filters = new Models.Filters(data.filters, {
+            parse: true
+          });
+          App.reqres.setHandler('filter:entities', function() {
+            return data.filters;
+          });
+          data.infobox_variables = new Models.InfoBoxSections(data.infobox_variables, {
+            parse: true
+          });
+          App.reqres.setHandler('info:box:section:entities', function() {
+            return data.infobox_variables;
+          });
+          data.variables = new Models.Variables(data.variables, {
+            parse: true
+          });
+          App.reqres.setHandler('variable:entities', function() {
+            return data.variables;
+          });
+          data.items = new App.Models.Items(data.items, {
+            parse: true
+          });
+          return App.reqres.setHandler('item:entities', (function(_this) {
+            return function(query) {
+              var id;
+              if (data.items != null) {
+                if (_.isObject(query)) {
+                  return data.items.findWhere(query);
+                }
+                if (query != null) {
+                  id = parseInt(query, 10);
+                  return data.items.findWhere({
+                    id: id
+                  });
+                }
+              }
+              return data.items;
+            };
+          })(this));
+        }
+      }
     });
     return Models.Projects = Models.BaseCollection.extend({
       initialize: function() {
@@ -2830,12 +2873,61 @@
 }).call(this);
 
 (function() {
+  this.Atlas.Projects.Show.PolicyBrief = this.Atlas.Projects.Show.Explainer;
+
+}).call(this);
+
+(function() {
+  this.Atlas.Projects.Show.Polling = this.Atlas.Projects.Show.Explainer;
+
+}).call(this);
+
+(function() {
   this.Atlas.module('Projects.Show.Tilemap', function(Tilemap, App, Backbone, Marionette, $, _) {
+    var setItemEventListeners;
     this.startWithParent = false;
-    Tilemap.submoduleKeys = ['Entities', 'Filter', 'Search', 'Legend', 'Info', 'Headline', 'Map', 'InfoBox', 'Popup'];
-    return this.on('start', function() {
+    Tilemap.submoduleKeys = ['Filter', 'Search', 'Legend', 'Info', 'Headline', 'Map', 'InfoBox', 'Popup'];
+    setItemEventListeners = (function(_this) {
+      return function() {
+        var items, setHeaderStripColor;
+        items = App.reqres.request('item:entities');
+        setHeaderStripColor = function() {
+          var cls, filter, hoveredItem, i;
+          filter = App.reqres.request('filter');
+          hoveredItem = items.hovered;
+          if (hoveredItem != null) {
+            i = filter.getValueIndeces(hoveredItem);
+            cls = filter.getBackgroundColorClass(i[0]);
+            return App.commands.execute('set:header:strip:color', {
+              className: cls
+            });
+          } else {
+            return App.commands.execute('set:header:strip:color', 'none');
+          }
+        };
+        _this.listenTo(App.vent, 'item:activate', function(modelOrId) {
+          return items.setActive(modelOrId);
+        });
+        _this.listenTo(App.vent, 'item:deactivate', function() {
+          return items.setActive(-1);
+        });
+        _this.listenTo(App.vent, 'item:mouseover', function(modelOrId) {
+          items.setHovered(modelOrId);
+          return setHeaderStripColor();
+        });
+        return _this.listenTo(App.vent, 'item:mouseout', function() {
+          items.setHovered(-1);
+          return setHeaderStripColor();
+        });
+      };
+    })(this);
+    this.on('start', function() {
       this.Controller.showMainView();
-      return this.Controller.startSubmodules();
+      this.Controller.startSubmodules();
+      return setItemEventListeners();
+    });
+    return this.on('stop', function() {
+      return this.stopListening();
     });
   });
 
@@ -2905,16 +2997,6 @@
 }).call(this);
 
 (function() {
-  this.Atlas.Projects.Show.PolicyBrief = this.Atlas.Projects.Show.Explainer;
-
-}).call(this);
-
-(function() {
-  this.Atlas.Projects.Show.Polling = this.Atlas.Projects.Show.Explainer;
-
-}).call(this);
-
-(function() {
   this.Atlas.module('Projects.Show.Tilemap.Submodules', function(Submodules, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     return App.reqres.setHandler('value:hovered', function() {
@@ -2925,150 +3007,6 @@
         return f;
       }
       return l;
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    Entities.FilterModel = Backbone.Model.extend({
-      getVariableModel: function(variables) {
-        if (variables == null) {
-          variables = App.reqres.request('variable:entities');
-        }
-        return variables.findWhere({
-          id: this.get('variable_id')
-        });
-      }
-    });
-    return Entities.FilterCollection = Backbone.Collection.extend({
-      model: Entities.FilterModel
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    return this.on('start', function() {
-      var data, filters;
-      data = App.currentProjectModel.get('data');
-      if (data != null) {
-        filters = new App.Models.Filters(data.filters);
-      }
-      return App.reqres.setHandler('filter:entities', function() {
-        return filters;
-      });
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      var data, infoBoxSections;
-      data = App.currentProjectModel.get('data');
-      if (data != null) {
-        infoBoxSections = new App.Models.InfoBoxSections(data.infobox_variables, {
-          parse: true
-        });
-      }
-      return App.reqres.setHandler('info:box:section:entities', function() {
-        return infoBoxSections;
-      });
-    });
-    return this.on('stop', function() {
-      return App.reqres.removeHandler('info:box:section:entities');
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      var data, items, setHeaderStripColor;
-      data = App.currentProjectModel.get('data');
-      if (data != null) {
-        items = new App.Models.Items(data.items, {
-          parse: true
-        });
-      }
-      App.reqres.setHandler('item:entities', (function(_this) {
-        return function(query) {
-          var id;
-          if (items != null) {
-            if (_.isObject(query)) {
-              return items.findWhere(query);
-            }
-            if (query != null) {
-              id = parseInt(query, 10);
-              return items.findWhere({
-                id: id
-              });
-            }
-          }
-          return items;
-        };
-      })(this));
-      setHeaderStripColor = function() {
-        var cls, filter, hoveredItem, i;
-        items = App.reqres.request('item:entities');
-        filter = App.reqres.request('filter');
-        hoveredItem = items.hovered;
-        if (hoveredItem != null) {
-          i = filter.getValueIndeces(hoveredItem);
-          cls = filter.getBackgroundColorClass(i[0]);
-          return App.commands.execute('set:header:strip:color', {
-            className: cls
-          });
-        } else {
-          return App.commands.execute('set:header:strip:color', 'none');
-        }
-      };
-      this.listenTo(App.vent, 'item:activate', function(modelOrId) {
-        return items.setActive(modelOrId);
-      });
-      this.listenTo(App.vent, 'item:deactivate', function() {
-        return items.setActive(-1);
-      });
-      this.listenTo(App.vent, 'item:mouseover', function(modelOrId) {
-        items.setHovered(modelOrId);
-        return setHeaderStripColor();
-      });
-      return this.listenTo(App.vent, 'item:mouseout', function() {
-        items.setHovered(-1);
-        return setHeaderStripColor();
-      });
-    });
-    return this.on('stop', function() {
-      App.reqres.removeHandler('item:entities');
-      return this.stopListening();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      var data, variables;
-      data = App.currentProjectModel.get('data');
-      if (data != null) {
-        variables = new App.Models.Variables(data.variables);
-      }
-      return App.reqres.setHandler('variable:entities', function(query) {
-        return variables;
-      });
-    });
-    return this.on('stop', function() {
-      return App.reqres.removeHandler('variable:entities');
     });
   });
 
@@ -5108,6 +5046,7 @@
           if (project.exists()) {
             App.vent.trigger('current:project:change', project);
             templateName = project.get('project_template_name');
+            project.buildData();
             return Show[templateName].start();
           } else {
             return Backbone.history.navigate('welcome', {

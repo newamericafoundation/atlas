@@ -58,7 +58,33 @@
 
 		# If there is a data field, convert to appropriate collections.
 		buildData: () ->
-			
+			data = @get('data')
+			if data?
+
+				data.filters = new Models.Filters data.filters, { parse: true }
+				App.reqres.setHandler 'filter:entities', -> data.filters
+
+				data.infobox_variables = new Models.InfoBoxSections data.infobox_variables, { parse: true }
+				App.reqres.setHandler 'info:box:section:entities', -> data.infobox_variables
+
+				data.variables = new Models.Variables data.variables, { parse: true }
+				App.reqres.setHandler 'variable:entities', -> data.variables
+
+				data.items = new App.Models.Items data.items, { parse: true }
+				App.reqres.setHandler 'item:entities', (query) =>
+
+					if data.items? 
+						# use query object by default
+						if _.isObject query
+							return data.items.findWhere query
+
+						# if no object is passed in, assume it is an id
+						if query?
+							id = parseInt(query, 10)
+							return data.items.findWhere({ id: id })
+
+					# if nothing is passed in, return the whole collection
+					data.items
 
 
 

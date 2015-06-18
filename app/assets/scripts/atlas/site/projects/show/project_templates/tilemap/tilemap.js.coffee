@@ -11,7 +11,6 @@
 	#   Future devs: by adding a new layer of events, this behavior can be eliminated.
 	# Later order is not that relevant.
 	Tilemap.submoduleKeys = [ 
-		'Entities' 
 		'Filter'
 		'Search'
 		'Legend'
@@ -20,8 +19,42 @@
 		'Map'
 		'InfoBox'
 		'Popup'
-	]
+	] 
+
+	setItemEventListeners = =>
+
+		items = App.reqres.request 'item:entities'
+
+		setHeaderStripColor = ->
+			
+			filter = App.reqres.request 'filter'
+			hoveredItem = items.hovered
+			if hoveredItem?
+				i = filter.getValueIndeces hoveredItem
+				cls = filter.getBackgroundColorClass i[0]
+				App.commands.execute 'set:header:strip:color', { className: cls }
+			else
+				App.commands.execute 'set:header:strip:color', 'none'
+
+		@listenTo App.vent, 'item:activate', (modelOrId) ->
+			items.setActive modelOrId
+
+		@listenTo App.vent, 'item:deactivate', ->
+			items.setActive -1
+			
+		@listenTo App.vent, 'item:mouseover', (modelOrId) ->
+			items.setHovered modelOrId
+			setHeaderStripColor()
+
+		@listenTo App.vent, 'item:mouseout', () ->
+			items.setHovered -1
+			setHeaderStripColor()
+
 
 	@on 'start', ->
 		@Controller.showMainView()			
 		@Controller.startSubmodules()
+		setItemEventListeners()
+
+	@on 'stop', ->
+		@stopListening()

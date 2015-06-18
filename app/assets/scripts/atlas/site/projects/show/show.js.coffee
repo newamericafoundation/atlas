@@ -17,6 +17,7 @@
 			if project.exists()
 				App.vent.trigger 'current:project:change', project
 				templateName = project.get 'project_template_name'
+				project.buildData()
 				Show[templateName].start()
 			else
 				Backbone.history.navigate 'welcome', { trigger: true }
