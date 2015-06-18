@@ -19,7 +19,7 @@
 		'Map'
 		'InfoBox'
 		'Popup'
-	] 
+	]
 
 	setItemEventListeners = =>
 
@@ -52,9 +52,9 @@
 
 
 	@on 'start', ->
+		setItemEventListeners()
 		@Controller.showMainView()			
 		@Controller.startSubmodules()
-		setItemEventListeners()
 
 	@on 'stop', ->
 		@stopListening()

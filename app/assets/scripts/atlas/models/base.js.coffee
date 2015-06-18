@@ -18,6 +18,10 @@
 						delete data[kf]
 			found
 
+
+		# Adapts Mongoid ID.
+		_adaptMongoId: (data) ->
+			data
 		
 
 

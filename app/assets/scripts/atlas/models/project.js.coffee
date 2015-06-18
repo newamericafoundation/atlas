@@ -71,6 +71,7 @@
 				App.reqres.setHandler 'variable:entities', -> data.variables
 
 				data.items = new App.Models.Items data.items, { parse: true }
+				
 				App.reqres.setHandler 'item:entities', (query) =>
 
 					if data.items? 

@@ -1117,6 +1117,9 @@
           }
         }
         return found;
+      },
+      _adaptMongoId: function(data) {
+        return data;
       }
     });
     return Models.BaseCollection = Backbone.Collection.extend({
@@ -2922,9 +2925,9 @@
       };
     })(this);
     this.on('start', function() {
+      setItemEventListeners();
       this.Controller.showMainView();
-      this.Controller.startSubmodules();
-      return setItemEventListeners();
+      return this.Controller.startSubmodules();
     });
     return this.on('stop', function() {
       return this.stopListening();
@@ -3054,10 +3057,12 @@
         return Filter.rootView.destroy();
       },
       _buildFilter: function() {
-        var filters, items, variables;
-        items = App.reqres.request('item:entities');
-        variables = App.reqres.request('variable:entities');
-        filters = App.reqres.request('filter:entities');
+        var data, filters, items, model, variables;
+        model = App.currentProjectModel;
+        data = model.get('data');
+        items = data.items;
+        variables = data.variables;
+        filters = data.filters;
         return new Filter.Model(Filter.buildFilterTree(items, variables, filters));
       },
       getKeysView: function() {

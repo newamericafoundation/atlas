@@ -28,9 +28,11 @@
 
 
 		_buildFilter: ->
-			items = App.reqres.request('item:entities')
-			variables = App.reqres.request('variable:entities')
-			filters = App.reqres.request('filter:entities')
+			model = App.currentProjectModel
+			data = model.get 'data'
+			items = data.items
+			variables = data.variables
+			filters = data.filters
 			new Filter.Model Filter.buildFilterTree items, variables, filters
 
 
