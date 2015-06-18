@@ -12,7 +12,7 @@
 					@getRegion(key).show(value)
 
 			$(window).on 'resize', ->
-				console.log 'resized window' 
+				# console.log 'resized window' 
 
 		collapseIfSettingsBarIsOverflowing: ->
 			h1 = $('.atl__headline').height() + $('.atl__filter').height()

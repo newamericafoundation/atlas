@@ -1,27 +1,18 @@
-@mixin button($font-size: 16px, $extra-padding: 0px) {
+@mixin button($font-size: 16px, $extra-padding: 0px, $color: map-get($palette, off-white)) {
 
     line-height: 80%;
-
 	position: static;
     display: inline-block;
-
     margin: 6px 6px 0px 0px;
     padding: 2px+$extra-padding 5px+$extra-padding 0px+$extra-padding 5px+$extra-padding;
-
-    border: 2px solid map-get($palette, off-white);
-
+    
     border-radius: 7px;
-    opacity: 0.4;
+    
     cursor: pointer;
 
-    &__icon {
-        display: inline-block;
-        width: $font-size;
-        height: $font-size;
-        content: '';
-    }
-
+    border: 2px solid $color;
     p {
+        color: $color; 
         display: inline-block;
         width: auto;
         @include font-size($font-size);
@@ -35,12 +26,8 @@
         font-family: 'SimplonNorm-Regular-WebS' !important;
     }
 
-    &:hover, &--active, .toc-active & { opacity: 0.9; }
-
-    .atl--collapsed &, .bg-c-off-white & {
-        border-color: map-get(map-get($palette, grey), base);
-        p { color: map-get(map-get($palette, grey), base); }
-    }
+    opacity: 0.4;
+    &:hover, &--active { opacity: 0.9; }
 
 }
 

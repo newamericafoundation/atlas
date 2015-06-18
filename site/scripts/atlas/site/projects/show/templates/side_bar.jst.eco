@@ -2,15 +2,15 @@
 
 <ul class="atl__side-bar__icons">
 
-	<% for option in [ ['projects', 'grid'], ['share', 'share'], ['collapse', 'contract'], ['help', 'help', true], ['print', 'print', true] ]: %>
+	<% for option in [ ['projects', 'grid'], ['share', 'share'], ['collapse', 'contract'], ['help', 'help'], ['print', 'print'] ]: %>
 
-		<li>
-			<a href="#" class="bg-img-<%= option[1] %>--off-white" data-method="<%= option[0] %>" target="<%= if option[2] then '_blank' else '' %>"></a>
+		<li class="atl__side-bar__icon" data-method="<%= option[0] %>">
+			<div class="bg-img-<%= option[1] %>--off-white"></div>
 		</li>
 
 	<% end %>
 
-	<li class='atl__side-bar__icons__download'>
+	<li class='atl__side-bar__icon'>
 		<form class="form--compact bg-img-download--off-white" action='/api/v1/projects/print' method='post'> 
 			<input type="hidden" name="atlas_url" value="<%= @atlas_url %>">
 			<input type="submit" value="">

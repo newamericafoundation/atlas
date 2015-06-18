@@ -8,19 +8,19 @@ form {
     text-align: center;
 
     &.form--compact {
-        padding: 0;
+        opacity: 1;
         margin: 0;
-        width: 24px;
-        height: 24px;
-        opacity: 0.7;
+        padding: 0;
+        width: 100%;
+        height: 100%;
         &:hover { opacity: 0.9; }
+        input[type="hidden"] { display: none; }
         input[type="submit"] {
+            width: 100%;
+            height: 100%;
             opacity: 0;
             margin: 0;
             padding: 0;
-            width: 100%;
-            height: 100%;
-            background: none;
             @include font-size(2px);
         }
     }

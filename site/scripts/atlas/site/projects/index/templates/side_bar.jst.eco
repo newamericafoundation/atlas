@@ -1,8 +1,8 @@
 <div class="atl__side-bar__background"></div>
 <ul class="atl__side-bar__icons">
 	<li>
-		<div class="atl__side-bar__icon">
-			<a href="mailto:atlas@newamerica.org" class="bg-img-comment--off-white"></a>
-		</div>
+		<a href="mailto:atlas@newamerica.org" class="atl__side-bar__icon">
+			<div class="bg-img-comment--off-white"></div>
+		</a>
 	</li>
 </ul>

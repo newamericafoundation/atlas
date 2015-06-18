@@ -14,13 +14,18 @@
 		className: 'atl__side-bar fill-parent'
 		template: 'projects/show/templates/side_bar'
 		events: 
-			'click a': 'navigate'			
+			'click .atl__side-bar__icon': 'navigate'
 
 		navigate: (e) ->
+			# If the download form is clicked, don't execute JavaScript.
+			$target = $(e.target)
+			tagName = $target.prop('tagName').toLowerCase().trim()
+			return if (tagName is 'form' or tagName is 'input')
+
 			e.preventDefault()
 			e.stopPropagation()
 			entity = $(e.currentTarget).attr('data-method')
-			method = @["_#{entity}"]
+			method = @["_#{entity}"].bind(@)
 			method(e) if method?
 
 		_projects: ->
@@ -33,7 +38,19 @@
 
 		_collapse: (e) ->
 			$('.atl').toggleClass 'atl--collapsed'
-			$(e.target).toggleClass 'bg-img-expand--off-white'
+			$target = $(e.target)
+			if $target.hasClass('atl__side-bar__icon')
+				$target = $($target.children()[0])
+			$target.toggleClass 'bg-img-expand--off-white'
+			@_toggleDisplayNavColor()
+
+		_help: (e) ->
+			$('.atl').toggleClass('atl--help')
+
+		_print: ->
+			window.print()
+
+		_toggleDisplayNavColor: () ->
 			$('.atl__binary-toggle__link').each () ->
 				$el = $(@)
 				cls = $el.attr 'class'
@@ -46,12 +63,6 @@
 					$el.removeClass colorCls
 					colorCls = colorCls.replace('black', 'off-white')
 					$el.addClass colorCls
-
-		_help: (e) ->
-			$('.atl').toggleClass('atl--help')
-
-		_print: ->
-			window.print()
 
 		updateLinkUrl: ->
 			if @model?

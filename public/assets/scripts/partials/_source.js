@@ -21,6 +21,27 @@
 }).call(this);
 
 (function() {
+  $.fn.extend({
+    changeModifierClass: function(baseClass, previousModifier, newModifier, modifierIndicator) {
+      var $el, newCls, previousCls;
+      if (modifierIndicator == null) {
+        modifierIndicator = '--';
+      }
+      $el = $(this);
+      previousCls = baseClass + modifierIndicator + previousModifier;
+      newCls = baseClass + modifierIndicator + newModifier;
+      if (previousModifier != null) {
+        if ($el.hasClass(previousCls)) {
+          $el.removeClass(previousCls);
+        }
+      }
+      return $el.addClass(newCls);
+    }
+  });
+
+}).call(this);
+
+(function() {
   Marionette.Renderer.render = function(template, data) {
     var i, len, path, paths;
     if (window.JST == null) {
@@ -2495,12 +2516,12 @@
 }).call(this);
 
 (function() {
-  this.Atlas.Projects.Show.PolicyBrief = this.Atlas.Projects.Show.Explainer;
+  this.Atlas.Projects.Show.Polling = this.Atlas.Projects.Show.Explainer;
 
 }).call(this);
 
 (function() {
-  this.Atlas.Projects.Show.Polling = this.Atlas.Projects.Show.Explainer;
+  this.Atlas.Projects.Show.PolicyBrief = this.Atlas.Projects.Show.Explainer;
 
 }).call(this);
 
@@ -2558,9 +2579,7 @@
           }
           return results;
         });
-        return $(window).on('resize', function() {
-          return console.log('resized window');
-        });
+        return $(window).on('resize', function() {});
       },
       collapseIfSettingsBarIsOverflowing: function() {
         var h1, h2;
@@ -2598,6 +2617,33 @@
 }).call(this);
 
 (function() {
+
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    this.on('start', function() {
+      var data, infoBoxSections;
+      data = App.currentProjectModel.get('data');
+      if (data != null) {
+        infoBoxSections = new Entities.ItemCollection(data.infobox_variables, {
+          parse: true
+        });
+      }
+      return App.reqres.setHandler('info:box:section:entities', function() {
+        return infoBoxSections;
+      });
+    });
+    return this.on('stop', function() {
+      return App.reqres.removeHandler('info:box:section:entities');
+    });
+  });
+
+}).call(this);
+
+(function() {
   this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
     Entities.FilterModel = Backbone.Model.extend({
       getVariableModel: function() {
@@ -2627,33 +2673,6 @@
       return App.reqres.setHandler('filter:entities', function() {
         return filters;
       });
-    });
-  });
-
-}).call(this);
-
-(function() {
-
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      var data, infoBoxSections;
-      data = App.currentProjectModel.get('data');
-      if (data != null) {
-        infoBoxSections = new Entities.ItemCollection(data.infobox_variables, {
-          parse: true
-        });
-      }
-      return App.reqres.setHandler('info:box:section:entities', function() {
-        return infoBoxSections;
-      });
-    });
-    return this.on('stop', function() {
-      return App.reqres.removeHandler('info:box:section:entities');
     });
   });
 
@@ -4488,6 +4507,62 @@
 }).call(this);
 
 (function() {
+  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    this.on('start', function() {
+      this.Controller.show();
+      App.searchTerm = "";
+      return App.reqres.setHandler('search:term', function() {
+        return App.searchTerm;
+      });
+    });
+    return this.on('stop', function() {
+      this.Controller.destroy();
+      return this.stopListening();
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
+    return Search.Controller = {
+      show: function() {
+        Search.view = new App.Base.SearchView({
+          el: $('.atl__search'),
+          model: new Backbone.Model({
+            placeholder: 'Search Project'
+          })
+        });
+        return Search.view.render();
+      },
+      destroy: function() {
+        return Search.view.destroy();
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
+    return Search.RootView = Marionette.ItemView.extend({
+      tagName: 'div',
+      className: 'atl__search',
+      template: 'projects/show/project_templates/tilemap/submodules/search/templates/root',
+      events: {
+        'keyup input': 'changeSearchTerm'
+      },
+      changeSearchTerm: function(e) {
+        Search.term = $(e.target)[0].value;
+        return App.vent.trigger('search:term:change');
+      }
+    });
+  });
+
+}).call(this);
+
+(function() {
   this.Atlas.module('Projects.Show.Tilemap.Popup', function(Popup, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     this.on('start', function() {
@@ -4597,62 +4672,6 @@
       },
       preventDefault: function(e) {
         return e.preventDefault();
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      this.Controller.show();
-      App.searchTerm = "";
-      return App.reqres.setHandler('search:term', function() {
-        return App.searchTerm;
-      });
-    });
-    return this.on('stop', function() {
-      this.Controller.destroy();
-      return this.stopListening();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
-    return Search.Controller = {
-      show: function() {
-        Search.view = new App.Base.SearchView({
-          el: $('.atl__search'),
-          model: new Backbone.Model({
-            placeholder: 'Search Project'
-          })
-        });
-        return Search.view.render();
-      },
-      destroy: function() {
-        return Search.view.destroy();
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
-    return Search.RootView = Marionette.ItemView.extend({
-      tagName: 'div',
-      className: 'atl__search',
-      template: 'projects/show/project_templates/tilemap/submodules/search/templates/root',
-      events: {
-        'keyup input': 'changeSearchTerm'
-      },
-      changeSearchTerm: function(e) {
-        Search.term = $(e.target)[0].value;
-        return App.vent.trigger('search:term:change');
       }
     });
   });
@@ -5215,14 +5234,19 @@
       className: 'atl__side-bar fill-parent',
       template: 'projects/show/templates/side_bar',
       events: {
-        'click a': 'navigate'
+        'click .atl__side-bar__icon': 'navigate'
       },
       navigate: function(e) {
-        var entity, method;
+        var $target, entity, method, tagName;
+        $target = $(e.target);
+        tagName = $target.prop('tagName').toLowerCase().trim();
+        if (tagName === 'form' || tagName === 'input') {
+          return;
+        }
         e.preventDefault();
         e.stopPropagation();
         entity = $(e.currentTarget).attr('data-method');
-        method = this["_" + entity];
+        method = this["_" + entity].bind(this);
         if (method != null) {
           return method(e);
         }
@@ -5239,8 +5263,22 @@
         return window.location.href = url;
       },
       _collapse: function(e) {
+        var $target;
         $('.atl').toggleClass('atl--collapsed');
-        $(e.target).toggleClass('bg-img-expand--off-white');
+        $target = $(e.target);
+        if ($target.hasClass('atl__side-bar__icon')) {
+          $target = $($target.children()[0]);
+        }
+        $target.toggleClass('bg-img-expand--off-white');
+        return this._toggleDisplayNavColor();
+      },
+      _help: function(e) {
+        return $('.atl').toggleClass('atl--help');
+      },
+      _print: function() {
+        return window.print();
+      },
+      _toggleDisplayNavColor: function() {
         return $('.atl__binary-toggle__link').each(function() {
           var $el, cls, colorCls;
           $el = $(this);
@@ -5256,12 +5294,6 @@
             return $el.addClass(colorCls);
           }
         });
-      },
-      _help: function(e) {
-        return $('.atl').toggleClass('atl--help');
-      },
-      _print: function() {
-        return window.print();
       },
       updateLinkUrl: function() {
         if (this.model != null) {

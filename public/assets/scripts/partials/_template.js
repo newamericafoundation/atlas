@@ -1987,7 +1987,7 @@ window.JST_ATL["atlas/site/projects/index/templates/side_bar.jst"] = function (_
   }
   (function() {
     (function() {
-      __out.push('<div class="atl__side-bar__background"></div>\n<ul class="atl__side-bar__icons">\n\t<li>\n\t\t<div class="atl__side-bar__icon">\n\t\t\t<a href="mailto:atlas@newamerica.org" class="bg-img-comment--off-white"></a>\n\t\t</div>\n\t</li>\n</ul>');
+      __out.push('<div class="atl__side-bar__background"></div>\n<ul class="atl__side-bar__icons">\n\t<li>\n\t\t<a href="mailto:atlas@newamerica.org" class="atl__side-bar__icon">\n\t\t\t<div class="bg-img-comment--off-white"></div>\n\t\t</a>\n\t</li>\n</ul>');
     
     }).call(this);
     
@@ -2093,19 +2093,17 @@ window.JST_ATL["atlas/site/projects/show/templates/side_bar.jst"] = function (__
     
       __out.push('<div class="atl__side-bar__background"></div>\n\n<ul class="atl__side-bar__icons">\n\n\t');
     
-      ref = [['projects', 'grid'], ['share', 'share'], ['collapse', 'contract'], ['help', 'help', true], ['print', 'print', true]];
+      ref = [['projects', 'grid'], ['share', 'share'], ['collapse', 'contract'], ['help', 'help'], ['print', 'print']];
       for (i = 0, len = ref.length; i < len; i++) {
         option = ref[i];
-        __out.push('\n\n\t\t<li>\n\t\t\t<a href="#" class="bg-img-');
-        __out.push(__sanitize(option[1]));
-        __out.push('--off-white" data-method="');
+        __out.push('\n\n\t\t<li class="atl__side-bar__icon" data-method="');
         __out.push(__sanitize(option[0]));
-        __out.push('" target="');
-        __out.push(__sanitize(option[2] ? '_blank' : ''));
-        __out.push('"></a>\n\t\t</li>\n\n\t');
+        __out.push('">\n\t\t\t<div class="bg-img-');
+        __out.push(__sanitize(option[1]));
+        __out.push('--off-white"></div>\n\t\t</li>\n\n\t');
       }
     
-      __out.push('\n\n\t<li class=\'atl__side-bar__icons__download\'>\n\t\t<form class="form--compact bg-img-download--off-white" action=\'/api/v1/projects/print\' method=\'post\'> \n\t\t\t<input type="hidden" name="atlas_url" value="');
+      __out.push('\n\n\t<li class=\'atl__side-bar__icon\'>\n\t\t<form class="form--compact bg-img-download--off-white" action=\'/api/v1/projects/print\' method=\'post\'> \n\t\t\t<input type="hidden" name="atlas_url" value="');
     
       __out.push(__sanitize(this.atlas_url));
     

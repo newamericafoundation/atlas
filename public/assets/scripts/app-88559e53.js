@@ -1987,7 +1987,7 @@ window.JST_ATL["atlas/site/projects/index/templates/side_bar.jst"] = function (_
   }
   (function() {
     (function() {
-      __out.push('<div class="atl__side-bar__background"></div>\n<ul class="atl__side-bar__icons">\n\t<li>\n\t\t<div class="atl__side-bar__icon">\n\t\t\t<a href="mailto:atlas@newamerica.org" class="bg-img-comment--off-white"></a>\n\t\t</div>\n\t</li>\n</ul>');
+      __out.push('<div class="atl__side-bar__background"></div>\n<ul class="atl__side-bar__icons">\n\t<li>\n\t\t<a href="mailto:atlas@newamerica.org" class="atl__side-bar__icon">\n\t\t\t<div class="bg-img-comment--off-white"></div>\n\t\t</a>\n\t</li>\n</ul>');
     
     }).call(this);
     
@@ -2093,19 +2093,17 @@ window.JST_ATL["atlas/site/projects/show/templates/side_bar.jst"] = function (__
     
       __out.push('<div class="atl__side-bar__background"></div>\n\n<ul class="atl__side-bar__icons">\n\n\t');
     
-      ref = [['projects', 'grid'], ['share', 'share'], ['collapse', 'contract'], ['help', 'help', true], ['print', 'print', true]];
+      ref = [['projects', 'grid'], ['share', 'share'], ['collapse', 'contract'], ['help', 'help'], ['print', 'print']];
       for (i = 0, len = ref.length; i < len; i++) {
         option = ref[i];
-        __out.push('\n\n\t\t<li>\n\t\t\t<a href="#" class="bg-img-');
-        __out.push(__sanitize(option[1]));
-        __out.push('--off-white" data-method="');
+        __out.push('\n\n\t\t<li class="atl__side-bar__icon" data-method="');
         __out.push(__sanitize(option[0]));
-        __out.push('" target="');
-        __out.push(__sanitize(option[2] ? '_blank' : ''));
-        __out.push('"></a>\n\t\t</li>\n\n\t');
+        __out.push('">\n\t\t\t<div class="bg-img-');
+        __out.push(__sanitize(option[1]));
+        __out.push('--off-white"></div>\n\t\t</li>\n\n\t');
       }
     
-      __out.push('\n\n\t<li class=\'atl__side-bar__icons__download\'>\n\t\t<form class="form--compact bg-img-download--off-white" action=\'/api/v1/projects/print\' method=\'post\'> \n\t\t\t<input type="hidden" name="atlas_url" value="');
+      __out.push('\n\n\t<li class=\'atl__side-bar__icon\'>\n\t\t<form class="form--compact bg-img-download--off-white" action=\'/api/v1/projects/print\' method=\'post\'> \n\t\t\t<input type="hidden" name="atlas_url" value="');
     
       __out.push(__sanitize(this.atlas_url));
     
@@ -42987,6 +42985,27 @@ jQuery.fn.toc.defaults = {
 }).call(this);
 
 (function() {
+  $.fn.extend({
+    changeModifierClass: function(baseClass, previousModifier, newModifier, modifierIndicator) {
+      var $el, newCls, previousCls;
+      if (modifierIndicator == null) {
+        modifierIndicator = '--';
+      }
+      $el = $(this);
+      previousCls = baseClass + modifierIndicator + previousModifier;
+      newCls = baseClass + modifierIndicator + newModifier;
+      if (previousModifier != null) {
+        if ($el.hasClass(previousCls)) {
+          $el.removeClass(previousCls);
+        }
+      }
+      return $el.addClass(newCls);
+    }
+  });
+
+}).call(this);
+
+(function() {
   Marionette.Renderer.render = function(template, data) {
     var i, len, path, paths;
     if (window.JST == null) {
@@ -45461,12 +45480,12 @@ jQuery.fn.toc.defaults = {
 }).call(this);
 
 (function() {
-  this.Atlas.Projects.Show.PolicyBrief = this.Atlas.Projects.Show.Explainer;
+  this.Atlas.Projects.Show.Polling = this.Atlas.Projects.Show.Explainer;
 
 }).call(this);
 
 (function() {
-  this.Atlas.Projects.Show.Polling = this.Atlas.Projects.Show.Explainer;
+  this.Atlas.Projects.Show.PolicyBrief = this.Atlas.Projects.Show.Explainer;
 
 }).call(this);
 
@@ -45524,9 +45543,7 @@ jQuery.fn.toc.defaults = {
           }
           return results;
         });
-        return $(window).on('resize', function() {
-          return console.log('resized window');
-        });
+        return $(window).on('resize', function() {});
       },
       collapseIfSettingsBarIsOverflowing: function() {
         var h1, h2;
@@ -45564,6 +45581,33 @@ jQuery.fn.toc.defaults = {
 }).call(this);
 
 (function() {
+
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    this.on('start', function() {
+      var data, infoBoxSections;
+      data = App.currentProjectModel.get('data');
+      if (data != null) {
+        infoBoxSections = new Entities.ItemCollection(data.infobox_variables, {
+          parse: true
+        });
+      }
+      return App.reqres.setHandler('info:box:section:entities', function() {
+        return infoBoxSections;
+      });
+    });
+    return this.on('stop', function() {
+      return App.reqres.removeHandler('info:box:section:entities');
+    });
+  });
+
+}).call(this);
+
+(function() {
   this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
     Entities.FilterModel = Backbone.Model.extend({
       getVariableModel: function() {
@@ -45593,33 +45637,6 @@ jQuery.fn.toc.defaults = {
       return App.reqres.setHandler('filter:entities', function() {
         return filters;
       });
-    });
-  });
-
-}).call(this);
-
-(function() {
-
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      var data, infoBoxSections;
-      data = App.currentProjectModel.get('data');
-      if (data != null) {
-        infoBoxSections = new Entities.ItemCollection(data.infobox_variables, {
-          parse: true
-        });
-      }
-      return App.reqres.setHandler('info:box:section:entities', function() {
-        return infoBoxSections;
-      });
-    });
-    return this.on('stop', function() {
-      return App.reqres.removeHandler('info:box:section:entities');
     });
   });
 
@@ -47454,6 +47471,62 @@ jQuery.fn.toc.defaults = {
 }).call(this);
 
 (function() {
+  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    this.on('start', function() {
+      this.Controller.show();
+      App.searchTerm = "";
+      return App.reqres.setHandler('search:term', function() {
+        return App.searchTerm;
+      });
+    });
+    return this.on('stop', function() {
+      this.Controller.destroy();
+      return this.stopListening();
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
+    return Search.Controller = {
+      show: function() {
+        Search.view = new App.Base.SearchView({
+          el: $('.atl__search'),
+          model: new Backbone.Model({
+            placeholder: 'Search Project'
+          })
+        });
+        return Search.view.render();
+      },
+      destroy: function() {
+        return Search.view.destroy();
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
+    return Search.RootView = Marionette.ItemView.extend({
+      tagName: 'div',
+      className: 'atl__search',
+      template: 'projects/show/project_templates/tilemap/submodules/search/templates/root',
+      events: {
+        'keyup input': 'changeSearchTerm'
+      },
+      changeSearchTerm: function(e) {
+        Search.term = $(e.target)[0].value;
+        return App.vent.trigger('search:term:change');
+      }
+    });
+  });
+
+}).call(this);
+
+(function() {
   this.Atlas.module('Projects.Show.Tilemap.Popup', function(Popup, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     this.on('start', function() {
@@ -47563,62 +47636,6 @@ jQuery.fn.toc.defaults = {
       },
       preventDefault: function(e) {
         return e.preventDefault();
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      this.Controller.show();
-      App.searchTerm = "";
-      return App.reqres.setHandler('search:term', function() {
-        return App.searchTerm;
-      });
-    });
-    return this.on('stop', function() {
-      this.Controller.destroy();
-      return this.stopListening();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
-    return Search.Controller = {
-      show: function() {
-        Search.view = new App.Base.SearchView({
-          el: $('.atl__search'),
-          model: new Backbone.Model({
-            placeholder: 'Search Project'
-          })
-        });
-        return Search.view.render();
-      },
-      destroy: function() {
-        return Search.view.destroy();
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
-    return Search.RootView = Marionette.ItemView.extend({
-      tagName: 'div',
-      className: 'atl__search',
-      template: 'projects/show/project_templates/tilemap/submodules/search/templates/root',
-      events: {
-        'keyup input': 'changeSearchTerm'
-      },
-      changeSearchTerm: function(e) {
-        Search.term = $(e.target)[0].value;
-        return App.vent.trigger('search:term:change');
       }
     });
   });
@@ -48181,14 +48198,19 @@ jQuery.fn.toc.defaults = {
       className: 'atl__side-bar fill-parent',
       template: 'projects/show/templates/side_bar',
       events: {
-        'click a': 'navigate'
+        'click .atl__side-bar__icon': 'navigate'
       },
       navigate: function(e) {
-        var entity, method;
+        var $target, entity, method, tagName;
+        $target = $(e.target);
+        tagName = $target.prop('tagName').toLowerCase().trim();
+        if (tagName === 'form' || tagName === 'input') {
+          return;
+        }
         e.preventDefault();
         e.stopPropagation();
         entity = $(e.currentTarget).attr('data-method');
-        method = this["_" + entity];
+        method = this["_" + entity].bind(this);
         if (method != null) {
           return method(e);
         }
@@ -48205,8 +48227,22 @@ jQuery.fn.toc.defaults = {
         return window.location.href = url;
       },
       _collapse: function(e) {
+        var $target;
         $('.atl').toggleClass('atl--collapsed');
-        $(e.target).toggleClass('bg-img-expand--off-white');
+        $target = $(e.target);
+        if ($target.hasClass('atl__side-bar__icon')) {
+          $target = $($target.children()[0]);
+        }
+        $target.toggleClass('bg-img-expand--off-white');
+        return this._toggleDisplayNavColor();
+      },
+      _help: function(e) {
+        return $('.atl').toggleClass('atl--help');
+      },
+      _print: function() {
+        return window.print();
+      },
+      _toggleDisplayNavColor: function() {
         return $('.atl__binary-toggle__link').each(function() {
           var $el, cls, colorCls;
           $el = $(this);
@@ -48222,12 +48258,6 @@ jQuery.fn.toc.defaults = {
             return $el.addClass(colorCls);
           }
         });
-      },
-      _help: function(e) {
-        return $('.atl').toggleClass('atl--help');
-      },
-      _print: function() {
-        return window.print();
       },
       updateLinkUrl: function() {
         if (this.model != null) {
