@@ -3,7 +3,6 @@
 	@startWithParent = false
 
 	@on 'start', ->
-
+		model = App.currentProjectModel
 		Explainer.Controller.show()
-
 		@

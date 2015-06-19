@@ -1,6 +1,6 @@
 var express = require('express'),
 	mongoose = require('mongoose'),
-	bodyParser = require('body-parser'),
+	bodyParser = require('body-parser'), 
 	app = express(),
 	router = require('./app/routes/index'),
 	basicAuth = require('basic-auth-connect'),

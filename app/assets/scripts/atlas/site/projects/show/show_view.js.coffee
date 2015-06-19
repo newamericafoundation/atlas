@@ -42,27 +42,12 @@
 			if $target.hasClass('atl__side-bar__icon')
 				$target = $($target.children()[0])
 			$target.toggleClass 'bg-img-expand--off-white'
-			@_toggleDisplayNavColor()
 
 		_help: (e) ->
 			$('.atl').toggleClass('atl--help')
 
 		_print: ->
 			window.print()
-
-		_toggleDisplayNavColor: () ->
-			$('.atl__binary-toggle__link').each () ->
-				$el = $(@)
-				cls = $el.attr 'class'
-				colorCls = cls.match(/bg-img-(filter|search)--(off-white|black)/g)[0]
-				if colorCls.indexOf('off-white') > -1
-					$el.removeClass colorCls
-					colorCls = colorCls.replace('off-white', 'black')
-					$el.addClass colorCls
-				else
-					$el.removeClass colorCls
-					colorCls = colorCls.replace('black', 'off-white')
-					$el.addClass colorCls
 
 		updateLinkUrl: ->
 			if @model?
@@ -78,7 +63,8 @@
 			main: '#atl__main'
 
 		events: 
-			'click .atl__binary-toggle__link': 'toggleDisplay'
+			'click #atl__set-filter-display': 'setFilterDisplay'
+			'click #atl__set-search-display': 'setSearchDisplay'
 
 		initialize: ->
 			@listenTo App.vent, 'current:project:change', (project) ->
@@ -90,23 +76,16 @@
 			if @model?
 				@$el.addClass 'atl--' + @model.get('project_template_name').toLowerCase()
 
-		toggleDisplay: (e) ->
-
+		setFilterDisplay: (e) ->
 			e.preventDefault()
-			$target = $(e.target)
-			$app = $('.atl')
+			$('.atl').removeClass('atl--search-display').addClass('atl--filter-display')
+			$('#atl__set-search-display').removeClass 'atl__binary-toggle__link--active'
+			$('#atl__set-filter-display').addClass 'atl__binary-toggle__link--active'
+			App.commands.execute 'change:display:mode', 'filter'
 
-			activate = (mode) ->
-				$('.atl__binary-toggle__link').removeClass 'atl__binary-toggle__link--active'
-				$target.addClass 'atl__binary-toggle__link--active'
-				App.commands.execute 'change:display:mode', mode
-
-			if $target.attr('id') is 'atl__set-filter-display'
-				activate('filter')
-				$app.addClass('atl--filter-display')
-				$app.removeClass('atl--search-display')
-
-			if $target.attr('id') is 'atl__set-search-display'
-				activate('search')
-				$app.addClass('atl--search-display')
-				$app.removeClass('atl--filter-display')
+		setSearchDisplay: (e) ->
+			e.preventDefault()
+			$('.atl').removeClass('atl--filter-display').addClass('atl--search-display')
+			$('#atl__set-filter-display').removeClass 'atl__binary-toggle__link--active'
+			$('#atl__set-search-display').addClass 'atl__binary-toggle__link--active'
+			App.commands.execute 'change:display:mode', 'search'

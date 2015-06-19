@@ -5,6 +5,7 @@
 		show: ->
 			Headline.rootView = @getRootView()
 			Headline.rootView.render()
+			App.vent.trigger 'show:component:ready'
 
 		destroy: ->
 			Headline.rootView.destroy();

@@ -17,6 +17,7 @@
 			Filter.valuesView = @getValuesView()
 
 			Filter.rootView.render()
+			App.vent.trigger 'show:component:ready'
 
 			Filter.rootView.getRegion('keys').show Filter.keysView
 			Filter.rootView.getRegion('values').show Filter.valuesView

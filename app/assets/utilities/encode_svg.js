@@ -4,7 +4,7 @@
 var fs = require('fs'),
 	css = "",
 	colors = { 'off-white': '#fffaef', 'black': '#000' },
-	path = '../site/images/icons/svg/',
+	path = '../images/icons/svg/',
 	crap = [
 		//'<?xml version="1.0" encoding="utf-8"?>',
 		'<!-- Generator: Adobe Illustrator 18.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->',
@@ -13,10 +13,10 @@ var fs = require('fs'),
 		//'version="1.1"  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"'
 	];
 
-var writeFile = function(css) {
-	fs.writeFile('../site/styles/base/_bg-img.scss', css, 'utf8', function(err) {
+var writeFile = function(dest, content) {
+	fs.writeFile(dest, content, 'utf8', function(err) {
 		if(err) { return console.log(err); }
-		console.log('saved successfully!');
+		console.log('saved successfully!'); 
 	});
 };
 
@@ -27,35 +27,83 @@ var eraseCrap = function(data) {
 	return data;
 };
 
-fs.readdir(path, function(err, files) {
+/*
+ * Get Base64 encoded url for an svg.
+ * @param {string} svg
+ * @returns {string} url - E.g. url(data:image/svg+xml;base64,...)
+ */
+var getEncodedUrl = function(svg) {
+	encoded = new Buffer(svg).toString('base64');
+	svg = 'data:image/svg+xml;base64,' + encoded;
+	url = "url('" + svg + "')";
+	return url;
+};
 
+/*
+ * Get CSS data for file.
+ * Background image placeholder classes and real classes are prefixed with bg-img.
+ * @param {string} fileName
+ * @param {string} data - File contents.
+ * @returns {string} css
+ */
+var getFileCssData = function(fileName, data) {
+
+	var encoded, svg, url,
+		base = fileName.slice(6, -4),
+		hex, css = '';
+
+	for (color in colors) {
+		hex = colors[color];
+		data = data.replace(/fill=\"#231[fF]20\"/g, 'fill="' + hex + '"');	
+		className = 'bg-img-' + base + '--' + color;
+		css += '%' + className + ' { background-image: ' + getEncodedUrl(data) + '; }\n';
+		css += '.' + className + ' { @extend %' + className + '; }\n';
+	}
+
+	return css;
+
+};
+
+var getFileReactData = function(fileName, data) {
+	var base = fileName.slice(6, -4),
+		react = '';
+
+	react += 'Comp.Icons.' + base + ' = React.createClass';
+	react += '\n\trender: ->\n\t\t';
+
+	data = data.replace(/\n/g, '\n\t\t');
+	data = data.replace(/fill=\"#231[fF]20\"/g, 'fill={this.props.color}');
+
+	react += data;
+
+	react += '\n';
+
+	return react;
+
+};
+
+// Main entry.
+fs.readdir(path, function(err, files) {
 	if (err) { return console.log(err); }
 	var fileCount = files.length,
 		currentFileIndex = 0,
-		css = "";
+		css = "",
+		react = "";
 
 	files.forEach(function(file) {
 		fs.readFile(path + file, 'utf8', function(err, data) {
 			if (err) { return console.log(err); }
-
-			var encoded, svg, url,
-				base = file.slice(6, -4),
-				hex, newData;
-
-			for (color in colors) {
-				hex = colors[color];
-				newData = eraseCrap(data);
-				newData = newData.replace(/fill=\"#231[fF]20\"/g, 'fill="' + hex + '"');
-				encoded = new Buffer(newData).toString('base64');
-				svg = 'data:image/svg+xml;base64,' + encoded;
-				url = "url('" + svg + "')";
-				css += '.bg-img-' + base + '--' + color + ' { background-image: ' + url + '; }\n';
+			data = eraseCrap(data);
+			console.log(data);
+			if (file[0] !== '.') { 
+				css += getFileCssData(file, data);
+				react += getFileReactData(file, data); 
 			}
-
 			currentFileIndex += 1;
-			if (currentFileIndex === fileCount) { writeFile(css); }
-
+			if (currentFileIndex === fileCount) { 
+				writeFile('../styles/base/_bg-img.scss', css);
+				writeFile('../scripts/atlas/components/site/icons/illustrator.cjsx', react);
+			}
 		});
 	});
-
 });

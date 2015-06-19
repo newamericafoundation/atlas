@@ -16,7 +16,7 @@ var path = require('path'),
     shell = require('gulp-shell'),
     mocha = require('gulp-mocha'),
     mochaPhantomJs = require('gulp-mocha-phantomjs'),
-    argv = require('yargs').argv,
+    cjsx = require('gulp-cjsx'),
     liveReload = require('gulp-livereload');
 
 var config = {
@@ -39,6 +39,7 @@ var jsSource = {
         './bower_components/lodash/lodash.js',
         './bower_components/backbone/backbone.js',
         './bower_components/marionette/lib/backbone.marionette.js',
+        './bower_components/react/react.js',
         './bower_components/topojson/topojson.js',
         './bower_components/chartist/dist/chartist.js',
         './bower_components/chartist-html/build/chartist-html.js',
@@ -54,7 +55,6 @@ var jsSource = {
         './app/assets/scripts/atlas/routes/**/*.js.coffee',
         './app/assets/scripts/atlas/base/**/*.js.coffee',
         './app/assets/scripts/atlas/util/**/*.js.coffee',
-        './app/assets/scripts/atlas/components/**/*.js.coffee',
         './app/assets/scripts/atlas/models/**/*.js.coffee',
         './app/assets/scripts/atlas/entities/**/*.js.coffee',
         './app/assets/scripts/atlas/site/site.js.coffee',
@@ -62,6 +62,17 @@ var jsSource = {
         './app/assets/scripts/atlas/site/header/**/*.js.coffee',
         './app/assets/scripts/atlas/site/projects/**/*.js.coffee',
         './app/assets/scripts/atlas/site/about/**/*.js.coffee'
+    ],
+
+    component: [
+        './app/assets/scripts/atlas/components/init.cjsx',
+        './app/assets/scripts/atlas/components/site/about/**/*.cjsx',
+        './app/assets/scripts/atlas/components/site/welcome/**/*.cjsx',
+        './app/assets/scripts/atlas/components/site/projects/root.cjsx',
+        './app/assets/scripts/atlas/components/site/projects/index/**/*.cjsx',
+        './app/assets/scripts/atlas/components/site/projects/show/root.cjsx',
+        './app/assets/scripts/atlas/components/site/projects/show/tilemap/**/*.cjsx',
+        './app/assets/scripts/atlas/components/site/projects/show/explainer/**/*.cjsx'
     ],
 
     template: [
@@ -134,8 +145,15 @@ gulp.task('js-build-vendor', [ 'js-clean' ], function() {
         .pipe(gulp.dest('public/assets/scripts/partials'));
 });
 
-gulp.task('js-build', ['js-build-template', 'js-build-source', 'js-build-vendor'], function() {
-    return gulp.src(['public/assets/scripts/partials/_template.js', 'public/assets/scripts/partials/_vendor.js', 'public/assets/scripts/partials/_source.js'])
+gulp.task('js-build-component', [ 'js-clean' ], function() {
+    gulp.src(jsSource.component)
+        .pipe(concat('_component.cjsx'))
+        .pipe(cjsx({ bare: true }))
+        .pipe(gulp.dest('public/assets/scripts/partials'));
+});
+
+gulp.task('js-build', ['js-build-template', 'js-build-source', 'js-build-vendor', 'js-build-component'], function() {
+    return gulp.src(['public/assets/scripts/partials/_template.js', 'public/assets/scripts/partials/_vendor.js', 'public/assets/scripts/partials/_component.js', 'public/assets/scripts/partials/_source.js'])
         .pipe(concat('app.js'))
         .pipe(config.production ? util.noop() : gulp.dest('public/assets/scripts'))
         .pipe(config.production ? uglify() : util.noop())
@@ -153,7 +171,7 @@ gulp.task('dev', function() {
     liveReload.listen();
     nodemon({
         script: './app.js',
-        ext: 'js css gz jade scss coffee eco',
+        ext: 'js css gz jade scss coffee eco cjsx',
         tasks: function(changedFiles) {
             return [ 'default' ];
         } 
@@ -165,7 +183,7 @@ gulp.task('dev', function() {
 });
 
 gulp.task('js-build-spec', function() {
-    return gulp.src([ './spec/site/scripts/atlas/**/*.js.coffee' ])
+    return gulp.src([ './spec/site/scripts/atlas/**/*.js.coffee', './spec/site/scripts/config/**/*.js.coffee' ])
         .pipe(coffee())
         .pipe(concat('all-spec.js'))
         .pipe(gulp.dest('./spec/site'));

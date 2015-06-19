@@ -11,9 +11,6 @@
 
 		&:first-child {
 			border-right: 1px solid map-get($palette, off-white);
-			.atl--collapsed & {
-				border-right: 1px solid black;
-			}
 		}
 
 		.atl__binary-toggle__link { 

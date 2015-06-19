@@ -21,9 +21,16 @@
 
 		# Adapts Mongoid ID.
 		_adaptMongoId: (data) ->
+			if (data._id?)
+				if (data._id.$oid?)
+					data.id = String(data._id.$oid)
+				else
+					data.id = data._id
+				delete data._id				
+			else if(data.id? && data.id.$oid?)
+				data.id = String(data.id.$oid)
 			data
 		
-
 
 	Models.BaseCollection = Backbone.Collection.extend
 		model: Models.BaseModel

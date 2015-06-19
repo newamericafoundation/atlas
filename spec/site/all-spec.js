@@ -29,6 +29,54 @@
 }).call(this);
 
 (function() {
+  describe('Atlas.Models.BaseModel', function() {
+    var Model, model;
+    Model = Atlas.Models.BaseModel;
+    model = new Model();
+    return describe('adaptId', function() {
+      it('replaces _id key with id if no $oid nesting is present', function() {
+        var actual, expected, raw;
+        raw = {
+          _id: 1
+        };
+        expected = {
+          id: 1
+        };
+        actual = model._adaptMongoId(raw);
+        return actual.should.eql(expected);
+      });
+      it('if _id.$oid field exists, turns value into a string and moves it onto id. deletes _id', function() {
+        var actual, expected, raw;
+        raw = {
+          _id: {
+            $oid: 1
+          }
+        };
+        expected = {
+          id: '1'
+        };
+        actual = model._adaptMongoId(raw);
+        return actual.should.eql(expected);
+      });
+      return it('if id.$oid field exists, turns value into a string and moves it onto id. deletes id.$oid', function() {
+        var actual, expected, raw;
+        raw = {
+          id: {
+            $oid: 1
+          }
+        };
+        expected = {
+          id: '1'
+        };
+        actual = model._adaptMongoId(raw);
+        return actual.should.eql(expected);
+      });
+    });
+  });
+
+}).call(this);
+
+(function() {
   describe('Atlas.Models.Items', function() {
     var Models;
     Models = Atlas.Models.Items;
@@ -626,6 +674,34 @@
           'roast': 'light'
         }).should.equal(false);
       });
+    });
+  });
+
+}).call(this);
+
+(function() {
+  describe('toggleModifierClass', function() {
+    var $el0, $el1, $el2;
+    $el1 = $("<div class='base--modifier1'></div>");
+    $el2 = $("<div class='base--modifier2'></div>");
+    $el0 = $("<div'></div>");
+    it('removes current modifier and adds next one', function() {
+      var $el;
+      $el = $("<div class='base--modifier1'></div>");
+      $el.toggleModifierClass('base', ['modifier1', 'modifier2'], '--');
+      return $el.attr('class').should.equal('base--modifier2');
+    });
+    it('wraps around list of modifiers', function() {
+      var $el;
+      $el = $("<div class='base--modifier2'></div>");
+      $el.toggleModifierClass('base', ['modifier1', 'modifier2'], '--');
+      return $el.attr('class').should.equal('base--modifier1');
+    });
+    return it('adds first modifier if none found', function() {
+      var $el;
+      $el = $("<div></div>");
+      $el.toggleModifierClass('base', ['modifier1', 'modifier2'], '--');
+      return $el.attr('class').should.equal('base--modifier1');
     });
   });
 

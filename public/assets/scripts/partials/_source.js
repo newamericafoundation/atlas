@@ -22,20 +22,28 @@
 
 (function() {
   $.fn.extend({
-    changeModifierClass: function(baseClass, previousModifier, newModifier, modifierIndicator) {
-      var $el, newCls, previousCls;
-      if (modifierIndicator == null) {
-        modifierIndicator = '--';
+    toggleModifierClass: function(baseClass, modifiers, modifierSign) {
+      var $el, className, i, j, len, modifier, newClass, newModifier;
+      if (modifierSign == null) {
+        modifierSign = '--';
       }
       $el = $(this);
-      previousCls = baseClass + modifierIndicator + previousModifier;
-      newCls = baseClass + modifierIndicator + newModifier;
-      if (previousModifier != null) {
-        if ($el.hasClass(previousCls)) {
-          $el.removeClass(previousCls);
+      if (!(modifiers instanceof Array)) {
+        modifiers = modifiers[0];
+      }
+      for (i = j = 0, len = modifiers.length; j < len; i = ++j) {
+        modifier = modifiers[i];
+        className = baseClass + modifierSign + modifier;
+        if ($el.hasClass(className)) {
+          $el.removeClass(className);
+          newModifier = (modifiers[i + 1] != null ? modifiers[i + 1] : modifiers[0]);
+          if ((newModifier !== modifier) && (newModifier !== '')) {
+            newClass = baseClass + modifierSign + newModifier;
+            return $el.addClass(newClass);
+          }
         }
       }
-      return $el.addClass(newCls);
+      return $el.addClass(baseClass + modifierSign + modifiers[0]);
     }
   });
 
@@ -89,6 +97,9 @@
   this.Atlas = (function(Backbone, Marionette) {
     var App;
     App = new Marionette.Application();
+    if (App.uiState == null) {
+      App.uiState = {};
+    }
     App.on('start', function() {
       var router;
       console.log('Hi, Mom!');
@@ -179,6 +190,7 @@
       },
       routes: {
         'welcome': 'welcome_index',
+        'about': 'about_index',
         'menu': 'projects_index',
         'show': 'projects_show',
         ':atlas_url': 'projects_show',
@@ -228,6 +240,14 @@
         this._stopRoutableModules();
         App.vent.trigger('router:current:action:change', this.history.getCurrentActionIndex());
         return App.commands.execute('apply:route:specific:styling', action);
+      },
+      navigateApp: function(url, trigger) {
+        if (trigger == null) {
+          trigger = true;
+        }
+        return Backbone.history.navigate(url, {
+          trigger: trigger
+        });
       },
       _stopRoutableModules: function() {
         App.Welcome.stop();
@@ -1119,6 +1139,16 @@
         return found;
       },
       _adaptMongoId: function(data) {
+        if ((data._id != null)) {
+          if ((data._id.$oid != null)) {
+            data.id = String(data._id.$oid);
+          } else {
+            data.id = data._id;
+          }
+          delete data._id;
+        } else if ((data.id != null) && (data.id.$oid != null)) {
+          data.id = String(data.id.$oid);
+        }
         return data;
       }
     });
@@ -1960,82 +1990,20 @@
 
 (function() {
   this.Atlas.module('Welcome', function(Welcome, App, Backbone, Marionette, $, _) {
+    var el;
     this.startWithParent = false;
+    el = $('#atl')[0];
     this.on('start', function() {
-      return this.Controller.show();
+      var c;
+      c = React.createElement(Comp.Welcome, {
+        app: App
+      });
+      return React.render(c, el);
     });
     return this.on('stop', function() {
+      console.log(React.unmountComponentAtNode(el));
       return this.stopListening();
     });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Welcome', function(Welcome, App, Backbone, Marionette, $, _) {
-    return Welcome.Controller = {
-      show: function() {
-        var rootView;
-        rootView = this.getRootView();
-        return App.contentRegion.show(rootView);
-      },
-      getRootView: function() {
-        return new Welcome.RootView();
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  this.Atlas.module('Welcome', function(Welcome, App, Backbone, Marionette, $, _) {
-    return Welcome.RootView = (function(superClass) {
-      extend(RootView, superClass);
-
-      function RootView() {
-        return RootView.__super__.constructor.apply(this, arguments);
-      }
-
-      RootView.prototype.tagName = 'div';
-
-      RootView.prototype.className = 'welcome';
-
-      RootView.prototype.template = 'welcome/templates/root';
-
-      RootView.prototype.initialize = function() {
-        return this.listenTo(App.vent, 'mouse:move', this._setColor);
-      };
-
-      RootView.prototype._setColor = function(mouse) {
-        var color;
-        color = App.CSS.Colors.interpolate(mouse.x);
-        this.$('.welcome__strip').css('background-color', color);
-        return this.$('.welcome__title__alias').css('color', color);
-      };
-
-      RootView.prototype._unsetColor = function() {
-        this.$('.banner__strip').css('background-color', '');
-        return this.$('.banner__title__alias').css('color', '');
-      };
-
-      RootView.prototype.events = {
-        'click #welcome__main-nav__button': 'toggle'
-      };
-
-      RootView.prototype.toggle = function(e) {
-        e.preventDefault();
-        App.vent.trigger('project:filter:change');
-        return Backbone.history.navigate('menu', {
-          trigger: true
-        });
-      };
-
-      return RootView;
-
-    })(Marionette.LayoutView);
   });
 
 }).call(this);
@@ -2599,6 +2567,8 @@
   this.Atlas.module('Projects.Show.Explainer', function(Explainer, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     return this.on('start', function() {
+      var model;
+      model = App.currentProjectModel;
       Explainer.Controller.show();
       return this;
     });
@@ -2736,6 +2706,19 @@
         App.appContentRegion.show(rootView);
         relatedPagesView = this.getRelatedPagesView();
         return rootView.getRegion('related').show(relatedPagesView);
+      },
+      getReactView: function() {
+        var c, coll, id, model;
+        model = App.currentProjectModel;
+        id = model.get('id');
+        coll = App.reqres.request('project:entities', {
+          queryString: "related_to=" + id,
+          cache: false
+        });
+        return c = React.createElement(Comp.Projects.Show.Explainer, {
+          model: model,
+          collection: coll
+        });
       },
       getRootView: function() {
         var view;
@@ -2978,12 +2961,50 @@
           }
           return results;
         });
-        return $(window).on('resize', function() {});
+        $(window).on('resize', this.collapseIfSettingsBarIsOverflowing.bind(this));
+        return this.listenTo(App.vent, 'show:component:ready', this.collapseIfSettingsBarIsOverflowing.bind(this));
       },
+      onBeforeDestroy: function() {
+        return $(window).off('resize', this.collapseIfSettingsBarIsOverflowing.bind(this));
+      },
+      filterHeight: 0,
+      headlineHeight: 0,
+      headerHeight: 0,
       collapseIfSettingsBarIsOverflowing: function() {
-        var h1, h2;
-        h1 = $('.atl__headline').height() + $('.atl__filter').height();
-        return h2 = $('.atl__settings-bar').height();
+        var availableHeight, space, tolerance, useHeight;
+        tolerance = 60;
+        useHeight = this._getFilterHeight() + this._getHeadlineHeight() + this._getHeaderHeight() + tolerance;
+        availableHeight = $(window).height();
+        console.log(availableHeight);
+        space = availableHeight - useHeight;
+        if (space < 0) {
+          return $('.atl').addClass('atl--collapsed');
+        } else {
+          return $('.atl').removeClass('atl--collapsed');
+        }
+      },
+      _getFilterHeight: function() {
+        return this._getHeight($('.atl__filter'), 'filter');
+      },
+      _getHeadlineHeight: function() {
+        return this._getHeight($('.atl__headline'), 'headline');
+      },
+      _getHeaderHeight: function() {
+        return this._getHeight($('#header'), 'header');
+      },
+      _getHeight: function($el, name) {
+        var currentHeight, height;
+        currentHeight = $el.height();
+        if (this[name + 'Height'] == null) {
+          this[name + 'Height'] = 0;
+        }
+        console.log(this[name + 'Height']);
+        if (this[name + 'Height'] < currentHeight) {
+          height = this[name + 'Height'] = currentHeight;
+        } else {
+          height = this[name + 'Height'];
+        }
+        return height;
       },
       regions: {
         infoBox: '#atl__info-box',
@@ -3049,6 +3070,7 @@
         Filter.keysView = this.getKeysView();
         Filter.valuesView = this.getValuesView();
         Filter.rootView.render();
+        App.vent.trigger('show:component:ready');
         Filter.rootView.getRegion('keys').show(Filter.keysView);
         return Filter.rootView.getRegion('values').show(Filter.valuesView);
       },
@@ -3558,7 +3580,8 @@
     return Headline.Controller = {
       show: function() {
         Headline.rootView = this.getRootView();
-        return Headline.rootView.render();
+        Headline.rootView.render();
+        return App.vent.trigger('show:component:ready');
       },
       destroy: function() {
         return Headline.rootView.destroy();
@@ -5143,31 +5166,13 @@
         if ($target.hasClass('atl__side-bar__icon')) {
           $target = $($target.children()[0]);
         }
-        $target.toggleClass('bg-img-expand--off-white');
-        return this._toggleDisplayNavColor();
+        return $target.toggleClass('bg-img-expand--off-white');
       },
       _help: function(e) {
         return $('.atl').toggleClass('atl--help');
       },
       _print: function() {
         return window.print();
-      },
-      _toggleDisplayNavColor: function() {
-        return $('.atl__binary-toggle__link').each(function() {
-          var $el, cls, colorCls;
-          $el = $(this);
-          cls = $el.attr('class');
-          colorCls = cls.match(/bg-img-(filter|search)--(off-white|black)/g)[0];
-          if (colorCls.indexOf('off-white') > -1) {
-            $el.removeClass(colorCls);
-            colorCls = colorCls.replace('off-white', 'black');
-            return $el.addClass(colorCls);
-          } else {
-            $el.removeClass(colorCls);
-            colorCls = colorCls.replace('black', 'off-white');
-            return $el.addClass(colorCls);
-          }
-        });
       },
       updateLinkUrl: function() {
         if (this.model != null) {
@@ -5183,7 +5188,8 @@
         main: '#atl__main'
       },
       events: {
-        'click .atl__binary-toggle__link': 'toggleDisplay'
+        'click #atl__set-filter-display': 'setFilterDisplay',
+        'click #atl__set-search-display': 'setSearchDisplay'
       },
       initialize: function() {
         return this.listenTo(App.vent, 'current:project:change', function(project) {
@@ -5196,26 +5202,19 @@
           return this.$el.addClass('atl--' + this.model.get('project_template_name').toLowerCase());
         }
       },
-      toggleDisplay: function(e) {
-        var $app, $target, activate;
+      setFilterDisplay: function(e) {
         e.preventDefault();
-        $target = $(e.target);
-        $app = $('.atl');
-        activate = function(mode) {
-          $('.atl__binary-toggle__link').removeClass('atl__binary-toggle__link--active');
-          $target.addClass('atl__binary-toggle__link--active');
-          return App.commands.execute('change:display:mode', mode);
-        };
-        if ($target.attr('id') === 'atl__set-filter-display') {
-          activate('filter');
-          $app.addClass('atl--filter-display');
-          $app.removeClass('atl--search-display');
-        }
-        if ($target.attr('id') === 'atl__set-search-display') {
-          activate('search');
-          $app.addClass('atl--search-display');
-          return $app.removeClass('atl--filter-display');
-        }
+        $('.atl').removeClass('atl--search-display').addClass('atl--filter-display');
+        $('#atl__set-search-display').removeClass('atl__binary-toggle__link--active');
+        $('#atl__set-filter-display').addClass('atl__binary-toggle__link--active');
+        return App.commands.execute('change:display:mode', 'filter');
+      },
+      setSearchDisplay: function(e) {
+        e.preventDefault();
+        $('.atl').removeClass('atl--filter-display').addClass('atl--search-display');
+        $('#atl__set-filter-display').removeClass('atl__binary-toggle__link--active');
+        $('#atl__set-search-display').addClass('atl__binary-toggle__link--active');
+        return App.commands.execute('change:display:mode', 'search');
       }
     });
   });
@@ -5224,54 +5223,20 @@
 
 (function() {
   this.Atlas.module('About', function(About, App, Backbone, Marionette, $, _) {
+    var el;
     this.startWithParent = false;
+    el = $('#atl')[0];
     this.on('start', function() {
-      return this.Controller.show();
+      var c;
+      c = React.createElement(Comp.About, {
+        app: App
+      });
+      return React.render(c, el);
     });
     return this.on('stop', function() {
+      React.unmountComponentAtNode(el);
       return this.stopListening();
     });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('About', function(About, App, Backbone, Marionette, $, _) {
-    return About.Controller = {
-      show: function() {
-        var rootView;
-        rootView = this.getRootView();
-        return App.contentRegion.show(rootView);
-      },
-      getRootView: function() {
-        return new About.RootView();
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  this.Atlas.module('About', function(About, App, Backbone, Marionette, $, _) {
-    return About.RootView = (function(superClass) {
-      extend(RootView, superClass);
-
-      function RootView() {
-        return RootView.__super__.constructor.apply(this, arguments);
-      }
-
-      RootView.prototype.tagName = 'div';
-
-      RootView.prototype.className = 'about bg-c-off-white';
-
-      RootView.prototype.template = 'about/templates/root';
-
-      return RootView;
-
-    })(Marionette.LayoutView);
   });
 
 }).call(this);

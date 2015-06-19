@@ -17,6 +17,9 @@
 	opacity: 1;
 	color: #333333;
 	
+	b {
+		font-family: 'SimplonNorm-Bold-WebS';
+	}
 
 	@mixin pointy() {
 		content: ' ';

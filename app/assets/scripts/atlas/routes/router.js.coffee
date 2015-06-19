@@ -7,7 +7,7 @@
 
 		routes:
 			'welcome': 'welcome_index'
-			# 'about': 'about_index'
+			'about': 'about_index'
 			'menu': 'projects_index'
 			'show': 'projects_show'
 			':atlas_url': 'projects_show'
@@ -46,6 +46,9 @@
 			@_stopRoutableModules()
 			App.vent.trigger 'router:current:action:change', @history.getCurrentActionIndex()
 			App.commands.execute 'apply:route:specific:styling', action
+
+		navigateApp: (url, trigger=true) ->
+			Backbone.history.navigate url, { trigger: trigger }
 
 		_stopRoutableModules: () ->
 			App.Welcome.stop()

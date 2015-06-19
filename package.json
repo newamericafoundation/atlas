@@ -14,6 +14,7 @@
     "async": "^1.0.0",
     "del": "^1.2.0",
     "gulp": "^3.8.11",
+    "gulp-cjsx": "^3.0.0",
     "gulp-coffee": "^2.3.1",
     "gulp-concat": "^2.5.2",
     "gulp-copy": "0.0.2",
@@ -33,8 +34,7 @@
     "gulp-util": "^3.0.4",
     "gulp-watch": "^4.2.4",
     "mocha": "^2.2.5",
-    "should": "^6.0.3",
-    "yargs": "^3.10.0"
+    "should": "^6.0.3"
   },
   "dependencies": {
     "basic-auth-connect": "^1.0.0",

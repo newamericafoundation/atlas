@@ -2,8 +2,12 @@
 
 	@startWithParent = false
 
+	el = $('#atl')[0] 
+
 	@on 'start', ->
-		@Controller.show()
+		c = React.createElement(Comp.Welcome, { app: App })
+		React.render c, el
 
 	@on 'stop', ->
+		console.log React.unmountComponentAtNode el
 		@stopListening()
