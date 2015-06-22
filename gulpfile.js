@@ -192,15 +192,10 @@ gulp.task('port-models', function() {
 gulp.task('bundle-models', function() {
     return gulp.src(['./app/backbone-models/index.js'])
         .pipe(browserify({
-            insertGlobals: false,
+            insertGlobals: true,
             external: [ 'underscore', 'backbone', 'jquery' ]
         }))
-        .on('prebundle', function(bundle) {
-            bundle.external('underscore');
-            bundle.external('backbone');
-            bundle.external('jquery');
-        })
-        .pipe(gulp.dest('./test.js'));
+        .pipe(gulp.dest('./app/backbone-models/bundle-test'));
 });
 
 gulp.task('js-build-spec', function() {
