@@ -56,7 +56,6 @@
 			# initialize cache
 			unless @[name + 'Height']?
 				@[name + 'Height'] = 0 
-			console.log @[name + 'Height']
 			if @[name + 'Height'] < currentHeight
 				height = @[name + 'Height'] = currentHeight
 			else

@@ -21,22 +21,39 @@
 		font-family: 'SimplonNorm-Bold-WebS';
 	}
 
+	@mixin atl__help__pointy {
+
+		content: ' ';
+		height: 0; 
+		position: absolute; 
+		width: 0; 
+		top: 27%;
+		overflow: visible; 
+		line-height: 100%;
+
+		border-top-color: transparent;
+		border-top-style: solid;
+		border-top-width: #{$tip-size / 2};
+		//border-right-color: transparent;
+		border-right-style: solid;
+		border-right-width: #{$tip-size / 2};
+		border-bottom-color: transparent;
+		border-bottom-style: solid;
+		border-bottom-width: #{$tip-size / 2};
+		//border-left-color: transparent;
+		border-left-style: solid;
+		border-left-width: #{$tip-size / 2};
+
+	}
+
 	&--right {
 		right: - ($width + $tip-size / 2);
 		&:before {
-			// repeated (extend not working)
-			content: ' ';
-			height: 0; 
-			position: absolute; 
-			width: 0; 
-			border: #{$tip-size / 2} solid transparent; 
-			top: 27%;
-			overflow: visible; 
-			line-height: 100%;
-			
+			@include atl__help__pointy;
 			margin-left: -$tip-size;
 			left: +2px;  
 			border-right-color: map-get($palette, off-white);
+			border-left-color: transparent;
 			z-index: 10; 
 		}
 	}
@@ -44,20 +61,11 @@
 	&--left {
 		left: - ($width + $tip-size / 2);
 		&:after {
-
-			// repeated (extend not working)
-			content: ' ';
-			height: 0; 
-			position: absolute; 
-			width: 0; 
-			border: #{$tip-size / 2} solid transparent; 
-			top: 27%;
-			overflow: visible; 
-			line-height: 100%;
-			
+			@include atl__help__pointy;
 			margin-left: 0;
 			right: -$tip-size+2px;
 			border-left-color: map-get($palette, off-white);
+			border-right-color: transparent;
 			z-index: 10; 
 		}
 	}

@@ -1,6 +1,6 @@
 @Atlas.module 'Models', (Models, App, Backbone, Marionette, $, _) ->
 	
-	class Models.Image extends Backbone.Model
+	Models.Image = Models.BaseModel.extend
 
 		urlRoot: '/api/v1/images'
 
@@ -8,9 +8,8 @@
 			@urlRoot + "?name=#{@get 'name'}"
 
 		parse: (resp) ->
-			parsers = App.Util.parsers
-			resp = parsers.removeArrayWrapper resp
-			resp = parsers.removeLineBreaks resp, 'encoded'
+			resp = @_removeArrayWrapper resp
+			resp = @_removeLineBreaks resp, 'encoded'
 			resp
 
 		getBackgroundImageCss: () ->
@@ -19,14 +18,10 @@
 				"url('data:image/png;base64,#{encoded}')"
 
 		getAttributionHtml: () ->
-			credit = @get 'credit'
-			if credit?
-				$html = $(marked(credit))
-				$html.find('a').attr 'target', '_blank'
-				return $html.html()
+			@getMarkdownHtml('credit')
 
 
-	class Models.Images extends Backbone.Collection
+	Models.Images = Models.BaseCollection.extend
 
 		model: Models.Image
 		url: '/api/v1/images'

@@ -21,10 +21,9 @@
 
 		# Parses JSON response.
 		parse: (resp) ->
-			parsers = App.Util.parsers
-			resp = parsers.removeArrayWrapper resp
-			resp = parsers.removeSpaces resp, 'template_name'
-			resp = parsers.processStaticHtml resp, 'body_text'
+			resp = @_removeArrayWrapper resp
+			resp = @_removeSpaces resp, 'template_name'
+			resp = @_processStaticHtml resp, 'body_text'
 			resp
 
 		# Filters a project by two filterable collections that it belongs to.
@@ -49,11 +48,7 @@
 
 		# Get imgage attribution html.
 		getImageAttributionHtml: () ->
-			credit = @get 'image_credit'
-			if credit?
-				$html = $(marked(credit))
-				$html.find('a').attr 'target', '_blank'
-				return $html.html()
+			@getMarkdownHtml('image_credit')
 
 
 		# If there is a data field, convert to appropriate collections.

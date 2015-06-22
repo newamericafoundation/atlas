@@ -1,60 +1,5 @@
 @Atlas.module 'Models', (Models, App, Backbone, Marionette, $, _) ->
 
-	class RichGeoJson extends Marionette.Object
-
-		constructor: ->
-			@type = 'FeatureCollection'
-			@features = []
-
-		onReady: (next) ->
-			if @features.length > 0
-				next()
-				return
-			@on 'sync', next
-
-
-	# Create GeoJson elements based on item type.
-	# Model references are injected in the GeoJson.
-	itemGeoJsonInjecters = 
-
-		pindrop: (itemCollection) ->
-			richGeoJson = new RichGeoJson()
-			for item in itemCollection.models
-				richGeoJson.features.push item.toRichGeoJsonFeature()
-			richGeoJson.trigger 'sync'
-			richGeoJson
-
-		state: (itemCollection) ->
-			richGeoJson = new RichGeoJson()
-
-			setup = (data) ->
-				richGeoJson.features = topojson.feature(data, data.objects.states).features
-				for feature in richGeoJson.features
-					item = itemCollection.findWhere { id: feature.id }
-					feature._model = item
-				richGeoJson.trigger 'sync'
-
-			data = App['us-states-10m']
-
-			if data?
-				setup data
-			else
-				$.ajax
-					url: '/data/us-states-10m.js'
-					dataType: 'script'
-					success: () ->
-						setup App['us-states-10m']
-
-			# Make database request - slow!
-			#coreDatum = App.reqres.request 'core:datum:entity', 'us-states-10m'
-			#coreDatum.on 'sync', =>
-			#	data = coreDatum.get('data')
-			#	setup data
-
-			return richGeoJson
-
-
-
 	# @constructor
 	# Note on methods toLatLongPoint, toRichGeoJson: these methods assume that the model instance has a lat and long fields.
 	Models.Item = Models.BaseModel.extend
@@ -283,8 +228,48 @@
 				res.push model.toLatLongPoint()
 			res
 
+		richGeoJsonBuilders:
+
+			state: (collection) ->
+
+				richGeoJson = new Models.RichGeoJson()
+
+				setup = (data) ->
+					richGeoJson.features = topojson.feature(data, data.objects.states).features
+					for feature in richGeoJson.features
+						item = collection.findWhere { id: feature.id }
+						feature._model = item
+					richGeoJson.trigger 'sync'
+
+				data = App['us-states-10m']
+
+				if data?
+					setup data
+				else
+					$.ajax
+						url: '/data/us-states-10m.js'
+						dataType: 'script'
+						success: () ->
+							setup App['us-states-10m']
+
+				# Make database request - slow!
+				#coreDatum = App.reqres.request 'core:datum:entity', 'us-states-10m'
+				#coreDatum.on 'sync', =>
+				#	data = coreDatum.get('data')
+				#	setup data
+
+				return richGeoJson
+
+
+			pindrop: (collection) ->
+				richGeoJson = new Models.RichGeoJson()
+				for item in collection.models
+					richGeoJson.features.push item.toRichGeoJsonFeature()
+				richGeoJson.trigger 'sync'
+				richGeoJson
+
 		# Returns generic Rich GeoJson feature.
 		# The feature is either ready to use or triggers a sync event on itself once it is.
 		getRichGeoJson: ->
 			type = this.getItemType()
-			itemGeoJsonInjecters[type](@)
+			@richGeoJsonBuilders[type](@)

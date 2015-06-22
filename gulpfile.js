@@ -17,7 +17,8 @@ var path = require('path'),
     mocha = require('gulp-mocha'),
     mochaPhantomJs = require('gulp-mocha-phantomjs'),
     cjsx = require('gulp-cjsx'),
-    liveReload = require('gulp-livereload');
+    liveReload = require('gulp-livereload'),
+    browserify = require('gulp-browserify');
 
 var config = {
     production: !!util.env.production
@@ -180,6 +181,26 @@ gulp.task('dev', function() {
         gulp.src('./app.js')
             .pipe(liveReload());
     });
+});
+
+gulp.task('port-models', function() {
+    return gulp.src([ './app/assets/scripts/atlas/models/**/*.js.coffee' ])
+        .pipe(coffee({ bare: true }))
+        .pipe(gulp.dest('./app/backbone-models'));
+});
+
+gulp.task('bundle-models', function() {
+    return gulp.src(['./app/backbone-models/index.js'])
+        .pipe(browserify({
+            insertGlobals: false,
+            external: [ 'underscore', 'backbone', 'jquery' ]
+        }))
+        .on('prebundle', function(bundle) {
+            bundle.external('underscore');
+            bundle.external('backbone');
+            bundle.external('jquery');
+        })
+        .pipe(gulp.dest('./test.js'));
 });
 
 gulp.task('js-build-spec', function() {

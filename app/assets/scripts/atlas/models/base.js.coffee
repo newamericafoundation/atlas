@@ -30,7 +30,49 @@
 			else if(data.id? && data.id.$oid?)
 				data.id = String(data.id.$oid)
 			data
-		
+
+
+		# Remove the array wrapper, if response is one-member array.
+		# @param {object} resp - Server resonse.
+		# @returns {object} resp - Modified response.
+		_removeArrayWrapper: (resp) ->
+			resp = resp[0] if _.isArray(resp) and (resp.length is 1)
+			resp
+
+
+		# Remove all line breaks from field.
+		_removeLineBreaks: (resp, key) ->
+			if resp[key]?
+				resp[key] = resp[key].replace /(\r\n|\n|\r)/gm, ''
+			resp
+
+
+		# Removes all spaces from field.
+		_removeSpaces: (resp, key) ->
+			if resp[key]?
+				resp[key] = resp[key].replace /\s+/g, ''
+			resp
+
+		# Process static html on a key.
+		_processStaticHtml: (resp, key) ->
+			html = resp[key]
+			$html = $(html)
+			$html.find('a').attr('target', '_blank')
+			# TODO - make sure the href points to the outside
+			newHtml = $('<div></div>').append($html.clone()).html()
+			resp[key] = newHtml
+			resp
+
+
+		# Get markdown html.
+		getMarkdownHtml: (key) ->
+			md = @get(key)
+			if md?
+				$html = $(marked(md))
+				$html.find('a').attr 'target', '_blank'
+				newHtml = $('<div></div>').append($html.clone()).html()
+				return newHtml
+
 
 	Models.BaseCollection = Backbone.Collection.extend
 		model: Models.BaseModel

@@ -2,7 +2,7 @@
 
 	InfoBox.SectionsCollection = Backbone.Collection.extend()
 
-	InfoBox.Model = Backbone.Model.extend
+	InfoBox.Model = App.Models.BaseModel.extend
 		defaults:
 			name: 'General Project Info'
 

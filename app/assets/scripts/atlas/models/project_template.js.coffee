@@ -1,10 +1,10 @@
 @Atlas.module 'Models', (Models, App, Backbone, Marionette, $, _) ->
 
-	Models.ProjectTemplate = Marionette.Accountant.FilterModel.extend
+	Models.ProjectTemplate = Models.BaseFilterModel.extend
 		urlRoot: '/api/v1/project_templates'
 
 
-	Models.ProjectTemplates = Marionette.Accountant.FilterCollection.extend
+	Models.ProjectTemplates = Models.BaseFilterCollection.extend
 		model: Models.ProjectTemplate
 		url: '/api/v1/project_templates'
 		hasSingleActiveChild: true

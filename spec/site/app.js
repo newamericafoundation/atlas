@@ -62707,27 +62707,6 @@ Comp.Projects.Show.Explainer.RelatedPages = React.createClass({
 }).call(this);
 
 (function() {
-  Marionette.Renderer.render = function(template, data) {
-    var i, len, path, paths;
-    if (window.JST == null) {
-      window.JST = {};
-    }
-    if (window.JST_ATL == null) {
-      window.JST_ATL = {};
-    }
-    paths = [JST_ATL['atlas/site/' + template + '.jst'], JST_ATL['atlas/' + template + '.jst']];
-    for (i = 0, len = paths.length; i < len; i++) {
-      path = paths[i];
-      if (path) {
-        return path(data);
-      }
-    }
-    throw "Template " + template + " not found!";
-  };
-
-}).call(this);
-
-(function() {
   $.ajaxSetup({
     headers: {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
@@ -62762,6 +62741,27 @@ Comp.Projects.Show.Explainer.RelatedPages = React.createClass({
       return $el.addClass(baseClass + modifierSign + modifiers[0]);
     }
   });
+
+}).call(this);
+
+(function() {
+  Marionette.Renderer.render = function(template, data) {
+    var i, len, path, paths;
+    if (window.JST == null) {
+      window.JST = {};
+    }
+    if (window.JST_ATL == null) {
+      window.JST_ATL = {};
+    }
+    paths = [JST_ATL['atlas/site/' + template + '.jst'], JST_ATL['atlas/' + template + '.jst']];
+    for (i = 0, len = paths.length; i < len; i++) {
+      path = paths[i];
+      if (path) {
+        return path(data);
+      }
+    }
+    throw "Template " + template + " not found!";
+  };
 
 }).call(this);
 
@@ -63592,55 +63592,6 @@ Comp.Projects.Show.Explainer.RelatedPages = React.createClass({
 }).call(this);
 
 (function() {
-  this.Atlas.module('Util', function(Util, App, Backbone, Marionette, $, _) {
-    return Util.parsers = {
-      adaptMongoId: function(resp) {
-        if (resp.id != null) {
-          if (resp.id.$oid != null) {
-            resp.id = resp.id['$oid'];
-          }
-        } else if (resp._id != null) {
-          if (resp._id.$oid != null) {
-            resp.id = resp._id.$oid;
-          } else {
-            resp.id = resp._id;
-          }
-          delete resp._id;
-        }
-        return resp;
-      },
-      removeArrayWrapper: function(resp) {
-        if (_.isArray(resp) && (resp.length === 1)) {
-          resp = resp[0];
-        }
-        return resp;
-      },
-      removeLineBreaks: function(resp, key) {
-        if (resp[key] != null) {
-          resp[key] = resp[key].replace(/(\r\n|\n|\r)/gm, '');
-        }
-        return resp;
-      },
-      removeSpaces: function(resp, key) {
-        if (resp[key] != null) {
-          resp[key] = resp[key].replace(/\s+/g, '');
-        }
-        return resp;
-      },
-      processStaticHtml: function(resp, key) {
-        var formatters;
-        formatters = Util.formatters;
-        if (resp[key] != null) {
-          resp[key] = formatters.htmlToHtml(resp[key]);
-        }
-        return resp;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
   this.Atlas.module('CSS', function(CSS, App, Backbone, Marionette, $, _) {
     CSS.Colors = {
       _list: [[133, 2, 106], [138, 1, 135], [140, 2, 165], [129, 10, 166], [118, 18, 167], [106, 23, 167], [93, 43, 171], [79, 56, 173], [77, 72, 177], [73, 87, 182], [67, 102, 186], [58, 116, 191], [44, 130, 195], [11, 144, 199], [50, 161, 217]],
@@ -63844,10 +63795,137 @@ Comp.Projects.Show.Explainer.RelatedPages = React.createClass({
           data.id = String(data.id.$oid);
         }
         return data;
+      },
+      _removeArrayWrapper: function(resp) {
+        if (_.isArray(resp) && (resp.length === 1)) {
+          resp = resp[0];
+        }
+        return resp;
+      },
+      _removeLineBreaks: function(resp, key) {
+        if (resp[key] != null) {
+          resp[key] = resp[key].replace(/(\r\n|\n|\r)/gm, '');
+        }
+        return resp;
+      },
+      _removeSpaces: function(resp, key) {
+        if (resp[key] != null) {
+          resp[key] = resp[key].replace(/\s+/g, '');
+        }
+        return resp;
+      },
+      _processStaticHtml: function(resp, key) {
+        var $html, html, newHtml;
+        html = resp[key];
+        $html = $(html);
+        $html.find('a').attr('target', '_blank');
+        newHtml = $('<div></div>').append($html.clone()).html();
+        resp[key] = newHtml;
+        return resp;
+      },
+      getMarkdownHtml: function(key) {
+        var $html, md, newHtml;
+        md = this.get(key);
+        if (md != null) {
+          $html = $(marked(md));
+          $html.find('a').attr('target', '_blank');
+          newHtml = $('<div></div>').append($html.clone()).html();
+          return newHtml;
+        }
       }
     });
     return Models.BaseCollection = Backbone.Collection.extend({
       model: Models.BaseModel
+    });
+  });
+
+}).call(this);
+
+(function() {
+  var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+  this.Atlas.module('Models', function(Models, App, Backbone, Marionette, $, _) {
+    Models.BaseFilterModel = Models.BaseModel.extend({
+      _activate: function() {
+        return this.set('_isActive', true);
+      },
+      _deactivate: function() {
+        return this.set('_isActive', false);
+      },
+      toggleActiveState: function() {
+        if (this.isActive()) {
+          if (!((this.collection != null) && this.collection.hasSingleActiveChild)) {
+            return this._deactivate();
+          }
+        } else {
+          this._activate();
+          if ((this.collection != null) && this.collection.hasSingleActiveChild) {
+            return this.collection.deactivateSiblings(this);
+          }
+        }
+      },
+      isActive: function() {
+        return this.get('_isActive');
+      },
+      test: function(testedModel, foreignKey) {
+        var foreignId, foreignIds, id;
+        if (!this.isActive()) {
+          return false;
+        }
+        id = this.get('id');
+        foreignId = testedModel.get(foreignKey + '_id');
+        if (foreignId != null) {
+          return id === foreignId;
+        }
+        foreignIds = testedModel.get(foreignKey + '_ids');
+        if (foreignIds != null) {
+          return (indexOf.call(foreignIds, id) >= 0);
+        }
+        return false;
+      }
+    });
+    return Models.BaseFilterCollection = Models.BaseCollection.extend({
+      initialize: function() {
+        if (this.initializeActiveStatesOnReset) {
+          return this.on('reset', this.initializeActiveStates);
+        }
+      },
+      model: Models.BaseFilterModel,
+      hasSingleActiveChild: false,
+      deactivateSiblings: function(activeChild) {
+        var i, len, model, ref, results;
+        ref = this.models;
+        results = [];
+        for (i = 0, len = ref.length; i < len; i++) {
+          model = ref[i];
+          if (model !== activeChild) {
+            results.push(model._deactivate());
+          } else {
+            results.push(void 0);
+          }
+        }
+        return results;
+      },
+      initializeActiveStates: function() {
+        var i, index, len, model, ref;
+        ref = this.models;
+        for (index = i = 0, len = ref.length; i < len; index = ++i) {
+          model = ref[index];
+          model.set('_isActive', !this.hasSingleActiveChild ? true : (index === 0 ? true : false));
+        }
+        return this.trigger('initialize:active:states');
+      },
+      test: function(testedModel, foreignKey) {
+        var i, len, model, ref;
+        ref = this.models;
+        for (i = 0, len = ref.length; i < len; i++) {
+          model = ref[i];
+          if (model.test(testedModel, foreignKey)) {
+            return true;
+          }
+        }
+        return false;
+      }
     });
   });
 
@@ -63864,12 +63942,6 @@ Comp.Projects.Show.Explainer.RelatedPages = React.createClass({
       },
       parse: function(resp) {
         return resp = this._removeArrayWrapper(resp);
-      },
-      _removeArrayWrapper: function(resp) {
-        if (_.isArray(resp)) {
-          resp = resp[0];
-        }
-        return resp;
       }
     });
     return Models.CoreData = Models.BaseCollection.extend({
@@ -63884,9 +63956,6 @@ Comp.Projects.Show.Explainer.RelatedPages = React.createClass({
   this.Atlas.module('Models', function(Models, App, Backbone, Marionette, $, _) {
     Models.Filter = Models.BaseModel.extend({
       getVariableModel: function(variables) {
-        if (variables == null) {
-          variables = App.reqres.request('variable:entities');
-        }
         return variables.findWhere({
           id: this.get('variable_id')
         });
@@ -63900,66 +63969,32 @@ Comp.Projects.Show.Explainer.RelatedPages = React.createClass({
 }).call(this);
 
 (function() {
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
   this.Atlas.module('Models', function(Models, App, Backbone, Marionette, $, _) {
-    Models.Image = (function(superClass) {
-      extend(Image, superClass);
-
-      function Image() {
-        return Image.__super__.constructor.apply(this, arguments);
-      }
-
-      Image.prototype.urlRoot = '/api/v1/images';
-
-      Image.prototype.url = function() {
+    Models.Image = Models.BaseModel.extend({
+      urlRoot: '/api/v1/images',
+      url: function() {
         return this.urlRoot + ("?name=" + (this.get('name')));
-      };
-
-      Image.prototype.parse = function(resp) {
-        var parsers;
-        parsers = App.Util.parsers;
-        resp = parsers.removeArrayWrapper(resp);
-        resp = parsers.removeLineBreaks(resp, 'encoded');
+      },
+      parse: function(resp) {
+        resp = this._removeArrayWrapper(resp);
+        resp = this._removeLineBreaks(resp, 'encoded');
         return resp;
-      };
-
-      Image.prototype.getBackgroundImageCss = function() {
+      },
+      getBackgroundImageCss: function() {
         var encoded;
         encoded = this.get('encoded');
         if (encoded != null) {
           return "url('data:image/png;base64," + encoded + "')";
         }
-      };
-
-      Image.prototype.getAttributionHtml = function() {
-        var $html, credit;
-        credit = this.get('credit');
-        if (credit != null) {
-          $html = $(marked(credit));
-          $html.find('a').attr('target', '_blank');
-          return $html.html();
-        }
-      };
-
-      return Image;
-
-    })(Backbone.Model);
-    return Models.Images = (function(superClass) {
-      extend(Images, superClass);
-
-      function Images() {
-        return Images.__super__.constructor.apply(this, arguments);
+      },
+      getAttributionHtml: function() {
+        return this.getMarkdownHtml('credit');
       }
-
-      Images.prototype.model = Models.Image;
-
-      Images.prototype.url = '/api/v1/images';
-
-      return Images;
-
-    })(Backbone.Collection);
+    });
+    return Models.Images = Models.BaseCollection.extend({
+      model: Models.Image,
+      url: '/api/v1/images'
+    });
   });
 
 }).call(this);
@@ -63973,74 +64008,9 @@ Comp.Projects.Show.Explainer.RelatedPages = React.createClass({
 }).call(this);
 
 (function() {
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty,
-    indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+  var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   this.Atlas.module('Models', function(Models, App, Backbone, Marionette, $, _) {
-    var RichGeoJson, itemGeoJsonInjecters;
-    RichGeoJson = (function(superClass) {
-      extend(RichGeoJson, superClass);
-
-      function RichGeoJson() {
-        this.type = 'FeatureCollection';
-        this.features = [];
-      }
-
-      RichGeoJson.prototype.onReady = function(next) {
-        if (this.features.length > 0) {
-          next();
-          return;
-        }
-        return this.on('sync', next);
-      };
-
-      return RichGeoJson;
-
-    })(Marionette.Object);
-    itemGeoJsonInjecters = {
-      pindrop: function(itemCollection) {
-        var item, j, len, ref, richGeoJson;
-        richGeoJson = new RichGeoJson();
-        ref = itemCollection.models;
-        for (j = 0, len = ref.length; j < len; j++) {
-          item = ref[j];
-          richGeoJson.features.push(item.toRichGeoJsonFeature());
-        }
-        richGeoJson.trigger('sync');
-        return richGeoJson;
-      },
-      state: function(itemCollection) {
-        var data, richGeoJson, setup;
-        richGeoJson = new RichGeoJson();
-        setup = function(data) {
-          var feature, item, j, len, ref;
-          richGeoJson.features = topojson.feature(data, data.objects.states).features;
-          ref = richGeoJson.features;
-          for (j = 0, len = ref.length; j < len; j++) {
-            feature = ref[j];
-            item = itemCollection.findWhere({
-              id: feature.id
-            });
-            feature._model = item;
-          }
-          return richGeoJson.trigger('sync');
-        };
-        data = App['us-states-10m'];
-        if (data != null) {
-          setup(data);
-        } else {
-          $.ajax({
-            url: '/data/us-states-10m.js',
-            dataType: 'script',
-            success: function() {
-              return setup(App['us-states-10m']);
-            }
-          });
-        }
-        return richGeoJson;
-      }
-    };
     Models.Item = Models.BaseModel.extend({
       parse: function(data) {
         this._processValues(data);
@@ -64286,10 +64256,53 @@ Comp.Projects.Show.Explainer.RelatedPages = React.createClass({
         }
         return res;
       },
+      richGeoJsonBuilders: {
+        state: function(collection) {
+          var data, richGeoJson, setup;
+          richGeoJson = new Models.RichGeoJson();
+          setup = function(data) {
+            var feature, item, j, len, ref;
+            richGeoJson.features = topojson.feature(data, data.objects.states).features;
+            ref = richGeoJson.features;
+            for (j = 0, len = ref.length; j < len; j++) {
+              feature = ref[j];
+              item = collection.findWhere({
+                id: feature.id
+              });
+              feature._model = item;
+            }
+            return richGeoJson.trigger('sync');
+          };
+          data = App['us-states-10m'];
+          if (data != null) {
+            setup(data);
+          } else {
+            $.ajax({
+              url: '/data/us-states-10m.js',
+              dataType: 'script',
+              success: function() {
+                return setup(App['us-states-10m']);
+              }
+            });
+          }
+          return richGeoJson;
+        },
+        pindrop: function(collection) {
+          var item, j, len, ref, richGeoJson;
+          richGeoJson = new Models.RichGeoJson();
+          ref = collection.models;
+          for (j = 0, len = ref.length; j < len; j++) {
+            item = ref[j];
+            richGeoJson.features.push(item.toRichGeoJsonFeature());
+          }
+          richGeoJson.trigger('sync');
+          return richGeoJson;
+        }
+      },
       getRichGeoJson: function() {
         var type;
         type = this.getItemType();
-        return itemGeoJsonInjecters[type](this);
+        return this.richGeoJsonBuilders[type](this);
       }
     });
   });
@@ -64316,11 +64329,9 @@ Comp.Projects.Show.Explainer.RelatedPages = React.createClass({
         return keyCount !== 1;
       },
       parse: function(resp) {
-        var parsers;
-        parsers = App.Util.parsers;
-        resp = parsers.removeArrayWrapper(resp);
-        resp = parsers.removeSpaces(resp, 'template_name');
-        resp = parsers.processStaticHtml(resp, 'body_text');
+        resp = this._removeArrayWrapper(resp);
+        resp = this._removeSpaces(resp, 'template_name');
+        resp = this._processStaticHtml(resp, 'body_text');
         return resp;
       },
       compositeFilter: function(projectSections, projectTemplates) {
@@ -64338,13 +64349,7 @@ Comp.Projects.Show.Explainer.RelatedPages = React.createClass({
         return true;
       },
       getImageAttributionHtml: function() {
-        var $html, credit;
-        credit = this.get('image_credit');
-        if (credit != null) {
-          $html = $(marked(credit));
-          $html.find('a').attr('target', '_blank');
-          return $html.html();
-        }
+        return this.getMarkdownHtml('image_credit');
       },
       buildData: function() {
         var data;
@@ -64446,14 +64451,14 @@ Comp.Projects.Show.Explainer.RelatedPages = React.createClass({
 
 (function() {
   this.Atlas.module('Models', function(Models, App, Backbone, Marionette, $, _) {
-    Models.ProjectSection = Marionette.Accountant.FilterModel.extend({
+    Models.ProjectSection = Models.BaseFilterModel.extend({
       urlRoot: '/api/v1/project_sections',
       parse: function(resp) {
         resp.id = String(resp.id);
         return resp;
       }
     });
-    return Models.ProjectSections = Marionette.Accountant.FilterCollection.extend({
+    return Models.ProjectSections = Models.BaseFilterCollection.extend({
       model: Models.ProjectSection,
       url: '/api/v1/project_sections',
       hasSingleActiveChild: false,
@@ -64470,10 +64475,10 @@ Comp.Projects.Show.Explainer.RelatedPages = React.createClass({
 
 (function() {
   this.Atlas.module('Models', function(Models, App, Backbone, Marionette, $, _) {
-    Models.ProjectTemplate = Marionette.Accountant.FilterModel.extend({
+    Models.ProjectTemplate = Models.BaseFilterModel.extend({
       urlRoot: '/api/v1/project_templates'
     });
-    return Models.ProjectTemplates = Marionette.Accountant.FilterCollection.extend({
+    return Models.ProjectTemplates = Models.BaseFilterCollection.extend({
       model: Models.ProjectTemplate,
       url: '/api/v1/project_templates',
       hasSingleActiveChild: true,
@@ -64494,6 +64499,26 @@ Comp.Projects.Show.Explainer.RelatedPages = React.createClass({
     Models.Researcher = Models.BaseModel.extend();
     return Models.Researchers = Models.BaseCollection.extend({
       model: Models.Researcher
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Models', function(Models, App, Backbone, Marionette, $, _) {
+    return Models.RichGeoJson = Backbone.Model.extend({
+      initialize: function() {
+        _.extend(this, Backbone.Events);
+        this.type = 'FeatureCollection';
+        return this.features = [];
+      },
+      onReady: function(next) {
+        if (this.features.length > 0) {
+          next();
+          return;
+        }
+        return this.on('sync', next);
+      }
     });
   });
 
@@ -65699,7 +65724,6 @@ Comp.Projects.Show.Explainer.RelatedPages = React.createClass({
         if (this[name + 'Height'] == null) {
           this[name + 'Height'] = 0;
         }
-        console.log(this[name + 'Height']);
         if (this[name + 'Height'] < currentHeight) {
           height = this[name + 'Height'] = currentHeight;
         } else {
@@ -65732,60 +65756,6 @@ Comp.Projects.Show.Explainer.RelatedPages = React.createClass({
         return f;
       }
       return l;
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Headline', function(Headline, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      return this.Controller.show();
-    });
-    return this.on('stop', function() {
-      this.Controller.destroy();
-      return this.stopListening();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Headline', function(Headline, App, Backbone, Marionette, $, _) {
-    return Headline.Controller = {
-      show: function() {
-        Headline.rootView = this.getRootView();
-        Headline.rootView.render();
-        return App.vent.trigger('show:component:ready');
-      },
-      destroy: function() {
-        return Headline.rootView.destroy();
-      },
-      getRootView: function() {
-        var rootView;
-        rootView = new Headline.RootView({
-          el: '.atl__headline',
-          model: App.currentProjectModel
-        });
-        return rootView;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Headline', function(Headline, App, Backbone, Marionette, $, _) {
-    return Headline.RootView = Marionette.ItemView.extend({
-      template: 'projects/show/project_templates/tilemap/submodules/headline/templates/root',
-      className: 'atl__headline',
-      events: {
-        'click .link': 'openInfoBox'
-      },
-      openInfoBox: function() {
-        return App.commands.execute('activate:info:box');
-      }
     });
   });
 
@@ -66122,12 +66092,12 @@ Comp.Projects.Show.Explainer.RelatedPages = React.createClass({
       filterVariables = filters.map(function(filter, index) {
         var display_title, formatters, long_description, nd, o, short_description, type, variable, variable_id;
         formatters = App.Util.formatters;
-        variable = filter.getVariableModel();
+        variable = filter.getVariableModel(variables);
         variable_id = variable.get('id');
         display_title = variable.get('display_title');
         short_description = variable.get('short_description');
-        long_description = variable.get('long_description');
-        long_description = formatters.mdToHtml(long_description);
+        console.log(variable.get('long_description'));
+        long_description = variable.getMarkdownHtml('long_description');
         type = filter.get('type');
         o = {
           variable_id: variable_id,
@@ -66317,6 +66287,60 @@ Comp.Projects.Show.Explainer.RelatedPages = React.createClass({
 }).call(this);
 
 (function() {
+  this.Atlas.module('Projects.Show.Tilemap.Headline', function(Headline, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    this.on('start', function() {
+      return this.Controller.show();
+    });
+    return this.on('stop', function() {
+      this.Controller.destroy();
+      return this.stopListening();
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Headline', function(Headline, App, Backbone, Marionette, $, _) {
+    return Headline.Controller = {
+      show: function() {
+        Headline.rootView = this.getRootView();
+        Headline.rootView.render();
+        return App.vent.trigger('show:component:ready');
+      },
+      destroy: function() {
+        return Headline.rootView.destroy();
+      },
+      getRootView: function() {
+        var rootView;
+        rootView = new Headline.RootView({
+          el: '.atl__headline',
+          model: App.currentProjectModel
+        });
+        return rootView;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Headline', function(Headline, App, Backbone, Marionette, $, _) {
+    return Headline.RootView = Marionette.ItemView.extend({
+      template: 'projects/show/project_templates/tilemap/submodules/headline/templates/root',
+      className: 'atl__headline',
+      events: {
+        'click .link': 'openInfoBox'
+      },
+      openInfoBox: function() {
+        return App.commands.execute('activate:info:box');
+      }
+    });
+  });
+
+}).call(this);
+
+(function() {
   this.Atlas.module('Projects.Show.Tilemap.Info', function(Info, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     this.on('start', function() {
@@ -66452,69 +66476,42 @@ Comp.Projects.Show.Explainer.RelatedPages = React.createClass({
 }).call(this);
 
 (function() {
-  this.Atlas.module('Projects.Show.Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
+  this.Atlas.module('Projects.Show.Tilemap.Legend', function(Legend, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     this.on('start', function() {
-      this.listenTo(App.vent, 'item:activate', this.Controller.updateAndReveal.bind(this.Controller));
-      return App.commands.setHandler('activate:info:box', this.Controller.updateAndReveal.bind(this.Controller));
+      this.Controller.show();
+      return App.reqres.setHandler('legend:value:hovered', function() {
+        return Legend.valueHoverIndex;
+      });
     });
     return this.on('stop', function() {
-      this.stopListening();
-      return this.Controller.destroy();
+      App.reqres.removeHandler('legend:value:hovered');
+      this.Controller.destroy();
+      return this.stopListening();
     });
   });
 
 }).call(this);
 
 (function() {
-  this.Atlas.module('Projects.Show.Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
-    return InfoBox.Controller = {
-      create: function() {
-        InfoBox.rootView = this._getRootView();
-        return InfoBox.rootView.render();
-      },
-      updateAndReveal: function() {
-        this.update();
-        return this.reveal();
-      },
-      update: function() {
-        this.destroy();
-        this._ensureContainer();
-        return this.create();
-      },
-      reveal: function() {
-        return InfoBox.rootView.reveal();
-      },
-      hide: function() {
-        InfoBox.rootView.hide();
-        return App.vent.trigger('item:deactivate');
+  this.Atlas.module('Projects.Show.Tilemap.Legend', function(Legend, App, Backbone, Marionette, $, _) {
+    return Legend.Controller = {
+      show: function() {
+        Legend.rootView = this.getRootView();
+        return Legend.rootView.render();
       },
       destroy: function() {
-        if (InfoBox.rootView != null) {
-          return InfoBox.rootView.destroy();
-        }
+        return Legend.rootView.destroy();
       },
-      _ensureContainer: function() {
-        var $atl;
-        $atl = $('.atl__main');
-        if ($atl.find('.atl__info-box').length === 0) {
-          return $atl.append('<div class="atl__info-box"></div>');
-        }
-      },
-      _getRootView: function() {
-        var rootView;
-        rootView = new InfoBox.RootView({
-          model: this._getModel().model,
-          collection: this._getModel().collection,
-          el: '.atl__info-box'
+      getRootView: function() {
+        var coll, filter, rootView;
+        filter = App.reqres.request('filter');
+        coll = new Backbone.Collection(filter.getActiveChild().children);
+        rootView = new Legend.RootView({
+          collection: coll,
+          el: '.atl__legend'
         });
         return rootView;
-      },
-      _getModel: function() {
-        var activeItem, model;
-        activeItem = App.reqres.request('item:entities').active;
-        model = InfoBox.getModelObject(activeItem);
-        return model;
       }
     };
   });
@@ -66522,229 +66519,93 @@ Comp.Projects.Show.Explainer.RelatedPages = React.createClass({
 }).call(this);
 
 (function() {
-  this.Atlas.module('Projects.Show.Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
-    var getSectionHtml;
-    InfoBox.SectionsCollection = Backbone.Collection.extend();
-    InfoBox.Model = Backbone.Model.extend({
-      defaults: {
-        name: 'General Project Info'
-      }
-    });
-    InfoBox.getModelObject = function(item) {
-      var collectionData, model;
-      model = item != null ? item : App.currentProjectModel;
-      collectionData = item != null ? this.getItemSectionsCollection(item) : void 0;
-      return {
-        model: model,
-        collection: collectionData != null ? new InfoBox.SectionsCollection(collectionData) : void 0
-      };
-      return new InfoBox.Model(modelData);
-    };
-    InfoBox.getItemSectionsCollection = function(item) {
-      var infoBoxSections, sections, variables;
-      infoBoxSections = App.reqres.request('info:box:section:entities');
-      variables = App.reqres.request('variable:entities');
-      return sections = _.map(infoBoxSections.models, function(infoBoxSection) {
-        var obj, sectionTitle, text, variable, variableId;
-        variableId = infoBoxSection.get('variable_id');
-        variable = variables.findWhere({
-          id: variableId
-        });
-        sectionTitle = variable != null ? variable.get('display_title') : "Section";
-        text = item.get(variableId);
-        obj = {
-          heading: sectionTitle,
-          text: getSectionHtml(text)
-        };
-        return obj;
-      });
-    };
-    return getSectionHtml = function(raw) {
-      var formatters, html;
-      if ((raw == null) || _.isArray(raw)) {
-        return raw;
-      }
-      if (_.isNumber(raw)) {
-        return raw.toString();
-      }
-      html = marked(raw);
-      formatters = App.Util.formatters;
-      return formatters.htmlToHtml(html);
-    };
-  });
+  var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
-    var TocView;
-    InfoBox.SectionView = Marionette.CompositeView.extend({
+  this.Atlas.module('Projects.Show.Tilemap.Legend', function(Legend, App, Backbone, Marionette, $, _) {
+    Legend.IconView = Marionette.ItemView.extend({
       tagName: 'li',
-      className: 'atl__info-box__item',
-      template: 'projects/show/project_templates/tilemap/submodules/info_box/templates/section'
-    });
-    TocView = Marionette.ItemView.extend({
+      className: 'atl__legend__icon',
+      template: 'projects/show/project_templates/tilemap/submodules/legend/templates/icon',
+      onRender: function() {
+        var cls;
+        cls = this.model.getBackgroundColorClass();
+        return this.$('.hexicon__hex').attr('class', "hexicon__hex " + cls);
+      },
       events: {
-        'click a': 'triggerScroll'
+        'mouseenter': 'onMouseOver',
+        'mouseleave': 'onMouseOut',
+        'click': 'triggerValueClick'
       },
-      triggerScroll: function(e) {
-        return App.vent.trigger('scroll');
+      highlight: function() {
+        return this.$el.addClass('atl__legend__icon--highlighted');
       },
-      isEmpty: function() {
-        return this.$el.html() === "";
-      }
-    });
-    return InfoBox.RootView = Marionette.ItemView.extend({
-      initialize: function() {
-        return this.listenTo(App.vent, 'scroll', function() {
-          return this._setStickyNavLayout();
+      dehighlight: function() {
+        return this.$el.removeClass('atl__legend__icon--highlighted');
+      },
+      toggleActiveState: function() {
+        return this.$el.toggleClass('atl__legend__icon--inactive');
+      },
+      onMouseOver: function() {
+        var cls, filter, modelIndex;
+        modelIndex = this._getModelIndex();
+        Legend.valueHoverIndex = modelIndex;
+        App.vent.trigger('value:mouseover', modelIndex);
+        filter = App.reqres.request('filter');
+        cls = filter.getBackgroundColorClass(modelIndex);
+        return App.commands.execute('set:header:strip:color', {
+          className: cls
         });
       },
+      onMouseOut: function() {
+        App.commands.execute('set:header:strip:color', 'none');
+        Legend.valueHoverIndex = -1;
+        return App.vent.trigger('value:mouseout', -1);
+      },
+      triggerValueClick: function() {
+        var modelIndex;
+        modelIndex = this._getModelIndex();
+        return App.vent.trigger('value:click', modelIndex);
+      },
+      _getModelIndex: function() {
+        return this.model.collection.models.indexOf(this.model);
+      }
+    });
+    return Legend.RootView = Marionette.CompositeView.extend({
       tagName: 'div',
-      className: 'atl__info-box fill-parent',
-      template: 'projects/show/project_templates/tilemap/submodules/info_box/templates/root',
-      events: {
-        'click .atl__info-box__close': 'purgeView'
+      className: 'atl__legend',
+      template: 'projects/show/project_templates/tilemap/submodules/legend/templates/root',
+      childView: Legend.IconView,
+      childViewContainer: 'ul',
+      initialize: function() {
+        this.listenTo(App.vent, 'value:click', this.setActiveState);
+        this.listenTo(App.vent, 'item:mouseover item:mouseout value:mouseover value:mouseout', this.setHighlighting);
+        return this.listenTo(App.vent, 'key:click', function() {
+          var filter;
+          filter = App.reqres.request('filter');
+          return this.collection.reset(filter.getActiveChild().children);
+        });
       },
-      templateHelpers: App.Util.formatters,
-      getCollectionHtml: function() {
-        var html;
-        if (this.collection != null) {
-          html = "";
-          this.collection.each((function(_this) {
-            return function(model) {
-              var view;
-              view = new InfoBox.SectionView({
-                model: model
-              });
-              view.render();
-              return html += view.el.innerHTML;
-            };
-          })(this));
-          return html;
+      setActiveState: function(index) {
+        var child;
+        child = this.children.findByIndex(index);
+        return child.toggleActiveState();
+      },
+      setHighlighting: function() {
+        var filter, hoveredItem, indeces;
+        hoveredItem = App.reqres.request('item:entities').hovered;
+        filter = App.reqres.request('filter');
+        if (hoveredItem != null) {
+          indeces = filter.getValueIndeces(hoveredItem);
+        } else {
+          indeces = [App.reqres.request('filter:value:hovered')];
         }
-      },
-      onRender: function() {
-        this.$('.static-content').html(this.getCollectionHtml());
-        this._buildToc();
-        this._setStickyNavLayout();
-        this._setImage();
-        if (this.collection == null) {
-          return this._setThemeBackground();
-        }
-      },
-      onBeforeDestroy: function() {
-        if (this.attributionView != null) {
-          this.attributionView.destroy();
-        }
-        if (this.tocView != null) {
-          return this.tocView.destroy();
-        }
-      },
-      reveal: function() {
-        var $app;
-        $app = $('.atl');
-        $app.addClass('atl__info-box--active');
-        return this;
-      },
-      hide: function() {
-        var $app;
-        $app = $('.atl');
-        $app.removeClass('atl__info-box--active');
-        return this;
-      },
-      hideAndDestroy: function() {
-        var $app;
-        $app = $('.atl');
-        $app.removeClass('atl__info-box--active');
-        $app.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', (function(_this) {
-          return function(e) {
-            return _this.destroy();
-          };
-        })(this));
-        return this;
-      },
-      purgeView: function() {
-        return InfoBox.Controller.hide();
-      },
-      showAttributionLink: function(e) {
-        return $(e.target).toggleClass('atl__attribution--active');
-      },
-      _buildToc: function() {
-        $('#atl__toc__list').toc({
-          selectors: 'h1,h2',
-          container: '.static-content',
-          templates: {
-            h2: _.template('<%= title %>'),
-            h3: _.template('<%= title %>')
+        return this.children.each(function(child, childIndex) {
+          if (indexOf.call(indeces, childIndex) >= 0) {
+            return child.highlight();
+          } else {
+            return child.dehighlight();
           }
         });
-        this.tocView = new TocView({
-          el: $('#atl__toc__list ul')
-        });
-        if (this.tocView.isEmpty()) {
-          return $('.atl__toc').hide();
-        }
-      },
-      _setStickyNavLayout: function(subClasses) {
-        var $elem, className, scrollTop;
-        scrollTop = $('.atl__info-box').scrollTop();
-        className = "atl__page-nav";
-        $elem = this.$("." + className);
-        if (scrollTop > $('.atl__title-bar').height()) {
-          return $elem.addClass(className + "--fixed");
-        } else {
-          return $elem.removeClass(className + "--fixed");
-        }
-      },
-      _setImage: function() {
-        var $el, imageName, img;
-        $el = this.$('.atl__title-bar__background');
-        $el.css('background-color', 'rgba(50, 50, 50, 0.1)');
-        if (!((this.model != null) && (this.model.getImageName != null))) {
-          return;
-        }
-        imageName = this.model.getImageName();
-        if (imageName != null) {
-          img = App.reqres.request('image:entity', {
-            name: imageName
-          });
-          return img.on('sync', (function(_this) {
-            return function() {
-              var backgroundImageCss;
-              backgroundImageCss = img.getBackgroundImageCss();
-              if (backgroundImageCss != null) {
-                $el.css('background-color', 'initial');
-                $el.css('background-image', backgroundImageCss);
-                return _this._appendImageAttribution(img.getAttributionHtml());
-              }
-            };
-          })(this));
-        }
-      },
-      _appendImageAttribution: function(html) {
-        var view;
-        view = new App.Base.AttributionView({
-          model: new Backbone.Model({
-            linkHtml: html
-          })
-        });
-        view.render();
-        $('.atl__title-bar').append(view.$el);
-        return this.attributionView = view;
-      },
-      _setThemeBackground: function() {
-        var $bg, $titleBar, color;
-        $titleBar = this.$('.atl__title-bar');
-        $bg = this.$('.atl__title-bar__background');
-        $titleBar.removeClass('atl__title-bar--image');
-        $titleBar.addClass('atl__title-bar--solid');
-        color = App.currentThemeColor;
-        if (color != null) {
-          return $bg.css('background-color', color);
-        } else {
-          return $bg.css('background-color', '');
-        }
       }
     });
   });
@@ -66981,143 +66842,6 @@ Comp.Projects.Show.Explainer.RelatedPages = React.createClass({
 }).call(this);
 
 (function() {
-  this.Atlas.module('Projects.Show.Tilemap.Legend', function(Legend, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      this.Controller.show();
-      return App.reqres.setHandler('legend:value:hovered', function() {
-        return Legend.valueHoverIndex;
-      });
-    });
-    return this.on('stop', function() {
-      App.reqres.removeHandler('legend:value:hovered');
-      this.Controller.destroy();
-      return this.stopListening();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Legend', function(Legend, App, Backbone, Marionette, $, _) {
-    return Legend.Controller = {
-      show: function() {
-        Legend.rootView = this.getRootView();
-        return Legend.rootView.render();
-      },
-      destroy: function() {
-        return Legend.rootView.destroy();
-      },
-      getRootView: function() {
-        var coll, filter, rootView;
-        filter = App.reqres.request('filter');
-        coll = new Backbone.Collection(filter.getActiveChild().children);
-        rootView = new Legend.RootView({
-          collection: coll,
-          el: '.atl__legend'
-        });
-        return rootView;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
-
-  this.Atlas.module('Projects.Show.Tilemap.Legend', function(Legend, App, Backbone, Marionette, $, _) {
-    Legend.IconView = Marionette.ItemView.extend({
-      tagName: 'li',
-      className: 'atl__legend__icon',
-      template: 'projects/show/project_templates/tilemap/submodules/legend/templates/icon',
-      onRender: function() {
-        var cls;
-        cls = this.model.getBackgroundColorClass();
-        return this.$('.hexicon__hex').attr('class', "hexicon__hex " + cls);
-      },
-      events: {
-        'mouseenter': 'onMouseOver',
-        'mouseleave': 'onMouseOut',
-        'click': 'triggerValueClick'
-      },
-      highlight: function() {
-        return this.$el.addClass('atl__legend__icon--highlighted');
-      },
-      dehighlight: function() {
-        return this.$el.removeClass('atl__legend__icon--highlighted');
-      },
-      toggleActiveState: function() {
-        return this.$el.toggleClass('atl__legend__icon--inactive');
-      },
-      onMouseOver: function() {
-        var cls, filter, modelIndex;
-        modelIndex = this._getModelIndex();
-        Legend.valueHoverIndex = modelIndex;
-        App.vent.trigger('value:mouseover', modelIndex);
-        filter = App.reqres.request('filter');
-        cls = filter.getBackgroundColorClass(modelIndex);
-        return App.commands.execute('set:header:strip:color', {
-          className: cls
-        });
-      },
-      onMouseOut: function() {
-        App.commands.execute('set:header:strip:color', 'none');
-        Legend.valueHoverIndex = -1;
-        return App.vent.trigger('value:mouseout', -1);
-      },
-      triggerValueClick: function() {
-        var modelIndex;
-        modelIndex = this._getModelIndex();
-        return App.vent.trigger('value:click', modelIndex);
-      },
-      _getModelIndex: function() {
-        return this.model.collection.models.indexOf(this.model);
-      }
-    });
-    return Legend.RootView = Marionette.CompositeView.extend({
-      tagName: 'div',
-      className: 'atl__legend',
-      template: 'projects/show/project_templates/tilemap/submodules/legend/templates/root',
-      childView: Legend.IconView,
-      childViewContainer: 'ul',
-      initialize: function() {
-        this.listenTo(App.vent, 'value:click', this.setActiveState);
-        this.listenTo(App.vent, 'item:mouseover item:mouseout value:mouseover value:mouseout', this.setHighlighting);
-        return this.listenTo(App.vent, 'key:click', function() {
-          var filter;
-          filter = App.reqres.request('filter');
-          return this.collection.reset(filter.getActiveChild().children);
-        });
-      },
-      setActiveState: function(index) {
-        var child;
-        child = this.children.findByIndex(index);
-        return child.toggleActiveState();
-      },
-      setHighlighting: function() {
-        var filter, hoveredItem, indeces;
-        hoveredItem = App.reqres.request('item:entities').hovered;
-        filter = App.reqres.request('filter');
-        if (hoveredItem != null) {
-          indeces = filter.getValueIndeces(hoveredItem);
-        } else {
-          indeces = [App.reqres.request('filter:value:hovered')];
-        }
-        return this.children.each(function(child, childIndex) {
-          if (indexOf.call(indeces, childIndex) >= 0) {
-            return child.highlight();
-          } else {
-            return child.dehighlight();
-          }
-        });
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
   this.Atlas.module('Projects.Show.Tilemap.Popup', function(Popup, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     this.on('start', function() {
@@ -67283,6 +67007,306 @@ Comp.Projects.Show.Explainer.RelatedPages = React.createClass({
       changeSearchTerm: function(e) {
         Search.term = $(e.target)[0].value;
         return App.vent.trigger('search:term:change');
+      }
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    this.on('start', function() {
+      this.listenTo(App.vent, 'item:activate', this.Controller.updateAndReveal.bind(this.Controller));
+      return App.commands.setHandler('activate:info:box', this.Controller.updateAndReveal.bind(this.Controller));
+    });
+    return this.on('stop', function() {
+      this.stopListening();
+      return this.Controller.destroy();
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
+    return InfoBox.Controller = {
+      create: function() {
+        InfoBox.rootView = this._getRootView();
+        return InfoBox.rootView.render();
+      },
+      updateAndReveal: function() {
+        this.update();
+        return this.reveal();
+      },
+      update: function() {
+        this.destroy();
+        this._ensureContainer();
+        return this.create();
+      },
+      reveal: function() {
+        return InfoBox.rootView.reveal();
+      },
+      hide: function() {
+        InfoBox.rootView.hide();
+        return App.vent.trigger('item:deactivate');
+      },
+      destroy: function() {
+        if (InfoBox.rootView != null) {
+          return InfoBox.rootView.destroy();
+        }
+      },
+      _ensureContainer: function() {
+        var $atl;
+        $atl = $('.atl__main');
+        if ($atl.find('.atl__info-box').length === 0) {
+          return $atl.append('<div class="atl__info-box"></div>');
+        }
+      },
+      _getRootView: function() {
+        var rootView;
+        rootView = new InfoBox.RootView({
+          model: this._getModel().model,
+          collection: this._getModel().collection,
+          el: '.atl__info-box'
+        });
+        return rootView;
+      },
+      _getModel: function() {
+        var activeItem, model;
+        activeItem = App.reqres.request('item:entities').active;
+        model = InfoBox.getModelObject(activeItem);
+        return model;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
+    var getSectionHtml;
+    InfoBox.SectionsCollection = Backbone.Collection.extend();
+    InfoBox.Model = App.Models.BaseModel.extend({
+      defaults: {
+        name: 'General Project Info'
+      }
+    });
+    InfoBox.getModelObject = function(item) {
+      var collectionData, model;
+      model = item != null ? item : App.currentProjectModel;
+      collectionData = item != null ? this.getItemSectionsCollection(item) : void 0;
+      return {
+        model: model,
+        collection: collectionData != null ? new InfoBox.SectionsCollection(collectionData) : void 0
+      };
+      return new InfoBox.Model(modelData);
+    };
+    InfoBox.getItemSectionsCollection = function(item) {
+      var infoBoxSections, sections, variables;
+      infoBoxSections = App.reqres.request('info:box:section:entities');
+      variables = App.reqres.request('variable:entities');
+      return sections = _.map(infoBoxSections.models, function(infoBoxSection) {
+        var obj, sectionTitle, text, variable, variableId;
+        variableId = infoBoxSection.get('variable_id');
+        variable = variables.findWhere({
+          id: variableId
+        });
+        sectionTitle = variable != null ? variable.get('display_title') : "Section";
+        text = item.get(variableId);
+        obj = {
+          heading: sectionTitle,
+          text: getSectionHtml(text)
+        };
+        return obj;
+      });
+    };
+    return getSectionHtml = function(raw) {
+      var formatters, html;
+      if ((raw == null) || _.isArray(raw)) {
+        return raw;
+      }
+      if (_.isNumber(raw)) {
+        return raw.toString();
+      }
+      html = marked(raw);
+      formatters = App.Util.formatters;
+      return formatters.htmlToHtml(html);
+    };
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
+    var TocView;
+    InfoBox.SectionView = Marionette.CompositeView.extend({
+      tagName: 'li',
+      className: 'atl__info-box__item',
+      template: 'projects/show/project_templates/tilemap/submodules/info_box/templates/section'
+    });
+    TocView = Marionette.ItemView.extend({
+      events: {
+        'click a': 'triggerScroll'
+      },
+      triggerScroll: function(e) {
+        return App.vent.trigger('scroll');
+      },
+      isEmpty: function() {
+        return this.$el.html() === "";
+      }
+    });
+    return InfoBox.RootView = Marionette.ItemView.extend({
+      initialize: function() {
+        return this.listenTo(App.vent, 'scroll', function() {
+          return this._setStickyNavLayout();
+        });
+      },
+      tagName: 'div',
+      className: 'atl__info-box fill-parent',
+      template: 'projects/show/project_templates/tilemap/submodules/info_box/templates/root',
+      events: {
+        'click .atl__info-box__close': 'purgeView'
+      },
+      templateHelpers: App.Util.formatters,
+      getCollectionHtml: function() {
+        var html;
+        if (this.collection != null) {
+          html = "";
+          this.collection.each((function(_this) {
+            return function(model) {
+              var view;
+              view = new InfoBox.SectionView({
+                model: model
+              });
+              view.render();
+              return html += view.el.innerHTML;
+            };
+          })(this));
+          return html;
+        }
+      },
+      onRender: function() {
+        this.$('.static-content').html(this.getCollectionHtml());
+        this._buildToc();
+        this._setStickyNavLayout();
+        this._setImage();
+        if (this.collection == null) {
+          return this._setThemeBackground();
+        }
+      },
+      onBeforeDestroy: function() {
+        if (this.attributionView != null) {
+          this.attributionView.destroy();
+        }
+        if (this.tocView != null) {
+          return this.tocView.destroy();
+        }
+      },
+      reveal: function() {
+        var $app;
+        $app = $('.atl');
+        $app.addClass('atl__info-box--active');
+        return this;
+      },
+      hide: function() {
+        var $app;
+        $app = $('.atl');
+        $app.removeClass('atl__info-box--active');
+        return this;
+      },
+      hideAndDestroy: function() {
+        var $app;
+        $app = $('.atl');
+        $app.removeClass('atl__info-box--active');
+        $app.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', (function(_this) {
+          return function(e) {
+            return _this.destroy();
+          };
+        })(this));
+        return this;
+      },
+      purgeView: function() {
+        return InfoBox.Controller.hide();
+      },
+      showAttributionLink: function(e) {
+        return $(e.target).toggleClass('atl__attribution--active');
+      },
+      _buildToc: function() {
+        $('#atl__toc__list').toc({
+          selectors: 'h1,h2',
+          container: '.static-content',
+          templates: {
+            h2: _.template('<%= title %>'),
+            h3: _.template('<%= title %>')
+          }
+        });
+        this.tocView = new TocView({
+          el: $('#atl__toc__list ul')
+        });
+        if (this.tocView.isEmpty()) {
+          return $('.atl__toc').hide();
+        }
+      },
+      _setStickyNavLayout: function(subClasses) {
+        var $elem, className, scrollTop;
+        scrollTop = $('.atl__info-box').scrollTop();
+        className = "atl__page-nav";
+        $elem = this.$("." + className);
+        if (scrollTop > $('.atl__title-bar').height()) {
+          return $elem.addClass(className + "--fixed");
+        } else {
+          return $elem.removeClass(className + "--fixed");
+        }
+      },
+      _setImage: function() {
+        var $el, imageName, img;
+        $el = this.$('.atl__title-bar__background');
+        $el.css('background-color', 'rgba(50, 50, 50, 0.1)');
+        if (!((this.model != null) && (this.model.getImageName != null))) {
+          return;
+        }
+        imageName = this.model.getImageName();
+        if (imageName != null) {
+          img = App.reqres.request('image:entity', {
+            name: imageName
+          });
+          return img.on('sync', (function(_this) {
+            return function() {
+              var backgroundImageCss;
+              backgroundImageCss = img.getBackgroundImageCss();
+              if (backgroundImageCss != null) {
+                $el.css('background-color', 'initial');
+                $el.css('background-image', backgroundImageCss);
+                return _this._appendImageAttribution(img.getAttributionHtml());
+              }
+            };
+          })(this));
+        }
+      },
+      _appendImageAttribution: function(html) {
+        var view;
+        view = new App.Base.AttributionView({
+          model: new Backbone.Model({
+            linkHtml: html
+          })
+        });
+        view.render();
+        $('.atl__title-bar').append(view.$el);
+        return this.attributionView = view;
+      },
+      _setThemeBackground: function() {
+        var $bg, $titleBar, color;
+        $titleBar = this.$('.atl__title-bar');
+        $bg = this.$('.atl__title-bar__background');
+        $titleBar.removeClass('atl__title-bar--image');
+        $titleBar.addClass('atl__title-bar--solid');
+        color = App.currentThemeColor;
+        if (color != null) {
+          return $bg.css('background-color', color);
+        } else {
+          return $bg.css('background-color', '');
+        }
       }
     });
   });

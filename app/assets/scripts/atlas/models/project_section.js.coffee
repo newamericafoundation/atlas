@@ -1,13 +1,14 @@
 @Atlas.module 'Models', (Models, App, Backbone, Marionette, $, _) ->
 
-	Models.ProjectSection = Marionette.Accountant.FilterModel.extend
+
+	Models.ProjectSection = Models.BaseFilterModel.extend
 		urlRoot: '/api/v1/project_sections'
 		parse: (resp) ->
 			resp.id = String(resp.id)
 			resp
 
 
-	Models.ProjectSections = Marionette.Accountant.FilterCollection.extend
+	Models.ProjectSections = Models.BaseFilterCollection.extend
 
 		model: Models.ProjectSection
 		url: '/api/v1/project_sections'

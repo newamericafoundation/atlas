@@ -8,6 +8,7 @@
 	&:hover, &--active { opacity: 0.8; }
 	&__link {
 		@include attribution-box;
+		p { margin: 0; }
 		display: none;
 		.atl__attribution--active & {
 			display: table-cell;

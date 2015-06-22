@@ -8,9 +8,6 @@
 		parse: (resp) ->
 			resp = @_removeArrayWrapper resp
 
-		_removeArrayWrapper: (resp) ->
-			resp = resp[0] if _.isArray(resp)
-			resp
 
 	Models.CoreData = Models.BaseCollection.extend
 		model: Models.CoreDatum

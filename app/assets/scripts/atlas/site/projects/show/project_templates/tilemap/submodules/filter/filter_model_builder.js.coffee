@@ -13,13 +13,13 @@
 
 			formatters = App.Util.formatters
 
-			variable = filter.getVariableModel()
+			variable = filter.getVariableModel(variables)
 
 			variable_id = variable.get 'id'
 			display_title = variable.get 'display_title'
 			short_description = variable.get 'short_description'
-			long_description = variable.get 'long_description'
-			long_description = formatters.mdToHtml(long_description)
+			console.log variable.get('long_description')
+			long_description = variable.getMarkdownHtml 'long_description'
 			type = filter.get 'type'
 
 			o =
