@@ -33,9 +33,9 @@ var eraseCrap = function(data) {
  * @returns {string} url - E.g. url(data:image/svg+xml;base64,...)
  */
 var getEncodedUrl = function(svg) {
-	encoded = new Buffer(svg).toString('base64');
-	svg = 'data:image/svg+xml;base64,' + encoded;
-	url = "url('" + svg + "')";
+	var encoded = new Buffer(svg).toString('base64'),
+		urlInner = 'data:image/svg+xml;base64,' + encoded,
+		url = "url('" + urlInner + "')";
 	return url;
 };
 
@@ -54,9 +54,10 @@ var getFileCssData = function(fileName, data) {
 
 	for (color in colors) {
 		hex = colors[color];
-		data = data.replace(/fill=\"#231[fF]20\"/g, 'fill="' + hex + '"');	
+		console.log(hex);
+		newData = data.replace(/fill=\"#231[fF]20\"/g, 'fill="' + hex + '"');
 		className = 'bg-img-' + base + '--' + color;
-		css += '%' + className + ' { background-image: ' + getEncodedUrl(data) + '; }\n';
+		css += '%' + className + ' { background-image: ' + getEncodedUrl(newData) + '; }\n';
 		css += '.' + className + ' { @extend %' + className + '; }\n';
 	}
 
@@ -94,7 +95,6 @@ fs.readdir(path, function(err, files) {
 		fs.readFile(path + file, 'utf8', function(err, data) {
 			if (err) { return console.log(err); }
 			data = eraseCrap(data);
-			console.log(data);
 			if (file[0] !== '.') { 
 				css += getFileCssData(file, data);
 				react += getFileReactData(file, data); 
@@ -102,7 +102,7 @@ fs.readdir(path, function(err, files) {
 			currentFileIndex += 1;
 			if (currentFileIndex === fileCount) { 
 				writeFile('../styles/base/_bg-img.scss', css);
-				writeFile('../scripts/atlas/components/site/icons/illustrator.cjsx', react);
+				// writeFile('../scripts/atlas/components/site/icons/illustrator.cjsx', react);
 			}
 		});
 	});

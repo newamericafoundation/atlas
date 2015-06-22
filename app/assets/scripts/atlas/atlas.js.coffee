@@ -2,7 +2,9 @@
 
 	App = new Marionette.Application()
 
-	App.uiState ?= {}
+	App.uiState = {
+		isCollapsed: false
+	}
 
 	App.on 'start', ->
 		console.log 'Hi, Mom!'

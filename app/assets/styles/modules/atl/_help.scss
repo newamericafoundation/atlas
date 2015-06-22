@@ -15,27 +15,25 @@
 	overflow-y: visible;
 	background-color: map-get($palette, off-white);
 	opacity: 1;
-	color: #333333;
+	color: map-get(map-get($palette, grey), base);
 	
 	b {
 		font-family: 'SimplonNorm-Bold-WebS';
 	}
 
-	@mixin pointy() {
-		content: ' ';
-		height: 0; 
-		position: absolute; 
-		width: 0; 
-		border: #{$tip-size / 2} solid transparent; 
-		top: 27%;
-		overflow: visible; 
-		line-height: 100%;
-	}
-
 	&--right {
 		right: - ($width + $tip-size / 2);
 		&:before {
-			@include pointy();
+			// repeated (extend not working)
+			content: ' ';
+			height: 0; 
+			position: absolute; 
+			width: 0; 
+			border: #{$tip-size / 2} solid transparent; 
+			top: 27%;
+			overflow: visible; 
+			line-height: 100%;
+			
 			margin-left: -$tip-size;
 			left: +2px;  
 			border-right-color: map-get($palette, off-white);
@@ -46,7 +44,17 @@
 	&--left {
 		left: - ($width + $tip-size / 2);
 		&:after {
-			@include pointy();
+
+			// repeated (extend not working)
+			content: ' ';
+			height: 0; 
+			position: absolute; 
+			width: 0; 
+			border: #{$tip-size / 2} solid transparent; 
+			top: 27%;
+			overflow: visible; 
+			line-height: 100%;
+			
 			margin-left: 0;
 			right: -$tip-size+2px;
 			border-left-color: map-get($palette, off-white);

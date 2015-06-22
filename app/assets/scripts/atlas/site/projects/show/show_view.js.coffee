@@ -36,12 +36,21 @@
 			url = App.currentProjectModel.buildUrl()
 			window.location.href = url
 
+		# Expand or collapse. To be renamed.
 		_collapse: (e) ->
-			$('.atl').toggleClass 'atl--collapsed'
-			$target = $(e.target)
-			if $target.hasClass('atl__side-bar__icon')
-				$target = $($target.children()[0])
-			$target.toggleClass 'bg-img-expand--off-white'
+			# App.uiState.isCollapsed is highest authority in determining whether
+			#   settings bar is expanded or not, but only if there is space.
+			# TODO - clean up this complicated logic.
+			isCollapsed = App.uiState.isCollapsed or $('.atl').hasClass('atl--collapsed')
+			cannotExpand = App.reqres.request('is:settings:bar:overflowing')
+			unless (isCollapsed) and (cannotExpand)
+				App.uiState.isCollapsed = not App.uiState.isCollapsed
+				$('.atl').toggleClass 'atl--collapsed'
+				# get icon
+				$target = $(e.target)
+				if $target.hasClass('atl__side-bar__icon')
+					$target = $($target.children()[0])
+				$target.toggleClass 'bg-img-expand--off-white'
 
 		_help: (e) ->
 			$('.atl').toggleClass('atl--help')

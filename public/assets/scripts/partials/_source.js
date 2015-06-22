@@ -97,9 +97,9 @@
   this.Atlas = (function(Backbone, Marionette) {
     var App;
     App = new Marionette.Application();
-    if (App.uiState == null) {
-      App.uiState = {};
-    }
+    App.uiState = {
+      isCollapsed: false
+    };
     App.on('start', function() {
       var router;
       console.log('Hi, Mom!');
@@ -190,7 +190,6 @@
       },
       routes: {
         'welcome': 'welcome_index',
-        'about': 'about_index',
         'menu': 'projects_index',
         'show': 'projects_show',
         ':atlas_url': 'projects_show',
@@ -2962,7 +2961,12 @@
           return results;
         });
         $(window).on('resize', this.collapseIfSettingsBarIsOverflowing.bind(this));
-        return this.listenTo(App.vent, 'show:component:ready', this.collapseIfSettingsBarIsOverflowing.bind(this));
+        this.listenTo(App.vent, 'show:component:ready', this.collapseIfSettingsBarIsOverflowing.bind(this));
+        return App.reqres.setHandler('is:settings:bar:overflowing', (function(_this) {
+          return function() {
+            return _this.isSettingsBarOverflowing();
+          };
+        })(this));
       },
       onBeforeDestroy: function() {
         return $(window).off('resize', this.collapseIfSettingsBarIsOverflowing.bind(this));
@@ -2970,16 +2974,18 @@
       filterHeight: 0,
       headlineHeight: 0,
       headerHeight: 0,
-      collapseIfSettingsBarIsOverflowing: function() {
+      isSettingsBarOverflowing: function() {
         var availableHeight, space, tolerance, useHeight;
         tolerance = 60;
         useHeight = this._getFilterHeight() + this._getHeadlineHeight() + this._getHeaderHeight() + tolerance;
         availableHeight = $(window).height();
-        console.log(availableHeight);
         space = availableHeight - useHeight;
-        if (space < 0) {
+        return space < 0;
+      },
+      collapseIfSettingsBarIsOverflowing: function() {
+        if (this.isSettingsBarOverflowing()) {
           return $('.atl').addClass('atl--collapsed');
-        } else {
+        } else if (!App.uiState.isCollapsed) {
           return $('.atl').removeClass('atl--collapsed');
         }
       },
@@ -5160,13 +5166,18 @@
         return window.location.href = url;
       },
       _collapse: function(e) {
-        var $target;
-        $('.atl').toggleClass('atl--collapsed');
-        $target = $(e.target);
-        if ($target.hasClass('atl__side-bar__icon')) {
-          $target = $($target.children()[0]);
+        var $target, cannotExpand, isCollapsed;
+        isCollapsed = App.uiState.isCollapsed || $('.atl').hasClass('atl--collapsed');
+        cannotExpand = App.reqres.request('is:settings:bar:overflowing');
+        if (!(isCollapsed && cannotExpand)) {
+          App.uiState.isCollapsed = !App.uiState.isCollapsed;
+          $('.atl').toggleClass('atl--collapsed');
+          $target = $(e.target);
+          if ($target.hasClass('atl__side-bar__icon')) {
+            $target = $($target.children()[0]);
+          }
+          return $target.toggleClass('bg-img-expand--off-white');
         }
-        return $target.toggleClass('bg-img-expand--off-white');
       },
       _help: function(e) {
         return $('.atl').toggleClass('atl--help');

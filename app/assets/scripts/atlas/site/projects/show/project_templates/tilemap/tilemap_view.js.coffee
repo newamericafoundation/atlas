@@ -1,6 +1,6 @@
 @Atlas.module 'Projects.Show.Tilemap', (Tilemap, App, Backbone, Marionette, $, _) ->	
 
-	Tilemap.View = Marionette.LayoutView.extend
+	Tilemap.View = Marionette.LayoutView.extend 
 
 		tagName: 'div'
 		className: 'atl__main fill-parent'
@@ -13,22 +13,27 @@
 			$(window).on 'resize', @collapseIfSettingsBarIsOverflowing.bind(@)
 			@listenTo App.vent, 'show:component:ready', @collapseIfSettingsBarIsOverflowing.bind(@)
 
-		onBeforeDestroy: ->
+			App.reqres.setHandler 'is:settings:bar:overflowing', =>
+				@isSettingsBarOverflowing()
+
+		onBeforeDestroy: -> 
 			$(window).off 'resize', @collapseIfSettingsBarIsOverflowing.bind(@)
 
 		filterHeight: 0
 		headlineHeight: 0
 		headerHeight: 0
 
-		collapseIfSettingsBarIsOverflowing: ->
+		isSettingsBarOverflowing: ->
 			tolerance = 60
 			useHeight = @_getFilterHeight() + @_getHeadlineHeight() + @_getHeaderHeight() + tolerance
 			availableHeight = $(window).height()
-			console.log availableHeight
 			space = availableHeight - useHeight
-			if (space < 0) 
+			(space < 0)
+
+		collapseIfSettingsBarIsOverflowing: ->
+			if (@isSettingsBarOverflowing())
 				$('.atl').addClass('atl--collapsed')
-			else
+			else if not App.uiState.isCollapsed
 				$('.atl').removeClass('atl--collapsed')
 
 		_getFilterHeight: ->

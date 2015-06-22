@@ -7,7 +7,7 @@
 
 		routes:
 			'welcome': 'welcome_index'
-			'about': 'about_index'
+			#'about': 'about_index'
 			'menu': 'projects_index'
 			'show': 'projects_show'
 			':atlas_url': 'projects_show'
