@@ -1,8 +1,11 @@
 var base = require('./base'),
 	baseFilter = require('./base_filter'),
-	coreDatum = require('./core_datum');
+	coreDatum = require('./core_datum'),
+	filter = require('./filter'),
+	image = require('./image'),
+	infoBoxSection = require('./info_box_section');
 
-exports.Models = {
+window.Models = {
 
 	BaseModel: base.Model,
 	BaseCollection: base.Collection,
@@ -11,8 +14,9 @@ exports.Models = {
 	BaseFilterCollection: baseFilter.Collection,
 
 	CoreDatum: coreDatum.Model,
-	CoreData: coreDatum.Collection
+	CoreData: coreDatum.Collection,
+
+	Filter: filter.Model,
+	Filters: filter.Collection
 
 };
-
-window.Models = exports.Models;

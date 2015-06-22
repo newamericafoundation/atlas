@@ -7,6 +7,7 @@ var path = require('path'),
     concat = require('gulp-concat'),
     coffee = require('gulp-coffee'),
     uglify = require('gulp-uglify'),
+    insert = require('gulp-insert'),
     rev = require('gulp-rev'),
     rename = require('gulp-rename'),
     nodemon = require('gulp-nodemon'),
@@ -18,7 +19,9 @@ var path = require('path'),
     mochaPhantomJs = require('gulp-mocha-phantomjs'),
     cjsx = require('gulp-cjsx'),
     liveReload = require('gulp-livereload'),
-    browserify = require('gulp-browserify');
+    browserifyGlobalShim = require('browserify-global-shim'),
+    browserify = require('browserify'),
+    source = require('vinyl-source-stream');
 
 var config = {
     production: !!util.env.production
@@ -189,12 +192,21 @@ gulp.task('port-models', function() {
         .pipe(gulp.dest('./app/backbone-models'));
 });
 
+var globalShim = browserifyGlobalShim.configure({
+    'jquery': '$',
+    'underscore': '_',
+    'backbone': 'Backbone'
+});
+
 gulp.task('bundle-models', function() {
-    return gulp.src(['./app/backbone-models/index.js'])
-        .pipe(browserify({
-            insertGlobals: true,
-            external: [ 'underscore', 'backbone', 'jquery' ]
-        }))
+    var b = browserify({
+        entries: [ './app/backbone-models/index.js' ]
+    });
+    b.transform(globalShim);
+    return b.bundle()
+        .pipe(source('index.js.coffee'))
+        .pipe(insert.prepend('`\n'))
+        .pipe(insert.append('\n`'))
         .pipe(gulp.dest('./app/backbone-models/bundle-test'));
 });
 
