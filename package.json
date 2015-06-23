@@ -51,9 +51,10 @@
     "inflected": "^1.1.6",
     "jade": "^1.9.2",
     "jquery": "^2.1.4",
-    "mongodb": "^2.0.33",
+    "mongodb": "^2.0.35",
     "mongoose": "^4.0.3",
     "nice-json2csv": "^0.2.0",
+    "q": "^1.4.1",
     "underscore": "^1.8.3"
   },
   "browserify-shim": {

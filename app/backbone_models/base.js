@@ -87,7 +87,7 @@ exports.Model = Backbone.Model.extend({
 			return newHtml;
 		}
 	}
-	
+
 });
 
 exports.Collection = Backbone.Collection.extend({
@@ -95,9 +95,10 @@ exports.Collection = Backbone.Collection.extend({
 	parse: function(resp) {
 		var i, max,
 			item;
+		if (exports.Model.prototype.parse == null) { return resp; }
 		for (i = 0, max = resp.length; i < max; i += 1) {
 			item = resp[i];
-			resp[i] = exports.Model.prototype.parse(resp[i]);
+			resp[i] = exports.Model.prototype.parse(item);
 		}
 		return resp;
 	}
