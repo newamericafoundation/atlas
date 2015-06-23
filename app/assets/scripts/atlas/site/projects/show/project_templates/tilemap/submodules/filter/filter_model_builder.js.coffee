@@ -18,7 +18,6 @@
 			variable_id = variable.get 'id'
 			display_title = variable.get 'display_title'
 			short_description = variable.get 'short_description'
-			console.log variable.get('long_description')
 			long_description = variable.getMarkdownHtml 'long_description'
 			type = filter.get 'type'
 

@@ -16,7 +16,7 @@
 
 	@mixin collapsed {
 		background: none;
-		height: 300px;
+		height: auto;
 	}
 
 	@include collapsed;

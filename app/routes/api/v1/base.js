@@ -1,5 +1,4 @@
-var Model = require('../../../models/project_section').Model,
-	util = require('../../../models/util');
+var util = require('../../../models/util');
 
 module.exports = function(req, res, resource) {
 	var Model = require('../../../models/' + resource).Model;

@@ -2,6 +2,7 @@ var express = require('express'),
 	router = express.Router(),
 	Model = require('../../../models/project').Model,
 	util = require('../../../models/util'),
+	project = require('./../../../backbone_models/project.js'),
 	templates = require('../../../../db/seeds/project_templates.json'),
 	sections = require('../../../../db/seeds/project_sections.json'),
 	csv = require('csv');

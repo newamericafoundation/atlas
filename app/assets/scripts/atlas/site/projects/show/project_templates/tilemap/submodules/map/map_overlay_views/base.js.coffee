@@ -53,7 +53,7 @@
             $('.loading-icon').remove()
 
         # Callback.
-        onMapClick: (e) ->
+        onMapClick: (e) -> 
             # console.log "map clicked on lat = #{e.latlng.lat} and long = #{e.latlng.lng}"
             if @activeFeature?
                 @activeFeature = undefined
@@ -72,8 +72,7 @@
             valueHoverIndex = App.reqres.request 'value:hovered'
             searchTerm = App.reqres.request 'search:term'
             if model?
-                #cls = filter.getLayerClasses(model, valueHoverIndex, searchTerm, baseClass)
-                cls = model.getLayerClasses(filter, valueHoverIndex, searchTerm, baseClass)
+                cls = model.getLayerClasses(filter, valueHoverIndex, searchTerm, baseClass, App.currentDisplayMode)
                 return cls
 
         # Checks if bounds are finite.

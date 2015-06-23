@@ -3,4 +3,4 @@
 	Models.Variable = Models.BaseModel.extend()
 
 	Models.Variables = Models.BaseCollection.extend
-		model: Models.Variable
+		model: Models.Variable 

@@ -6,6 +6,7 @@
 
 		events:
 			'click .link': 'openInfoBox'
+			'click .atl__headline__title': 'openInfoBox'
 
 		openInfoBox: ->
 			App.commands.execute 'activate:info:box'

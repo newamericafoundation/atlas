@@ -1,6 +1,6 @@
 var express = require('express'),
 	router = express.Router(),
-	resources = [ 'projects', 'project_sections', 'project_templates', 'core_data', 'images'/*, 'researchers'*/ ],
+	resources = [ 'projects', 'project_sections', 'project_templates', 'core_data', 'images' ],
 	fingerprintManifest = require('./fingerprint-manifest'),
 	json2csv = require('nice-json2csv');
 

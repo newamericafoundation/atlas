@@ -10,6 +10,3 @@
 		hasSingleActiveChild: true
 		initializeActiveStatesOnReset: true
 		comparator: 'order'
-		initialize: ->
-			@on 'initialize:active:states', () ->
-				App.vent.trigger 'project:filter:change', @

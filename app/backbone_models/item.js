@@ -1,8 +1,9 @@
 var _ = require('underscore'),
 	Backbone = require('backbone'),
 	base = require('./base'),
-	$ = require('jquery');
-
+	rgf = require('./rich_geo_feature'),
+	$ = require('jquery'),
+	states = require('./../../db/seeds/states.json');
 
 var indexOf = [].indexOf || function(item) {
 	for (var i = 0, l = this.length; i < l; i++) {
@@ -24,7 +25,9 @@ exports.Model = base.Model.extend({
 			value = data[key];
 			if (_.isString(value)) {
 				if ((value.indexOf("|") > -1) && (value.indexOf("\n") === -1)) {
-					data[key] = App.Util.formatters.atlasArrayToArray(value);
+					data[key] = _.map(value.split('|'), function(item) {
+						return item.trim();
+					});
 				} else {
 					data[key] = value.trim();
 				}
@@ -57,7 +60,7 @@ exports.Model = base.Model.extend({
 		var errors, stateData;
 		errors = [];
 		if (data.name != null) {
-			stateData = _.where(Atlas.Data.states, {
+			stateData = _.where(states, {
 				name: data.name
 			});
 			if ((stateData != null) && stateData.length > 0) {
@@ -109,7 +112,7 @@ exports.Model = base.Model.extend({
 		};
 		return geoJson;
 	},
-	getLayerClasses: function(filter, valueHoverIndex, searchTerm, baseClass) {
+	getLayerClasses: function(filter, valueHoverIndex, searchTerm, baseClass, currentDisplayMode) {
 		var classNames, d, elementBaseClass, filterIndeces, highlightedClass, i, inactiveClass, isFiltered, j, k, layerClasses, len, neutralClass;
 		if (baseClass == null) {
 			baseClass = 'map-region';
@@ -125,7 +128,7 @@ exports.Model = base.Model.extend({
 		};
 		classNames = [];
 		d = this.toJSON();
-		if (App.currentDisplayMode === 'filter') {
+		if (currentDisplayMode === 'filter') {
 			isFiltered = filter.test(d);
 			filterIndeces = filter.getValueIndeces(d);
 			k = filter.getValueCountOnActiveKey();
@@ -142,7 +145,7 @@ exports.Model = base.Model.extend({
 			} else {
 				layerClasses.group = baseClass + ' ' + inactiveClass;
 			}
-		} else if (App.currentDisplayMode === 'search') {
+		} else if (currentDisplayMode === 'search') {
 			if (this.matchesSearchTerm(searchTerm)) {
 				layerClasses.group = baseClass + ' ' + neutralClass;
 				layerClasses.elements = [''];
@@ -173,7 +176,7 @@ exports.Model = base.Model.extend({
 
 
 exports.Collection = base.Collection.extend({
-	model: Models.Item,
+	model: exports.Model,
 	getItemType: function() {
 		var itemType;
 		itemType = this.models[0].get('_itemType');
@@ -262,9 +265,9 @@ exports.Collection = base.Collection.extend({
 		return res;
 	},
 	richGeoJsonBuilders: {
-		state: function(collection) {
+		state: function(collection, baseGeoData) {
 			var data, richGeoJson, setup;
-			richGeoJson = new Models.RichGeoJson();
+			richGeoJson = new rgf.Collection();
 			setup = function(data) {
 				var feature, item, j, len, ref;
 				richGeoJson.features = topojson.feature(data, data.objects.states).features;
@@ -278,23 +281,12 @@ exports.Collection = base.Collection.extend({
 				}
 				return richGeoJson.trigger('sync');
 			};
-			data = App['us-states-10m'];
-			if (data != null) {
-				setup(data);
-			} else {
-				$.ajax({
-					url: '/data/us-states-10m.js',
-					dataType: 'script',
-					success: function() {
-						return setup(App['us-states-10m']);
-					}
-				});
-			}
+			setup(baseGeoData);
 			return richGeoJson;
 		},
 		pindrop: function(collection) {
 			var item, j, len, ref, richGeoJson;
-			richGeoJson = new Models.RichGeoJson();
+			richGeoJson = new rgf.Collection();
 			ref = collection.models;
 			for (j = 0, len = ref.length; j < len; j++) {
 				item = ref[j];
@@ -304,9 +296,9 @@ exports.Collection = base.Collection.extend({
 			return richGeoJson;
 		}
 	},
-	getRichGeoJson: function() {
+	getRichGeoJson: function(baseGeoData) {
 		var type;
 		type = this.getItemType();
-		return this.richGeoJsonBuilders[type](this);
+		return this.richGeoJsonBuilders[type](this, baseGeoData);
 	}
 });

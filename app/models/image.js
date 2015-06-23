@@ -1,8 +1,5 @@
-var mongoose = require('mongoose'),
-	Schema = mongoose.Schema;
+var mongoose = require('mongoose');
 
-var schema = new Schema({}, { collection: 'images' });
+var schema = new mongoose.Schema({}, { collection: 'images' });
 
-var Image = mongoose.model('Image', schema);
-
-exports.Model = Image;
+exports.Model = mongoose.model('Image', schema);

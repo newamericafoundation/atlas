@@ -1,8 +1,5 @@
-var mongoose = require('mongoose'),
-	Schema = mongoose.Schema;
+var mongoose = require('mongoose');
 
-var schema = new Schema({}, { collection: 'core_data' });
+var schema = new mongoose.Schema({}, { collection: 'core_data' });
 
-var CoreDatum = mongoose.model('CoreDatum', schema);
-
-exports.Model = CoreDatum;
+exports.Model = mongoose.model('CoreDatum', schema);

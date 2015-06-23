@@ -65,6 +65,8 @@
 
 	&__search { 
 		max-width: 450px;
+		opacity: 0.8;
+		padding: 20px 20px;
 		.atl--collapsed & {
 			padding-left: 0;
 		}
@@ -74,7 +76,7 @@
 		position: absolute; 
 		left: 40px;
 		top: 75px;
-		width: 250px; 
+		width: 350px; 
 	}
 
 	&__main {
@@ -91,11 +93,6 @@
 			}
 		}
 
-	}
-
-	&__search {
-		opacity: 0.8;
-		padding: 0 20px;
 	}
 
 }

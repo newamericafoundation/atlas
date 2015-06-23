@@ -1,5 +1,5 @@
 var assert = require('assert'),
-	util = require('../../models/util');
+	util = require('../../app/models/util');
 
 describe('testing environment', function() {
 

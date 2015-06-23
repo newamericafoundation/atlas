@@ -17,17 +17,36 @@
 			@renderOverlayView()
 
 		renderOverlayView: ->
-			items = App.reqres.request('item:entities')
+
+			items = App.reqres.request('item:entities') 
 			itemType = items.getItemType()
+
 			View = if itemType is 'state' then Map.PathOverlayView else Map.PindropOverlayView
-			coll = items.getRichGeoJson()
-			coll.onReady ->
-				overlayView = new View()
-				overlayView.collection = coll
-				# expose to module
-				Map.overlayView = overlayView
-				overlayView.render()
+
+			launch = (baseGeoData) ->
+				coll = items.getRichGeoJson(baseGeoData)
+				coll.onReady ->
+					overlayView = new View()
+					overlayView.collection = coll
+					# expose to module
+					Map.overlayView = overlayView
+					overlayView.render()
+
+			@getStateBaseGeoData launch
+
 			@
+
+		getStateBaseGeoData: (next) ->
+			data = App['us-states-10m']
+			if data?
+				next data
+			else
+				$.ajax
+					url: '/data/us-states-10m.js'
+					dataType: 'script'
+					success: () ->
+						next App['us-states-10m']
+
 
 		# Destroys view, including map base and overlay.
 		destroy: ->

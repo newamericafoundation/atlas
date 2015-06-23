@@ -1,6 +1,6 @@
 @Atlas.module 'Models', (Models, App, Backbone, Marionette, $, _) ->
 	
-	Models.Image = Models.BaseModel.extend
+	Models.Image = Models.BaseModel.extend 
 
 		urlRoot: '/api/v1/images'
 

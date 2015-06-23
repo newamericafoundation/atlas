@@ -87,7 +87,9 @@
 			@_addImages()
 
 		_filterCollection: ->
-			@collection.filter()
+			projectSections = App.reqres.request 'project:section:entities'
+			projectTemplates = App.reqres.request 'project:template:entities'
+			@collection.filter(projectSections, projectTemplates)
 
 		_addImages: ->
 			$.ajax

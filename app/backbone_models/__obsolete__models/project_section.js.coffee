@@ -14,7 +14,3 @@
 		url: '/api/v1/project_sections'
 		hasSingleActiveChild: false
 		initializeActiveStatesOnReset: true
-
-		initialize: ->
-			@on 'initialize:active:states', () ->
-				App.vent.trigger 'project:filter:change', @

@@ -2,7 +2,7 @@
 
 <ul class="atl__side-bar__icons">
 
-	<% for option in [ ['projects', 'grid'], ['share', 'share'], ['collapse', 'contract'], ['help', 'help'], ['print', 'print'] ]: %>
+	<% for option in [ ['projects', 'grid'], ['collapse', 'contract'], ['help', 'help'], ['print', 'print'] ]: %>
 
 		<li class="atl__side-bar__icon" data-method="<%= option[0] %>">
 			<div class="bg-img-<%= option[1] %>--off-white"></div>

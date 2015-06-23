@@ -59,7 +59,7 @@ var jsSource = {
         './app/assets/scripts/atlas/routes/**/*.js.coffee',
         './app/assets/scripts/atlas/base/**/*.js.coffee',
         './app/assets/scripts/atlas/util/**/*.js.coffee',
-        './app/assets/scripts/atlas/models/**/*.js.coffee',
+        './app/assets/scripts/atlas/__auto__models.js.coffee',
         './app/assets/scripts/atlas/entities/**/*.js.coffee',
         './app/assets/scripts/atlas/site/site.js.coffee',
         './app/assets/scripts/atlas/site/welcome/**/*.js.coffee',
@@ -195,19 +195,19 @@ gulp.task('port-models', function() {
 var globalShim = browserifyGlobalShim.configure({
     'jquery': '$',
     'underscore': '_',
-    'backbone': 'Backbone'
+    'backbone': 'Backbone' 
 });
 
 gulp.task('bundle-models', function() {
     var b = browserify({
-        entries: [ './app/backbone-models/index.js' ]
+        entries: [ './app/backbone_models/__client__.js' ]
     });
     b.transform(globalShim);
     return b.bundle()
-        .pipe(source('index.js.coffee'))
+        .pipe(source('__auto__models.js.coffee'))
         .pipe(insert.prepend('`\n'))
         .pipe(insert.append('\n`'))
-        .pipe(gulp.dest('./app/backbone-models/bundle-test'));
+        .pipe(gulp.dest('./app/assets/scripts/atlas'));
 });
 
 gulp.task('js-build-spec', function() {

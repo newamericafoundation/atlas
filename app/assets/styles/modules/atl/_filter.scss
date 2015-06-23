@@ -8,7 +8,7 @@
         padding: 10px 20px;
         @mixin collapsed {
             padding-left: 40px;
-            padding-top: 50px;
+            padding-top: 0px;
             @include bp-show-sidebars {
                 padding-left: 20px;
             }
