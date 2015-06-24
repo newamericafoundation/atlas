@@ -71,7 +71,7 @@ exports.Model = Backbone.Model.extend({
 			if ((data._id.$oid != null)) {
 				data.id = String(data._id.$oid);
 			} else {
-				data.id = data._id;
+				data.id = String(data._id);
 			}
 			delete data._id;
 		} else if ((data.id != null) && (data.id.$oid != null)) {

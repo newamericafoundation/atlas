@@ -1,12 +1,16 @@
 var express = require('express'),
 	router = express.Router(),
-	Model = require('../../../models/project').Model,
-	util = require('../../../models/util'),
-	project = require('./../../../backbone_models/project.js'),
-	projectSection = require('./../../../backbone_models/project_section.js'),
-	projectTemplate = require('./../../../backbone_models/project_template.js'),
-	base = require('./../../../backbone_models/base.js'),
+	// Model = require('../../../models/project').Model,
+	project = require('./../../../models/project.js'),
+	projectSection = require('./../../../models/project_section.js'),
+	projectTemplate = require('./../../../models/project_template.js'),
+	base = require('./../../../models/base.js'),
 	csv = require('csv');
+
+
+var mongoose = require('mongoose');
+var schema = new mongoose.Schema({}, { collection: 'projects' });
+var Model = mongoose.model('Project', schema);
 
 // Separated query parameters into regular queries and specialty ones.
 //   related_to specialty query specifies the id of the project the 
@@ -43,7 +47,8 @@ router.get('/', function(req, res) {
 
 		var selectedModels = [],
 			referenceModel,
-			referenceModelTags;
+			referenceModelTags,
+			resp = [];
 
 		models = base.Collection.prototype.parse(models);
 
@@ -56,29 +61,24 @@ router.get('/', function(req, res) {
 			mod.addForeignField('project_section_ids', sect, 'name');
 		});
 
-		models = coll.toJSON();
-
-		if (typeof specialQueryParams !== "undefined") {
-
-			referenceModel = util.findById(models, specialQueryParams.related_to);
-
-			referenceModelTags = referenceModel.tags;
-
-			models.forEach(function(model) {
-				if (util.isTagShared(model.tags, referenceModelTags) && (model.id !== referenceModel.id)) {
-					selectedModels.push(model);
+		
+		if (specialQueryParams == null) {
+			return res.json(coll.toJSON());
+		} else {
+			referenceModel = coll.findWhere({ id: specialQueryParams.related_to });
+			if (referenceModel == null) { return res.json([]); }
+			
+			coll.each(function(model) {
+				if (model.isRelatedTo(referenceModel)) {
+					resp.push(model.toJSON());
 				}
 			});
-
-		} else {
-
-			selectedModels = models;
+			return res.json(resp);
 
 		}
 
-		res.json(selectedModels);
-
 	});
+
 });
 
 router.get('/image', function(req, res) {
@@ -92,6 +92,7 @@ router.get('/image', function(req, res) {
 		if (err) { console.dir(err); }
 		res.json(models);
 	});
+
 });
 
 

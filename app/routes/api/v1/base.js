@@ -1,5 +1,5 @@
 var dbConnector = require('./../../../../db/connector'),
-	base = require('./../../../backbone_models/base');
+	base = require('./../../../models/base');
 
 module.exports = function(req, res, resource) {
 	var query = req.query;

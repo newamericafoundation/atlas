@@ -1,7 +1,7 @@
 var express = require('express'),
 	router = express.Router(),
 	fs = require('fs'),
-	coreDatum = require('./../../../backbone_models/core_datum'),
+	coreDatum = require('./../../../models/core_datum'),
 	dbConnector = require('./../../../../db/connector');
 
 router.get('/', function(req, res, next) {

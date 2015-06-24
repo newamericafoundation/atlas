@@ -1,6 +1,6 @@
 var express = require('express'),
 	router = express.Router(),
-	base = require('../../../backbone_models/base'),
+	base = require('../../../models/base'),
 	dbConnector = require('./../../../../db/connector');
 
 router.get('/', function(req, res) {

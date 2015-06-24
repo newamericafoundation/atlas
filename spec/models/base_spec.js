@@ -2,7 +2,7 @@ var assert = require('assert'),
 	Backbone = require('backbone'),
 	_ = require('underscore'),
 	$ = require('jquery'),
-	base = require('./../../app/backbone_models/base');
+	base = require('./../../app/models/base');
 
 
 describe('base.Model', function() {
