@@ -62,10 +62,50 @@ var Backbone = (window.Backbone),
 	$ = (window.$);
 
 exports.Model = Backbone.Model.extend({
+
 	parse: function(data) {
 		data = this._adaptMongoId(data);
 		return data;
 	},
+
+	/*
+	 * Adds fields of a foreign collection, referenced by a foreign id within the model.
+	 * @param {string} foreignIdKey - Foreign id key, of the format 'model_id' or 'model_ids'.
+	 *                                  the former references a single value, the latter an array.
+	 * @param {object} foreignCollection
+	 * @param {string} fieldKey - The field of the foreign model to be copied in, e.g. 'name'.
+	 * @returns {object} this - The model instance, with 'model_name' field added.
+	 */
+	addForeignField: function(foreignIdKey, foreignCollection, fieldKey) {
+
+		var newKey, 
+			foreignModel, foreignIds, foreignId,
+			singleForeignIdKey, // if foreignIdKey holds an array
+			foreignFields = [],
+			i, max;
+
+		if (foreignIdKey.slice(-2) === 'id') {
+			newKey = foreignIdKey.slice(0, -2) + fieldKey;
+			foreignModel = foreignCollection.findWhere({id: this.get(foreignIdKey)});
+			this.set(newKey, foreignModel.get(fieldKey));
+		} else if (foreignIdKey.slice(-3) === 'ids') {
+			foreignIds = this.get(foreignIdKey);
+			for(i = 0, max = foreignIds.length; i < max; i += 1) {
+				foreignId = foreignIds[i];
+				// simple pluralization
+				newKey = foreignIdKey.slice(0, -3) + fieldKey + 's';
+				foreignModel = foreignCollection.findWhere({id: foreignId});
+				if (foreignModel != null) {
+					foreignFields.push(foreignModel.get(fieldKey));
+				}
+			}
+			this.set(newKey, foreignFields);
+		}
+
+		return this;
+
+	},
+
 	_findAndReplaceKey: function(data, standardKey, keyFormatList) {
 		var found, i, kf, len;
 		found = false;
@@ -84,6 +124,7 @@ exports.Model = Backbone.Model.extend({
 		}
 		return found;
 	},
+
 	_adaptMongoId: function(data) {
 		if ((data._id != null)) {
 			if ((data._id.$oid != null)) {
@@ -97,24 +138,28 @@ exports.Model = Backbone.Model.extend({
 		}
 		return data;
 	},
+
 	_removeArrayWrapper: function(resp) {
 		if (_.isArray(resp) && (resp.length === 1)) {
 			resp = resp[0];
 		}
 		return resp;
 	},
+
 	_removeLineBreaks: function(resp, key) {
 		if (resp[key] != null) {
 			resp[key] = resp[key].replace(/(\r\n|\n|\r)/gm, '');
 		}
 		return resp;
 	},
+
 	_removeSpaces: function(resp, key) {
 		if (resp[key] != null) {
 			resp[key] = resp[key].replace(/\s+/g, '');
 		}
 		return resp;
 	},
+
 	_processStaticHtml: function(resp, key) {
 		var $html, html, newHtml;
 		html = resp[key];
@@ -124,6 +169,7 @@ exports.Model = Backbone.Model.extend({
 		resp[key] = newHtml;
 		return resp;
 	},
+
 	getMarkdownHtml: function(key) {
 		var $html, md, newHtml;
 		md = this.get(key);
@@ -134,19 +180,23 @@ exports.Model = Backbone.Model.extend({
 			return newHtml;
 		}
 	}
+
 });
 
 exports.Collection = Backbone.Collection.extend({
 	model: exports.Model,
+
 	parse: function(resp) {
 		var i, max,
 			item;
+		if (exports.Model.prototype.parse == null) { return resp; }
 		for (i = 0, max = resp.length; i < max; i += 1) {
 			item = resp[i];
-			resp[i] = exports.Model.prototype.parse(resp[i]);
+			resp[i] = exports.Model.prototype.parse(item);
 		}
 		return resp;
 	}
+
 });
 },{}],3:[function(require,module,exports){
 var _ = (window._),
@@ -621,13 +671,21 @@ var _ = (window._),
 
 
 exports.Model = base.Model.extend({
+
 	urlRoot: '/api/v1/projects',
+
+	// API queries that need to be handled custom.
+	// For every key, there is an this.is_#{key} method that filters a model.
+	customQueryKeys: [ 'related_to' ],
+
 	url: function() {
 		return this.urlRoot + ("?atlas_url=" + (this.get('atlas_url')));
 	},
+
 	buildUrl: function() {
 		return "http://build.atlas.newamerica.org/projects/" + (this.get('id')) + "/edit";
 	},
+
 	exists: function() {
 		var json, key, keyCount;
 		keyCount = 0;
@@ -637,12 +695,15 @@ exports.Model = base.Model.extend({
 		}
 		return keyCount !== 1;
 	},
+
 	parse: function(resp) {
+		resp = this._adaptMongoId(resp);
 		resp = this._removeArrayWrapper(resp);
 		resp = this._removeSpaces(resp, 'template_name');
 		resp = this._processStaticHtml(resp, 'body_text');
 		return resp;
 	},
+
 	compositeFilter: function(projectSections, projectTemplates) {
 		var filter, sectionsFilter, templatesFilter;
 		sectionsFilter = this.filter(projectSections, 'project_section');
@@ -651,15 +712,27 @@ exports.Model = base.Model.extend({
 		this.trigger('visibility:change', filter);
 		return filter;
 	},
+
+	/*
+	 * Custom query method.
+	 * @param {string} projectId
+	 * @returns {boolean}
+	 */
+	is_related_to: function(projectId) {
+
+	},
+
 	filter: function(collection, foreignKey) {
 		if ((collection != null) && (collection.test != null)) {
 			return collection.test(this, foreignKey);
 		}
 		return true;
 	},
+
 	getImageAttributionHtml: function() {
 		return this.getMarkdownHtml('image_credit');
 	},
+
 	buildData: function() {
 		var data;
 		data = this.get('data');
@@ -678,13 +751,17 @@ exports.Model = base.Model.extend({
 			});
 		}
 	}
+
 });
 
 exports.Collection = base.Collection.extend({
+
 	initialize: function() {
 		return this.on('reset', this.filter);
 	},
+
 	model: exports.Model,
+
 	url: function() {
 		var base;
 		base = '/api/v1/projects';
@@ -693,6 +770,7 @@ exports.Collection = base.Collection.extend({
 		}
 		return base;
 	},
+
 	comparator: function(model1, model2) {
 		var i1, i2;
 		i1 = model1.get('is_section_overview') === 'Yes' ? 10 : 0;
@@ -704,6 +782,7 @@ exports.Collection = base.Collection.extend({
 		}
 		return i2 - i1;
 	},
+
 	filter: function(projectSections, projectTemplates) {
 		var i, len, model, ref;
 		if ((projectSections.models == null) || (projectSections.models.length === 0)) {
@@ -721,7 +800,19 @@ exports.Collection = base.Collection.extend({
 			model.compositeFilter(projectSections, projectTemplates);
 		}
 		return this;
+	},
+
+	parse: function(resp) {
+		var i, max,
+			item;
+		if (exports.Model.prototype.parse == null) { return resp; }
+		for (i = 0, max = resp.length; i < max; i += 1) {
+			item = resp[i];
+			resp[i] = exports.Model.prototype.parse(item);
+		}
+		return resp;
 	}
+	
 });
 },{"./base":2,"./filter":4,"./info_box_section":6,"./item":7,"./variable":13}],9:[function(require,module,exports){
 var _ = (window._),
@@ -1049,7 +1140,7 @@ module.exports=[
     "name": "Wyoming",
     "code": "WY"
   }
-];
+]
 },{}]},{},[1]);
 
 `
