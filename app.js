@@ -11,7 +11,9 @@ var express = require('express'),
 
 // Basic configuration.
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(require('prerender-node').set('prerenderToken', config.prerenderToken));
+app.use(require('prerender-node')
+	//.set('prerenderServiceUrl', 'http://localhost:' + port + '/')
+	.set('prerenderToken', config.prerenderToken));
 
 // app.use(json2csv.expressDecorator);
 app.set('views', __dirname + '/app/views');
