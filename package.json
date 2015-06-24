@@ -52,6 +52,7 @@
     "jquery": "^2.1.4",
     "mongodb": "^2.0.35",
     "nice-json2csv": "^0.2.0",
+    "prerender-node": "^1.2.1",
     "q": "^1.4.1",
     "underscore": "^1.8.3"
   },
