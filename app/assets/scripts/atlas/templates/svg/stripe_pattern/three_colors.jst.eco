@@ -1,0 +1,13 @@
+<svg id="d3">
+    <defs>
+        <pattern id="diagonal-stripes" x="0" y="0" width="18" height="18" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+  		    <rect x="0" y="0" width="6" height="18" style="stroke:none; fill:#32a1d9;" />
+          	<rect x="6" y="0" width="6" height="18" style="stroke:none; fill:#85026a" />
+          	<rect x="12" y="0" width="6" height="18" style="stroke:none; fill:#6a17a7;" />
+       	</pattern>
+    </defs>
+    <g id="solid-rects"></g>
+    <g id="pattern-rects"></g>
+    <g id="pattern-rects2"></g>
+    <g id="solid-rects2"></g>
+</svg>

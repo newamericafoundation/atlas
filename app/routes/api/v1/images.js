@@ -10,7 +10,6 @@ router.get('/', function(req, res) {
 	var fields;
 
 	if (query.name == null) { 
-		console.log('no encoded');
 		fields = { encoded: false };
 	}
 
@@ -19,8 +18,6 @@ router.get('/', function(req, res) {
 		var collection, cursor;
 
 		collection = db.collection('images');
-
-		console.dir(fields);
 
 		if (fields != null) { 
 			cursor = collection.find(query, fields); 

@@ -1,5 +1,4 @@
 var express = require('express'),
-	mongoose = require('mongoose'),
 	bodyParser = require('body-parser'), 
 	app = express(),
 	router = require('./app/routes/index'),
@@ -15,19 +14,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(json2csv.expressDecorator);
 app.set('views', __dirname + '/app/views');
 app.set('view engine', 'jade');
-
-// Connect to DB, with automatic retry after 5s.
-var connectToDB = function() {
-	return mongoose.connect('mongodb://' + config.dbUrl[env] + ':27017/mongoid', function(err) {
-		if (err) {
-			console.log('Failed to connect to database, retrying in 5s. Error:');
-			console.dir(err);
-			return setTimeout(connectToDB, 5000);
-		}
-		return console.log('Successfully connected to the database.');
-	});
-};
-connectToDB();//
 
 /*
  * Removes query string from url.
