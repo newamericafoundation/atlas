@@ -3,32 +3,10 @@ var express = require('express'),
 	Model = require('../../../models/project').Model,
 	util = require('../../../models/util'),
 	project = require('./../../../backbone_models/project.js'),
-	templates = require('../../../../db/seeds/project_templates.json'),
-	sections = require('../../../../db/seeds/project_sections.json'),
+	projectSection = require('./../../../backbone_models/project_section.js'),
+	projectTemplate = require('./../../../backbone_models/project_template.js'),
+	base = require('./../../../backbone_models/base.js'),
 	csv = require('csv');
-
-// Set template name.
-var setTemplateName = function(model) {
-	templates.forEach(function(template) {
-		if (model.project_template_id === template.id) {
-			model.project_template_name = template.name;
-		}
-	});
-	return model;
-};
-
-// Set project section names.
-var setSectionNames = function(model) {
-	model.project_section_names = [];
-	if(model.project_section_ids) {
-		sections.forEach(function(section) {
-			if (model.project_section_ids.indexOf(section.id) > -1) {
-				model.project_section_names.push(section.name);
-			}
-		});
-	}
-	return model;
-};
 
 // Separated query parameters into regular queries and specialty ones.
 //   related_to specialty query specifies the id of the project the 
@@ -67,22 +45,35 @@ router.get('/', function(req, res) {
 			referenceModel,
 			referenceModelTags;
 
-		models.forEach(function(model) {
-			util.adaptId(model);
-			setTemplateName(model);
-			setSectionNames(model);			
+		models = base.Collection.prototype.parse(models);
+
+		var coll = new project.Collection(models),
+			temp = new projectTemplate.Collection(),
+			sect = new projectSection.Collection();
+
+		coll.each(function(mod) {
+			mod.addForeignField('project_template_id', temp, 'name');
+			mod.addForeignField('project_section_ids', sect, 'name');
 		});
 
+		models = coll.toJSON();
+
 		if (typeof specialQueryParams !== "undefined") {
+
 			referenceModel = util.findById(models, specialQueryParams.related_to);
+
 			referenceModelTags = referenceModel.tags;
+
 			models.forEach(function(model) {
 				if (util.isTagShared(model.tags, referenceModelTags) && (model.id !== referenceModel.id)) {
 					selectedModels.push(model);
 				}
 			});
+
 		} else {
+
 			selectedModels = models;
+
 		}
 
 		res.json(selectedModels);

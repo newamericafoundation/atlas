@@ -68,3 +68,15 @@ The production database is set in ./atlas_config.json. Atlas connects to this da
 ### Overflow x, y and combinations
 
 The [W3C spec](http://www.w3.org/TR/css3-box/#overflow-x) says that though overflow-x and overflow-y values may be different, combinations with visible are not possible.
+
+### SASS optimization
+
+### MongoClient Fields
+
+A MongoDB query in Node typically works like this:
+
+	db.collection('somes').find(query, fields);
+
+The fields variable in my case was conditionally set based on the query parameters, and ended up being undefined in some cases. To my surprise, the API didn't return anything, and froze the browser.
+
+Turns out, if the fields is undefined, it must not be passed into the method..

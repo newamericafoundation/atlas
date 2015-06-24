@@ -3,26 +3,6 @@
 var util = {};
 
 /*
- * Adapts MongoDB id's, removing _id keys and $oid inner wrappers.
- * ! Destructive ! No deep copy is created.
- * @param {object} model - Json model.
- * @returns {object} model - Adapted model.
- */
-util.adaptId = function(model) {
-	if (typeof model._id !== "undefined") {
-		if (typeof model._id.$oid !== "undefined") {
-			model.id = String(model._id.$oid);
-		} else {
-			model.id = model._id;
-		}
-		delete model._id;
-	} else if(typeof model.id !== "undefined" && typeof model.id.$oid !== "undefined") {
-		model.id = String(model.id.$oid);
-	}
-	return model;
-};
-
-/*
  * Find by id.
  *
  */

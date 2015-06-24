@@ -9,7 +9,41 @@ exports.Model = Backbone.Model.extend({
 		return data;
 	},
 
-	addForeignField: function(foreignId, foreignCollection, fieldKey) {
+	/*
+	 * Adds fields of a foreign collection, referenced by a foreign id within the model.
+	 * @param {string} foreignIdKey - Foreign id key, of the format 'model_id' or 'model_ids'.
+	 *                                  the former references a single value, the latter an array.
+	 * @param {object} foreignCollection
+	 * @param {string} fieldKey - The field of the foreign model to be copied in, e.g. 'name'.
+	 * @returns {object} this - The model instance, with 'model_name' field added.
+	 */
+	addForeignField: function(foreignIdKey, foreignCollection, fieldKey) {
+
+		var newKey, 
+			foreignModel, foreignIds, foreignId,
+			singleForeignIdKey, // if foreignIdKey holds an array
+			foreignFields = [],
+			i, max;
+
+		if (foreignIdKey.slice(-2) === 'id') {
+			newKey = foreignIdKey.slice(0, -2) + fieldKey;
+			foreignModel = foreignCollection.findWhere({id: this.get(foreignIdKey)});
+			this.set(newKey, foreignModel.get(fieldKey));
+		} else if (foreignIdKey.slice(-3) === 'ids') {
+			foreignIds = this.get(foreignIdKey);
+			for(i = 0, max = foreignIds.length; i < max; i += 1) {
+				foreignId = foreignIds[i];
+				// simple pluralization
+				newKey = foreignIdKey.slice(0, -3) + fieldKey + 's';
+				foreignModel = foreignCollection.findWhere({id: foreignId});
+				if (foreignModel != null) {
+					foreignFields.push(foreignModel.get(fieldKey));
+				}
+			}
+			this.set(newKey, foreignFields);
+		}
+
+		return this;
 
 	},
 
@@ -92,6 +126,7 @@ exports.Model = Backbone.Model.extend({
 
 exports.Collection = Backbone.Collection.extend({
 	model: exports.Model,
+
 	parse: function(resp) {
 		var i, max,
 			item;
@@ -102,4 +137,5 @@ exports.Collection = Backbone.Collection.extend({
 		}
 		return resp;
 	}
+
 });

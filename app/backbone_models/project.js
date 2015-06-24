@@ -12,6 +12,10 @@ exports.Model = base.Model.extend({
 
 	urlRoot: '/api/v1/projects',
 
+	// API queries that need to be handled custom.
+	// For every key, there is an this.is_#{key} method that filters a model.
+	customQueryKeys: [ 'related_to' ],
+
 	url: function() {
 		return this.urlRoot + ("?atlas_url=" + (this.get('atlas_url')));
 	},
@@ -31,6 +35,7 @@ exports.Model = base.Model.extend({
 	},
 
 	parse: function(resp) {
+		resp = this._adaptMongoId(resp);
 		resp = this._removeArrayWrapper(resp);
 		resp = this._removeSpaces(resp, 'template_name');
 		resp = this._processStaticHtml(resp, 'body_text');
@@ -51,7 +56,7 @@ exports.Model = base.Model.extend({
 	 * @param {string} projectId
 	 * @returns {boolean}
 	 */
-	related_to: function(projectId) {
+	is_related_to: function(projectId) {
 
 	},
 
@@ -133,7 +138,17 @@ exports.Collection = base.Collection.extend({
 			model.compositeFilter(projectSections, projectTemplates);
 		}
 		return this;
-	}
+	},
 
+	parse: function(resp) {
+		var i, max,
+			item;
+		if (exports.Model.prototype.parse == null) { return resp; }
+		for (i = 0, max = resp.length; i < max; i += 1) {
+			item = resp[i];
+			resp[i] = exports.Model.prototype.parse(item);
+		}
+		return resp;
+	}
 	
 });

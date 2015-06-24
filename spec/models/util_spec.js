@@ -2,17 +2,6 @@ var assert = require('assert'),
 	util = require('../../app/models/util');
 
 describe('testing environment', function() {
-
-	describe('adaptId', function() {
-
-		it('adapts ID', function() {
-			var raw = { _id: { $oid: 1 } },
-				expected = { id: 1 },
-				actual = util.adaptId(raw);
-			assert.deepEqual(expected, actual);
-		});
-
-	});
 	
 
 	describe('findById', function() {

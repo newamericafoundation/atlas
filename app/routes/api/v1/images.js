@@ -1,7 +1,5 @@
 var express = require('express'),
 	router = express.Router(),
-	fs = require('fs'),
-	Model = require('../../../models/image').Model,
 	base = require('../../../backbone_models/base'),
 	dbConnector = require('./../../../../db/connector');
 
@@ -9,34 +7,32 @@ router.get('/', function(req, res) {
 
 	var query = req.query;
 
-	/*var fields;
+	var fields;
 
 	if (query.name == null) { 
 		console.log('no encoded');
-		fields = { encoded: 0 };
+		fields = { encoded: false };
 	}
 
 	return dbConnector.connected().then(function(db) {
 
-		var collection = db.collection('images');
-		var cursor = collection.find(query, fields);
+		var collection, cursor;
+
+		collection = db.collection('images');
+
+		console.dir(fields);
+
+		if (fields != null) { 
+			cursor = collection.find(query, fields); 
+		} else {
+			cursor = collection.find(query);
+		}
 
 		cursor.toArray(function(err, items) {
 			if(err) { return console.dir(err); }
 			res.json(base.Collection.prototype.parse(items));
 		});
 
-	});*/
-
-	var mongoQuery = Model.find(query);
-
-	if (query.name == null) { 
-		mongoQuery.select("-encoded"); 
-	}
-
-	return mongoQuery.lean().exec(function(err, models) {
-		if (err) { return console.log(err); }
-		res.json(base.Collection.prototype.parse(models));
 	});
 
 });
