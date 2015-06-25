@@ -62,4 +62,9 @@
 
 	}
 
+	// The atl__info-box--narrow modifier is applied on the .atl element instead of .atl__info-box
+	&--narrow .atl-grid__2-3 {
+		width: 100%;
+	}
+
 }

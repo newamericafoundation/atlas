@@ -52,7 +52,7 @@ app.get([ '*.js' ], function(req, res, next) {
 
 app.use(express.static('public'));
 
-// Use router (see ./routes directory).
+// Use router (see ./app/routes directory).
 app.use(router);
 
 // Start server.

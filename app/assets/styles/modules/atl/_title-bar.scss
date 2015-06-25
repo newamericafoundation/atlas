@@ -7,6 +7,8 @@
 	display: table;
 	text-align: center;
 
+	.title { @include font-size(40px); }
+
 	// fix to offset fixed-width element that is empty on the right
 	//   and does not center properly 
 	.icon-button {
