@@ -1200,7 +1200,7 @@ exports.Model = Backbone.Model.extend({
 			if ((data._id.$oid != null)) {
 				data.id = String(data._id.$oid);
 			} else {
-				data.id = data._id;
+				data.id = String(data._id);
 			}
 			delete data._id;
 		} else if ((data.id != null) && (data.id.$oid != null)) {
@@ -1763,7 +1763,7 @@ exports.Model = base.Model.extend({
 		for (key in json) {
 			keyCount += 1;
 		}
-		return keyCount !== 1;
+		return (keyCount !== 1) && (json.id != null);
 	},
 
 	parse: function(resp) {
@@ -1788,8 +1788,18 @@ exports.Model = base.Model.extend({
 	 * @param {string} projectId
 	 * @returns {boolean}
 	 */
-	is_related_to: function(projectId) {
-
+	isRelatedTo: function(project) {
+		var self = this, prj, tags0, tags1, i, max;
+		if (this === project) { return false; }
+		tags0 = this.get('tags');
+		tags1 = project.get('tags');
+		if (tags0 === '' || tags1 === '') { return false; }
+		tags0 = tags0.split(',');
+		tags1 = tags1.split(',');
+		for (i = 0, max = tags0.length; i < max; i += 1) {
+			if (tags1.indexOf(tags0[i]) > -1) { return true; }
+		}
+		return false;
 	},
 
 	filter: function(collection, foreignKey) {
@@ -2365,7 +2375,7 @@ module.exports=[
       return React.render(c, el);
     });
     return this.on('stop', function() {
-      console.log(React.unmountComponentAtNode(el));
+      React.unmountComponentAtNode(el);
       return this.stopListening();
     });
   });
@@ -3989,6 +3999,141 @@ module.exports=[
 }).call(this);
 
 (function() {
+  this.Atlas.module('Projects.Show.Tilemap.Info', function(Info, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    this.on('start', function() {
+      return this.Controller.show();
+    });
+    return this.on('stop', function() {
+      this.Controller.destroy();
+      return this.stopListening();
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Info', function(Info, App, Backbone, Marionette, $, _) {
+    return Info.Controller = {
+      show: function() {
+        Info.rootView = this.getRootView();
+        return Info.rootView.render();
+      },
+      destroy: function() {
+        return Info.rootView.destroy();
+      },
+      getRootView: function() {
+        var filter, items, model, view;
+        filter = App.reqres.request('filter');
+        items = App.reqres.request('item:entities');
+        model = new Info.Model();
+        model.update(filter, items);
+        view = new Info.RootView({
+          el: '.atl__info',
+          model: model
+        });
+        return view;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Info', function(Info, App, Backbone, Marionette, $, _) {
+    return Info.Model = Backbone.Model.extend({
+      initialize: function() {
+        return this.listenTo(App.vent, 'mouseover:value', function() {
+          return this.updateInfo;
+        });
+      },
+      update: function() {
+        var filter, hoveredValueIndex, info, items;
+        filter = App.reqres.request('filter');
+        items = App.reqres.request('item:entities');
+        hoveredValueIndex = App.reqres.request('filter:value:hovered');
+        info = Info.modelBuilder(filter, items, hoveredValueIndex);
+        return this.set(info);
+      }
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Info', function(Info, App, Backbone, Marionette, $, _) {
+    return Info.modelBuilder = function(filter, items) {
+      var activeFilterChild, filterValue, formatItemList, hoveredItem, matchingItems, obj, valueIndex, varId;
+      formatItemList = function(items) {
+        if (items.length === 0) {
+          return ' ';
+        }
+        if (items.length === 1) {
+          return items[0];
+        }
+        if (items.length === 2) {
+          return items[0] + " and " + items[1];
+        }
+        if (items.length === 3) {
+          return items[0] + ", " + items[1] + " and " + items[2];
+        }
+        return items[0] + ", " + items[1] + " and " + (items.length - 2) + " others";
+      };
+      obj = {
+        key: ' ',
+        value: ' ',
+        items: ' '
+      };
+      matchingItems = [];
+      activeFilterChild = filter.getActiveChild();
+      obj.key = activeFilterChild.get('short_description');
+      varId = activeFilterChild.get('variable_id');
+      valueIndex = App.reqres.request('value:hovered');
+      if (valueIndex !== -1) {
+        filterValue = activeFilterChild.children[valueIndex];
+        items.each(function(item) {
+          var itemJSON;
+          itemJSON = item.toJSON();
+          if ((filterValue != null) && (filterValue.test != null) && filterValue.test(itemJSON, {
+            ignoreState: true
+          })) {
+            return matchingItems.push(itemJSON.name);
+          }
+        });
+        obj.items = formatItemList(matchingItems);
+        if (filterValue != null) {
+          obj.value = filterValue.get('value');
+        }
+      }
+      if (items.hovered != null) {
+        hoveredItem = items.hovered;
+        obj.items = hoveredItem.get('name');
+        obj.value = hoveredItem.get(varId);
+      }
+      return obj;
+    };
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Projects.Show.Tilemap.Info', function(Info, App, Backbone, Marionette, $, _) {
+    return Info.RootView = Marionette.ItemView.extend({
+      tagName: 'div',
+      className: 'atl__info',
+      template: 'projects/show/project_templates/tilemap/submodules/info/templates/root',
+      initialize: function() {
+        return this.listenTo(App.vent, 'value:mouseover value:mouseout item:mouseover item:mouseout key:click', function(index) {
+          this.model.update(index);
+          return this.render();
+        });
+      }
+    });
+  });
+
+}).call(this);
+
+(function() {
   this.Atlas.module('Projects.Show.Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     this.on('start', function() {
@@ -4128,7 +4273,7 @@ module.exports=[
         return App.vent.trigger('scroll');
       },
       isEmpty: function() {
-        return this.$el.html() === "";
+        return this.$el.children().length < 2;
       }
     });
     return InfoBox.RootView = Marionette.ItemView.extend({
@@ -4282,141 +4427,6 @@ module.exports=[
         } else {
           return $bg.css('background-color', '');
         }
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Info', function(Info, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      return this.Controller.show();
-    });
-    return this.on('stop', function() {
-      this.Controller.destroy();
-      return this.stopListening();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Info', function(Info, App, Backbone, Marionette, $, _) {
-    return Info.Controller = {
-      show: function() {
-        Info.rootView = this.getRootView();
-        return Info.rootView.render();
-      },
-      destroy: function() {
-        return Info.rootView.destroy();
-      },
-      getRootView: function() {
-        var filter, items, model, view;
-        filter = App.reqres.request('filter');
-        items = App.reqres.request('item:entities');
-        model = new Info.Model();
-        model.update(filter, items);
-        view = new Info.RootView({
-          el: '.atl__info',
-          model: model
-        });
-        return view;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Info', function(Info, App, Backbone, Marionette, $, _) {
-    return Info.Model = Backbone.Model.extend({
-      initialize: function() {
-        return this.listenTo(App.vent, 'mouseover:value', function() {
-          return this.updateInfo;
-        });
-      },
-      update: function() {
-        var filter, hoveredValueIndex, info, items;
-        filter = App.reqres.request('filter');
-        items = App.reqres.request('item:entities');
-        hoveredValueIndex = App.reqres.request('filter:value:hovered');
-        info = Info.modelBuilder(filter, items, hoveredValueIndex);
-        return this.set(info);
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Info', function(Info, App, Backbone, Marionette, $, _) {
-    return Info.modelBuilder = function(filter, items) {
-      var activeFilterChild, filterValue, formatItemList, hoveredItem, matchingItems, obj, valueIndex, varId;
-      formatItemList = function(items) {
-        if (items.length === 0) {
-          return ' ';
-        }
-        if (items.length === 1) {
-          return items[0];
-        }
-        if (items.length === 2) {
-          return items[0] + " and " + items[1];
-        }
-        if (items.length === 3) {
-          return items[0] + ", " + items[1] + " and " + items[2];
-        }
-        return items[0] + ", " + items[1] + " and " + (items.length - 2) + " others";
-      };
-      obj = {
-        key: ' ',
-        value: ' ',
-        items: ' '
-      };
-      matchingItems = [];
-      activeFilterChild = filter.getActiveChild();
-      obj.key = activeFilterChild.get('short_description');
-      varId = activeFilterChild.get('variable_id');
-      valueIndex = App.reqres.request('value:hovered');
-      if (valueIndex !== -1) {
-        filterValue = activeFilterChild.children[valueIndex];
-        items.each(function(item) {
-          var itemJSON;
-          itemJSON = item.toJSON();
-          if ((filterValue != null) && (filterValue.test != null) && filterValue.test(itemJSON, {
-            ignoreState: true
-          })) {
-            return matchingItems.push(itemJSON.name);
-          }
-        });
-        obj.items = formatItemList(matchingItems);
-        if (filterValue != null) {
-          obj.value = filterValue.get('value');
-        }
-      }
-      if (items.hovered != null) {
-        hoveredItem = items.hovered;
-        obj.items = hoveredItem.get('name');
-        obj.value = hoveredItem.get(varId);
-      }
-      return obj;
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Info', function(Info, App, Backbone, Marionette, $, _) {
-    return Info.RootView = Marionette.ItemView.extend({
-      tagName: 'div',
-      className: 'atl__info',
-      template: 'projects/show/project_templates/tilemap/submodules/info/templates/root',
-      initialize: function() {
-        return this.listenTo(App.vent, 'value:mouseover value:mouseout item:mouseover item:mouseout key:click', function(index) {
-          this.model.update(index);
-          return this.render();
-        });
       }
     });
   });
@@ -5450,34 +5460,28 @@ module.exports=[
   this.Atlas.module('Projects.Show', function(Show, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     this.on('start', function(atlas_url) {
-      var project;
+      var project, setDataRequestHandlers;
       App.currentDisplayMode = 'filter';
       Show.Controller.show();
       App.commands.setHandler('change:display:mode', function(mode) {
         App.currentDisplayMode = mode;
         return App.vent.trigger('display:mode:change');
       });
-      project = App.reqres.request('project:entity', {
-        atlas_url: atlas_url
-      });
-      project.on('sync', (function(_this) {
-        return function() {
-          var data, templateName;
-          if (project.exists()) {
-            App.vent.trigger('current:project:change', project);
-            templateName = project.get('project_template_name');
-            project.buildData();
-            data = project.get('data');
-            App.reqres.setHandler('filter:entities', function() {
-              return data.filters;
-            });
-            App.reqres.setHandler('info:box:section:entities', function() {
-              return data.infobox_variables;
-            });
-            App.reqres.setHandler('variable:entities', function() {
-              return data.variables;
-            });
-            App.reqres.setHandler('item:entities', function(query) {
+      setDataRequestHandlers = function(project) {
+        var data;
+        data = project.get('data');
+        if (data != null) {
+          App.reqres.setHandler('filter:entities', function() {
+            return data.filters;
+          });
+          App.reqres.setHandler('info:box:section:entities', function() {
+            return data.infobox_variables;
+          });
+          App.reqres.setHandler('variable:entities', function() {
+            return data.variables;
+          });
+          return App.reqres.setHandler('item:entities', (function(_this) {
+            return function(query) {
               var id;
               if (data.items != null) {
                 if (_.isObject(query)) {
@@ -5491,7 +5495,21 @@ module.exports=[
                 }
               }
               return data.items;
-            });
+            };
+          })(this));
+        }
+      };
+      project = App.reqres.request('project:entity', {
+        atlas_url: atlas_url
+      });
+      project.on('sync', (function(_this) {
+        return function() {
+          var templateName;
+          if (project.exists()) {
+            App.vent.trigger('current:project:change', project);
+            templateName = project.get('project_template_name');
+            project.buildData();
+            setDataRequestHandlers(project);
             return Show[templateName].start();
           } else {
             return Backbone.history.navigate('welcome', {
@@ -5616,12 +5634,24 @@ module.exports=[
       initialize: function() {
         return this.listenTo(App.vent, 'current:project:change', function(project) {
           this.model = project;
-          return this.setTemplateNameModifierClass();
+          this.setTemplateNameModifierClass();
+          return this.setInfoBoxModifierClass();
         });
       },
       setTemplateNameModifierClass: function() {
         if (this.model != null) {
           return this.$el.addClass('atl--' + this.model.get('project_template_name').toLowerCase());
+        }
+      },
+      setInfoBoxModifierClass: function() {
+        var data;
+        if (this.model != null) {
+          data = this.model.get('data');
+          if (data != null) {
+            if (data.infobox_variables.length < 2) {
+              return this.$el.addClass('atl__info-box--narrow');
+            }
+          }
         }
       },
       setFilterDisplay: function(e) {

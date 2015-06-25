@@ -200,7 +200,7 @@ var globalShim = browserifyGlobalShim.configure({
 
 gulp.task('bundle-models', function() {
     var b = browserify({
-        entries: [ './app/backbone_models/__client__.js' ]
+        entries: [ './app/models/__client__.js' ]
     });
     b.transform(globalShim);
     return b.bundle()

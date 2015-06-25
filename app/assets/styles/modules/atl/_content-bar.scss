@@ -6,4 +6,7 @@
 	@include bp-show-sidebars { 
 		padding-left: 75px;
 	}
+	.atl__info-box--narrow & {
+		padding-left: 0;
+	}
 }

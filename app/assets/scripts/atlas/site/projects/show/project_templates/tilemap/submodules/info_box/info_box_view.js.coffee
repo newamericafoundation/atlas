@@ -5,14 +5,15 @@
 		className: 'atl__info-box__item'
 		template: 'projects/show/project_templates/tilemap/submodules/info_box/templates/section'
 
-
+	# toc = table of contents
 	TocView = Marionette.ItemView.extend
 		events:
 			'click a': 'triggerScroll'
 		triggerScroll: (e) ->
 			App.vent.trigger 'scroll'
 		isEmpty: ->
-			@$el.html() is ""
+			# If there is one or no toc item, the toc is considered empty.
+			@$el.children().length < 2
 
 
 	InfoBox.RootView = Marionette.ItemView.extend

@@ -130,7 +130,7 @@ exports.Model = Backbone.Model.extend({
 			if ((data._id.$oid != null)) {
 				data.id = String(data._id.$oid);
 			} else {
-				data.id = data._id;
+				data.id = String(data._id);
 			}
 			delete data._id;
 		} else if ((data.id != null) && (data.id.$oid != null)) {
@@ -693,7 +693,7 @@ exports.Model = base.Model.extend({
 		for (key in json) {
 			keyCount += 1;
 		}
-		return keyCount !== 1;
+		return (keyCount !== 1) && (json.id != null);
 	},
 
 	parse: function(resp) {
@@ -718,8 +718,18 @@ exports.Model = base.Model.extend({
 	 * @param {string} projectId
 	 * @returns {boolean}
 	 */
-	is_related_to: function(projectId) {
-
+	isRelatedTo: function(project) {
+		var self = this, prj, tags0, tags1, i, max;
+		if (this === project) { return false; }
+		tags0 = this.get('tags');
+		tags1 = project.get('tags');
+		if (tags0 === '' || tags1 === '') { return false; }
+		tags0 = tags0.split(',');
+		tags1 = tags1.split(',');
+		for (i = 0, max = tags0.length; i < max; i += 1) {
+			if (tags1.indexOf(tags0[i]) > -1) { return true; }
+		}
+		return false;
 	},
 
 	filter: function(collection, foreignKey) {

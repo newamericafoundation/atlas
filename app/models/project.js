@@ -31,7 +31,7 @@ exports.Model = base.Model.extend({
 		for (key in json) {
 			keyCount += 1;
 		}
-		return keyCount !== 1;
+		return (keyCount !== 1) && (json.id != null);
 	},
 
 	parse: function(resp) {

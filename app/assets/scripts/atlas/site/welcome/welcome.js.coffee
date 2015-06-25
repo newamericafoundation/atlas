@@ -9,5 +9,5 @@
 		React.render c, el
 
 	@on 'stop', ->
-		console.log React.unmountComponentAtNode el
+		React.unmountComponentAtNode el
 		@stopListening()

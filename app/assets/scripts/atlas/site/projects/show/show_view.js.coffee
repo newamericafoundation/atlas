@@ -76,14 +76,24 @@
 			'click #atl__set-search-display': 'setSearchDisplay'
 
 		initialize: ->
+			# View is rendered before current project is synced.
 			@listenTo App.vent, 'current:project:change', (project) ->
 				@model = project
 				@setTemplateNameModifierClass()
+				@setInfoBoxModifierClass()
+			
 
 		# Set modifier class corresponding to the template name.
 		setTemplateNameModifierClass: ->
 			if @model?
 				@$el.addClass 'atl--' + @model.get('project_template_name').toLowerCase()
+
+		setInfoBoxModifierClass: ->
+			if @model?
+				data = @model.get 'data' 
+				if data?
+					if (data.infobox_variables.length < 2)
+						@$el.addClass 'atl__info-box--narrow'
 
 		setFilterDisplay: (e) ->
 			e.preventDefault()
