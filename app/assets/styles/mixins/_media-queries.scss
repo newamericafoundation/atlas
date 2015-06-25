@@ -4,13 +4,19 @@
     }
 }
 
-@mixin bp-show-sidebars() {
+@mixin bp-w-sm {
     @media only screen and (min-width: 640px) {
         @content;
     }
 }
 
-@mixin bp-unstack-map-settings-bar {
+@mixin bp-expand-menu {
+    @media only screen and (min-width: 800px) {
+        @content;
+    }
+}
+
+@mixin bp-unstack-map-settings-bar { 
     @media only screen and (min-width: 800px) {
         @content;
     }

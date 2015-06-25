@@ -2038,7 +2038,7 @@ window.JST_ATL["atlas/site/projects/index/templates/root.jst"] = function (__obj
   }
   (function() {
     (function() {
-      __out.push('<div id="atl__side-bar" class="-id-atl__side-bar"></div>\n\n<div id="atl__main" class="-id-atl__main fill-parent">\n\t<div class="atl__main">\n\t\t<div class="atl__clear-side-bar">\n\t\t\t<div id="atl__nav" class="-id-atl__nav bg-c-off-white"></div>\n\t\t\t<div id="atl__projects" class="-id-atl__projects">\n\t\t\t\t<div class=\'loading-icon\'><div>Loading...</div></div>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</div>');
+      __out.push('<div id="atl__side-bar" class="-id-atl__side-bar"></div>\n\n<div id="atl__main" class="-id-atl__main fill-parent">\n\t<div class="atl__main">\n\t\t<div id="atl__nav" class="-id-atl__nav bg-c-off-white"></div>\n\t\t<div id="atl__projects" class="-id-atl__projects">\n\t\t\t<div class=\'loading-icon\'><div>Loading...</div></div>\n\t\t</div>\n\t</div>\n</div>');
     
     }).call(this);
     
@@ -2221,6 +2221,71 @@ window.JST_ATL["atlas/site/projects/show/templates/side_bar.jst"] = function (__
 if (!window.JST_ATL) {
   window.JST_ATL = {};
 }
+window.JST_ATL["atlas/site/projects/index/templates/projects/project.jst"] = function (__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+      var initials;
+    
+      if (this.title != null) {
+        initials = this.title.substring(0, 1) + this.title.substring(1, 2).toLowerCase();
+      }
+    
+      __out.push('\n\n<div class="atl__project__background atl__project__background--unselected">\n\t<div class="center--content">\n\t\t<p class="atl__project__background__initials">');
+    
+      __out.push(__sanitize(initials));
+    
+      __out.push('</p>\n\t</div>\n</div>\n<div class="atl__project__text">\n\t<div class="center--content">\n\t\t<h1>');
+    
+      __out.push(__sanitize(this.title));
+    
+      __out.push('</h1>\n\t</div>\n</div>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+};
+
+if (!window.JST_ATL) {
+  window.JST_ATL = {};
+}
 window.JST_ATL["atlas/site/projects/index/templates/nav/project_section.jst"] = function (__obj) {
   if (!__obj) __obj = {};
   var __out = [], __capture = function(callback) {
@@ -2391,71 +2456,6 @@ window.JST_ATL["atlas/site/projects/index/templates/nav/root.jst"] = function (_
   (function() {
     (function() {
       __out.push('<h1 class="title title--compact">Explore Atlas</h1>\n<div id="atl__project-template-filter">\n\t<div class="loading-icon"><div>Loading...</div></div>\n</div>\n<div id="atl__project-section-filter">\n\t<div class="loading-icon"><div>Loading...</div></div>\n</div>');
-    
-    }).call(this);
-    
-  }).call(__obj);
-  __obj.safe = __objSafe, __obj.escape = __escape;
-  return __out.join('');
-};
-
-if (!window.JST_ATL) {
-  window.JST_ATL = {};
-}
-window.JST_ATL["atlas/site/projects/index/templates/projects/project.jst"] = function (__obj) {
-  if (!__obj) __obj = {};
-  var __out = [], __capture = function(callback) {
-    var out = __out, result;
-    __out = [];
-    callback.call(this);
-    result = __out.join('');
-    __out = out;
-    return __safe(result);
-  }, __sanitize = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else if (typeof value !== 'undefined' && value != null) {
-      return __escape(value);
-    } else {
-      return '';
-    }
-  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
-  __safe = __obj.safe = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else {
-      if (!(typeof value !== 'undefined' && value != null)) value = '';
-      var result = new String(value);
-      result.ecoSafe = true;
-      return result;
-    }
-  };
-  if (!__escape) {
-    __escape = __obj.escape = function(value) {
-      return ('' + value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    };
-  }
-  (function() {
-    (function() {
-      var initials;
-    
-      if (this.title != null) {
-        initials = this.title.substring(0, 1) + this.title.substring(1, 2).toLowerCase();
-      }
-    
-      __out.push('\n\n<div class="atl__project__background atl__project__background--unselected">\n\t<div class="center--content">\n\t\t<p class="atl__project__background__initials">');
-    
-      __out.push(__sanitize(initials));
-    
-      __out.push('</p>\n\t</div>\n</div>\n<div class="atl__project__text">\n\t<div class="center--content">\n\t\t<h1>');
-    
-      __out.push(__sanitize(this.title));
-    
-      __out.push('</h1>\n\t</div>\n</div>');
     
     }).call(this);
     

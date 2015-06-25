@@ -22,16 +22,10 @@
 	@include collapsed;
 	.atl--collapsed & { @include collapsed; }
 
-	@include bp-show-sidebars {
-		padding: 20px;
-		padding-left: $side-bar-width + 20px;
-	}
-
 	@include bp-unstack-map-settings-bar {
 		@include expanded;
 		padding: 20px 0; 
 		width: $atl-settings-bar-width;
-		left: $side-bar-width;
 		top: 0;
 		height: 100%;
 	}

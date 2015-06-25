@@ -22,9 +22,10 @@
 
 	&__close {
 		z-index: 10;
-		position: fixed;
-		top: $top-bar-height + 30px;
-		right: 30px;
+		position: absolute;
+		//top: $top-bar-height + 25px;
+		top: 25px;
+		right: 25px;
 		width: 25px;
 		height: 25px;
 		opacity: 0.6;
@@ -44,10 +45,6 @@
 
 		top: 15px;
 		right: 15px;
-
-		@include bp-show-sidebars {
-			right: $side-bar-width + 15px;
-		}
 
 		&__item {
 			content: '';

@@ -93,7 +93,7 @@ td, th {
     text-align: left; 
     padding: 20px 5px; 
     font-size: 13px;
-    @include bp-show-sidebars {
+    @include bp-w-sm {
         @include font-size(17px);
     }
     color: rgba(51,50,50,0.9); 

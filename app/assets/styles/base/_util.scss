@@ -37,7 +37,7 @@
 	text-align: center;
 	font-family: 'Platform Web';
 	@include font-size(40px);
-	@include bp-show-sidebars { @include font-size(53px); }
+	@include bp-w-sm { @include font-size(53px); }
 	text-transform: uppercase;
 }
 

@@ -3,9 +3,6 @@
 	min-height: 800px;
 	padding-top: 22px;
 	padding-bottom: 50px;
-	@include bp-show-sidebars { 
-		padding-left: 75px;
-	}
 	.atl__info-box--narrow & {
 		padding-left: 0;
 	}

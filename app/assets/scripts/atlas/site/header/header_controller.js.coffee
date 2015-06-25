@@ -18,6 +18,9 @@
 			new Header.NavCirclesView
 				collection: Header.navCirclesCollection
 
+		getMenuView: ->
+			
+
 		getStripView: ->
 			new Header.StripView()
 

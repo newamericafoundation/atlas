@@ -28,7 +28,7 @@
 		text-align: left;
 	}
 
-	@include bp-show-sidebars() {
+	@include bp-w-sm() {
 		margin-left: 0;
 	}
 

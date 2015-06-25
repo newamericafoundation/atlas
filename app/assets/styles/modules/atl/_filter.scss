@@ -9,7 +9,7 @@
         @mixin collapsed {
             padding-left: 40px;
             padding-top: 0px;
-            @include bp-show-sidebars {
+            @include bp-w-sm {
                 padding-left: 20px;
             }
             @include bp-unstack-map-settings-bar {

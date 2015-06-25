@@ -2,11 +2,9 @@
 
 <div id="atl__main" class="-id-atl__main fill-parent">
 	<div class="atl__main">
-		<div class="atl__clear-side-bar">
-			<div id="atl__nav" class="-id-atl__nav bg-c-off-white"></div>
-			<div id="atl__projects" class="-id-atl__projects">
-				<div class='loading-icon'><div>Loading...</div></div>
-			</div>
+		<div id="atl__nav" class="-id-atl__nav bg-c-off-white"></div>
+		<div id="atl__projects" class="-id-atl__projects">
+			<div class='loading-icon'><div>Loading...</div></div>
 		</div>
 	</div>
 </div>

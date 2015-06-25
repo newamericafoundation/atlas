@@ -18,6 +18,7 @@
 
 	&__background {
 		content: "";
+		
 		.atl__title-bar--solid & {
 			background-color: nth(map-get($palette, scheme), 8);
 			opacity: 0.8;
@@ -56,8 +57,6 @@
 		}
 
 		position: relative;
-
-		@include bp-show-sidebars { left: 37.5px; }
 
 		.atl__info-box--narrow & { left: 0; }
 
