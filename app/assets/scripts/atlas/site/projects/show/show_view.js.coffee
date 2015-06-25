@@ -13,8 +13,14 @@
 		tagName: 'div'
 		className: 'atl__side-bar fill-parent'
 		template: 'projects/show/templates/side_bar'
-		events: 
+		events:
+			'click': 'toggle'
 			'click .atl__side-bar__icon': 'navigate'
+
+		toggle: (e) ->
+			$target = $(e.target)
+			if $target.hasClass('atl__side-bar')
+				$target.toggleClass('atl__side-bar--active')
 
 		navigate: (e) ->
 			# If the download form is clicked, don't execute JavaScript.

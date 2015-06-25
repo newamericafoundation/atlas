@@ -1,4 +1,17 @@
 (function() {
+  if (typeof ChartistHtml !== "undefined" && ChartistHtml !== null) {
+    ChartistHtml.config.baseClass = "atlas-chart";
+    ChartistHtml.config.colorSpectrum = ['#85026A', '#019fde'];
+    ChartistHtml.config.tooltipTemplate = function(data) {
+      return "<div><h1>" + data.label + "</h1><p>" + data.value + "</p></div>";
+    };
+    ChartistHtml.config.chartOptions.bar.options.base.seriesBarDistance = 28;
+    ChartistHtml.config.labelOffsetCoefficient = 5;
+  }
+
+}).call(this);
+
+(function() {
   $.ajaxSetup({
     headers: {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
@@ -33,19 +46,6 @@
       return $el.addClass(baseClass + modifierSign + modifiers[0]);
     }
   });
-
-}).call(this);
-
-(function() {
-  if (typeof ChartistHtml !== "undefined" && ChartistHtml !== null) {
-    ChartistHtml.config.baseClass = "atlas-chart";
-    ChartistHtml.config.colorSpectrum = ['#85026A', '#019fde'];
-    ChartistHtml.config.tooltipTemplate = function(data) {
-      return "<div><h1>" + data.label + "</h1><p>" + data.value + "</p></div>";
-    };
-    ChartistHtml.config.chartOptions.bar.options.base.seriesBarDistance = 28;
-    ChartistHtml.config.labelOffsetCoefficient = 5;
-  }
 
 }).call(this);
 
@@ -5567,7 +5567,15 @@ module.exports=[
       className: 'atl__side-bar fill-parent',
       template: 'projects/show/templates/side_bar',
       events: {
+        'click': 'toggle',
         'click .atl__side-bar__icon': 'navigate'
+      },
+      toggle: function(e) {
+        var $target;
+        $target = $(e.target);
+        if ($target.hasClass('atl__side-bar')) {
+          return $target.toggleClass('atl__side-bar--active');
+        }
       },
       navigate: function(e) {
         var $target, entity, method, tagName;

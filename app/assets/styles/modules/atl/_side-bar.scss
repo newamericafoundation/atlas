@@ -14,7 +14,7 @@
 	cursor: pointer;
 
 	overflow: hidden;
-	&:hover { 
+	&:hover, &--active { 
 		overflow: visible;
 		@extend %bg-img-dropdown-up--off-white;
 	}
