@@ -2,7 +2,9 @@ var express = require('express'),
 	router = express.Router(),
 	resources = [ 'projects', 'project_sections', 'project_templates', 'core_data', 'images', 'researchers' ],
 	fingerprintManifest = require('./fingerprint-manifest'),
-	json2csv = require('nice-json2csv');
+	json2csv = require('nice-json2csv'),
+	WelcomeComponent = require('./../components/welcome.js'),
+	React = require('react');
 
 router.use(json2csv.expressDecorator);
 
@@ -12,7 +14,15 @@ resources.forEach(function(resource) {
 });
 
 router.get('/*', function(req, res) {
-	res.render('index.jade', fingerprintManifest);
+	var factory, html,
+		options = fingerprintManifest;
+	if (req.url === '/welcome') {
+		factory = React.createFactory(WelcomeComponent);
+		html = React.renderToString(factory());
+		options.reactOutput = html;
+		options.bodyClass = 'atl-route__welcome_index';
+	}
+	res.render('index.jade', options);
 });
 
 router.post('/print', function(req, res) {

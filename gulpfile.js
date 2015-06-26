@@ -210,6 +210,12 @@ gulp.task('bundle-models', function() {
         .pipe(gulp.dest('./app/assets/scripts/atlas'));
 });
 
+gulp.task('components', function() {
+    return gulp.src('./app/assets/scripts/atlas/components/**/*.cjsx')
+        .pipe(cjsx())
+        .pipe(gulp.dest('./app/__auto__components'));
+});
+
 gulp.task('js-build-spec', function() {
     return gulp.src([ './spec/site/scripts/atlas/**/*.js.coffee', './spec/site/scripts/config/**/*.js.coffee' ])
         .pipe(coffee())

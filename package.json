@@ -54,6 +54,7 @@
     "nice-json2csv": "^0.2.0",
     "prerender-node": "^1.2.1",
     "q": "^1.4.1",
+    "react": "^0.13.3",
     "underscore": "^1.8.3"
   },
   "browserify-shim": {

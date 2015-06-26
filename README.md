@@ -21,6 +21,10 @@ Additional files:
 * ``package.json`` - package definition and server-side dependencies.
 * ``gulpfile.js`` - build scripts.
 
+### Auto-generated Files and Folders
+
+To allow code-sharing between server and client, models and components are written on one side and compiled to the other. Files and folders prefixed by `__auto__` are generated automatically and should not be touched.
+
 ## Development Environment
 
 Atlas is currently deployed on Node version 0.12.2 (see .ebextensions/00_general.config for corresponding setting).
