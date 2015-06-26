@@ -13,8 +13,11 @@
 
 	cursor: pointer;
 
+	opacity: 0.7;
+
 	overflow: hidden;
 	&:hover, &--active { 
+		opacity: 1;
 		overflow: visible;
 		@extend %bg-img-dropdown-up--off-white;
 	}
@@ -28,8 +31,6 @@
 	}
 
 	z-index: 11000; 
-
-	opacity: 1;
 
 	&__icon {
 		float: left;

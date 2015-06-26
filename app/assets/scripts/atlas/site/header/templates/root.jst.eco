@@ -7,7 +7,7 @@
 	<p class="header__main__title"></p>
 </div>
 
-<div id="header__nav-circles">
+<div id="header__nav-circles"> 
 	<div class="header__nav-circles">
 	</div>
 </div>

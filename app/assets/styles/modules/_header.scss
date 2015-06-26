@@ -7,8 +7,6 @@
 	top: 0;
 	z-index: 100;
 
-	padding-right: 35px;
-
 	background-color: map-get(map-get($palette, grey), base);
 	.atl-route--welcome_index & { background: none; }
 
@@ -61,14 +59,17 @@
 	}
 
 	&__nav-circles {
-		position: fixed;
+		position: absolute;
+		width: 100%;
+		text-align: center;
 		display: inline-block;
 		top: 30px;
-		right: 50px;
+		left: calc(50% - 45px);
+		.atl-route--welcome_index & { left: auto; right: 30px; }
 		margin: 0;
 		width: auto;
 
-		@include bp-w-sm {
+		@include bp-expand-menu {
 			display: none;
 		}
 	}
