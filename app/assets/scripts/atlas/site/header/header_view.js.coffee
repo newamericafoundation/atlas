@@ -79,7 +79,7 @@
 		setText: (text) ->
 			# only display arrow if needed
 			title = if @model? then @model.get('title') else undefined
-			html = if title? then '&#8594; ' + title + ' (Beta)' else ''
+			html = if title? then '&#8594; &nbsp;' + title + ' (Beta)' else ''
 			$('.header__main__title').html html
 
 		regions:

@@ -65289,7 +65289,7 @@ module.exports=[
       RootView.prototype.setText = function(text) {
         var html, title;
         title = this.model != null ? this.model.get('title') : void 0;
-        html = title != null ? '&#8594; ' + title + ' (Beta)' : '';
+        html = title != null ? '&#8594; &nbsp;' + title + ' (Beta)' : '';
         return $('.header__main__title').html(html);
       };
 

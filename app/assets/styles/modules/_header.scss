@@ -20,16 +20,25 @@
 
 		h1 { display: inline-block; }
 
+		h1, img, &__title { float: left; } 
+
 		&__title {
-			padding-top: 4px;
-			padding-left: 15px;
+			padding: 4px 8px;
+			opacity: 0.8;
+			border-radius: 3px;
+			background-color: map-get(map-get($palette, grey), light);
+
+			@include font-size(15px);
+			margin-top: 19px;
+			margin-left: 15px;
 			display: none;
 			@include bp-w-sm {
-				display: block;
+				display: inline-block;
 			}
+			&:empty { display: none; }
 		}
 
-		h1, img, &__title { float: left; } 
+		
 
 		img { width: 30px; }
 
@@ -65,9 +74,14 @@
 		display: inline-block;
 		top: 30px;
 		left: calc(50% - 45px);
-		.atl-route--welcome_index & { left: auto; right: 30px; }
 		margin: 0;
 		width: auto;
+
+		.atl-route--welcome_index & { left: auto; right: 30px; }
+		@include bp-w-sm {
+			left: auto;
+			right: 45px;
+		}
 
 		@include bp-expand-menu {
 			display: none;
