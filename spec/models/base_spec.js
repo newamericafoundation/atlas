@@ -21,11 +21,31 @@ describe('base.Model', function() {
 
 	describe('_removeArrayWrapper', function() {
 
-		it('remove array wrapper if it contains a single value', function() {
+		it('removes array wrapper if it contains a single value', function() {
 			var parsedData = model._removeArrayWrapper([ 2 ]);
 			assert.equal(parsedData, 2);
 		});
 		
+	});
+
+
+	describe('_removeLineBreaks', function() {
+
+		it('removes line break if it contains multiple lines', function() {
+			var parsedData = model._removeLineBreaks([ 'nice\n basket' ], [0]);
+			assert.deepEqual(parsedData, [ 'nice basket' ]);
+		});
+
+	});
+
+
+	describe('_removeSpaces', function() {
+
+		it('removes spaces if it contains spaces', function() {
+			var parsedData = model._removeSpaces([ ' ni ce b ask et ' ], [0]);
+			assert.deepEqual(parsedData, [ 'nicebasket' ]);
+		});
+
 	});
 
 
