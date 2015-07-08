@@ -49,6 +49,17 @@ describe('base.Model', function() {
 	});
 
 
+	// pending because failing
+	xdescribe('_processStaticHtml', function() {
+
+		it('finds a href with target=_blank and appends it to a div, and retains the orig a href', function() {
+			var parsedData = model._processStaticHtml(['<a href="http://example.com/" target="_blank">Nice basket</a>'], [0]);
+			assert.equal(parsedData, [ '<div><a href="http://example.com/" target="_blank">Nice basket</a></div>' ]);
+		});
+
+	});
+
+
 	describe('addForeignField', function() {
 
 		it('adds single foreign field', function() {

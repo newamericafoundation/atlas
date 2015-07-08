@@ -12,13 +12,28 @@ var indexOf = [].indexOf || function(item) {
 	return -1;
 };
 
+// @constructor
+// Note on methods toLatLongPoint, toRichGeoJson: these methods assume that the model instance has a lat and long fields.
 exports.Model = base.Model.extend({
+	/** 
+	 * Recognize and process data.
+	 * @param {object} data
+	 * @returns {object} data - Modified data.
+	 */
 	parse: function(data) {
 		this._processValues(data);
 		this._checkPindrop(data);
 		this._checkState(data);
 		return data;
 	},
+	
+	/** 
+	 * Splits up values separated by '|' and removes leading and trailing whitespaces.
+	 * Values are not split if there is a return character (assume text).
+	 * Values are converted into arrays only if there is a '|' character.
+	 * @param {object} data
+	 * @returns {object} data - Modified data.
+	 */
 	_processValues: function(data) {
 		var key, value;
 		for (key in data) {
@@ -35,6 +50,12 @@ exports.Model = base.Model.extend({
 		}
 		return data;
 	},
+	
+	/** 
+	 * Recognizes, validates and returns a pindrop item.
+	 * @param {object} data
+	 * @returns {object} - Validation summary object.
+	 */
 	_checkPindrop: function(data) {
 		var errors, foundLat, foundLong;
 		errors = [];
@@ -56,6 +77,12 @@ exports.Model = base.Model.extend({
 			recognized: false
 		};
 	},
+	
+	/** 
+	 * Recognizes, validates and returns a US state.
+	 * @param {object} data
+	 * @returns {object} - Validation summary object.
+	 */
 	_checkState: function(data) {
 		var errors, stateData;
 		errors = [];
@@ -79,12 +106,22 @@ exports.Model = base.Model.extend({
 			recognized: false
 		};
 	},
+	
+	/** 
+	 *
+	 * @returns {string} name - Lower-cased name without line breaks.
+	 */
 	getImageName: function() {
 		if (this.get('image') != null) {
 			return this.get('image');
 		}
 		return this.get('name').replace(/(\r\n|\n|\r)/gm, "").toLowerCase();
 	},
+	
+	/** 
+	 * Sets latitude and longitude as a simple array.
+	 * @returns {array} - Point [Lat, Long].
+	 */
 	toLatLongPoint: function() {
 		var lat, long;
 		lat = this.get('lat');
@@ -97,9 +134,19 @@ exports.Model = base.Model.extend({
 		}
 		return [lat, long];
 	},
+	
+	/** 
+	 * Sets longitude and latitude as a simple array.
+	 * @returns {array} - Point [Long, Lat].
+	 */
 	toLongLatPoint: function() {
 		return this.toLatLongPoint().reverse();
 	},
+	
+	/** 
+	 * 
+	 * 
+	 */
 	toRichGeoJsonFeature: function() {
 		var geoJson;
 		geoJson = {
@@ -112,6 +159,19 @@ exports.Model = base.Model.extend({
 		};
 		return geoJson;
 	},
+	
+	/** 
+	 * Returns layer classnames to be applied on the model.
+	 * Classnames consist of group classes and element classes.
+	 * Group classes specifiy generic styles such as highlighted, inactive, neutral.
+	 * Element classes style components of the graphics corresponding to the item. E.g. map-pin dividers
+	 * @param {object} filter - Filter object.
+	 * @param {object} valueHoverIndex - Index of hovered value.
+	 * @param {} searchTerm
+	 * @param {string} baseClass - Base class.
+	 * @param {} currentDisplayMode
+	 * @returns {array} layerClasses - Array of class names.
+	 */
 	getLayerClasses: function(filter, valueHoverIndex, searchTerm, baseClass, currentDisplayMode) {
 		var classNames, d, elementBaseClass, filterIndeces, highlightedClass, i, inactiveClass, isFiltered, j, k, layerClasses, len, neutralClass;
 		if (baseClass == null) {
@@ -156,6 +216,12 @@ exports.Model = base.Model.extend({
 		}
 		return layerClasses;
 	},
+	
+	/** 
+	 * Evaluates whether the name attribute matches a search term.
+	 * @param {string} searchTerm
+	 * @returns {boolean} - Match result.
+	 */
 	matchesSearchTerm: function(searchTerm) {
 		var name;
 		name = this.get('name');
@@ -177,11 +243,22 @@ exports.Model = base.Model.extend({
 
 exports.Collection = base.Collection.extend({
 	model: exports.Model,
+	
+	/** 
+	 * 
+	 * @returns {} itemType
+	 */
 	getItemType: function() {
 		var itemType;
 		itemType = this.models[0].get('_itemType');
 		return itemType;
 	},
+	
+	/** 
+	 * Set active model under collection active field.
+	 * @param {} activeModel - Active model or its id.
+	 * @returns {object} this
+	 */
 	setActive: function(activeModel) {
 		var id;
 		if ((_.isObject(activeModel)) && (indexOf.call(this.models, activeModel) >= 0)) {
@@ -194,6 +271,12 @@ exports.Collection = base.Collection.extend({
 		}
 		return this;
 	},
+	
+	/** 
+	 * Set hovered model under collection hovered field.
+	 * @param {} hoveredModel - Hovered model or its id.
+	 * @returns {object} this
+	 */
 	setHovered: function(hoveredModel) {
 		var id;
 		if ((_.isObject(hoveredModel)) && (indexOf.call(this.models, hoveredModel) >= 0)) {
@@ -206,6 +289,12 @@ exports.Collection = base.Collection.extend({
 		}
 		return this;
 	},
+	
+	/** 
+	 * Gets value list for a given key.
+	 * @param {string} key
+	 * @returns {array} valueList
+	 */
 	getValueList: function(key) {
 		var j, l, len, len1, model, ref, val, value, valueList;
 		valueList = [];
@@ -228,7 +317,15 @@ exports.Collection = base.Collection.extend({
 		}
 		return valueList;
 	},
+	
+	/** TODO: Gets value list sorted by frequency in the data. */
 	getSortedValueList: function(key) {},
+	
+	/** 
+	 * Assumes the model has a latitude and longitude fields.
+	 * Must first go through parse method to make sure these fields are named correctly.
+	 * @returns {array} array of arrays - Latitude and longitude bounds, two arrays with two elements each.
+	 */
 	getLatLongBounds: function() {
 		var j, lat, len, long, maxLat, maxLong, minLat, minLong, model, ref;
 		ref = this.models;
@@ -254,6 +351,11 @@ exports.Collection = base.Collection.extend({
 			[maxLat, maxLong]
 		];
 	},
+	
+	/** 
+	 * 
+	 * @returns {array} array of arrays - Returns array of Simple latitute and longitude arrays.
+	 */
 	toLatLongMultiPoint: function() {
 		var j, len, model, ref, res;
 		res = [];
@@ -264,6 +366,7 @@ exports.Collection = base.Collection.extend({
 		}
 		return res;
 	},
+	
 	richGeoJsonBuilders: {
 		state: function(collection, baseGeoData) {
 			var data, richGeoJson, setup;
@@ -296,9 +399,15 @@ exports.Collection = base.Collection.extend({
 			return richGeoJson;
 		}
 	},
+	
+	/** 
+	 * The feature is either ready to use or triggers a sync event on itself once it is.
+	 * @returns {} - Generic Rich GeoJson feature.
+	 */
 	getRichGeoJson: function(baseGeoData) {
 		var type;
 		type = this.getItemType();
 		return this.richGeoJsonBuilders[type](this, baseGeoData);
 	}
+
 });
