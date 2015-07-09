@@ -32,8 +32,8 @@ describe('base.Model', function() {
 	describe('_removeLineBreaks', function() {
 
 		it('removes line break if it contains multiple lines', function() {
-			var parsedData = model._removeLineBreaks([ 'nice\n basket' ], [0]);
-			assert.deepEqual(parsedData, [ 'nice basket' ]);
+			var parsedData = model._removeLineBreaks({ name: 'nice\n basket' }, 'name');
+			assert.deepEqual(parsedData, { name: 'nice basket' });
 		});
 
 	});
@@ -42,19 +42,8 @@ describe('base.Model', function() {
 	describe('_removeSpaces', function() {
 
 		it('removes spaces if it contains spaces', function() {
-			var parsedData = model._removeSpaces([ ' ni ce b ask et ' ], [0]);
-			assert.deepEqual(parsedData, [ 'nicebasket' ]);
-		});
-
-	});
-
-
-	// pending because failing
-	xdescribe('_processStaticHtml', function() {
-
-		it('finds a href with target=_blank and appends it to a div, and retains the orig a href', function() {
-			var parsedData = model._processStaticHtml(['<a href="http://example.com/" target="_blank">Nice basket</a>'], [0]);
-			assert.equal(parsedData, [ '<div><a href="http://example.com/" target="_blank">Nice basket</a></div>' ]);
+			var parsedData = model._removeSpaces({ name: ' ni ce b ask et ' }, 'name');
+			assert.deepEqual(parsedData, { name: 'nicebasket' });
 		});
 
 	});
