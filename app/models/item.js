@@ -354,7 +354,7 @@ exports.Collection = base.Collection.extend({
 	
 	/** 
 	 * 
-	 * @returns {array} array of arrays - Returns array of Simple latitute and longitude arrays.
+	 * @returns {array} array of arrays - Returns array of simple latitute and longitude arrays.
 	 */
 	toLatLongMultiPoint: function() {
 		var j, len, model, ref, res;

@@ -7,7 +7,51 @@ var assert = require('assert'),
 
 describe('base.Model', function() {
 
+
 	var model = new base.Model();
+
+
+	describe('addForeignField', function() {
+
+		it('adds single foreign field', function() {
+			var model = new base.Model({ id: 1, basket_id: 2 }),
+				coll = new Backbone.Collection([ 
+					{ id: 2, name: 'nice basket' },
+					{ id: 4, name: 'nice basket xxx' }
+				]);
+
+			model.addForeignField('basket_id', coll, 'name');
+			assert.equal(model.get('basket_name'), 'nice basket');
+		});
+
+		it('adds multiple foreign fields', function() {
+			var model = new base.Model({ id: 1, basket_ids: [ 2, 4] }),
+				coll = new Backbone.Collection([ 
+					{ id: 2, name: 'nice basket' },
+					{ id: 4, name: 'very nice basket' }
+				]);
+
+			model.addForeignField('basket_ids', coll, 'name');
+			assert.deepEqual(model.get('basket_names'), [ 'nice basket', 'very nice basket' ]);
+		});
+
+	});
+
+
+	describe('_findAndReplaceKey', function() {
+
+		it('returns true if data key is found and replaced by standard key', function() {
+			var parsedData = model._findAndReplaceKey({id: 3, name: 'Michigan', Lat: 48.976 }, 'lat', ['latitude', 'Latitude', 'lat', 'Lat']);
+			assert.equal(parsedData, true);
+		});
+
+		it('returns false if data key is not found in key format list', function() {
+			var parsedData = model._findAndReplaceKey({id: 3, name: 'Michigan', Long: 131.657}, 'lat', ['latitude', 'Latitude', 'lat', 'Lat']);
+			assert.equal(parsedData, false);
+		});
+
+	});
+
 
 	describe('_adaptMongoId', function() {
 
@@ -44,33 +88,6 @@ describe('base.Model', function() {
 		it('removes spaces if it contains spaces', function() {
 			var parsedData = model._removeSpaces({ name: ' ni ce b ask et ' }, 'name');
 			assert.deepEqual(parsedData, { name: 'nicebasket' });
-		});
-
-	});
-
-
-	describe('addForeignField', function() {
-
-		it('adds single foreign field', function() {
-			var model = new base.Model({ id: 1, basket_id: 2 }),
-				coll = new Backbone.Collection([ 
-					{ id: 2, name: 'nice basket' },
-					{ id: 4, name: 'nice basket xxx' }
-				]);
-
-			model.addForeignField('basket_id', coll, 'name');
-			assert.equal(model.get('basket_name'), 'nice basket');
-		});
-
-		it('adds multiple foreign fields', function() {
-			var model = new base.Model({ id: 1, basket_ids: [ 2, 4] }),
-				coll = new Backbone.Collection([ 
-					{ id: 2, name: 'nice basket' },
-					{ id: 4, name: 'very nice basket' }
-				]);
-
-			model.addForeignField('basket_ids', coll, 'name');
-			assert.deepEqual(model.get('basket_names'), [ 'nice basket', 'very nice basket' ]);
 		});
 
 	});

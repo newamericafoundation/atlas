@@ -7,7 +7,9 @@ var assert = require('assert'),
 
 describe('item.Model', function() {
 
+
 	var model = new item.Model();
+
 
 	describe('_processValues', function() {
 
@@ -66,12 +68,12 @@ describe('item.Model', function() {
 
 	describe('toLatLongPoint', function () {
 		
-		xit('creates array from provided lat and long variables', function() { //issue: toLatLongPoint doesn't take arguments, so how to access data model?
-			assert.deepEqual(({ lat: 34.678, long: 167.98 }).toLatLongPoint(), [34.678, 167.98] );
-		});
-
-		it('inserts default lat and long values if variables are null or not found', function() {
-			assert.deepEqual(model.toLatLongPoint(), [-37.8602828, 145.0796161] );
+		var model = new item.Model();
+		model.lat = 34.678;
+		model.long = 167.98;
+		
+		xit('creates array from lat and long keys', function() {
+			assert.equal(model.toLatLongPoint(), [34.678, 167.98]);
 		});
 
 	});

@@ -7,7 +7,9 @@ var assert = require('assert'),
 
 describe('project.Model', function() {
 
+
 	var model = new project.Model();
+
 
 	describe('isRelatedTo', function() {
 
@@ -24,12 +26,15 @@ describe('project.Model', function() {
 		});
 		
 	});
+
 });
 
 
 describe('project.Collection', function() {
 
+
 	var collection = new project.Collection();
+
 
 	describe('comparator', function() {
 
@@ -48,10 +53,11 @@ describe('project.Collection', function() {
 			assert.equal(coll.models[0].get('id'), 1);
 		});
 
-		it('still passes sort test for four models', function() {
+		it('still passes sort test over four models', function() {
 			var coll = new project.Collection([ modelData1, modelData2, modelData3, modelData4 ]);
-			assert.equal(coll.models[3].get('id'), 3);
+			assert.equal(coll.models[0].get('id'), 2);
 		});
 
 	});
+
 });

@@ -13,7 +13,7 @@ exports.Model = base.Model.extend({
 	urlRoot: '/api/v1/projects',
 
 	// API queries that need to be handled custom.
-	// For every key, there is an this.is_#{key} method that filters a model.
+	// For every key, there is a this.is_#{key} method that filters a model.
 	customQueryKeys: [ 'related_to' ],
 
 	/** Returns the URL of the Atlas API that holds the data for the project. */
