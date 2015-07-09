@@ -38,12 +38,12 @@ describe('project.Collection', function() {
 			modelData3 = { id: 3, title: 'Xtitla', is_section_overview: 'No' },
 			modelData4 = { id: 4, title: 'Xtitl', is_section_overview: 'No' };
 
-		it('sorts by title when both (or neither) are section overviews', function() {
+		it('sorts by title if both (or neither) are section overviews', function() {
 			var coll = new project.Collection([ modelData1, modelData2 ]);
 			assert.equal(coll.models[0].get('id'), 2);
 		});
 
-		it('sorts the section overview first when one is a section overview and one is not', function() {
+		it('sorts the section overview first if one is a section overview and one is not', function() {
 			var coll = new project.Collection([ modelData3, modelData1 ]);
 			assert.equal(coll.models[0].get('id'), 1);
 		});

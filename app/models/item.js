@@ -31,7 +31,7 @@ exports.Model = base.Model.extend({
 	 * Splits up values separated by '|' and removes leading and trailing whitespaces.
 	 * Values are not split if there is a return character (assume text).
 	 * Values are converted into arrays only if there is a '|' character.
-	 * @param {object} data
+	 * @param {object} data - Data object with key-value pairs
 	 * @returns {object} data - Modified data.
 	 */
 	_processValues: function(data) {
@@ -108,7 +108,7 @@ exports.Model = base.Model.extend({
 	},
 	
 	/** 
-	 *
+	 * Get and format image name
 	 * @returns {string} name - Lower-cased name without line breaks.
 	 */
 	getImageName: function() {
@@ -120,7 +120,7 @@ exports.Model = base.Model.extend({
 	
 	/** 
 	 * Sets latitude and longitude as a simple array.
-	 * @returns {array} - Point [Lat, Long].
+	 * @returns {array} - Spatial data point as simple array [Lat, Long].
 	 */
 	toLatLongPoint: function() {
 		var lat, long;
@@ -136,16 +136,16 @@ exports.Model = base.Model.extend({
 	},
 	
 	/** 
-	 * Sets longitude and latitude as a simple array.
-	 * @returns {array} - Point [Long, Lat].
+	 * Reverses [Lat, Long] point and sets longitude and latitude as a simple array.
+	 * @returns {array} - Spatial data point as simple array [Long, Lat].
 	 */
 	toLongLatPoint: function() {
 		return this.toLatLongPoint().reverse();
 	},
 	
 	/** 
-	 * 
-	 * 
+	 * Creates geoJson object from current model
+	 * @returns {object} geoJson
 	 */
 	toRichGeoJsonFeature: function() {
 		var geoJson;
