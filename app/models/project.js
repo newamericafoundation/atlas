@@ -125,13 +125,18 @@ exports.Model = base.Model.extend({
 });
 
 exports.Collection = base.Collection.extend({
-
+	/**
+	 * Initializes collection
+	 */
 	initialize: function() {
 		return this.on('reset', this.filter);
 	},
-
 	model: exports.Model,
 
+	/**
+	 * Creates new URL using base API path and query.
+	 * @returns {string} base - Modified root URL.
+	 */
 	url: function() {
 		var base;
 		base = '/api/v1/projects';

@@ -112,7 +112,7 @@ exports.Model = Backbone.Model.extend({
 	/**
 	 * Remove all line breaks from field.
 	 * @param {object} resp - Server response.
-	 * @param {} key - 
+	 * @param {string} key - Response key.
 	 * @returns {object} resp - Modified response.
 	 */
 	_removeLineBreaks: function(resp, key) {
@@ -125,7 +125,7 @@ exports.Model = Backbone.Model.extend({
 	/**
 	 * Removes all spaces from field.
 	 * @param {object} resp - Server response.
-	 * @param {} key - 
+	 * @param {string} key - Response key.
 	 * @returns {object} resp - Modified response.
 	 */
 	_removeSpaces: function(resp, key) {
@@ -138,7 +138,7 @@ exports.Model = Backbone.Model.extend({
 	/**
 	 * Process static html on a key.
 	 * @param {object} resp - Server response.
-	 * @param {} key - 
+	 * @param {string} key - Response key.
 	 * @returns {object} resp - Modified response.
 	 */
 	_processStaticHtml: function(resp, key) {
@@ -153,7 +153,7 @@ exports.Model = Backbone.Model.extend({
 
 	/**
 	 * Get markdown html.
-	 * @param {} key - 
+	 * @param {string} key - 
 	 * @returns {} newHtml - 
 	 */
 	getMarkdownHtml: function(key) {
@@ -172,7 +172,7 @@ exports.Model = Backbone.Model.extend({
 exports.Collection = Backbone.Collection.extend({
 	model: exports.Model,
 
-	/*
+	/**
 	 * Recognize and process server response.
 	 * @param {object} resp - Server response.
 	 * @returns {object} resp - Modified response.

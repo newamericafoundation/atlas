@@ -33,42 +33,25 @@ describe('project.Collection', function() {
 
 	describe('comparator', function() {
 
-		var modelData1, modelData2, modelData3, modelData4;
-		return beforeEach(function() {
-			modelData1 = {
-				id: 1,
-				title: 'C',
-				is_section_overview: 'Yes'
-			};
-			modelData2 = {
-				id: 2,
-				title: 'B',
-				is_section_overview: 'Yes'
-			};
-			modelData3 = {
-				id: 3,
-				title: 'Xtitla',
-				is_section_overview: 'No'
-			};
-			modelData4 = {
-				id: 4,
-				title: 'Xtitl',
-				is_section_overview: 'No'
-			};
-		});
+		var modelData1 = { id: 1, title: 'C', is_section_overview: 'Yes' },
+			modelData2 = { id: 2, title: 'B', is_section_overview: 'Yes' },
+			modelData3 = { id: 3, title: 'Xtitla', is_section_overview: 'No' },
+			modelData4 = { id: 4, title: 'Xtitl', is_section_overview: 'No' };
 
-		it('sorts by title if both (or neither) are section overviews', function() {
+		it('sorts by title when both (or neither) are section overviews', function() {
 			var coll = new project.Collection([ modelData1, modelData2 ]);
-			return (coll.models[0].get('id')).should.equal(2);
+			assert.equal(coll.models[0].get('id'), 2);
 		});
 
-		it('sorts the section overview first if one is a section overview and one is not', function() {
-			// test like above, once that's working
+		it('sorts the section overview first when one is a section overview and one is not', function() {
+			var coll = new project.Collection([ modelData3, modelData1 ]);
+			assert.equal(coll.models[0].get('id'), 1);
 		});
 
-		it('passes integration test for four models', function() {
-			// ditto above
+		it('still passes sort test for four models', function() {
+			var coll = new project.Collection([ modelData1, modelData2, modelData3, modelData4 ]);
+			assert.equal(coll.models[3].get('id'), 3);
 		});
-	
+
 	});
 });

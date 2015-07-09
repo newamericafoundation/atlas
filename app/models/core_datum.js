@@ -6,7 +6,7 @@ var _ = require('underscore'),
 exports.Model = base.Model.extend({
 	urlRoot: '/api/v1/core_data',
 	
-	/** Fetches core data model url by name */
+	/** Fetches core data model url by name key */
 	url: function() {
 		return this.urlRoot + "?" + $.param({
 			name: this.get('name')
