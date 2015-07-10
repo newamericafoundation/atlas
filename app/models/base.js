@@ -138,7 +138,7 @@ exports.Model = Backbone.Model.extend({
 	/**
 	 * Process static html on a key.
 	 * @param {object} resp - Server response.
-	 * @param {string} key - Response key.
+	 * @param {string} key
 	 * @returns {object} resp - Modified response.
 	 */
 	_processStaticHtml: function(resp, key) {
@@ -153,8 +153,8 @@ exports.Model = Backbone.Model.extend({
 
 	/**
 	 * Get markdown html.
-	 * @param {string} key - 
-	 * @returns {} newHtml - 
+	 * @param {string} key
+	 * @returns {} newHtml
 	 */
 	getMarkdownHtml: function(key) {
 		var $html, md, newHtml;

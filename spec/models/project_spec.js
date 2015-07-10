@@ -11,6 +11,38 @@ describe('project.Model', function() {
 	var model = new project.Model();
 
 
+	describe('url', function() {
+
+		it('finds atlas url and concatenates to root url', function() {
+			var urlRoot = '/api/v1/projects';
+			pm = new project.Model({ atlas_url: 'folder/subfolder' });
+			assert.equal(pm.url(), '/api/v1/projects?atlas_url=folder/subfolder');
+		});
+
+	});
+
+
+	describe('buildUrl', function() {
+
+		it('finds id and concatenates to root build url', function() {
+			pm = new project.Model({ id: 234 });
+			assert.equal(pm.buildUrl(), 'http://build.atlas.newamerica.org/projects/234/edit');
+		});
+
+	});
+
+
+	describe('exists', function() {
+
+		//Failing. Need to recognize json.id isn't null and json has more than one key
+		xit('returns true if project has mandatory fields', function() {
+			pm = new project.Model({ json: { id: 1, a: 'first', b: 'second'} });
+			assert.equal(pm.exists(), true);
+		});
+
+	});
+	
+
 	describe('isRelatedTo', function() {
 
 		it('returns true if there is a shared tag', function() {
@@ -36,6 +68,21 @@ describe('project.Collection', function() {
 	var collection = new project.Collection();
 
 
+	describe('url', function() {
+
+		var modelData1 = { id: 1, title: 'C', queryString: 'something' },
+			base = '/api/v1/projects';
+
+		// Finds query, but doesn't concatenate to base.
+		xit('finds query and concatenates to base api path', function() {
+			var pc = new project.Collection([ modelData1 ]);
+			assert.equal(pc.models[0].get('queryString'), 'something');
+			// assert.equal(pc.url(), '/api/v1/projects?something');
+		});
+
+	});
+
+
 	describe('comparator', function() {
 
 		var modelData1 = { id: 1, title: 'C', is_section_overview: 'Yes' },
@@ -44,18 +91,18 @@ describe('project.Collection', function() {
 			modelData4 = { id: 4, title: 'Xtitl', is_section_overview: 'No' };
 
 		it('sorts by title if both (or neither) are section overviews', function() {
-			var coll = new project.Collection([ modelData1, modelData2 ]);
-			assert.equal(coll.models[0].get('id'), 2);
+			var pc = new project.Collection([ modelData1, modelData2 ]);
+			assert.equal(pc.models[0].get('id'), 2);
 		});
 
 		it('sorts the section overview first if one is a section overview and one is not', function() {
-			var coll = new project.Collection([ modelData3, modelData1 ]);
-			assert.equal(coll.models[0].get('id'), 1);
+			var pc = new project.Collection([ modelData3, modelData1 ]);
+			assert.equal(pc.models[0].get('id'), 1);
 		});
 
 		it('still passes sort test over four models', function() {
-			var coll = new project.Collection([ modelData1, modelData2, modelData3, modelData4 ]);
-			assert.equal(coll.models[0].get('id'), 2);
+			var pc = new project.Collection([ modelData1, modelData2, modelData3, modelData4 ]);
+			assert.equal(pc.models[0].get('id'), 2);
 		});
 
 	});

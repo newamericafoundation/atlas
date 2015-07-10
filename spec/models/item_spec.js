@@ -98,11 +98,11 @@ describe('item.Model', function() {
 
 	describe('toRichGeoJsonFeature', function() {
 
-		//Failing. Need to read up on properly accessing model.
+		//Failing.
 		xit('creates geoJson object from current model and assigns Feature type', function() {
 			var im = new item.Model({ id: 2 });
 			im.toRichGeoJsonFeature();
-			assert.equal(im.get('type'), 'Point');
+			assert.equal(im.get('type'), 'Feature');
 		});
 
 	});
@@ -126,5 +126,8 @@ describe('item.Model', function() {
 		});
 
 	});
+
+
+
 
 });

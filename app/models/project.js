@@ -16,17 +16,26 @@ exports.Model = base.Model.extend({
 	// For every key, there is a this.is_#{key} method that filters a model.
 	customQueryKeys: [ 'related_to' ],
 
-	/** Returns the URL of the Atlas API that holds the data for the project. */
+	/** 
+	 * Returns the URL of the Atlas API that holds the data for the project. 
+	 * @returns {string} url
+	 */
 	url: function() {
 		return this.urlRoot + ("?atlas_url=" + (this.get('atlas_url')));
 	},
 
-	/** Returns the URL of the Build.Atlas API that holds the data for the project. */
+	/** 
+	 * Returns the URL of the Build.Atlas API that holds the data for the project. 
+	 * @returns {string} buildUrl
+	 */
 	buildUrl: function() {
 		return "http://build.atlas.newamerica.org/projects/" + (this.get('id')) + "/edit";
 	},
 
-	/** Checks if the project has the mandatory fields. */
+	/** 
+	 * Checks if the project has the mandatory fields. 
+	 * returns {boolean}
+	 */
 	exists: function() {
 		var json, key, keyCount;
 		keyCount = 0;
