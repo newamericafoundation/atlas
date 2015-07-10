@@ -66,14 +66,63 @@ describe('item.Model', function() {
 	});
 
 
-	describe('toLatLongPoint', function () {
+	describe('toLatLongPoint', function() {
 		
-		var model = new item.Model();
-		model.lat = 34.678;
-		model.long = 167.98;
-		
-		xit('creates array from lat and long keys', function() {
-			assert.equal(model.toLatLongPoint(), [34.678, 167.98]);
+		it('creates single array with lat and long keys', function() {
+			var im = new item.Model({ lat: 34.678, long: 167.98 });
+			assert.deepEqual(im.toLatLongPoint(), [34.678, 167.98]);
+		});
+
+		it('creates array with default values if lat and long keys are null', function() {
+			var im = new item.Model({ lat: null, long: null });
+			assert.deepEqual(im.toLatLongPoint(), [-37.8602828, 145.0796161]);
+		});
+
+	});
+
+
+	describe('toLongLatPoint', function() {
+
+		it('creates single array with long and lat keys, reverses toLatLongPoint', function() {
+			var im = new item.Model({ lat: 34.678, long: 167.98 });
+			assert.deepEqual(im.toLongLatPoint(), [167.98, 34.678]);
+		});
+
+		it('creates array with default values if long and lat keys are null, reverses toLatLongPoint', function() {
+			var im = new item.Model({ lat: null, long: null });
+			assert.deepEqual(im.toLongLatPoint(), [145.0796161, -37.8602828]);
+		});
+
+	});
+
+
+	describe('toRichGeoJsonFeature', function() {
+
+		//Failing. Need to read up on properly accessing model.
+		xit('creates geoJson object from current model and assigns Feature type', function() {
+			var im = new item.Model({ id: 2 });
+			im.toRichGeoJsonFeature();
+			assert.equal(im.get('type'), 'Point');
+		});
+
+	});
+
+
+	describe('matchesSearchTerm', function() {
+
+		it('returns true if search term matches model name', function() {
+			var im = new item.Model({ name: 'alabama' });
+			assert.equal(im.matchesSearchTerm('ALABAMA'), true);
+		});
+
+		it('returns false if search term does not match model name', function() {
+			var im = new item.Model({ name: 'alabama' });
+			assert.equal(im.matchesSearchTerm('Michigan'), false);
+		});
+
+		it('returns false if model name is an empty string', function() {
+			var im = new item.Model({ name: "" });
+			assert.equal(im.matchesSearchTerm(""), false);
 		});
 
 	});

@@ -167,7 +167,7 @@ exports.Model = base.Model.extend({
 	 * Element classes style components of the graphics corresponding to the item. E.g. map-pin dividers
 	 * @param {object} filter - Filter object.
 	 * @param {object} valueHoverIndex - Index of hovered value.
-	 * @param {} searchTerm
+	 * @param {string} searchTerm
 	 * @param {string} baseClass - Base class.
 	 * @param {} currentDisplayMode
 	 * @returns {array} layerClasses - Array of class names.
