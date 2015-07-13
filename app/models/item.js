@@ -245,8 +245,8 @@ exports.Collection = base.Collection.extend({
 	model: exports.Model,
 	
 	/** 
-	 * 
-	 * @returns {} itemType
+	 * Gets item type first model in a collection
+	 * @returns {string} itemType
 	 */
 	getItemType: function() {
 		var itemType;
@@ -291,9 +291,9 @@ exports.Collection = base.Collection.extend({
 	},
 	
 	/** 
-	 * Gets value list for a given key.
-	 * @param {string} key
-	 * @returns {array} valueList
+	 * Gets lists of values for a given key.
+	 * @param {string} key - any key in models
+	 * @returns {array} valueList - list of values for specified key
 	 */
 	getValueList: function(key) {
 		var j, l, len, len1, model, ref, val, value, valueList;
@@ -353,8 +353,8 @@ exports.Collection = base.Collection.extend({
 	},
 	
 	/** 
-	 * 
-	 * @returns {array} array of arrays - Returns array of simple latitute and longitude arrays.
+	 * Creates single array from lat, long arrays of each model into one array (array of arrays)
+	 * @returns {array} res - Returns array of arrays - e.g. [[lat, long], [lat, long]].
 	 */
 	toLatLongMultiPoint: function() {
 		var j, len, model, ref, res;

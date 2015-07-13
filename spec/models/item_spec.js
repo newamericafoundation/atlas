@@ -66,6 +66,17 @@ describe('item.Model', function() {
 	});
 
 
+	// failing -- how to structure model and access image and name?
+	describe('getImageName', function() {
+
+		xit('finds and formats image name', function() {
+			var im = new item.Model({ image: { name: 'Nice basket' } });
+			assert.equal(im.getImageName(), 'nicebasket');
+		});
+
+	});
+
+
 	describe('toLatLongPoint', function() {
 		
 		it('creates single array with lat and long keys', function() {
@@ -98,12 +109,19 @@ describe('item.Model', function() {
 
 	describe('toRichGeoJsonFeature', function() {
 
-		//Failing.
+		//Failing. What does geoJson object look like? 
 		xit('creates geoJson object from current model and assigns Feature type', function() {
 			var im = new item.Model({ id: 2 });
 			im.toRichGeoJsonFeature();
 			assert.equal(im.get('type'), 'Feature');
 		});
+
+	});
+
+
+	xdescribe('getLayerClasses', function() {
+
+		//specs here.
 
 	});
 
@@ -127,7 +145,65 @@ describe('item.Model', function() {
 
 	});
 
+});
 
 
+describe('item.Collection', function() {
+	
+
+	var collection = new item.Collection();
+
+
+	describe('getItemType', function() {
+
+		var modelData1 = { id: 1, title: 'C', _itemType: 'explainer' };
+
+		it('returns _itemType of the first indexed model in the collection', function(){
+			var ic = new item.Collection([ modelData1 ]);
+			assert.equal(ic.getItemType(), 'explainer');
+		});
+
+	});
+
+
+	describe('getValueList', function() {
+
+		var modelData1 = { id: 1, title: 'C' },
+			modelData2 = { id: 2, title: 'B' },
+			modelData3 = { id: 3, title: 'A' };
+
+		it('creates array of values for specified key in collection of models', function() {
+			var ic = new item.Collection([ modelData1, modelData2, modelData3 ]);
+			assert.deepEqual(ic.getValueList('title'), [ 'C', 'B', 'A' ]);
+		});
+
+	});
+
+
+	describe('getLatLongBounds', function() {
+
+		var modelData1 = { id: 1, title: 'C', lat: 34.56, long: 198.76 },
+			modelData2 = { id: 2, title: 'B', lat: 45.67, long: 123.45 },
+			modelData3 = { id: 3, title: 'A', lat: 43.21, long: 234.56 };
+
+		it('creates array of arrays - [[min lat, min long], [max lat, max long]]', function() {
+			var ic = new item.Collection([ modelData1, modelData2, modelData3 ]);
+			assert.deepEqual(ic.getLatLongBounds(), [ [34.56, 123.45], [45.67, 234.56] ]);
+		});
+
+	});
+
+
+	describe('toLatLongMultiPoint', function() {
+
+		var modelData1 = { id: 1, title: 'C', lat: 34.56, long: 123.45 },
+			modelData2 = { id: 2, title: 'B', lat: 45.67, long: 234.56 };
+
+		it('creates array of arrays - [lat, long] of each model in collection', function() {
+			var ic = new item.Collection([ modelData1, modelData2 ]);
+			assert.deepEqual(ic.toLatLongMultiPoint(), [ [34.56, 123.45], [45.67, 234.56] ]);
+		});
+
+	});
 
 });

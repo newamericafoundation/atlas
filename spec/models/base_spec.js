@@ -25,7 +25,7 @@ describe('base.Model', function() {
 		});
 
 		it('adds multiple foreign fields', function() {
-			var model = new base.Model({ id: 1, basket_ids: [ 2, 4] }),
+			var model = new base.Model({ id: 1, basket_ids: [2,4] }),
 				coll = new Backbone.Collection([ 
 					{ id: 2, name: 'nice basket' },
 					{ id: 4, name: 'very nice basket' }
@@ -41,12 +41,12 @@ describe('base.Model', function() {
 	describe('_findAndReplaceKey', function() {
 
 		it('returns true if data key is found and replaced by standard key', function() {
-			var parsedData = model._findAndReplaceKey({id: 3, name: 'Michigan', Lat: 48.976 }, 'lat', ['latitude', 'Latitude', 'lat', 'Lat']);
+			var parsedData = model._findAndReplaceKey({ id: 3, name: 'Michigan', Lat: 48.976 }, 'lat', ['latitude', 'Latitude', 'lat', 'Lat']);
 			assert.equal(parsedData, true);
 		});
 
 		it('returns false if data key is not found in key format list', function() {
-			var parsedData = model._findAndReplaceKey({id: 3, name: 'Michigan', Long: 131.657}, 'lat', ['latitude', 'Latitude', 'lat', 'Lat']);
+			var parsedData = model._findAndReplaceKey({ id: 3, name: 'Michigan', Long: 131.657 }, 'lat', ['latitude', 'Latitude', 'lat', 'Lat']);
 			assert.equal(parsedData, false);
 		});
 
@@ -91,5 +91,26 @@ describe('base.Model', function() {
 		});
 
 	});
+
+
+	//failing -- how to format and access html of this mock data? 
+	xdescribe('_processStaticHtml', function() {
+
+		it('finds a href el with _blank target, clones contents into new var, wraps in div tag', function() {
+			var html = '<a href="somelink.com" target="_blank">Some link</a>'
+				newHtml,
+				parsedData = model._processStaticHtml(html);
+			assert.deepEqual(parsedData, { newHtml: '<div><a href="somelink.com" target="_blank">Some link</a></div>'});
+		});
+
+	});
+
+
+	xdescribe('getMarkdownHtml', function() {
+		
+		//spec here
+
+	});
+
 
 });

@@ -32,16 +32,23 @@ describe('project.Model', function() {
 	});
 
 
-	describe('exists', function() {
+	//Failing. how to mock json data to recognize json.id and count keys?
+	xdescribe('exists', function() {
 
-		//Failing. Need to recognize json.id isn't null and json has more than one key
-		xit('returns true if project has mandatory fields', function() {
+		it('returns true if project has mandatory fields', function() {
 			pm = new project.Model({ json: { id: 1, a: 'first', b: 'second'} });
 			assert.equal(pm.exists(), true);
 		});
 
 	});
 	
+
+	describe('compositeFilter', function() {
+
+		//spec here
+
+	});
+
 
 	describe('isRelatedTo', function() {
 
@@ -68,13 +75,13 @@ describe('project.Collection', function() {
 	var collection = new project.Collection();
 
 
-	describe('url', function() {
+	xdescribe('url', function() {
 
 		var modelData1 = { id: 1, title: 'C', queryString: 'something' },
 			base = '/api/v1/projects';
 
-		// Finds query, but doesn't concatenate to base.
-		xit('finds query and concatenates to base api path', function() {
+		// Failing. Finds query, but doesn't concatenate to base.
+		it('finds query and concatenates to base api path', function() {
 			var pc = new project.Collection([ modelData1 ]);
 			assert.equal(pc.models[0].get('queryString'), 'something');
 			// assert.equal(pc.url(), '/api/v1/projects?something');
