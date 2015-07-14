@@ -40,12 +40,12 @@ exports.Model = base.Model.extend({
 	},
 	
 	/** 
-	* Tests whether a tested model satisfies a belongs_to relation with the model instance under a specified foreign key. 
-	* Example: this.get('id') === testedModel.get('user_id') if the foreign key is 'user'.
-	* @param {object} testedModel
-	* @param {string} foreignKey
-	* @returns {boolean}
-	*/
+	 * Tests whether a tested model satisfies a belongs_to relation with the model instance under a specified foreign key. 
+	 * Example: this.get('id') === testedModel.get('user_id') if the foreign key is 'user'.
+	 * @param {object} testedModel
+	 * @param {string} foreignKey
+	 * @returns {boolean}
+	 */
 	test: function(testedModel, foreignKey) {
 		var foreignId, foreignIds, id;
 		if (!this.isActive()) {
@@ -111,8 +111,8 @@ exports.Collection = base.Collection.extend({
 
 	/**
 	 * 
-	 * @param {} testedModel - 
-	 * @param {} foreignKey - 
+	 * @param {object} testedModel - 
+	 * @param {string} foreignKey - 
 	 * @returns {boolean}
 	 */
 	test: function(testedModel, foreignKey) {

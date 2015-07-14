@@ -1,6 +1,6 @@
 var assert = require('assert'),
-	Backbone = require('backbone'),
 	_ = require('underscore'),
+	Backbone = require('backbone'),
 	$ = require('jquery'),
 	item = require('./../../app/models/item');
 

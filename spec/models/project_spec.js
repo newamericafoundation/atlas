@@ -13,7 +13,7 @@ describe('project.Model', function() {
 
 	describe('url', function() {
 
-		it('finds atlas url and concatenates to root url', function() {
+		it('creates url by concatenating atlas url to root url', function() {
 			var urlRoot = '/api/v1/projects';
 			pm = new project.Model({ atlas_url: 'folder/subfolder' });
 			assert.equal(pm.url(), '/api/v1/projects?atlas_url=folder/subfolder');
@@ -24,7 +24,7 @@ describe('project.Model', function() {
 
 	describe('buildUrl', function() {
 
-		it('finds id and concatenates to root build url', function() {
+		it('creates url by concatenating id to root build url', function() {
 			pm = new project.Model({ id: 234 });
 			assert.equal(pm.buildUrl(), 'http://build.atlas.newamerica.org/projects/234/edit');
 		});

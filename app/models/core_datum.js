@@ -3,10 +3,15 @@ var _ = require('underscore'),
 	base = require('./base'),
 	$ = require('jquery');
 
+
 exports.Model = base.Model.extend({
+	
 	urlRoot: '/api/v1/core_data',
 	
-	/** Fetches core data model url by name key */
+	/** 
+	 * Fetches core data model url by name key 
+	 * @returns {string} name
+	 */
 	url: function() {
 		return this.urlRoot + "?" + $.param({
 			name: this.get('name')
