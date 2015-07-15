@@ -12,8 +12,10 @@ var indexOf = [].indexOf || function(item) {
 	return -1;
 };
 
-// @constructor
-// Note on methods toLatLongPoint, toRichGeoJson: these methods assume that the model instance has a lat and long fields.
+/** 
+ * @constructor
+ * Note on methods toLatLongPoint, toRichGeoJson: these methods assume that the model instance has a lat and long fields. 
+ */
 exports.Model = base.Model.extend({
 	/** 
 	 * Recognize and process data.
@@ -31,7 +33,7 @@ exports.Model = base.Model.extend({
 	 * Splits up values separated by '|' and removes leading and trailing whitespaces.
 	 * Values are not split if there is a return character (assume text).
 	 * Values are converted into arrays only if there is a '|' character.
-	 * @param {object} data - Data object with key-value pairs
+	 * @param {object} data - Data object with key-value pairs.
 	 * @returns {object} data - Modified data.
 	 */
 	_processValues: function(data) {
@@ -108,7 +110,7 @@ exports.Model = base.Model.extend({
 	},
 	
 	/** 
-	 * Get and format image name
+	 * Get and format image name.
 	 * @returns {string} name - Lower-cased name without line breaks.
 	 */
 	getImageName: function() {
@@ -143,9 +145,9 @@ exports.Model = base.Model.extend({
 		return this.toLatLongPoint().reverse();
 	},
 	
-	/** 
-	 * Creates geoJson object from current model
-	 * @returns {object} geoJson
+	/**
+	 * Creates geoJson object from current model.
+	 * @returns {object} geoJson.
 	 */
 	toRichGeoJsonFeature: function() {
 		var geoJson;
@@ -245,7 +247,7 @@ exports.Collection = base.Collection.extend({
 	model: exports.Model,
 	
 	/** 
-	 * Gets item type first model in a collection
+	 * Gets item type first model in a collection.
 	 * @returns {string} itemType
 	 */
 	getItemType: function() {
@@ -292,8 +294,8 @@ exports.Collection = base.Collection.extend({
 	
 	/** 
 	 * Gets lists of values for a given key.
-	 * @param {string} key - any key in models
-	 * @returns {array} valueList - list of values for specified key
+	 * @param {string} key - Any key in models.
+	 * @returns {array} valueList - List of values for specified key.
 	 */
 	getValueList: function(key) {
 		var j, l, len, len1, model, ref, val, value, valueList;
@@ -353,8 +355,8 @@ exports.Collection = base.Collection.extend({
 	},
 	
 	/** 
-	 * Creates single array from lat, long arrays of each model into one array (array of arrays)
-	 * @returns {array} res - Returns array of arrays - e.g. [[lat, long], [lat, long]].
+	 * Creates single array from lat, long arrays of each model into one array (array of arrays).
+	 * @returns {array} res - Returns array of arrays. E.g. [[lat, long], [lat, long]]
 	 */
 	toLatLongMultiPoint: function() {
 		var j, len, model, ref, res;
