@@ -33,8 +33,9 @@ exports.Model = base.Model.extend({
 	},
 
 	/** 
-	 * Checks if the project has the mandatory fields. 
-	 * returns {boolean}
+	 * Conversts model object to json
+	 * Checks if it has mandatory fields (id and more than one key). 
+	 * returns {boolean} - Whether madatory fields exist
 	 */
 	exists: function() {
 		var json, key, keyCount;

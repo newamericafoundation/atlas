@@ -9,7 +9,7 @@ exports.Model = base.Model.extend({
 	
 	/** 
 	 * Fetches image model url by name key
-	 * @returns {string} url plus name
+	 * @returns {string} - Url plus name
 	 */
 	url: function() {
 		return this.urlRoot + ("?name=" + (this.get('name')));

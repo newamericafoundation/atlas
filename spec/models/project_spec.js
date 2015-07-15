@@ -32,12 +32,21 @@ describe('project.Model', function() {
 	});
 
 
-	//Failing. how to mock json data to recognize json.id and count keys?
-	xdescribe('exists', function() {
+	describe('exists', function() {
 
 		it('returns true if project has mandatory fields', function() {
-			pm = new project.Model({ json: { id: 1, a: 'first', b: 'second'} });
+			pm = new project.Model({ id: 1, a: 'first', b: 'second' });
 			assert.equal(pm.exists(), true);
+		});
+
+		it('returns false if project is missing id', function() {
+			pm = new project.Model({ a: 'first', b: 'second' });
+			assert.equal(pm.exists(), false);
+		});
+
+		it('returns false if project only has one key', function() {
+			pm = new project.Model({ id: 1 });
+			assert.equal(pm.exists(), false);
 		});
 
 	});
@@ -75,16 +84,25 @@ describe('project.Collection', function() {
 	var collection = new project.Collection();
 
 
-	xdescribe('url', function() {
+	/** 
+	 * Failing (1st passes, second fails). 
+	 * But, unsure if queryString should be key within model object?
+	 */
+	describe('url', function() {
 
-		var modelData1 = { id: 1, title: 'C', queryString: 'something' },
+		var modelData1 = { id: 1, title: 'C', atlas_url: 'folder/subfolder', queryString: 'something' },
 			base = '/api/v1/projects';
-
-		// Failing. Finds query, but doesn't concatenate to base.
-		it('finds query and concatenates to base api path', function() {
+			
+		//Test that it recognizes queryString
+		it('returns query string', function() {
 			var pc = new project.Collection([ modelData1 ]);
 			assert.equal(pc.models[0].get('queryString'), 'something');
-			// assert.equal(pc.url(), '/api/v1/projects?something');
+		});
+		
+		//Actual is just base url when this runs, doesn't find queryString
+		xit('creates url by concatenating query string to base url', function() {
+			var pc = new project.Collection([ modelData1 ]);
+			assert.equal(pc.url(), '/api/v1/projects?something');
 		});
 
 	});
@@ -107,7 +125,7 @@ describe('project.Collection', function() {
 			assert.equal(pc.models[0].get('id'), 1);
 		});
 
-		it('still passes sort test over four models', function() {
+		it('still passes sort test with four models', function() {
 			var pc = new project.Collection([ modelData1, modelData2, modelData3, modelData4 ]);
 			assert.equal(pc.models[0].get('id'), 2);
 		});

@@ -66,12 +66,12 @@ describe('item.Model', function() {
 	});
 
 
-	// failing -- how to structure model and access image and name?
-	describe('getImageName', function() {
+	// Failing. Actual returns (this.get('image')), but not reaching second return to get and format name
+	xdescribe('getImageName', function() {
 
-		xit('finds and formats image name', function() {
-			var im = new item.Model({ image: { name: 'Nice basket' } });
-			assert.equal(im.getImageName(), 'nicebasket');
+		it('returns formatted image name from model object', function() {
+			var im = new item.Model({ id: 2, image: { id: 111, name: 'Nice basket' }, title: 'C' });
+			assert.equal(im.getImageName(), { name: 'nicebasket' });
 		});
 
 	});
@@ -107,13 +107,14 @@ describe('item.Model', function() {
 	});
 
 
-	describe('toRichGeoJsonFeature', function() {
+	// Failing. Can't access figure out how to access one specific key in geoJson to test.
+	xdescribe('toRichGeoJsonFeature', function() {
 
-		//Failing. What does geoJson object look like? 
-		xit('creates geoJson object from current model and assigns Feature type', function() {
-			var im = new item.Model({ id: 2 });
-			im.toRichGeoJsonFeature();
-			assert.equal(im.get('type'), 'Feature');
+		it('returns geoJson object created from current model', function() {
+			var im = new item.Model({ id: 2, title: 'C', lat: 34.5, long: 123.4 });
+			// im.toRichGeoJsonFeature();
+			// console.log(im); //not transformed to geoJson
+			assert.equal((im.toRichGeoJsonFeature()).get('geometry'), { type: 'Point', coordinates: [123.4, 34.5] });
 		});
 
 	});
