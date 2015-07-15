@@ -10,13 +10,18 @@ exports.Model = base.Model.extend({
 	
 	/** 
 	 * Fetches core data model url by name key 
-	 * @returns {string} name
+	 * @returns {string} url plus name
 	 */
-	url: function() {
-		return this.urlRoot + "?" + $.param({
-			name: this.get('name')
-		});
+	 url: function() {
+		return this.urlRoot + ("?name=" + (this.get('name')));
 	},
+
+	/** URL METHOD REWRITTEN ABOVE BY JM TO MIRROR IMAGE.JS METHOD FORMAT */
+	// url: function() {
+	// 	return this.urlRoot + "?" + $.param({
+	// 		name: this.get('name')
+	// 	});
+	// },
 
 	/** 
 	 * Recognize and process server response.

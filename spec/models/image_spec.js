@@ -7,18 +7,18 @@ var assert = require('assert'),
 
 describe('image.Model', function() {
 
-	// "cannot read property Model of undefined" error when running gulp spec-server
-	// var image = new image.Model();
+
+	var model = new image.Model();
 
 
-	// describe('url', function() {
+	describe('url', function() {
 
-	// 	it('creates url by concatenating name to root url', function() {
-	// 		var urlRoot = '/api/v1/images';
-	// 		im = new image.Model({ name: 'picture' });
-	// 		assert.equal(im.url(), '/api/v1/images?name=picture');
-	// 	});
+		it('creates url by concatenating name to root url', function() {
+			var urlRoot = '/api/v1/images';
+			im = new image.Model({ name: 'picture' });
+			assert.equal(im.url(), '/api/v1/images?name=picture');
+		});
 
-	// });
+	});
 
 });

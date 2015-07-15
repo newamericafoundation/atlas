@@ -4,9 +4,13 @@ var _ = require('underscore'),
 	$ = require('jquery');
 
 exports.Model = base.Model.extend({
+	
 	urlRoot: '/api/v1/images',
 	
-	/** Fetches image model url by name */
+	/** 
+	 * Fetches image model url by name key
+	 * @returns {string} url plus name
+	 */
 	url: function() {
 		return this.urlRoot + ("?name=" + (this.get('name')));
 	},
