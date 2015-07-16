@@ -51,4 +51,14 @@ describe('baseFilter.Model', function() {
 
 	});
 
+
+	describe('test', function() {
+
+		it('returns false if model is deactivated', function() {
+			var bfm = new baseFilter.Model({ id: 2, title: 'C', user_id: 'A' }, 'user')._deactivate();
+			assert.equal(bfm.test(), false);
+		});
+
+	});
+
 });
