@@ -114,7 +114,7 @@ describe('item.Model', function() {
 			var im = new item.Model({ id: 2, title: 'C', lat: 34.5, long: 123.4 });
 			// im.toRichGeoJsonFeature();
 			// console.log(im); //not transformed to geoJson
-			assert.equal((im.toRichGeoJsonFeature()).get('geometry'), { type: 'Point', coordinates: [123.4, 34.5] });
+			assert.equal(im.toRichGeoJsonFeature().get('geometry'), { type: 'Point', coordinates: [123.4, 34.5] });
 		});
 
 	});
