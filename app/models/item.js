@@ -172,7 +172,7 @@ exports.Model = base.Model.extend({
 	 * @param {string} searchTerm
 	 * @param {string} baseClass - Base class.
 	 * @param {} currentDisplayMode
-	 * @returns {array} layerClasses - Array of class names.
+	 * @returns {object} layerClasses - Object with three keys: group, element base, and elements (array)
 	 */
 	getLayerClasses: function(filter, valueHoverIndex, searchTerm, baseClass, currentDisplayMode) {
 		var classNames, d, elementBaseClass, filterIndeces, highlightedClass, i, inactiveClass, isFiltered, j, k, layerClasses, len, neutralClass;

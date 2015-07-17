@@ -120,15 +120,25 @@ describe('item.Model', function() {
 			var im = new item.Model({ id: 2, title: 'C', lat: 34.5, long: 123.4 });
 			// im.toRichGeoJsonFeature();
 			// console.log(im); //not transformed to geoJson
-			assert.equal((im.toRichGeoJsonFeature()).get('geometry'), { type: 'Point', coordinates: [123.4, 34.5] });
+			assert.deepEqual((im.toRichGeoJsonFeature()).get('geometry'), { type: 'Point', coordinates: [123.4, 34.5] });
 		});
 
 	});
 
 
-	xdescribe('getLayerClasses', function() {
+	describe('getLayerClasses', function() {
 
-		//specs here.
+		it('assigns map-region as baseClass if baseClass param is null', function() {
+			var im = new item.Model({ id: 2, title: 'C' });
+			assert.equal(im.getLayerClasses({ a: 1 }, 1, 'searching', null, 'active').group, 'map-region');
+		});
+
+		xit('creates layerClasses object', function() {
+			var im = new item.Model({ id: 2, title: 'C' });
+			assert.deepEqual(im.getLayerClasses({ a: 1 }, 1, 'searching', 'test-base', 'inactive'), { 'elementBase': 'test-base__element', 'elements': ['test-base--highlighted', 'test-base--inactive', 'test-base--neutral'], 'group': 'test-base' });
+		});
+
+		//more specs for this method here.
 
 	});
 
