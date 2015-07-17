@@ -1,13 +1,14 @@
 var _ = require('underscore'),
 	Backbone = require('backbone'),
 	base = require('./base'),
-	$ = require('jquery'),
-	indexOf = [].indexOf || function(item) {
-		for (var i = 0, l = this.length; i < l; i++) {
-			if (i in this && this[i] === item) return i;
-		}
-		return -1;
-	};
+	$ = require('jquery');
+	
+var indexOf = [].indexOf || function(item) {
+	for (var i = 0, l = this.length; i < l; i++) {
+		if (i in this && this[i] === item) return i;
+	}
+	return -1;
+};
 
 exports.Model = base.Model.extend({
 	/** Activates model. Takes no collection filter logic into consideration - hence internal only. */

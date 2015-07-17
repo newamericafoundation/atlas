@@ -4,6 +4,12 @@ var assert = require('assert'),
 	$ = require('jquery'),
 	item = require('./../../app/models/item');
 
+var indexOf = [].indexOf || function(item) {
+	for (var i = 0, l = this.length; i < l; i++) {
+		if (i in this && this[i] === item) return i;
+	}
+	return -1;
+};
 
 describe('item.Model', function() {
 
@@ -114,7 +120,7 @@ describe('item.Model', function() {
 			var im = new item.Model({ id: 2, title: 'C', lat: 34.5, long: 123.4 });
 			// im.toRichGeoJsonFeature();
 			// console.log(im); //not transformed to geoJson
-			assert.equal(im.toRichGeoJsonFeature().get('geometry'), { type: 'Point', coordinates: [123.4, 34.5] });
+			assert.equal((im.toRichGeoJsonFeature()).get('geometry'), { type: 'Point', coordinates: [123.4, 34.5] });
 		});
 
 	});

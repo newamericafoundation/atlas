@@ -2,14 +2,14 @@ var assert = require('assert'),
 	_ = require('underscore'),
 	Backbone = require('backbone'),
 	$ = require('jquery'),
-	indexOf = [].indexOf || function(item) {
-		for (var i = 0, l = this.length; i < l; i++) {
-			if (i in this && this[i] === item) return i;
-		}
-		return -1;
-	},
 	baseFilter = require('./../../app/models/base_filter');
 
+var indexOf = [].indexOf || function(item) {
+	for (var i = 0, l = this.length; i < l; i++) {
+		if (i in this && this[i] === item) return i;
+	}
+	return -1;
+};
 
 describe('baseFilter.Model', function() {
 
