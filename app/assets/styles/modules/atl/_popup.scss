@@ -1,0 +1,83 @@
+/* 
+ * Map popup
+ * Simple .atl__popup produces a dark, horizontally centered popup, logo underneath target (map pin), text above.
+ * .atl__popup .atl__popup--center modifier element produces light popup with
+ *   content vertically centered within target (map region), logo next to text.
+ */
+.atl__popup {
+
+	.atl__info-box--active &, .leaflet-dragging & { display: none; }
+
+	position: absolute;
+	width: 200px;
+	height: 300px;
+	pointer-events: none;
+	font-family: 'SimplonNorm-Bold-WebS' !important;
+
+	&__wrapper {
+		text-align: center;
+		width: 100%;
+		height: 100%;
+		position: relative;
+		left: -100px;
+		.atl__popup--center & {
+			top: -30px;
+		}
+		text-align: center;
+	}
+
+	&__content {
+
+		$c1: map-get($palette, off-white);
+		$c2: map-get(map-get($palette, grey), base);
+
+		display: inline-block;
+		margin: auto;
+
+		.atl__popup--center & > div { float: left; }
+
+		&__logo {
+			position: absolute;
+			@include animation(bounce 0.7s linear infinite);
+			top: 15px;
+			left: 80px;
+			padding-top: 0;
+			width: 40px;
+			height: 40px;
+
+			.hex-button__border { stroke: $c2; stroke-width: 6px; fill: none; }
+			.hex-button__down { fill: $c2; stroke: none; }
+
+			.atl__popup--center & {
+				position: relative;
+				left: -10px;
+				top: 10px;
+			}
+
+		}
+		&__text {
+
+			border-radius: 6px;
+			padding: 13px 10px 10px 10px;
+			position: relative;
+			top: -90px;
+
+			background-color: map-get(map-get($palette, grey), base);
+
+			height: 40px;
+			display: table;
+
+			p {
+				@include font-size(14px);
+				display: table-cell;
+				vertical-align: middle;
+				color: $c1;
+			}
+			.atl__popup--center & {
+				top: 10px;
+				text-align: left;
+			}
+
+		}
+	}
+}

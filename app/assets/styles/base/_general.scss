@@ -1,0 +1,100 @@
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    font-family: "SimplonNorm-Regular-WebS";
+    -webkit-font-smoothing: antialiased;
+    font-weight: normal;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+@media print {
+    * {
+        overflow: visible !important;
+    }
+}
+
+// Override normalize.css assignment - set manually with bold font-face files.
+b, optgroup, strong { font-weight: normal; }
+
+.loading-icon {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    width: 100%;
+    height: 100%;
+
+    z-index: 1000;
+
+    display: table;
+    text-align: center;
+    & > div {
+        position: relative;
+        top: 50px;
+        width: auto;
+        height: 60px;
+        padding: 20px;
+        background-color: map-get(map-get($palette, grey), base);
+        color: map-get($palette, off-white);
+        font-family: 'SimplonNorm-Bold-WebS';
+        display: inline-block;
+        text-align: center;
+        vertical-align: middle;
+        border-radius: 8px;
+        opacity: 0.8;
+        @include animation(flicker 2s infinite);
+    }
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+}
+
+img {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    background-color: map-get($palette, off-white);
+    &.atl-route--welcome_index { background-color: darken(map-get(map-get($palette, grey), base), 3); }
+}
+
+ul {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+a { text-decoration: none; }
+
+table {
+    margin: 0 auto 18px;
+    color: rgba(51,50,50,0.9);
+    overflow-x: scroll;//
+}
+
+td, th { 
+    vertical-align: middle; 
+    background-color: #fffaef;
+    border: 1px solid rgba(51,50,50,0.1); 
+    border-width: 0px 0px 1px; 
+    text-align: left; 
+    padding: 20px 5px; 
+    font-size: 13px;
+    @include bp-w-sm {
+        @include font-size(17px);
+    }
+    color: rgba(51,50,50,0.9); 
+}

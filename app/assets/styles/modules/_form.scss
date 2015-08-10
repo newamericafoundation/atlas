@@ -1,0 +1,93 @@
+form {
+    @media print { display: none; }
+    width: 90%;
+    max-width: 900px;
+    margin: auto auto 30px auto;
+    padding-top: 30px;
+    display: block;
+    text-align: center;
+
+    &.form--compact {
+        opacity: 1;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        &:hover { opacity: 0.9; }
+        input[type="hidden"] { display: none; }
+        input[type="submit"] {
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            margin: 0;
+            padding: 0;
+            @include font-size(2px);
+        }
+    }
+}
+
+.input-container.input-container-half {
+    width: 49%;
+    margin: 0;
+    display: inline-block;
+}
+
+.input-container {
+    margin: 40px auto;
+    width: 100%;
+}
+
+label {
+    display: inline-block;
+    margin-bottom: 8px;
+    overflow: visible;
+    color: #333;
+    width: 100%;
+    @include font-size(18px);
+    text-align: left;
+	opacity: 0.8;
+}
+
+input, select, textarea {
+	padding: 13px 10px 10px 10px;
+    display: block;
+    width: 100%; 
+    
+    @include font-size(20px);
+
+    $base: map-get(map-get($palette, grey), dark);
+
+    bg-c-off-white & { color: #333; }
+
+    background: lighten($base, 2);
+    &::placeholder { color: lighten($base, 2); }
+    &:hover {
+        background: lighten($base, 3);
+    }
+    &:focus {
+        background: lighten($base, 4);
+    }
+    border: none;
+    &:focus {
+        border: none;
+        outline: 0;
+    }
+}
+
+textarea {
+    min-height: 800px;
+    resize: vertical;
+}
+
+input {
+    &[type="submit"] {
+    	margin: 50px auto 80px auto;
+        background-color: #333;
+        color: map-get($palette, off-white);
+        cursor: pointer;
+        opacity: 0.8;
+        &:hover { opacity: 1; }
+    }
+    &[type="file"] { background: none; }
+    &[type="radio"] { display: inline-block; }
+}

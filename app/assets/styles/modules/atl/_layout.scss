@@ -1,0 +1,168 @@
+.atl {
+
+	@extend %page-container;
+	
+	&__setup {
+		height: 0;
+	}
+
+	&__toc, &__related {
+		& > p {
+			font-family: 'SimplonNorm-Bold-WebS'; 
+			@include font-size(21px);
+		}
+		a {
+			@include link;
+			font-family: 'SimplonNorm-Bold-WebS'; 
+			@include font-size(17px);
+		}
+	}
+
+	&__toc {
+		padding-top: 15px;
+		padding-bottom: 15px;
+		ul { max-width: 300px; }
+		@include bp-atl-grid-unstack {
+			
+			padding-bottom: 0;
+			padding-top: 0;
+		}
+		@media print { display: none; }
+		li {
+			&.toc-h1 { padding-left: 0; }
+			&.toc-h2 { padding-left: 20px; }
+		}
+	}
+
+	.atl__related li, &__toc li { margin: 15px 0; line-height: 110%; }
+
+	&__page-nav {
+
+		position: static;
+		
+		&--fixed {
+			position: static;
+		}
+
+		@include bp-atl-grid-unstack {
+			position: relative;
+			top: 0px;
+			&--fixed {
+				width: 280px;
+				position: fixed;
+				left: 45px;
+				top: $top-bar-height + 20px;
+			}
+		}
+	}
+
+	&--filter-display .atl__search { display: none; }
+	&--search-display .atl__filter { display: none; }
+	&--search-display .atl__legend { display: none; }
+
+	&__search { 
+		max-width: 450px;
+		opacity: 0.8;
+		padding: 20px 20px;
+		.atl--collapsed & {
+			padding-left: 0;
+		}
+	}
+
+	&--collapsed .atl__search { 
+		position: absolute; 
+		left: 40px;
+		top: 75px;
+		width: 350px; 
+	}
+
+	&__main {
+		position: relative;
+		top: 0;
+		height: 100%;
+		overflow: hidden;
+		@include transition(all, 0.5s, ease-in-out);
+
+		.atl-route--projects_index & {
+			overflow-y: scroll;
+			@include bp-unstack-listings-page { 
+				overflow-y: hidden;
+			}
+		}
+
+	}
+
+}
+
+.-id-atl__main {
+	width: 100%;
+	overflow: hidden;
+	.atl--explainer &, .atl--polling & { overflow-y: scroll; }
+}
+
+.atl__main {
+	position: relative;
+	top: 0;
+	height: 100%;
+	overflow: hidden;
+	@include transition(all, 0.5s, ease-in-out);
+
+	.atl-route--projects_index & {
+		overflow-y: scroll;
+		@include bp-unstack-listings-page {
+			overflow-y: hidden;
+		}
+	}
+
+}
+
+.-id-atl__display-toggle {
+
+	position: absolute;
+	top: 32px;
+	left: 30px;
+	@include bp-unstack-map-settings-bar() {
+		left: auto;
+		right: 5px;
+	}
+
+	.atl--collapsed & {
+		left: 30px;
+	}
+
+	svg { 
+		fill: black;
+		.atl--collapsed & { fill: black; }
+		@include bp-unstack-map-settings-bar() {
+			fill: map-get($palette, off-white);
+		}
+	}
+	
+	.atl__binary-toggle__half {
+
+		&:first-child {
+			border-right: 1px solid black;
+			.atl--collapsed & {
+				border-right: 1px solid black;
+			}
+			@include bp-unstack-map-settings-bar() {
+				border-right: 1px solid map-get($palette, off-white);
+			}
+		}
+
+	}
+	
+}
+
+.atl__legend {
+	display: none;
+	@include bp-unstack-map-settings-bar { display: block; }
+	position: absolute;
+	bottom: 100px;
+	right: 25px;
+	@include bp-w-sm {
+		bottom: 5px;
+		right: 338px;
+	}
+	.atl__info-box--active &, .atl--search-display & { display: none; }
+}

@@ -1,0 +1,8 @@
+<div class="atl__map-control">
+	<div id="atl__map-attribution" class="atl__map-control__button bg-img-info--black"></div> 
+	<div id="atl__map-zoom-in"  class="atl__map-control__button bg-img-plus--black"></div>
+	<div id="atl__map-zoom-out" class="atl__map-control__button bg-img-minus--black"></div>
+	<div class='atl__help atl__help--left'>
+		View <b>copyright</b> information about the map and <b>zoom</b> in and out.
+	</div>
+</div>

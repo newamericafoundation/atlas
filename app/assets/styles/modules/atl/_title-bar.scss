@@ -1,0 +1,100 @@
+.atl__title-bar {
+	position: relative;
+	width: 100%;
+	overflow-x: hidden;
+	height: 300px;
+	@media print { height: 100px; }
+	display: table;
+	text-align: center;
+
+	.title { @include font-size(40px); }
+
+	// fix to offset fixed-width element that is empty on the right
+	//   and does not center properly 
+	.icon-button {
+		position: relative;
+		left: 33px;
+	}
+
+	&__background {
+		content: "";
+		
+		.atl__title-bar--solid & {
+			background-color: nth(map-get($palette, scheme), 8);
+			opacity: 0.8;
+		}
+		.atl__title-bar--image & {
+			opacity: 0.35;
+			@include filter(100%);
+			
+		}
+		@media print { background: none; }
+		background-size: cover;
+		background-repeat: no-repeat;
+		background-position-y: 20%;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		position: absolute;
+		z-index: 1; 
+	}
+
+	.atl__attribution {
+		position: absolute;
+		z-index: 5;
+		bottom: 30px;
+		right: 30px;
+	}
+
+	&__content {
+
+		padding: 10px 10px 0;
+
+		@media print {
+			width: auto;
+			& > * { text-align: left; }
+		}
+
+		position: relative;
+
+		.atl__info-box--narrow & { left: 0; }
+
+		width: 100%;
+		height: 100%;
+		display: table-cell;
+		vertical-align: middle;
+
+		.title {
+			margin: auto;
+			padding: 0;
+
+			.atl__title-bar--solid & {
+				color: map-get($palette, off-white);
+				@media print { color: black; }
+			}
+
+		}
+
+		ul {
+			width: 100%;
+			text-align: center;
+			margin-top: 20px;
+			padding-top: 0;
+			li {
+
+
+				display: inline-block;
+				margin: auto 10px;
+
+				.atl__title-bar--solid & {
+					color: map-get($palette, off-white);
+					@media print { color: black; }
+				}
+				
+			}
+		}
+
+		z-index: 2;
+	}
+}

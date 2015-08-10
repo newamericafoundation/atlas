@@ -1,0 +1,65 @@
+.atl__headline {
+
+	padding: 0 20px 20px 20px;
+
+	.link {
+		color: map-get($palette, off-white);
+		border-bottom: 2px solid map-get($palette, off-white);
+	}
+
+	&__title {
+
+		cursor: pointer;
+		opacity: 0.9;
+		&:hover { opacity: 1; }
+		font-family: 'Platform Web';
+		text-transform: uppercase;
+		line-height: 85%; 
+		margin: 0;
+
+		@mixin collapsed {
+			@include font-size(24px);
+			color: map-get(map-get($palette, grey), base);
+			padding-left: 100px;
+			padding-top: 12px;
+		}
+		
+		@include collapsed;
+		.atl--collapsed & { @include collapsed; }
+
+		@include bp-unstack-map-settings-bar {
+			@include font-size(42px);
+			color: map-get($palette, off-white);
+			padding-left: 0;
+			padding-top: 0;
+		}
+		
+	}
+
+	&__sections, &__description {
+		display: none;
+		.atl--collapsed & { display: none; }
+		@include bp-unstack-map-settings-bar { display: block; }
+	}
+
+	&__sections {
+		@include font-size(16px);
+		margin: 14px auto 25px auto;
+		font-family: 'SimplonNorm-Regular-WebS';
+		text-transform: uppercase;
+		opacity: 0.4;
+		letter-spacing: 2px;
+	}
+
+	&__description { 
+		margin: 25px 0 0 0 ;
+		padding: 0;
+		@include font-size(17px);
+		line-height: 110%;
+		a { 
+			@include font-size(17px);
+			margin-left: 5px; 
+		}
+	}
+
+}

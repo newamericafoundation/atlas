@@ -1,0 +1,282 @@
+var _ = require('underscore'),
+    Backbone = require('backbone'),
+    base = require('./base.js'),
+    formatters = require('./../utilities/formatters.js'),
+    baseComposite = require('./base_composite.js');
+
+
+var LocalBaseModel = baseComposite.Model.extend({
+
+    isActive: function() {
+        return this.get('_isActive');
+    },
+
+    activate: function() {
+        this.set('_isActive', true);
+        return this;
+    },
+
+    deactivate: function() {
+        this.set('_isActive', false);
+        return this;
+    },
+
+    toggle: function() {
+        this.set('_isActive', !this.isActive());
+        return this;
+    },
+
+    activateAllChildren: function() {
+        this.children.forEach(function(child) {
+            child.activate();
+        });
+        return this;
+    },
+
+    deactivateAllChildren: function() {
+        this.children.forEach(function(child) {
+            child.deactivate();
+        });
+        return this;
+    },
+
+    toggleAllChildren: function() {
+        this.children.forEach(function(child) {
+            child.toggle();
+        });
+        return this;
+    },
+
+    /*
+     * Deactivate all siblings, not including self.
+     *
+     */
+    deactivateSiblings: function() {
+        var self = this,
+            siblingsIncludingSelf;
+        if (this.parent == null) { return; }
+        siblingsIncludingSelf = this.parent.children;
+        siblingsIncludingSelf.forEach(function(sibling) {
+            if (sibling !== self) {
+                sibling.deactivate();
+            }
+        });
+    },
+
+    /*
+     * Get sibling index.
+     *
+     */
+    getSiblingIndex: function() {
+        var siblingsIncludingSelf = this.parent.children;
+        return siblingsIncludingSelf.indexOf(this);
+    },
+
+    /* 
+     * If every sibling in order got integer indeces between 1 and n, interpolate for instance.
+     * @param {number} n - Top friendly integer.
+     * @returns {number}
+     */
+    getFriendlySiblingIndex: function(n) {
+        var i = this.getSiblingIndex(),
+            max = this.getSiblingCountIncludingSelf();
+        return Math.round(i * (n - 1) / (max - 1) + 1);
+    },
+
+    getSiblingCountIncludingSelf: function() {
+        return this.parent.children.length;
+    }
+
+});
+
+
+// Copied from client.
+
+exports.FilterValue = LocalBaseModel.extend({
+
+    test: function(d, options) {
+        var j, key, len, res, val, value;
+        if (d == null) {
+            return false;
+        }
+        if ((!this.get('_isActive')) && (!((options != null) && options.ignoreState))) {
+            return false;
+        }
+        res = false;
+        key = this.parent.get('variable_id');
+        value = d[key];
+        if (!_.isArray(value)) {
+            value = [value];
+        }
+        for (j = 0, len = value.length; j < len; j++) {
+            val = value[j];
+            res = res || this.testValue(val);
+        }
+        return res;
+    },
+
+    testValue: function(value) {
+        var res;
+        res = false;
+        if (this._isNumericFilter()) {
+            if ((value < this.get('max')) && (value >= this.get('min'))) {
+                res = true;
+            }
+        } else {
+            if (value === this.get('value')) {
+                res = true;
+            }
+        }
+        return res;
+    },
+
+    _isNumericFilter: function() {
+        return (this.get('min') != null) && (this.get('max') != null);
+    },
+
+    isParentActive: function() {
+        return this.parent === this.parent.parent.getActiveChild();
+    },
+
+    handleClick: function() {
+        var activeKeyIndex, keyIndex;
+        this.toggle();
+        keyIndex = this.parent.get('_index');
+        return activeKeyIndex = this.parent.parent.get('activeIndex');
+    }
+
+});
+
+
+exports.FilterKey = LocalBaseModel.extend({
+
+    childModel: exports.FilterValue,
+
+    /*
+     * Toggle item as it were 'clicked on'. 
+     * If the value is being activated, all its siblings need to be deactivated.
+     *
+     */
+    clickToggle: function() {
+        if (this.isActive()) {
+            return;
+        } else {
+            this.deactivateSiblings();
+            this.activate();
+        }
+    },
+
+    toggleOne: function(childIndex) {
+        return this.children[childIndex].toggle();
+    },
+
+    getValueIndeces: function(model) {
+        var child, data, dataIndeces, i, j, len, ref;
+        data = (model != null) && _.isFunction(model.toJSON) ? model.toJSON() : model;
+        dataIndeces = [];
+        ref = this.children;
+        for (i = j = 0, len = ref.length; j < len; i = ++j) {
+            child = ref[i];
+            if (child.test(data)) {
+                dataIndeces.push(i);
+            }
+        }
+        return dataIndeces;
+    },
+
+    getValue: function(index) {
+        return this.children[index].get('value');
+    },
+
+    test: function(data, options) {
+        var child, j, len, ref, result;
+        result = false;
+        ref = this.children;
+        for (j = 0, len = ref.length; j < len; j++) {
+            child = ref[j];
+            if (child.test(data, options)) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
+});
+
+
+exports.FilterTree = LocalBaseModel.extend({
+
+    childModel: exports.FilterKey,
+
+    test: function(data) {
+        return this.getActiveChild().test(data);
+    },
+
+    setActiveChildByIndex: function(activeChildIndex) {
+        if (this.children[activeChildIndex] !== this.getActiveChild()) {
+            this.getActiveChild().deactivate();
+            this.children[activeChildIndex].activate();
+            return true;
+        }
+        return false;
+    },
+
+    getActiveChild: function() {
+        var child, j, len, ref;
+        ref = this.children;
+        for (j = 0, len = ref.length; j < len; j++) {
+            child = ref[j];
+            if (child.isActive()) {
+                return child;
+            }
+        }
+    },
+
+    getMatchingValue: function(model) {
+        var ind;
+        ind = this.getValueIndeces(model)[0];
+        if (this.getActiveChild().children[ind] != null) {
+            return this.getActiveChild().children[ind].get('value');
+        }
+        return void 0;
+    },
+
+    getValueCountOnActiveKey: function() {
+        return this.getActiveChild().children.length;
+    },
+
+    getValueIndeces: function(model) {
+        var ach;
+        ach = this.getActiveChild();
+        return ach.getValueIndeces(model);
+    },
+
+    getFriendlyIndeces: function(model, scaleMax) {
+        var maxIndex, valueIndeces;
+        valueIndeces = this.getValueIndeces(model);
+        maxIndex = this.getValueCountOnActiveKey();
+        return valueIndeces.map(function(valIndex) {
+            var friendlyIndex;
+            friendlyIndex = Math.round(valIndex * (scaleMax - 1) / (maxIndex - 1) + 1);
+            return friendlyIndex;
+        });
+    },
+
+    getItemListByOption: function(keyIndex) {
+        var ach, data, datum, gch, j, len, list;
+        ach = this.getActiveChild();
+        gch = ach.children[keyIndex];
+        list = [];
+        data = this.parent.data.data.data;
+        for (j = 0, len = data.length; j < len; j++) {
+            datum = data[j];
+            if (gch.test(datum, {
+                    ignoreState: true
+                })) {
+                list.push(datum.state);
+            }
+        }
+        return list;
+    }
+
+});

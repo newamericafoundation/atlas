@@ -1,0 +1,27 @@
+html { 
+	font-size: 100%;
+	color: map-get($palette, off-white);
+}
+
+a { color: map-get($palette, off-white); }
+
+h1, h2, h3, h4, h5, p, a, li {
+	display: block;
+	font-family: 'SimplonNorm-Regular-WebS';
+	line-height: 125%;
+}
+
+.bg-c-off-white {
+
+	$c: map-get(map-get($palette, grey), text);
+
+	h1, h2, h3, h4, h5, p, a, li {
+		color: $c;
+	}
+
+}
+
+h1 { @include font-size(53px); }
+h2 { @include font-size(24px); padding: 22px 0px; }
+h3 { @include font-size(20px); }
+p, a, li  { @include font-size(18px); }

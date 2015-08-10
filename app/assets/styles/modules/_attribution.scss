@@ -1,0 +1,20 @@
+.atl__attribution {
+	cursor: pointer;
+	width: 20px;
+	height: 20px;
+	position: relative;
+	display: table;
+	opacity: 0.5;
+	&:hover, &--active { opacity: 0.8; }
+	&__link {
+		@include attribution-box;
+		p { margin: 0; }
+		display: none;
+		.atl__attribution--active & {
+			display: table-cell;
+		}
+		position: absolute;
+		right: 30px;
+		top: -20px;
+	}
+}

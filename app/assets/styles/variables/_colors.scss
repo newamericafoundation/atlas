@@ -1,0 +1,32 @@
+$palette: (
+	naf-green: #2dbbb3,
+	grey: (
+		base: rgb(50, 50, 50), // used on titles
+		text: rgba(51, 50, 50, 0.9), // used on general text, off-white background
+		light: #4a4a4a, // 
+		dark: rgb(30, 30, 30)
+	),
+	off-white: #fffaef,
+	scheme: ( 
+		rgb(133, 2, 106), 
+		rgb(138, 1, 135), 
+		rgb(140, 2, 165), 
+		rgb(129, 10, 166),
+		rgb(118, 18, 167), 
+		rgb(106, 23, 167), 
+		rgb(93, 43, 171),
+		rgb(79, 56, 173),
+		rgb(77, 72, 177), 
+		rgb(73, 87, 182), 
+		rgb(67, 102, 186), 
+		rgb(58, 116, 191), 
+		rgb(44, 130, 195), 
+		rgb(11, 144, 199),
+		rgb(50, 161, 217)
+	),
+	blue: #549bae
+);
+
+@function palette-get($base, $key) {
+	@return 1;
+}

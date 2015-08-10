@@ -1,0 +1,58 @@
+.atl__settings-bar {
+
+	width: 100%;
+	position: absolute;
+	overflow: visible;
+	padding: 20px 0;
+
+	top: 0;
+
+	opacity: 1;
+	transition: 0.2s; 
+
+	@mixin expanded {
+		background-color: rgba(27,27,27,0.83);
+	}
+
+	@mixin collapsed {
+		background: none;
+		height: auto;
+	}
+
+	@include collapsed;
+	.atl--collapsed & { @include collapsed; }
+
+	@include bp-unstack-map-settings-bar {
+		@include expanded;
+		padding: 20px 0; 
+		width: $atl-settings-bar-width;
+		top: 0;
+		height: 100%;
+	}
+
+	.button {
+
+		$grey: map-get(map-get($palette, grey), base);
+		$off-white: map-get($palette, off-white);
+
+		&, .atl--collapsed & {
+			border: 2px solid $grey;
+			p { color: $grey; }
+		}
+
+		&--active, .atl--collapsed &--active {
+			background-color: $grey;
+			p { color: $off-white; }
+		}
+
+		@include bp-unstack-map-settings-bar {
+			&, &--active {
+				background: inherit;
+				border: 2px solid $off-white;
+				p { color: inherit; }
+			}
+		}
+
+	}
+
+}

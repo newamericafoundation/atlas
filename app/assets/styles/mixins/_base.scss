@@ -1,0 +1,96 @@
+// http://zerosixthree.se/8-sass-mixins-you-must-have-in-your-toolbox/
+@function calculate-rem($size) {
+    $remSize: $size / 16px;
+    @return $remSize * 1rem;
+}
+
+@mixin font-size($size) {
+    font-size: $size;
+    font-size: calculate-rem($size);
+}
+
+%text-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+%page-container {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    position: relative;
+    float: left;
+}
+
+.page-container {
+    @extend %pages-container;
+}
+
+@mixin transition($transition-property, $transition-time, $method: ease-in-out) {
+    -webkit-transition: $transition-property $transition-time $method;
+    -moz-transition: $transition-property $transition-time $method;
+    -ms-transition: $transition-property $transition-time $method;
+    -o-transition: $transition-property $transition-time $method;
+    transition: $transition-property $transition-time $method;
+}
+
+@mixin keyframes($animation-name) {
+    @-webkit-keyframes #{$animation-name} {
+        @content;
+    }
+    @-moz-keyframes #{$animation-name} {
+        @content;
+    }
+    @-ms-keyframes #{$animation-name} {
+        @content;
+    }
+    @-o-keyframes #{$animation-name} {
+        @content;
+    }
+    @keyframes #{$animation-name} {
+        @content;
+    }
+}
+
+@mixin animation($str) {
+    -webkit-animation: #{$str};
+    -moz-animation: #{$str};
+    -ms-animation: #{$str};
+    -o-animation: #{$str};
+    animation: #{$str};
+}
+
+@mixin filter($str) {
+    filter: #{$str};
+    -webkit-filter: #{$str};
+    -moz-filter: #{$str};
+    -o-filter: #{$str};
+    -ms-filter: #{$str};
+}
+
+@include keyframes(bounce) {
+    $val: 0 2 3 2 0 -2 -3 -2 0;
+    @each $i in 1, 2, 3, 4, 5, 6, 7, 8, 9 {
+        #{percentage(($i - 1) / 8)} {
+            transform: translateY((nth($val, $i))+px);
+        }
+    }
+}
+
+@include keyframes(flicker) {
+    0% { opacity: 0.8; }
+    50% { opacity: 0.6; } 
+    100% { opacity: 0.8; }
+}
+
+@include keyframes(color) {
+    from { color: rgb(133, 2, 106); }
+    to   { color: rgb(50, 161, 217); }
+}
+
+@include keyframes(background-color) {
+    from { background-color: rgb(133, 2, 106); }
+    to   { background-color: rgb(50, 161, 217); }
+}

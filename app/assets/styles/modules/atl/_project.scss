@@ -1,0 +1,139 @@
+.atl__projects {
+	width: 100%;
+	@include bp-unstack-listings-page {
+		width: calc(100% - #{$atl-settings-bar-width});
+		height: 100%;
+		float: left;
+		overflow-y: scroll;
+		overflow-x: hidden;
+	}
+}
+
+.atl__project {
+
+	&--hidden { display: none; }
+
+	$w: 350px;
+
+	position: relative;
+	border: 0;
+	height: 275px;
+
+	.atl__attribution {
+		position: absolute;
+		right: 10px;
+		bottom: 10px;
+		z-index: 50;
+		&:hover {
+			.atl__attribution__link { display: table-cell; }
+		}
+	}
+
+	$fs: 100%;
+	width: $fs;
+
+	@media screen and (min-width: 560px) {
+		width: (100%/2);
+	}
+
+	@media screen and (min-width: 1300px) {
+		width: (100%/3);
+	}
+
+	@media screen and (min-width: 1600px) {
+		width: (100%/4);
+	}
+
+	@media screen and (min-width: 1900px) {
+		width: (100%/5);
+	}
+
+	@media screen and (min-width: 2200px) {
+		width: (100%/6);
+	}
+
+	float: left;
+	cursor: pointer;
+
+	&__background, &__text {
+
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		
+	}
+
+	&__background {
+
+		$c: opacify(map-get($palette, off-white), 0.9);
+
+		background-color: $c;
+		.atl__project--overview & {
+			background-color: $c;
+		}
+
+		opacity: 0.25;
+		&:hover { opacity: 0.75; }
+
+		overflow: hidden;
+		background-size: cover;
+		background-position: 50% 50%;
+
+		filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'1 0 0 0 0, 0 1 0 0 0, 0 0 1 0 0, 0 0 0 1 0\'/></filter></svg>#grayscale");
+		@include filter(grayscale(93%));
+
+		background-blend-mode: multiply;
+		
+		& > div {
+			width: 100%;
+			height: 100%;
+		}
+
+		&__initials {
+			color: black;
+			width: 100%;
+			line-height: 85%;
+			height: 100%;
+			margin: 10px 0 0 0;
+			padding: 0;
+			@include font-size(240px);
+			font-family: 'Platform Web';
+			text-align: center;
+			opacity: 0.25;
+			.atl__project:hover & { opacity: 0.25; }
+		}
+
+	}
+
+	&__text {
+
+		& > div {
+
+			width: 100%;
+			height: 100%;
+			display: table;
+
+			h1 {
+				padding: 0 50px;
+				@include font-size(31px);
+				text-transform: uppercase;
+				font-family: 'Platform Web'; 
+				text-align: center;
+				line-height: 90%;
+				display: table-cell;
+				vertical-align: middle;
+
+				color: map-get(map-get($palette, grey), text);
+
+				.atl__project--overview & {
+					color: map-get(map-get($palette, grey), base);
+				}
+			}
+
+		}
+
+	}
+
+}

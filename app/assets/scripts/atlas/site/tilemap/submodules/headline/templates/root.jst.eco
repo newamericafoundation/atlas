@@ -1,0 +1,9 @@
+<% sectionText = if @project_section_names? then @project_section_names.join(',<br>').toUpperCase() else '' %>
+
+<p class="atl__headline__sections"><%- sectionText %></p>
+
+<h1 class="atl__headline__title"><%= @title %></h1>
+
+<h2 class="atl__headline__description">
+	<%= @short_description %><a href="#" class="link">More..</a>
+</h2>

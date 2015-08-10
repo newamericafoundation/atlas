@@ -1,0 +1,5 @@
+<pattern id="diagonal-stripes" x="0" y="0" width="18" height="18" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+  	<rect x="0" y="0" width="6" height="18" style="stroke:none; fill:<%= @colors[0] %>;" />
+    <rect x="6" y="0" width="6" height="18" style="stroke:none; fill:<%= @colors[1] %>;" />
+    <rect x="12" y="0" width="6" height="18" style="stroke:none; fill:<%= @colors[2] %>;" />
+</pattern>
