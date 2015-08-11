@@ -1,0 +1,50 @@
+.login {
+
+	width: 100%;
+	height: 100%;
+	display: table;
+
+	&__container {
+		display: table-cell;
+		vertical-align: middle;
+	}
+
+	background-color: map-get($palette, naf-green);
+
+	&__title {
+		text-align: center;
+		
+		span {
+			@include font-size(36px);
+			font-family: 'Platform Web';
+		}
+		em {
+			@include font-size(48px);
+			margin-right: 5px;
+			font-family: 'BlackJack';
+		}
+
+		margin-bottom: 15px;
+
+	}
+
+	&__button {
+		margin: auto;
+		width: 200px;
+		height: 30px;
+		padding-top: 8px;
+		background-color: map-get($palette, off-white);
+		font-family: 'SimplonNorm-Regular-WebS';
+		p {
+			margin: 0;
+			color: map-get($palette, naf-green);
+			text-align: center;
+			@include font-size(14px);
+		}
+
+		border-radius: 2px;
+		opacity: 0.8;
+		&:hover { opacity: 1; }
+	}
+
+}

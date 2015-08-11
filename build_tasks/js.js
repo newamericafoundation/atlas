@@ -14,6 +14,7 @@ var gulp = require('gulp'),
     browserifyGlobalShim = require('browserify-global-shim'),
     browserify = require('browserify'),
     source = require('vinyl-source-stream'),
+    babel = require('gulp-babel'),
     babelify = require('babelify');
 
 var config = require('./config.js');
@@ -82,15 +83,13 @@ gulp.task('js-build-vendor', [ 'js-clean' ], function() {
         .pipe(gulp.dest('public/assets/scripts/partials'));
 });
 
+/* Not needed. Move towards browserifying components. */
 gulp.task('js-build-component', [ 'js-clean' ], function() {
     gulp.src(config.source.js.component)
-        .pipe(concat('_component.cjsx'))
-        .pipe(cjsx({ bare: true }))
-        .pipe(gulp.dest('public/assets/scripts/partials'))
-        .pipe(insert.prepend("var React = require('react');\n\n"))
-        .pipe(insert.append("\n\nmodule.exports = Comp;"))
-        .pipe(rename('__auto__comp.js'))
-        .pipe(gulp.dest('./app/components'));
+        .pipe(gulpIf(/[.]cjsx$/, cjsx({ bare: true })))
+        .pipe(gulpIf(/[.]jsx$/, babel()))
+        .pipe(concat('_component.js'))
+        .pipe(gulp.dest('public/assets/scripts/partials'));
 });
 
 gulp.task('js-build', [ 'bundle-models', 'js-build-template', 'js-build-source', 'js-build-vendor', 'js-build-component' ], function() {

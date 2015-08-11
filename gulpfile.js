@@ -6,7 +6,6 @@ var gulp = require('gulp'),
 require('./build_tasks/spec.js');
 require('./build_tasks/css.js');
 require('./build_tasks/js.js');
-require('./build_tasks/components.js'); // make client-side component definitions available on the server.
 
 // Run this task on the command line by simply typing 'gulp'.
 gulp.task('default', ['js-build', 'css-build']);

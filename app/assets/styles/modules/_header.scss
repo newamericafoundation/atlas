@@ -15,9 +15,15 @@
 		height: 100%;
 		padding-top: 6px;
 
-		h1 { display: inline-block; }
+		// &__site-name, &__cursive-prefix { display: inline-block; }
 
-		h1, img, &__title { float: left; } 
+		&__site-name, &__cursive-prefix, &__title { display: inline-block; float: left; } 
+
+		&__cursive-prefix {
+			font-family: 'BlackJack' !important;
+			@include font-size(20px);
+			margin-right: 2px;
+		}
 
 		&__title {
 			padding: 4px 8px;

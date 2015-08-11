@@ -1,0 +1,28 @@
+.room-booking {}
+
+	.floor {
+		
+		background: none;
+
+		&__plan {
+			stroke: black;
+			stroke-width: 3px;
+			fill: none;
+			z-index: 1;
+		}
+
+		&__rooms {
+			z-index: 0;
+		}
+
+		&__room {
+			stroke: none;
+			fill: map-get($palette, naf-green);
+			opacity: 0.4;
+			cursor: pointer;
+			&:hover {
+				opacity: 1;
+			}
+		}
+
+	}

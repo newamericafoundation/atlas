@@ -48,16 +48,94 @@
 	}
 
 	&__icon {
+
+		width:  $side-bar-width;
+		height: $side-bar-width;
+		margin: 0;
+		padding: $side-bar-width / 2 - $icon-size / 2;
+		& > * {
+			width: 100%;
+			height: 100%;
+		}
+
+		position: relative;
 		float: left;
-		background-color: map-get(map-get($palette, grey), base);
-		@include atl-icon();
 		cursor: pointer;
 		opacity: 1;
 
+		div, a { position: relative; }
+
+		svg {
+			
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: 0;
+		}
+
+		form {
+	        position: relative;
+	        opacity: 1;
+	        margin: 0;
+	        padding: 0;
+	        width: 100%;
+	        height: 100%;
+	        &:hover { opacity: 0.9; }
+	        input[type="hidden"] { display: none; }
+	        input[type="submit"] {
+	            width: 75px;
+	            height: 75px;
+	            position: relative;
+	            left: -25px;
+	            top: -25px;
+	            opacity: 0;
+	            margin: 0;
+	            padding: 0;
+	            @include font-size(2px);
+	        }
+	    }
+
+
+	    // background and icon colors - regular theme
+		$c-bg-0: map-get(map-get($palette, grey), base);
+		$c-ic-0: map-get($palette, off-white);
+
+		// background and icon colors - naf green theme
+		$c-bg-1: map-get($palette, naf-green);
+		$c-ic-1: map-get($palette, off-white);
+
+	    /* initial color setup */
+	    background-color: $c-bg-0;
+		.atl__side-bar--naf-green & {
+			background-color: $c-bg-1;
+		}
+
+		svg {
+			fill: $c-ic-0;
+			.atl__side-bar--naf-green & {
+				fill: $c-ic-1;
+			}
+		}
+
 		&:hover {
-			filter: invert(100%);
-			-webkit-filter: invert(100%);
-			background-color: #000510;
+
+			// filter: invert(100%);
+			// -webkit-filter: invert(100%);
+			// background-color: #000510;
+
+			/* inverted color setup */
+		    background-color: $c-ic-0;
+			.atl__side-bar--naf-green & {
+				background-color: $c-ic-1;
+			}
+
+			svg {
+				fill: $c-bg-0;
+				.atl__side-bar--naf-green & {
+					fill: $c-bg-1;
+				}
+			}
+
 		}
 	}
 

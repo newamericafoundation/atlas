@@ -8,6 +8,7 @@ form {
     text-align: center;
 
     &.form--compact {
+        position: relative;
         opacity: 1;
         margin: 0;
         padding: 0;
@@ -16,8 +17,11 @@ form {
         &:hover { opacity: 0.9; }
         input[type="hidden"] { display: none; }
         input[type="submit"] {
-            width: 100%;
-            height: 100%;
+            width: 75px;
+            height: 75px;
+            position: relative;
+            left: -25px;
+            top: -25px;
             opacity: 0;
             margin: 0;
             padding: 0;

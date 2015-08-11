@@ -2,17 +2,12 @@ extend layout
 
 block content
 
-	div(id="atl__setup")
-
-	div(class="wrapper")
-		div(id="header", class="-id-header")
-		div(id="atl", class="-id-atl fill-parent")
-			- if (typeof reactOutput !== 'undefined') {
-				!= reactOutput
-			- } else {
-				div(class="loading-icon")
-					div Loading...
-			- }
+	- if (typeof reactOutput !== 'undefined') {
+		!= reactOutput
+	- } else {
+		div(class="loading-icon")
+			div Loading...
+	- }
 			
 
 	script(src="/assets/scripts/#{js}")
