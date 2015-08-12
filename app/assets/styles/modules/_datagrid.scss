@@ -1,0 +1,87 @@
+.datagrid {
+
+    input { 
+        background-color: rgba(0,0,0,0.05);
+        color: black;
+        cursor: auto;
+        border: 0px;
+        display: block;
+        font-family: SimplonNorm-Regular-WebS, arial, sans-serif;
+        font-size: 15px;
+        height: 50px;
+        line-height: 15px;
+        margin: auto;
+        width: 300px;
+        padding: 0px 14px;
+    }
+
+
+
+    font-family: 'SimplonNorm-Regular-WebS', arial, Helvetica, sans-serif;
+    @include font-size(14px);
+    overflow: hidden;
+
+    border: 1px solid map-get($palette, off-white);
+
+    -webkit-border-radius: 1px;
+    -moz-border-radius: 1px;
+    border-radius: 1px;
+
+    td,
+    th {
+        padding: 14px 13px;
+        &.datagrid__circular {
+            padding: 0;
+        }
+    }
+
+    thead th {
+        background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, map-get($palette, off-white)), color-stop(1, map-get($palette, off-white)));
+        background: -moz-linear-gradient( center top, map-get($palette, off-white) 5%, map-get($palette, off-white) 100%);
+        // filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#FFFAEF', endColorstr='#FFFAEF');
+        background-color: map-get($palette, off-white);
+        color: #000000;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    thead th:first-child {
+        border: none;
+    }
+
+    tbody td {
+        color: #000000;
+        font-size: 14px;
+        border-bottom: 1px solid #eee;
+        font-weight: normal;
+    }
+
+    tbody td:first-child {
+        border-left: none;
+    }
+
+    tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    &__contact {
+        &:hover { background-color: rgba(0, 0, 0, 0.05); }
+        a {
+            color: map-get($palette, naf-green);
+            font-family: SimplonNorm-Bold-WebS, arial, sans-serif;
+        }
+    }
+
+    &__circular {
+        width: 60px;
+        height: 60px;
+        margin: 0 15px;
+        border-radius: 100%;
+        -webkit-border-radius: 100%;
+        -moz-border-radius: 100%;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover !important;
+    }
+}

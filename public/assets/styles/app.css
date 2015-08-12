@@ -3016,6 +3016,69 @@ input[type="radio"] {
   right: 0;
   z-index: 0; }
 
+.datagrid {
+  font-family: 'SimplonNorm-Regular-WebS', arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-size: 0.875rem;
+  overflow: hidden;
+  border: 1px solid #fffaef;
+  -webkit-border-radius: 1px;
+  -moz-border-radius: 1px;
+  border-radius: 1px; }
+  .datagrid input {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: black;
+    cursor: auto;
+    border: 0px;
+    display: block;
+    font-family: SimplonNorm-Regular-WebS, arial, sans-serif;
+    font-size: 15px;
+    height: 50px;
+    line-height: 15px;
+    margin: auto;
+    width: 300px;
+    padding: 0px 14px; }
+  .datagrid td,
+  .datagrid th {
+    padding: 14px 13px; }
+    .datagrid td.datagrid__circular,
+    .datagrid th.datagrid__circular {
+      padding: 0; }
+  .datagrid thead th {
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #fffaef), color-stop(1, #fffaef));
+    background: -moz-linear-gradient(center top, #fffaef 5%, #fffaef 100%);
+    background-color: #fffaef;
+    color: #000000;
+    font-size: 14px;
+    font-weight: bold; }
+  .datagrid thead th:first-child {
+    border: none; }
+  .datagrid tbody td {
+    color: #000000;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
+    font-weight: normal; }
+  .datagrid tbody td:first-child {
+    border-left: none; }
+  .datagrid tbody tr:last-child td {
+    border-bottom: none; }
+  .datagrid__contact:hover {
+    background-color: rgba(0, 0, 0, 0.05); }
+  .datagrid__contact a {
+    color: #2dbbb3;
+    font-family: SimplonNorm-Bold-WebS, arial, sans-serif; }
+  .datagrid__circular {
+    width: 60px;
+    height: 60px;
+    margin: 0 15px;
+    border-radius: 100%;
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover !important; }
+
 .dashboard {
   width: 100%;
   height: 100%;
