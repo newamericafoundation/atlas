@@ -1,7 +1,8 @@
 var gulp = require('gulp'),
     nodemon = require('gulp-nodemon'),
     shell = require('gulp-shell'),
-    liveReload = require('gulp-livereload');
+    liveReload = require('gulp-livereload'),
+    copy = require('gulp-copy');
 
 require('./build_tasks/spec.js');
 require('./build_tasks/css.js');
@@ -9,6 +10,13 @@ require('./build_tasks/js.js');
 
 // Run this task on the command line by simply typing 'gulp'.
 gulp.task('default', ['js-build', 'css-build']);
+
+gulp.task('css-build-intranet', [ 'css-build' ], function() {
+  return gulp.src('./public/assets/styles/app.css')
+    .pipe(copy('./../my-newamerica-org/', { prefix: 0 }));
+});
+
+gulp.task('default-2', [ 'css-build-intranet' ]);
 
 // Development environment.
 // Note: this does not compile server-side models on the client.
@@ -19,7 +27,7 @@ gulp.task('dev', function() {
         script: './app.js',
         ext: 'css js gz jade scss coffee eco cjsx',
         tasks: function(changedFiles) {
-            return [ 'default' ];
+            return [ 'default-2' ];
         } 
     })
     .on('restart', function() { 

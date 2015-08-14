@@ -1,5 +1,7 @@
 .datagrid {
 
+    max-width: 600px;
+
     input { 
         background-color: rgba(0,0,0,0.05);
         color: black;
@@ -10,11 +12,10 @@
         font-size: 15px;
         height: 50px;
         line-height: 15px;
-        margin: auto;
-        width: 300px;
+        margin: 0 0 15px 0;
+        width: 100%;
         padding: 0px 14px;
     }
-
 
 
     font-family: 'SimplonNorm-Regular-WebS', arial, Helvetica, sans-serif;
@@ -26,6 +27,12 @@
     -webkit-border-radius: 1px;
     -moz-border-radius: 1px;
     border-radius: 1px;
+
+    table {
+        height: 500px;
+        overflow: scroll;
+        display: block;
+    }
 
     td,
     th {
@@ -39,7 +46,6 @@
         background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, map-get($palette, off-white)), color-stop(1, map-get($palette, off-white)));
         background: -moz-linear-gradient( center top, map-get($palette, off-white) 5%, map-get($palette, off-white) 100%);
         // filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#FFFAEF', endColorstr='#FFFAEF');
-        background-color: map-get($palette, off-white);
         color: #000000;
         font-size: 14px;
         font-weight: bold;
@@ -65,11 +71,16 @@
     }
 
     &__contact {
-        &:hover { background-color: rgba(0, 0, 0, 0.05); }
+
+        cursor: pointer;
+        
+        &:hover, &--active { background-color: rgba(0, 0, 0, 0.05); }
+
         a {
             color: map-get($palette, naf-green);
             font-family: SimplonNorm-Bold-WebS, arial, sans-serif;
         }
+
     }
 
     &__circular {

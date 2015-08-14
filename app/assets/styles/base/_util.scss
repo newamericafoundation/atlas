@@ -29,15 +29,16 @@
 .text-center { text-align: center; }
 
 %title {
+	overflow: visible;
 	margin: 0 auto;
-	padding-left: 20px;
-	padding-right: 20px;
-	line-height: 85%;
+	position: relative;
 	max-width: 750px;
 	text-align: center;
 	font-family: 'Platform Web';
+	line-height: 85%;
 	@include font-size(40px);
 	@include bp-w-sm { @include font-size(53px); }
+
 	text-transform: uppercase;
 }
 
@@ -49,6 +50,7 @@
 .title {
 	@extend %title;
 	&--compact { @extend %title--compact; }
+
 }
 
 .subtitle {

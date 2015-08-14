@@ -1,28 +1,33 @@
 .room-booking {}
 
-	.floor {
-		
-		background: none;
-
-		&__plan {
-			stroke: black;
-			stroke-width: 3px;
-			fill: none;
-			z-index: 1;
-		}
-
-		&__rooms {
-			z-index: 0;
-		}
-
-		&__room {
-			stroke: none;
-			fill: map-get($palette, naf-green);
-			opacity: 0.4;
-			cursor: pointer;
-			&:hover {
-				opacity: 1;
-			}
-		}
-
-	}
+.floorplans {
+    background: none;
+    padding: 0;
+    &__floor {
+        width: 100%;
+        height: 400px;
+        display: block;
+        margin: auto;
+    }
+    &__outer-wall {
+        stroke: black;
+        stroke-width: 0.8px;
+        fill: none;
+        z-index: 1;
+    }
+    &__rooms {
+        z-index: 0;
+    }
+    &__room {
+        stroke-width: 0.05px;
+        stroke: map-get($palette, naf-green);
+        fill: map-palette(map-get($palette, grey), base);
+        opacity: 0.2;
+        cursor: pointer;
+        &:hover,
+        &--active {
+            opacity: 1;
+            fill: map-get($palette, naf-green);
+        }
+    }
+}

@@ -44,7 +44,7 @@ Comp.SideBar = React.createClass
 		IconComp = Comp.Icons[options.reactIcon]
 		if options.method is 'download'
 			atlas_url = @_getAtlasUrl()
-			return <form className="form--compact" action='/api/v1/projects/print' method='post'> 
+			return <form action='/api/v1/projects/print' method='post'> 
 				<IconComp />
 				<input type="hidden" name="atlas_url" value={ atlas_url } />
 				<input type="submit" value="" />

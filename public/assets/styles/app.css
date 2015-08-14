@@ -813,7 +813,6 @@ table {
 
 td, th {
   vertical-align: middle;
-  background-color: #fffaef;
   border: 1px solid rgba(51, 50, 50, 0.1);
   border-width: 0px 0px 1px;
   text-align: left;
@@ -1008,13 +1007,13 @@ p, a, li {
   text-align: center; }
 
 .title {
+  overflow: visible;
   margin: 0 auto;
-  padding-left: 20px;
-  padding-right: 20px;
-  line-height: 85%;
+  position: relative;
   max-width: 750px;
   text-align: center;
   font-family: 'Platform Web';
+  line-height: 85%;
   font-size: 40px;
   font-size: 2.5rem;
   text-transform: uppercase; }
@@ -1044,12 +1043,12 @@ p, a, li {
 .right {
   float: right; }
 
-.clearfix, .atl-grid {
+.clearfix, .page__content, .atl-grid {
   *zoom: 1; }
-  .clearfix:before, .atl-grid:before, .clearfix:after, .atl-grid:after {
+  .clearfix:before, .page__content:before, .atl-grid:before, .clearfix:after, .page__content:after, .atl-grid:after {
     content: " ";
     display: table; }
-  .clearfix:after, .atl-grid:after {
+  .clearfix:after, .page__content:after, .atl-grid:after {
     clear: both; }
 
 .fill-parent {
@@ -3017,6 +3016,7 @@ input[type="radio"] {
   z-index: 0; }
 
 .datagrid {
+  max-width: 600px;
   font-family: 'SimplonNorm-Regular-WebS', arial, Helvetica, sans-serif;
   font-size: 14px;
   font-size: 0.875rem;
@@ -3035,9 +3035,13 @@ input[type="radio"] {
     font-size: 15px;
     height: 50px;
     line-height: 15px;
-    margin: auto;
-    width: 300px;
+    margin: 0 0 15px 0;
+    width: 100%;
     padding: 0px 14px; }
+  .datagrid table {
+    height: 500px;
+    overflow: scroll;
+    display: block; }
   .datagrid td,
   .datagrid th {
     padding: 14px 13px; }
@@ -3047,7 +3051,6 @@ input[type="radio"] {
   .datagrid thead th {
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #fffaef), color-stop(1, #fffaef));
     background: -moz-linear-gradient(center top, #fffaef 5%, #fffaef 100%);
-    background-color: #fffaef;
     color: #000000;
     font-size: 14px;
     font-weight: bold; }
@@ -3062,11 +3065,13 @@ input[type="radio"] {
     border-left: none; }
   .datagrid tbody tr:last-child td {
     border-bottom: none; }
-  .datagrid__contact:hover {
-    background-color: rgba(0, 0, 0, 0.05); }
-  .datagrid__contact a {
-    color: #2dbbb3;
-    font-family: SimplonNorm-Bold-WebS, arial, sans-serif; }
+  .datagrid__contact {
+    cursor: pointer; }
+    .datagrid__contact:hover, .datagrid__contact--active {
+      background-color: rgba(0, 0, 0, 0.05); }
+    .datagrid__contact a {
+      color: #2dbbb3;
+      font-family: SimplonNorm-Bold-WebS, arial, sans-serif; }
   .datagrid__circular {
     width: 60px;
     height: 60px;
@@ -3149,33 +3154,99 @@ input[type="radio"] {
     .login__button:hover {
       opacity: 1; }
 
-.floor {
-  background: none; }
-  .floor__plan {
+.floorplans {
+  background: none;
+  padding: 0; }
+  .floorplans__floor {
+    width: 100%;
+    height: 400px;
+    display: block;
+    margin: auto; }
+  .floorplans__outer-wall {
     stroke: black;
-    stroke-width: 3px;
+    stroke-width: 0.8px;
     fill: none;
     z-index: 1; }
-  .floor__rooms {
+  .floorplans__rooms {
     z-index: 0; }
-  .floor__room {
-    stroke: none;
-    fill: #2dbbb3;
-    opacity: 0.4;
+  .floorplans__room {
+    stroke-width: 0.05px;
+    stroke: #2dbbb3;
+    fill: map-palette((base: #323232, text: rgba(51, 50, 50, 0.9), light: #4a4a4a, dark: #1e1e1e), base);
+    opacity: 0.2;
     cursor: pointer; }
-    .floor__room:hover {
-      opacity: 1; }
+    .floorplans__room:hover,
+    .floorplans__room--active {
+      opacity: 1;
+      fill: #2dbbb3; }
+
+.staff .datagrid, .staff .floorplans {
+  display: inline-block; }
+
+.staff .floorplans {
+  width: 500px;
+  padding: 30px;
+  position: relative;
+  top: -40px;
+  left: 50px; }
 
 .page {
   width: 100%;
   height: 100%;
-  overflow-y: scroll;
-  padding-top: 120px; }
+  overflow: scroll; }
+  .page__title {
+    text-align: center; }
+  .page__summary {
+    height: 75px;
+    padding: 0 45px; }
+    .page__summary p {
+      line-height: 105%;
+      margin: 0;
+      padding: 0; }
+      .page__summary p:first-child {
+        font-family: 'SimplonNorm-Bold-WebS'; }
+  .page__content {
+    position: relative;
+    padding: 120px 20px 60px 20px; }
+    @media screen and (min-width: 860px) {
+      .page__content {
+        width: 800px;
+        padding: 120px 30px 60px 30px;
+        margin: auto; } }
+    .page__content--large {
+      padding: 120px 20px 60px 20px; }
+      @media screen and (min-width: 1060px) {
+        .page__content--large {
+          width: 1000px;
+          padding: 120px 30px 60px 30px;
+          margin: auto; } }
+    .page__content__logo {
+      width: 75px;
+      height: 75px;
+      padding: 15px;
+      border-radius: 100%;
+      position: absolute;
+      left: -70px;
+      top: 105px;
+      background-color: #2dbbb3; }
+      .page__content__logo svg {
+        fill: #fffaef; }
+    .page__content__1-2, .page__content__2-2 {
+      float: left;
+      width: 100%;
+      margin: 20px 0; }
+      @media screen and (min-width: 1000px) {
+        .page__content__1-2, .page__content__2-2 {
+          width: 50%;
+          margin: 0; } }
+    .page__content__2-2 .floorplan {
+      position: relative;
+      top: -20px; }
   .page .title {
-    margin-bottom: 40px;
+    margin: 0 0 40px 0;
     color: #323232;
     text-align: left; }
-  .page h1, .page h2, .page h3, .page h4, .page p {
+  .page h1, .page h2, .page h3, .page h4, .page p, .page div, .page li, .page ul, .page a {
     color: #323232; }
 
 .atl__setup {
@@ -4017,8 +4088,6 @@ input[type="radio"] {
   .atl__side-bar__icon {
     width: 75px;
     height: 75px;
-    margin: 0;
-    padding: 25px;
     position: relative;
     float: left;
     cursor: pointer;
@@ -4027,14 +4096,11 @@ input[type="radio"] {
     background-color: #323232; }
     .atl__side-bar__icon > * {
       width: 100%;
-      height: 100%; }
+      height: 100%;
+      margin: 0;
+      padding: 25px; }
     .atl__side-bar__icon div, .atl__side-bar__icon a {
       position: relative; }
-    .atl__side-bar__icon svg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 0; }
     .atl__side-bar__icon form {
       position: relative;
       opacity: 1;
