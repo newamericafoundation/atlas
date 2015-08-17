@@ -24,10 +24,6 @@
 		@extend %bg-img-dropdown-up--off-white;
 	}
 
-	&--active &__icon {
-
-	}
-
 	padding-top: $top-bar-height;
 
 	@include bp-expand-menu {
@@ -37,7 +33,7 @@
 		padding-top: 0;
 	}
 
-	z-index: 11000; 
+	z-index: 11000;
 
 	&__title {
 		position: absolute;
@@ -45,6 +41,10 @@
 		text-align: right;
 		left: -420px;
 		top: 28px;
+	}
+
+	&__icons {
+		overflow: visible;
 	}
 
 	&__icon {
@@ -66,17 +66,10 @@
 
 		div, a { position: relative; }
 
-		// svg {
-		// 	top: 0;
-		// 	left: 0;
-		// 	z-index: 0;
-		// }
-
 		form {
 	        position: relative;
 	        opacity: 1;
 	        margin: 0;
-	        padding: 0;
 	        width: 100%;
 	        height: 100%;
 	        &:hover { opacity: 0.9; }
@@ -117,10 +110,6 @@
 		}
 
 		&:hover {
-
-			// filter: invert(100%);
-			// -webkit-filter: invert(100%);
-			// background-color: #000510;
 
 			/* inverted color setup */
 		    background-color: $c-ic-0;

@@ -1,44 +1,43 @@
 form {
-    @media print { display: none; }
+    @media print {
+        display: none;
+    }
     width: 90%;
     max-width: 900px;
     margin: auto auto 30px auto;
     padding-top: 30px;
     display: block;
     text-align: center;
-
-    &.form--compact {
-        position: relative;
-        opacity: 1;
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        &:hover { opacity: 0.9; }
-        input[type="hidden"] { display: none; }
-        input[type="submit"] {
-            width: 75px;
-            height: 75px;
-            position: relative;
-            left: -25px;
-            top: -25px;
-            opacity: 0;
-            margin: 0;
-            padding: 0;
-            @include font-size(2px);
-        }
-    }
 }
 
-.input-container.input-container-half {
-    width: 49%;
-    margin: 0;
-    display: inline-block;
-}
-
-.input-container {
-    margin: 40px auto;
+input, select {
     width: 100%;
+    height: 50px;
+    display: block;
+
+    padding: 0px 14px;
+
+    color: map-get(map-get($palette, grey), base);
+
+    cursor: auto;
+    border: 0px;
+
+    background-color: rgba(0, 0, 0, 0.05);
+
+    font-family: SimplonNorm-Regular-WebS, arial, sans-serif;
+    @include font-size(15px);
+    line-height: 100%;
+
+    &:focus {
+        border: none;
+        outline: 0;
+    }
+    
+}
+
+input {
+    margin: 0 0 15px 0;
+    
 }
 
 label {
@@ -49,49 +48,43 @@ label {
     width: 100%;
     @include font-size(18px);
     text-align: left;
-	opacity: 0.8;
+    opacity: 0.8;
 }
 
-input, select, textarea {
-	padding: 13px 10px 10px 10px;
-    display: block;
-    width: 100%; 
-    
-    @include font-size(20px);
-
-    $base: map-get(map-get($palette, grey), dark);
-
-    bg-c-off-white & { color: #333; }
-
-    background: lighten($base, 2);
-    &::placeholder { color: lighten($base, 2); }
-    &:hover {
-        background: lighten($base, 3);
-    }
-    &:focus {
-        background: lighten($base, 4);
-    }
-    border: none;
-    &:focus {
-        border: none;
-        outline: 0;
-    }
-}
-
-textarea {
-    min-height: 800px;
-    resize: vertical;
-}
-
-input {
-    &[type="submit"] {
-    	margin: 50px auto 80px auto;
-        background-color: #333;
-        color: map-get($palette, off-white);
-        cursor: pointer;
-        opacity: 0.8;
-        &:hover { opacity: 1; }
-    }
-    &[type="file"] { background: none; }
-    &[type="radio"] { display: inline-block; }
-}
+// input, select, textarea {
+//  padding: 13px 10px 10px 10px;
+//     display: block;
+//     width: 100%; 
+//     @include font-size(20px);
+//     $base: map-get(map-get($palette, grey), dark);
+//     bg-c-off-white & { color: #333; }
+//     background: lighten($base, 2);
+//     &::placeholder { color: lighten($base, 2); }
+//     &:hover {
+//         background: lighten($base, 3);
+//     }
+//     &:focus {
+//         background: lighten($base, 4);
+//     }
+//     border: none;
+//     &:focus {
+//         border: none;
+//         outline: 0;
+//     }
+// }
+// textarea {
+//     min-height: 800px;
+//     resize: vertical;
+// }
+// input {
+//     &[type="submit"] {
+//      margin: 50px auto 80px auto;
+//         background-color: #333;
+//         color: map-get($palette, off-white);
+//         cursor: pointer;
+//         opacity: 0.8;
+//         &:hover { opacity: 1; }
+//     }
+//     &[type="file"] { background: none; }
+//     &[type="radio"] { display: inline-block; }
+// }

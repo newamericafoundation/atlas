@@ -13,7 +13,7 @@ router.get('/', function(req, res) {
 		fields = { encoded: false };
 	}
 
-	return dbConnector.connected().then(function(db) {
+	return dbConnector.then(function(db) {
 
 		var collection, cursor;
 

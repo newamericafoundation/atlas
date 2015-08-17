@@ -36,7 +36,7 @@ router.get('/', function(req, res) {
 		fields.body_text = 0;
 	}
 
-	return dbConnector.connected().then(function(db) {
+	return dbConnector.then(function(db) {
 
 		var collection, cursor;
 
@@ -93,7 +93,7 @@ router.get('/image', function(req, res) {
 		
 	queryParams.is_live = "Yes";
 
-	return dbConnector.connected().then(function(db) {
+	return dbConnector.then(function(db) {
 
 		var cursor = db.collection('projects').find(queryParams, fields);
 
@@ -120,7 +120,7 @@ router.post('/print', function(req, res) {
 
 	queryParams.is_live = "Yes";
 
-	return dbConnector.connected().then(function(db) {
+	return dbConnector.then(function(db) {
 
 		var cursor = db.collection('projects').find(queryParams, fields);
 

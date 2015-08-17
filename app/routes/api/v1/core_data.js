@@ -7,7 +7,7 @@ var express = require('express'),
 router.get('/', function(req, res, next) {
 	var query = req.query;
 
-	return dbConnector.connected().then(function(db) {
+	return dbConnector.then(function(db) {
 
 		var collection = db.collection('core_data');
 		var cursor = collection.find({});

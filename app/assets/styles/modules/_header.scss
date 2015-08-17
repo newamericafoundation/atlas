@@ -11,7 +11,7 @@
 
 	&__main {
 
-		width: calc(100% - #{$side-bar-width});
+		// width: calc(100% - #{$side-bar-width});
 		height: 100%;
 		padding-top: 6px;
 
@@ -67,7 +67,23 @@
 	}
 
 	&__auth {
-		
+		height: 100%;
+		width: 300px;
+		padding-top: 18px;
+		margin-left: 25px;
+		& > * {
+			display: inline-block;
+			float: left;
+		}
+		img {
+			width: 40px;
+			height: 40px;
+			border-radius: 100%;
+		}
+		p {
+			margin: 12px 0 0 8px;
+			@include font-size(15px);
+		}
 	}
 
 	&__nav-circles {

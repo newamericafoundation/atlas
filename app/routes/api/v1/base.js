@@ -4,7 +4,7 @@ var dbConnector = require('./../../../../db/connector'),
 module.exports = function(req, res, resource) {
 	var query = req.query;
 
-	return dbConnector.connected().then(function(db) {
+	return dbConnector.then(function(db) {
 
 		var collection = db.collection(resource);
 		var cursor = collection.find(query);

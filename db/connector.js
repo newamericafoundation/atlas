@@ -1,24 +1,21 @@
-var Q = require('q'),
-	mongo = require('mongodb'),
-	express = require('express'),
-	env = express().get('env');
+import { MongoClient } from 'mongodb';
+import express from 'express';
 
-var MongoClient = mongo.MongoClient;
-var deferred = Q.defer();
+function getDbUrl() {
+	var env = express().get('env');
+	var dbUrlBase = (env === 'development') ? 'localhost' : process.env['PRODUCTION_DB_URL'];
+	return 'mongodb://' + dbUrlBase + ':27017/mongoid';
+}
 
-var dbUrlBase = (env === 'development') ? 'localhost' : process.env['PRODUCTION_DB_URL'];
+export default new Promise((resolve, reject) => {
 
-var dbUrl = 'mongodb://' + dbUrlBase + ':27017/mongoid';
+	MongoClient.connect(getDbUrl(), (err, database) => {
+		if (err) {
+			console.log('Unable to connecto to the database.');
+			return reject(err); 
+		}
+		console.log('Successfully connected to database.');
+		resolve(database);
+	});
 
-MongoClient.connect(dbUrl, function(err, database) {
-	if (err) {
-		deferred.reject(err);
-		return;
-	}
-	console.log('Successfully connected to database.');
-	deferred.resolve(database);
 });
-
-exports.connected = function() {
-	return deferred.promise;
-};

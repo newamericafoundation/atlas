@@ -2501,7 +2501,6 @@ p, a, li {
   .header > div, .header > a {
     float: left; }
   .header__main {
-    width: calc(100% - 75px);
     height: 100%;
     padding-top: 6px; }
     .header__main__site-name, .header__main__cursive-prefix, .header__main__title {
@@ -2542,6 +2541,22 @@ p, a, li {
       height: 25px;
       margin-left: 25px;
       margin-top: 25px; }
+  .header__auth {
+    height: 100%;
+    width: 300px;
+    padding-top: 18px;
+    margin-left: 25px; }
+    .header__auth > * {
+      display: inline-block;
+      float: left; }
+    .header__auth img {
+      width: 40px;
+      height: 40px;
+      border-radius: 100%; }
+    .header__auth p {
+      margin: 12px 0 0 8px;
+      font-size: 15px;
+      font-size: 0.9375rem; }
   .header__nav-circles {
     position: absolute;
     width: 100%;
@@ -2578,37 +2593,26 @@ form {
   @media print {
     form {
       display: none; } }
-  form.form--compact {
-    position: relative;
-    opacity: 1;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%; }
-    form.form--compact:hover {
-      opacity: 0.9; }
-    form.form--compact input[type="hidden"] {
-      display: none; }
-    form.form--compact input[type="submit"] {
-      width: 75px;
-      height: 75px;
-      position: relative;
-      left: -25px;
-      top: -25px;
-      opacity: 0;
-      margin: 0;
-      padding: 0;
-      font-size: 2px;
-      font-size: 0.125rem; }
 
-.input-container.input-container-half {
-  width: 49%;
-  margin: 0;
-  display: inline-block; }
+input, select {
+  width: 100%;
+  height: 50px;
+  display: block;
+  padding: 0px 14px;
+  color: #323232;
+  cursor: auto;
+  border: 0px;
+  background-color: rgba(0, 0, 0, 0.05);
+  font-family: SimplonNorm-Regular-WebS, arial, sans-serif;
+  font-size: 15px;
+  font-size: 0.9375rem;
+  line-height: 100%; }
+  input:focus, select:focus {
+    border: none;
+    outline: 0; }
 
-.input-container {
-  margin: 40px auto;
-  width: 100%; }
+input {
+  margin: 0 0 15px 0; }
 
 label {
   display: inline-block;
@@ -2620,45 +2624,6 @@ label {
   font-size: 1.125rem;
   text-align: left;
   opacity: 0.8; }
-
-input, select, textarea {
-  padding: 13px 10px 10px 10px;
-  display: block;
-  width: 100%;
-  font-size: 20px;
-  font-size: 1.25rem;
-  background: #232323;
-  border: none; }
-  bg-c-off-white input, bg-c-off-white select, bg-c-off-white textarea {
-    color: #333; }
-  input::placeholder, select::placeholder, textarea::placeholder {
-    color: #232323; }
-  input:hover, select:hover, textarea:hover {
-    background: #262626; }
-  input:focus, select:focus, textarea:focus {
-    background: #282828; }
-  input:focus, select:focus, textarea:focus {
-    border: none;
-    outline: 0; }
-
-textarea {
-  min-height: 800px;
-  resize: vertical; }
-
-input[type="submit"] {
-  margin: 50px auto 80px auto;
-  background-color: #333;
-  color: #fffaef;
-  cursor: pointer;
-  opacity: 0.8; }
-  input[type="submit"]:hover {
-    opacity: 1; }
-
-input[type="file"] {
-  background: none; }
-
-input[type="radio"] {
-  display: inline-block; }
 
 .atlas-chart {
   position: relative; }
@@ -3025,19 +2990,6 @@ input[type="radio"] {
   -webkit-border-radius: 1px;
   -moz-border-radius: 1px;
   border-radius: 1px; }
-  .datagrid input {
-    background-color: rgba(0, 0, 0, 0.05);
-    color: black;
-    cursor: auto;
-    border: 0px;
-    display: block;
-    font-family: SimplonNorm-Regular-WebS, arial, sans-serif;
-    font-size: 15px;
-    height: 50px;
-    line-height: 15px;
-    margin: 0 0 15px 0;
-    width: 100%;
-    padding: 0px 14px; }
   .datagrid table {
     height: 500px;
     overflow: scroll;
@@ -3092,6 +3044,7 @@ input[type="radio"] {
   background-size: cover;
   background-position: 50% 50%; }
   .dashboard__welcome {
+    background: none;
     width: 80%;
     position: relative;
     top: -37.5px;
@@ -3196,6 +3149,11 @@ input[type="radio"] {
   overflow: scroll; }
   .page__title {
     text-align: center; }
+  .page__section-title {
+    margin-top: 15px;
+    font-family: 'SimplonNorm-Bold-WebS';
+    font-size: 24px;
+    font-size: 1.5rem; }
   .page__summary {
     height: 75px;
     padding: 0 45px; }
@@ -4085,6 +4043,8 @@ input[type="radio"] {
     text-align: right;
     left: -420px;
     top: 28px; }
+  .atl__side-bar__icons {
+    overflow: visible; }
   .atl__side-bar__icon {
     width: 75px;
     height: 75px;
@@ -4105,7 +4065,6 @@ input[type="radio"] {
       position: relative;
       opacity: 1;
       margin: 0;
-      padding: 0;
       width: 100%;
       height: 100%; }
       .atl__side-bar__icon form:hover {
