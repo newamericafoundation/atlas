@@ -3060,14 +3060,14 @@ label {
     .dashboard__welcome h1 {
       max-width: 450px;
       font-family: 'Platform Web';
-      font-size: 120px;
-      font-size: 7.5rem; }
+      font-size: 150px;
+      font-size: 9.375rem; }
     .dashboard__welcome p {
       max-width: 400px;
-      margin-top: 15px;
+      margin-top: 5px;
       font-family: 'SimplonNorm-Bold-WebS';
-      font-size: 54px;
-      font-size: 3.375rem; }
+      font-size: 42px;
+      font-size: 2.625rem; }
 
 .login {
   width: 100%;
