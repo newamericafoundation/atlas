@@ -4,14 +4,34 @@
 	height: 100%;
 	display: table;
 	
-	background-image: url("/assets/images/shutterstock_268077389_1500.jpg");
-	background-size: cover;
-	background-position: 50% 50%;
+	position: relative;
+
+	&__background {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		img {
+			width: 100%; // dimensions are mandatory
+		    object-fit: cover;
+		}
+		opacity: 1;
+		transition: all 0.75s;
+		.dashboard--waiting-for-image & {
+			opacity: 0;
+			transition: all 0.75s;
+		}
+	}
+
+	// background-image: url("/assets/images/shutterstock_268077389_1500.jpg");
+	// background-size: cover;
+	// background-position: 50% 50%;
 
 	&__welcome {
 
 		background: none;
-		width: 80%;
+		width: 100%;
 		position: relative;
 		top: - $top-bar-height / 2;
 		margin: auto;

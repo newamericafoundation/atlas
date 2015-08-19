@@ -15,14 +15,15 @@ input, select {
     height: 50px;
     display: block;
 
-    padding: 0px 14px;
-
     color: map-get(map-get($palette, grey), base);
+    background-color: rgba(0, 0, 0, 0.05);
+
+    padding: 0px 14px;
 
     cursor: auto;
     border: 0px;
 
-    background-color: rgba(0, 0, 0, 0.05);
+    
 
     font-family: SimplonNorm-Regular-WebS, arial, sans-serif;
     @include font-size(15px);
@@ -32,11 +33,6 @@ input, select {
         border: none;
         outline: 0;
     }
-    
-}
-
-input {
-    margin: 0 0 15px 0;
     
 }
 
@@ -50,41 +46,3 @@ label {
     text-align: left;
     opacity: 0.8;
 }
-
-// input, select, textarea {
-//  padding: 13px 10px 10px 10px;
-//     display: block;
-//     width: 100%; 
-//     @include font-size(20px);
-//     $base: map-get(map-get($palette, grey), dark);
-//     bg-c-off-white & { color: #333; }
-//     background: lighten($base, 2);
-//     &::placeholder { color: lighten($base, 2); }
-//     &:hover {
-//         background: lighten($base, 3);
-//     }
-//     &:focus {
-//         background: lighten($base, 4);
-//     }
-//     border: none;
-//     &:focus {
-//         border: none;
-//         outline: 0;
-//     }
-// }
-// textarea {
-//     min-height: 800px;
-//     resize: vertical;
-// }
-// input {
-//     &[type="submit"] {
-//      margin: 50px auto 80px auto;
-//         background-color: #333;
-//         color: map-get($palette, off-white);
-//         cursor: pointer;
-//         opacity: 0.8;
-//         &:hover { opacity: 1; }
-//     }
-//     &[type="file"] { background: none; }
-//     &[type="radio"] { display: inline-block; }
-// }
