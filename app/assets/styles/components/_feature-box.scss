@@ -71,10 +71,11 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
-		padding: 40px;
+		$p: 40px;
+		padding: $p;
 		svg, img {
-			width: 120px;
-			height: 120px;
+			width: $w1 - 2 * $p;
+			height: $w1 - 2 * $p;
 			fill: map-get($palette, off-white);
 		}
 	}

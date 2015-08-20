@@ -49,10 +49,10 @@
 		}
 
 		p {
-			max-width: 400px; 
+			max-width: 95%; 
 			margin-top: 5px;
 			font-family: 'SimplonNorm-Bold-WebS';
-			@include font-size(42px);
+			@include font-size(32px);
 		}
 		
 	}
