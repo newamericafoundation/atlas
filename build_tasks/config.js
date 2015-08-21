@@ -17,7 +17,7 @@ module.exports = {
 		        './bower_components/jquery/dist/jquery.js',
 		        './bower_components/marked/lib/marked.js',
 		        './bower_components/jquery-mousewheel/jquery.mousewheel.js',
-		        './bower_components/lodash/lodash.js',
+		        './bower_components/underscore/underscore.js',
 		        './bower_components/backbone/backbone.js',
 		        './bower_components/marionette/lib/backbone.marionette.js',
 		        './bower_components/react/react.js',
@@ -43,7 +43,7 @@ module.exports = {
 		    ],
 
 		    component: [
-		        './app/components/init.cjsx',
+		        './app/components/init.jsx',
 		        './app/components/non_routable/loading.jsx',
 		        './app/components/non_routable/setup.cjsx',
 		        './app/components/non_routable/icons/**/*.cjsx',

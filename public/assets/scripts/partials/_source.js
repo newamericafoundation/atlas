@@ -6409,62 +6409,6 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
 }).call(this);
 
 (function() {
-  this.Atlas.module('Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      this.Controller.show();
-      App.searchTerm = "";
-      return App.reqres.setHandler('search:term', function() {
-        return App.searchTerm;
-      });
-    });
-    return this.on('stop', function() {
-      this.Controller.destroy();
-      return this.stopListening();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
-    return Search.Controller = {
-      show: function() {
-        Search.view = new App.Base.SearchView({
-          el: $('.atl__search'),
-          model: new Backbone.Model({
-            placeholder: 'Search Project'
-          })
-        });
-        return Search.view.render();
-      },
-      destroy: function() {
-        return Search.view.destroy();
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
-    return Search.RootView = Marionette.ItemView.extend({
-      tagName: 'div',
-      className: 'atl__search',
-      template: 'tilemap/submodules/search/templates/root',
-      events: {
-        'keyup input': 'changeSearchTerm'
-      },
-      changeSearchTerm: function(e) {
-        Search.term = $(e.target)[0].value;
-        return App.vent.trigger('search:term:change');
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
   this.Atlas.module('Tilemap.Popup', function(Popup, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     this.on('start', function() {
@@ -6576,6 +6520,62 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
       },
       preventDefault: function(e) {
         return e.preventDefault();
+      }
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    this.on('start', function() {
+      this.Controller.show();
+      App.searchTerm = "";
+      return App.reqres.setHandler('search:term', function() {
+        return App.searchTerm;
+      });
+    });
+    return this.on('stop', function() {
+      this.Controller.destroy();
+      return this.stopListening();
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
+    return Search.Controller = {
+      show: function() {
+        Search.view = new App.Base.SearchView({
+          el: $('.atl__search'),
+          model: new Backbone.Model({
+            placeholder: 'Search Project'
+          })
+        });
+        return Search.view.render();
+      },
+      destroy: function() {
+        return Search.view.destroy();
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
+    return Search.RootView = Marionette.ItemView.extend({
+      tagName: 'div',
+      className: 'atl__search',
+      template: 'tilemap/submodules/search/templates/root',
+      events: {
+        'keyup input': 'changeSearchTerm'
+      },
+      changeSearchTerm: function(e) {
+        Search.term = $(e.target)[0].value;
+        return App.vent.trigger('search:term:change');
       }
     });
   });

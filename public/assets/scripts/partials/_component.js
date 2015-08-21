@@ -1,24 +1,28 @@
-var Comp;
+// Initialize components namespace.
+"use strict";
 
-Comp = {};
+var Comp = {};
 
 Comp.Mixins = {};
 
 Comp.Icons = {};
 
+// Add Backbone Events to component.
 Comp.Mixins.BackboneEvents = {
-  componentDidMount: function() {
-    if ((typeof _ !== "undefined" && _ !== null) && (typeof Backbone !== "undefined" && Backbone !== null)) {
-      return _.extend(this, Backbone.Events);
-    }
-  },
-  componentWillUnmount: function() {
-    if (this.stopListening != null) {
-      return this.stopListening();
-    }
-  }
-};
 
+	componentDidMount: function componentDidMount() {
+		if (_ && Backbone) {
+			_.extend(this, Backbone.Events);
+		}
+	},
+
+	componentWillUnmount: function componentWillUnmount() {
+		if (this.stopListening) {
+			this.stopListening();
+		}
+	}
+
+};
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -811,7 +815,6 @@ Comp.SideBar = React.createClass({
     if (options.method === 'download') {
       atlas_url = this._getAtlasUrl();
       return React.createElement("form", {
-        "className": "form--compact",
         "action": '/api/v1/projects/print',
         "method": 'post'
       }, React.createElement(IconComp, null), React.createElement("input", {

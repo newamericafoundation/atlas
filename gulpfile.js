@@ -27,7 +27,7 @@ gulp.task('dev', function() {
         script: './app.js',
         ext: 'css js gz jade scss coffee eco cjsx',
         tasks: function(changedFiles) {
-            return [ 'default-2' ];
+            return [ 'default' ];
         } 
     })
     .on('restart', function() { 
