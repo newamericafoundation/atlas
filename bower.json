@@ -30,7 +30,7 @@
     "moment": "~2.9.0",
     "leaflet": "~0.7.3",
     "marked": "~0.3.3",
-    "chartist-html": "~0.1.1",
+    "chartist-html": "~0.1.2",
     "numeral": "~1.5.3",
     "react": "~0.13.3",
     "underscore": "~1.8.3"

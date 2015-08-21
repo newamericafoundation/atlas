@@ -42631,7 +42631,6 @@ ChartistHtml.ChartManager.prototype = {
 		if (ChartistHtml.exists(ChartistHtml.formatters[this.data.labelsFormat])) {
 			return ChartistHtml.formatters[this.data.labelsFormat](v);
 		}
-
 		return v;
 	},
 
@@ -42712,10 +42711,7 @@ ChartistHtml.ChartManager.prototype = {
 
 		$tooltip.css({ visibility: 'hidden', display: 'table', position: 'absolute' });
 
-		// console.log($chart, componentSelector);
-
 		$chart.on('mouseover', componentSelector, function(e) {
-
 			var $point = $(this),
 				value = self._formatSeriesValue($point.attr('ct:value')),
 				series = $point.parent().attr('class'),
@@ -42723,8 +42719,6 @@ ChartistHtml.ChartManager.prototype = {
 				label;
 
 			index = ChartistHtml.alphabet.indexOf(series[series.length - 1]);
-
-			// console.log('moused over', index);
 
 			if (chartType === 'pie') {
 				label = self.chart.data.labels[index];
@@ -42736,7 +42730,6 @@ ChartistHtml.ChartManager.prototype = {
 				$tooltip.html(ChartistHtml.config.tooltipTemplate({ label: label, value: value })).show();
 				$tooltip.css({ 'visibility': 'visible' });
 			}
-
 		});
 
 		$chart.on('mouseleave', componentSelector, function() {
