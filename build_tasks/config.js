@@ -1,4 +1,4 @@
-var util = require('gulp-util');
+import * as util from 'gulp-util';
 
 module.exports = {
 
@@ -46,8 +46,7 @@ module.exports = {
 		        './app/components/init.jsx',
 		        './app/components/non_routable/loading.jsx',
 		        './app/components/non_routable/setup.cjsx',
-		        './app/components/non_routable/icons/**/*.cjsx',
-		        './app/components/non_routable/icons/**/*.jsx',
+		        './app/components/non_routable/icons/**/*',
 		        './app/components/non_routable/layout.cjsx',
 		        './app/components/non_routable/header.cjsx',
 		        './app/components/non_routable/side_bar.cjsx',
@@ -59,9 +58,9 @@ module.exports = {
 		        './app/components/routable/projects/index/subcomponents/**/*.cjsx',
 		        './app/components/routable/projects/show/root.cjsx',
 		        './app/components/routable/projects/show/tilemap/root.cjsx',
-		        './app/components/routable/projects/show/tilemap/subcomponents/**/*.cjsx',
+		        './app/components/routable/projects/show/tilemap/subcomponents/**/*',
 		        './app/components/routable/projects/show/explainer/root.cjsx',
-		        './app/components/routable/projects/show/explainer/subcomponents/**/*.cjsx'
+		        './app/components/routable/projects/show/explainer/subcomponents/**/*'
 		    ],
 
 		    template: [

@@ -3,7 +3,6 @@ var _ = require('underscore'),
 	baseFilter = require('./base_filter.js'),
 	seed = require('./../../db/seeds/project_templates.json');
 
-
 exports.Model = baseFilter.Model.extend({
 	urlRoot: '/api/v1/project_templates'
 });

@@ -90,3 +90,7 @@ A MongoDB query in Node typically works like this:
 The fields variable in my case was conditionally set based on the query parameters, and ended up being undefined in some cases. To my surprise, the API didn't return anything, and froze the browser.
 
 Turns out, if the fields is undefined, it must not be passed into the method..
+
+### React Component Lifecycle Level 1.1
+
+``componentDidMount`` methods will execute in the order grandchild - child - parent, whereas ``componentWillMount`` methods will execute the other way around. I found this knowledge useful when I transitioned a codebase from Marionette.js to React.js, and kept Marionette's global messaging system so that components could listen to it and updated themselves (since many of the props were objects, changing them internally didn't trigger an update).

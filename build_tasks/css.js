@@ -5,6 +5,7 @@ var gulp = require('gulp'),
     util = require('gulp-util'),
     rename = require('gulp-rename'),
     gzip = require('gulp-gzip'),
+    copy = require('gulp-copy'),
     rev = require('gulp-rev');
 
 var config = require('./config.js');
@@ -25,4 +26,9 @@ gulp.task('css-build', ['css-clean'], function() {
         .pipe(gulp.dest('public/assets/styles'))
         .pipe(rev.manifest())
         .pipe(gulp.dest('public/assets/styles'));
+});
+
+gulp.task('css-ship-to-intranet', [ 'css-build' ], function() {
+  return gulp.src('./public/assets/styles/app.css')
+    .pipe(copy('./../my-newamerica-org/', { prefix: 0 }));
 });

@@ -18,25 +18,6 @@ Comp.Welcome = React.createClass
 			<Comp.Welcome.Nav App={ @props.App }/>
 		</div>
 
-	componentDidMount: ->
-		App = @props.App
-		if App?
-			@listenTo App.vent, 'mouse:move', @_setColor
-
-	# Not currently used.
-	_setColor: (mouse) ->
-		App = @props.App
-		if App? and $?
-			color = App.CSS.Colors.interpolate mouse.x
-			$('.welcome__strip').css 'background-color', color
-			$('.welcome__title__alias').css 'color', color
-
-	# Not currently used.
-	_unsetColor: ->
-		App = @props.App
-		if App? and $?
-			$('.welcome__strip').css 'background-color', ''
-			$('.welcome__title__alias').css 'color', ''
 
 
 Comp.Welcome.Nav = React.createClass
@@ -45,7 +26,6 @@ Comp.Welcome.Nav = React.createClass
 		App = this.props.App
 		if App?
 			e.preventDefault()
-			App = @props.App
 			App.router.navigate 'menu'
 
 	render: ->

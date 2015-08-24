@@ -63,8 +63,8 @@ Comp.Projects.Show.Tilemap.Filter.Value = React.createClass
 	displayName: 'Comp.Projects.Show.Tilemap.Filter.Value'
 
 	render: ->
-		<li className={ 'toggle-button ' + @getModifierClass() } onClick={ @toggle.bind(@) }>
-			<Comp.Icons.Hex className="toggle-button__icon" colorClassName={@getColorClass()} />
+		<li className={ 'toggle-button ' + @getModifierClass() } onClick={ @toggle.bind(@) } onMouseEnter={ @setHovered.bind(this) } onMouseLeave={ @clearHovered.bind(this) } >
+			<Comp.Icons.Hex className="toggle-button__icon" colorClassName={ @getColorClass() } />
 			<div className="toggle-button__text">
 			   	<p>{ @props.filterValue.get('value') }</p>
 			</div>
@@ -77,7 +77,24 @@ Comp.Projects.Show.Tilemap.Filter.Value = React.createClass
 		return ''
 
 	getColorClass: ->
-		return "bg-c-#{@props.filterValue.getFriendlySiblingIndex(15)}"
+		return "bg-c-#{ @props.filterValue.getFriendlySiblingIndex(15) }"
+
+	setHovered: ->
+		App = @props.App
+		modelIndex = @getFilterValueIndex()
+		@props.filterValue.parent.parent.state.valueHoverIndex = modelIndex
+		App.vent.trigger 'value:mouseover', modelIndex
+		cls = @getColorClass()
+		App.commands.execute 'set:header:strip:color', { className: cls }
+
+	clearHovered: ->
+		App = @props.App
+		@props.filterValue.parent.parent.state.valueHoverIndex = -1
+		App.vent.trigger 'value:mouseover'
+		App.commands.execute 'set:header:strip:color', 'none'
+
+	getFilterValueIndex: ->
+		return @props.filterValue.parent.children.indexOf(@props.filterValue)
 
 	toggle: ->
 		@props.filterValue.toggle()

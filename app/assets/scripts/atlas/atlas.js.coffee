@@ -7,6 +7,7 @@
 	}
 
 	App.on 'start', ->
+
 		console.log 'Hi, Mom!'
 		router = new App.Router.Router()
 		App.router = router

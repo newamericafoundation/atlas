@@ -89,30 +89,33 @@ exports.Model = Backbone.Model.extend({
 		var newKey,
 		    foreignModel,
 		    foreignIds,
-		    foreignId,
 		    singleForeignIdKey,
 		    // if foreignIdKey holds an array
-		foreignFields = [],
-		    i,
-		    max;
+		foreignFields = [];
 
+		// belongs_to relationship with a single reference id
 		if (foreignIdKey.slice(-2) === 'id') {
+
 			newKey = foreignIdKey.slice(0, -2) + fieldKey;
 			foreignModel = foreignCollection.findWhere({ id: this.get(foreignIdKey) });
 			this.set(newKey, foreignModel.get(fieldKey));
+
+			// has_many relationship with id references embedded in an array field
 		} else if (foreignIdKey.slice(-3) === 'ids') {
-			foreignIds = this.get(foreignIdKey);
-			for (i = 0, max = foreignIds.length; i < max; i += 1) {
-				foreignId = foreignIds[i];
-				// simple pluralization
-				newKey = foreignIdKey.slice(0, -3) + fieldKey + 's';
-				foreignModel = foreignCollection.findWhere({ id: foreignId });
-				if (foreignModel != null) {
-					foreignFields.push(foreignModel.get(fieldKey));
-				}
+
+				foreignIds = this.get(foreignIdKey);
+
+				foreignIds.forEach(function (foreignId) {
+					// simple pluralization
+					newKey = foreignIdKey.slice(0, -3) + fieldKey + 's';
+					foreignModel = foreignCollection.findWhere({ id: foreignId });
+					if (foreignModel != null) {
+						foreignFields.push(foreignModel.get(fieldKey));
+					}
+				});
+
+				this.set(newKey, foreignFields);
 			}
-			this.set(newKey, foreignFields);
-		}
 
 		return this;
 	},
@@ -913,8 +916,22 @@ var _ = window._,
     base = require('./base.js');
 
 exports.Model = base.Model.extend();
+
 exports.Collection = base.Collection.extend({
-	model: exports.Model
+
+	model: exports.Model,
+
+	getItemSections: function getItemSections(item, variables) {
+		return this.map(function (model) {
+			var varId = model.get('variable_id'),
+			    variable = variables.findWhere({ id: varId });
+			return {
+				variable: variable,
+				field: item.get(varId)
+			};
+		});
+	}
+
 });
 
 },{"./base.js":2}],8:[function(require,module,exports){

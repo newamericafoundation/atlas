@@ -5,34 +5,47 @@ Comp.Projects.Show = React.createClass
 	mixins: [ Comp.Mixins.BackboneEvents ]
 
 	getInitialState: ->
-		{}
+		{
+			ui: {
+				display: 'filter',
+				isInfoBoxActive: false,
+				isInfoBoxNarrow: false
+			}
+			
+		}
+
+	setUiState: (uiStateChanges) ->
+		currentUiState = @state.ui
+		for key, value of uiStateChanges
+			currentUiState[key] = value
+		@forceUpdate()
 
 	render: ->
 		<div className={ @_getClass() }>
-			<Comp.SideBar App={ @props.App } project={ @state.project } />
+			<Comp.SideBar App={ @props.App } project={ @state.project } uiState={ @state.ui } setUiState={ @setUiState.bind(@) } />
 			<div id="atl__main" className="-id-atl__main fill-parent">
 				{ @_renderProject() }
 			</div>
 		</div>
 
-	getDefaultProps: ->
-		return { related: [] }
-
 	_getClass: ->
 		project = @state.project
 		return "" unless project?
-		cls = "atl atl--filter-display"
+		data = project.get('data')
+		cls = "atl"
+		cls += " atl--#{this.state.ui.display}-display"
 		cls += ' atl--' + project.get('project_template_name').toLowerCase()
-		data = project.get 'data'
+		console.log @state
+		cls += ' atl__info-box--active' if @state.ui.isInfoBoxActive
 		cls += ' atl__info-box--narrow' if data? and (data.infobox_variables.length < 2)
 		cls
 
 	_renderProject: ->
 		return <Comp.Loading /> unless @state.project?
 		if @_isModelStatic()
-			return <Comp.Projects.Show.Explainer App={@props.App} project={ @state.project } related={ @state.related } />
+			return <Comp.Projects.Show.Explainer App={@props.App} uiState={ @state.ui } setUiState={ @setUiState.bind(@) } project={ @state.project } related={ @state.related } />
 		if @_isModelTilemap()
-			return <Comp.Projects.Show.Tilemap App={@props.App} project={ @state.project } />
+			return <Comp.Projects.Show.Tilemap App={@props.App} uiState={ @state.ui } setUiState={ @setUiState.bind(@) } project={ @state.project } />
 		return <Comp.Loading />
 
 	_isModelStatic: ->

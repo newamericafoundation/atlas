@@ -31,7 +31,6 @@
 
         # Callback.
         onFeatureMouseOver: (feature) ->
-            # console.log d3.geo.path().centroid(feature), Map.map.getPixelOrigin().x, Map.map.getPixelOrigin().y
             @bringFeatureToFront feature if @bringFeatureToFront?
             message = if feature._model? then feature._model else feature.id
             App.vent.trigger 'item:mouseover', message

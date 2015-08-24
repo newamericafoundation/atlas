@@ -15,7 +15,7 @@ Comp.SideBar = React.createClass
 		props = 
 			buttons: [
 				{ title: 'Explore Atlas', method: 'projects', icon: 'grid', reactIcon: 'Grid', isToggleable: false }
-				{ title: 'Collapse/Expand', method: 'collapse', icon: 'contract', reactIcon: 'Collapse', activeReactIcon: 'Expand', isToggleable: false }
+				{ title: 'Collapse/Expand', method: 'collapse', icon: 'contract', reactIcon: 'Contract', activeReactIcon: 'Expand', isToggleable: false }
 				{ title: 'Help', method: 'help', icon: 'help', reactIcon: 'Help', isToggleable: false }
 				{ title: 'Print', method: 'print', icon: 'print', reactIcon: 'Print', isToggleable: false }
 				{ title: 'Download Data', method: 'download', icon: 'download', reactIcon: 'Download', isToggleable: false }
@@ -97,11 +97,6 @@ Comp.SideBar = React.createClass
 			unless (isCollapsed) and (cannotExpand)
 				App.uiState.isCollapsed = not App.uiState.isCollapsed
 				$('.atl').toggleClass 'atl--collapsed'
-				# get icon
-				$target = $(e.target)
-				if $target.hasClass('atl__side-bar__icon')
-					$target = $($target.children()[0])
-				$target.toggleClass 'bg-img-expand--off-white'
 
 	# Button press method.
 	_help: (e) ->

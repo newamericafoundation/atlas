@@ -8,7 +8,7 @@ Comp.Icons = {};
 // Add Backbone Events to component.
 Comp.Mixins.BackboneEvents = {
 
-	componentDidMount: function() {
+	componentWillMount: function() {
 		if (_ && Backbone) {
 			_.extend(this, Backbone.Events);
 		}

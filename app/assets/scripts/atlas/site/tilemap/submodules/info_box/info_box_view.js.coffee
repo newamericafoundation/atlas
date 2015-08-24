@@ -112,11 +112,9 @@
 				img = App.reqres.request 'image:entity', { name: imageName }
 				img.on 'sync', =>
 					backgroundImageCss = img.getBackgroundImageCss()
-
 					if backgroundImageCss?
 						$el.css('background-color', 'initial')
 						$el.css('background-image', backgroundImageCss)
-
 						@_appendImageAttribution(img.getAttributionHtml())
 						
 
