@@ -39,7 +39,7 @@ module.exports = {
 		        './app/assets/scripts/atlas/__auto__models.js',
 		        './app/assets/scripts/atlas/entities/**/*.js.coffee',
 		        './app/assets/scripts/atlas/site/site.js.coffee',
-		        './app/assets/scripts/atlas/site/tilemap/**/*.js.coffee'
+		        './app/assets/scripts/atlas/site/map/**/*.js.coffee'
 		    ],
 
 		    component: [

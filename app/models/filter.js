@@ -166,6 +166,18 @@ exports.FilterKey = LocalBaseModel.extend({
         }
     },
 
+    /*
+     * When deactivating, activate all children back.
+     *
+     */
+    deactivate: function() {
+        this.set('_isActive', false);
+        this.children.forEach(function(childModel) {
+            childModel.activate();
+        });
+        return this;
+    },
+
     toggleOne: function(childIndex) {
         return this.children[childIndex].toggle();
     },
@@ -212,6 +224,10 @@ exports.FilterTree = LocalBaseModel.extend({
         return this.getActiveChild().test(data);
     },
 
+    /*
+     * 
+     *
+     */
     setActiveChildByIndex: function(activeChildIndex) {
         if (this.children[activeChildIndex] !== this.getActiveChild()) {
             this.getActiveChild().deactivate();
@@ -221,6 +237,10 @@ exports.FilterTree = LocalBaseModel.extend({
         return false;
     },
 
+    /*
+     * Return active child.
+     *
+     */
     getActiveChild: function() {
         var child, j, len, ref;
         ref = this.children;
@@ -232,15 +252,21 @@ exports.FilterTree = LocalBaseModel.extend({
         }
     },
 
+    /*
+     * Get 
+     *
+     */
     getMatchingValue: function(model) {
         var ind;
         ind = this.getValueIndeces(model)[0];
-        if (this.getActiveChild().children[ind] != null) {
-            return this.getActiveChild().children[ind].get('value');
-        }
-        return void 0;
+        if (this.getActiveChild().children[ind] == null) { return; }
+        return this.getActiveChild().children[ind].get('value');
     },
 
+    /*
+     *
+     *
+     */
     getValueCountOnActiveKey: function() {
         return this.getActiveChild().children.length;
     },
@@ -251,6 +277,10 @@ exports.FilterTree = LocalBaseModel.extend({
         return ach.getValueIndeces(model);
     },
 
+    /*
+     * Get 'friendly', integer-formatted key and value indeces, used for coloring.
+     *
+     */
     getFriendlyIndeces: function(model, scaleMax) {
         var maxIndex, valueIndeces;
         valueIndeces = this.getValueIndeces(model);
@@ -260,23 +290,6 @@ exports.FilterTree = LocalBaseModel.extend({
             friendlyIndex = Math.round(valIndex * (scaleMax - 1) / (maxIndex - 1) + 1);
             return friendlyIndex;
         });
-    },
-
-    getItemListByOption: function(keyIndex) {
-        var ach, data, datum, gch, j, len, list;
-        ach = this.getActiveChild();
-        gch = ach.children[keyIndex];
-        list = [];
-        data = this.parent.data.data.data;
-        for (j = 0, len = data.length; j < len; j++) {
-            datum = data[j];
-            if (gch.test(datum, {
-                    ignoreState: true
-                })) {
-                list.push(datum.state);
-            }
-        }
-        return list;
     }
 
 });

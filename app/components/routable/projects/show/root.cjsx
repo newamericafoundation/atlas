@@ -2,8 +2,6 @@ Comp.Projects.Show = React.createClass
 
 	displayName: 'Projects.Show'
 
-	mixins: [ Comp.Mixins.BackboneEvents ]
-
 	getInitialState: ->
 		{
 			ui: {
@@ -35,7 +33,6 @@ Comp.Projects.Show = React.createClass
 		cls = "atl"
 		cls += " atl--#{this.state.ui.display}-display"
 		cls += ' atl--' + project.get('project_template_name').toLowerCase()
-		console.log @state
 		cls += ' atl__info-box--active' if @state.ui.isInfoBoxActive
 		cls += ' atl__info-box--narrow' if data? and (data.infobox_variables.length < 2)
 		cls

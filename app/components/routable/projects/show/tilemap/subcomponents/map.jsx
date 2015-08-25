@@ -11,13 +11,13 @@ Comp.Projects.Show.Tilemap.Map = class extends React.Component {
 	componentDidMount() {
 		App = this.props.App;
 		if (App == null) { return; }
-		App.Tilemap.Map.Controller.show();
+		App.Map.Controller.show();
 	}
 
 	componentWillUnmount() {
 		App = this.props.App;
 		if (App == null) { return; }
-		App.Tilemap.Map.Controller.destroy();
+		App.Map.Controller.destroy();
 	}
 
 }

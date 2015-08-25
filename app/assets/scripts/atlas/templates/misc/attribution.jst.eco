@@ -1,4 +1,0 @@
-<div class='atl__attribution__link'>
-	Image Credit:<br>
-	<%- @linkHtml %> 
-</div>

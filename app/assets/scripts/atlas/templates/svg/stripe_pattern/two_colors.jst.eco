@@ -1,6 +1,0 @@
-<pattern id="<%= @id %>" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-    <rect x="0" y="0" width="2" height="8" style="stroke:none; fill:<%= @colors[0] %>;" />
-    <rect x="2" y="0" width="2" height="8" style="stroke:none; fill:<%= @colors[0] %>;" />
-    <rect x="4" y="0" width="2" height="8" style="stroke:none; fill:<%= @colors[1] %>;" />
-    <rect x="6" y="0" width="2" height="8" style="stroke:none; fill:<%= @colors[1] %>;" />
-</pattern>

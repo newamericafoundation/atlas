@@ -378,64 +378,6 @@
 }).call(this);
 
 (function() {
-  this.Atlas.module('Base', function(Base, App, Backbone, Marionette, $, _) {
-    return Base.AttributionView = Marionette.ItemView.extend({
-      tagName: 'div',
-      className: 'atl__attribution bg-img-info--black',
-      template: 'templates/misc/attribution',
-      events: {
-        'click': 'toggleActiveState'
-      },
-      toggleActiveState: function(e) {
-        e.stopPropagation();
-        return this.$el.toggleClass('atl__attribution--active');
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Base', function(Base, App, Backbone, Marionette, $, _) {
-    return Base.DisplayToggleView = Marionette.ItemView.extend({
-      tagName: 'div',
-      className: 'atl__display-toggle'
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Base', function(Base, App, Backbone, Marionette, $, _) {
-    Base.SearchModel = Backbone.Model.extend({
-      defaults: {
-        placeholder: 'Search'
-      }
-    });
-    return Base.SearchView = Marionette.ItemView.extend({
-      tagName: 'div',
-      className: 'atl__search',
-      template: 'templates/misc/search',
-      initialize: function() {
-        if (this.model == null) {
-          return this.model = new Base.SearchModel();
-        }
-      },
-      events: {
-        'keyup input': 'changeSearchTerm'
-      },
-      changeSearchTerm: function(e) {
-        var term;
-        term = $(e.target)[0].value;
-        App.searchTerm = term;
-        return App.vent.trigger('search:term:change', term);
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
   this.Atlas.module('Assets', function(Assets, App, Backbone, Marionette, $, _) {
     return Assets.svg = {
       shapes: {
@@ -1793,6 +1735,18 @@ exports.FilterKey = LocalBaseModel.extend({
         }
     },
 
+    /*
+     * When deactivating, activate all children back.
+     *
+     */
+    deactivate: function deactivate() {
+        this.set('_isActive', false);
+        this.children.forEach(function (childModel) {
+            childModel.activate();
+        });
+        return this;
+    },
+
     toggleOne: function toggleOne(childIndex) {
         return this.children[childIndex].toggle();
     },
@@ -1838,6 +1792,10 @@ exports.FilterTree = LocalBaseModel.extend({
         return this.getActiveChild().test(data);
     },
 
+    /*
+     * 
+     *
+     */
     setActiveChildByIndex: function setActiveChildByIndex(activeChildIndex) {
         if (this.children[activeChildIndex] !== this.getActiveChild()) {
             this.getActiveChild().deactivate();
@@ -1847,6 +1805,10 @@ exports.FilterTree = LocalBaseModel.extend({
         return false;
     },
 
+    /*
+     * Return active child.
+     *
+     */
     getActiveChild: function getActiveChild() {
         var child, j, len, ref;
         ref = this.children;
@@ -1858,15 +1820,23 @@ exports.FilterTree = LocalBaseModel.extend({
         }
     },
 
+    /*
+     * Get 
+     *
+     */
     getMatchingValue: function getMatchingValue(model) {
         var ind;
         ind = this.getValueIndeces(model)[0];
-        if (this.getActiveChild().children[ind] != null) {
-            return this.getActiveChild().children[ind].get('value');
+        if (this.getActiveChild().children[ind] == null) {
+            return;
         }
-        return void 0;
+        return this.getActiveChild().children[ind].get('value');
     },
 
+    /*
+     *
+     *
+     */
     getValueCountOnActiveKey: function getValueCountOnActiveKey() {
         return this.getActiveChild().children.length;
     },
@@ -1877,6 +1847,10 @@ exports.FilterTree = LocalBaseModel.extend({
         return ach.getValueIndeces(model);
     },
 
+    /*
+     * Get 'friendly', integer-formatted key and value indeces, used for coloring.
+     *
+     */
     getFriendlyIndeces: function getFriendlyIndeces(model, scaleMax) {
         var maxIndex, valueIndeces;
         valueIndeces = this.getValueIndeces(model);
@@ -1886,23 +1860,6 @@ exports.FilterTree = LocalBaseModel.extend({
             friendlyIndex = Math.round(valIndex * (scaleMax - 1) / (maxIndex - 1) + 1);
             return friendlyIndex;
         });
-    },
-
-    getItemListByOption: function getItemListByOption(keyIndex) {
-        var ach, data, datum, gch, j, len, list;
-        ach = this.getActiveChild();
-        gch = ach.children[keyIndex];
-        list = [];
-        data = this.parent.data.data.data;
-        for (j = 0, len = data.length; j < len; j++) {
-            datum = data[j];
-            if (gch.test(datum, {
-                ignoreState: true
-            })) {
-                list.push(datum.state);
-            }
-        }
-        return list;
     }
 
 });
@@ -5287,13 +5244,6 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
 (function() {
   this.Atlas.module('Site', function(Site, App, Backbone, Marionette, $, _) {
     this.startWithParent = true;
-    App.swipeDirection = 'left';
-    App.headerRegion = new Marionette.Region({
-      el: '#header'
-    });
-    App.contentRegion = new Marionette.Region({
-      el: '#atl'
-    });
     App.currentDisplayMode = 'filter';
     App.commands.setHandler('change:display:mode', function(mode) {
       App.currentDisplayMode = mode;
@@ -5306,888 +5256,14 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
       return App.currentProjectModel = project;
     });
     return $(document).on('mousewheel', function(e) {
-      App.vent.trigger('scroll');
-      if (e.deltaY > 50) {
-        App.vent.trigger('strong:scroll:up');
-      }
-      if (e.deltaY < -50) {
-        App.vent.trigger('strong:scroll:down');
-      }
-      if (e.deltaX > 50) {
-        App.vent.trigger('strong:scroll:left');
-      }
-      if (e.deltaX < -50) {
-        return App.vent.trigger('strong:scroll:right');
-      }
+      return App.vent.trigger('scroll');
     });
   });
 
 }).call(this);
 
 (function() {
-  this.Atlas.module("Tilemap.Filter", function(Filter, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      this.Controller.show();
-      App.reqres.setHandler('filter:value:hovered', function() {
-        return Filter.valueHoverIndex;
-      });
-      return App.reqres.setHandler('filter', function() {
-        return Filter.filter;
-      });
-    });
-    return this.on('stop', function() {
-      this.Controller.destroy();
-      return this.stopListening();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module("Tilemap.Filter", function(Filter, App, Backbone, Marionette, $, _) {
-    return Filter.Controller = {
-      show: function() {
-        var filter;
-        filter = this._getFilter();
-        filter.state = {};
-        Filter.rootView = new Filter.RootView({
-          el: '.atl__filter',
-          model: filter
-        });
-        Filter.filter = filter;
-        Filter.keysView = this.getKeysView();
-        Filter.valuesView = this.getValuesView();
-        Filter.rootView.render();
-        App.vent.trigger('show:component:ready');
-        Filter.rootView.getRegion('keys').show(Filter.keysView);
-        return Filter.rootView.getRegion('values').show(Filter.valuesView);
-      },
-      destroy: function() {
-        return Filter.filter.stopListening();
-      },
-      _getFilter: function() {
-        var filter, model;
-        model = App.currentProjectModel;
-        filter = model.get('data').filter;
-        filter.listenTo(App.vent, 'value:click', function(index) {
-          if (this.getActiveChild().children[index] != null) {
-            return this.getActiveChild().children[index].handleClick();
-          }
-        });
-        filter.listenTo(App.vent, 'key:click', function(index) {
-          return this.setActiveChildByIndex(index);
-        });
-        return filter;
-      },
-      getKeysView: function() {
-        return new Filter.KeysView({
-          collection: new Backbone.Collection(Filter.filter.children)
-        });
-      },
-      getValuesView: function() {
-        var ValuesCollection, ValuesModel, valuesCollection, valuesModel;
-        ValuesCollection = Backbone.Collection.extend({
-          rebuild: function() {
-            return this.reset(Filter.filter.getActiveChild().children);
-          }
-        });
-        ValuesModel = Backbone.Model.extend({
-          rebuild: function() {
-            return this.set('long_description', Filter.filter.getActiveChild().get('long_description'));
-          }
-        });
-        valuesCollection = new ValuesCollection();
-        valuesCollection.rebuild();
-        valuesModel = new ValuesModel();
-        valuesModel.rebuild();
-        return new Filter.ValuesView({
-          collection: valuesCollection,
-          model: valuesModel
-        });
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module("Tilemap.Filter", function(Filter, App, Backbone, Marionette, $, _) {
-    Filter.ValueView = Marionette.ItemView.extend({
-      tagName: 'li',
-      className: 'toggle-button',
-      template: 'tilemap/submodules/filter/templates/filter_value',
-      initialize: function() {
-        this.updateActiveState();
-        return this.listenTo(this.model, 'change:_isActive', this.updateActiveState);
-      },
-      templateHelpers: App.Util.formatters,
-      onShow: function() {
-        var cls;
-        cls = this.getBackgroundColorClass();
-        return this.$('.hexicon__hex').attr('class', "hexicon__hex " + cls);
-      },
-      events: {
-        'click': 'triggerValueClick',
-        'mouseenter': 'triggerValueMouseOver',
-        'mouseleave': 'triggerValueMouseOut'
-      },
-      updateActiveState: function() {
-        if (this.model.isActive()) {
-          this.$el.removeClass('toggle-button--inactive');
-        } else {
-          this.$el.addClass('toggle-button--inactive');
-        }
-        return this;
-      },
-      getBackgroundColorClass: function() {
-        var colorIndex, i, k;
-        k = this.model.parent.parent.getValueCountOnActiveKey();
-        i = this._getModelIndex() + 1;
-        colorIndex = App.CSS.ClassBuilder.interpolate(i, k);
-        return "bg-c-" + colorIndex;
-      },
-      triggerValueClick: function(e) {
-        var modelIndex;
-        if (e != null) {
-          e.stopPropagation();
-        }
-        modelIndex = this._getModelIndex();
-        App.vent.trigger('value:click', modelIndex);
-        return this;
-      },
-      triggerValueMouseOver: function() {
-        var cls, filter, modelIndex;
-        modelIndex = this._getModelIndex();
-        Filter.valueHoverIndex = modelIndex;
-        filter = this.model.parent.parent;
-        filter.state.valueHoverIndex = modelIndex;
-        App.vent.trigger('value:mouseover', modelIndex);
-        cls = this.getBackgroundColorClass();
-        App.commands.execute('set:header:strip:color', {
-          className: cls
-        });
-        return this;
-      },
-      triggerValueMouseOut: function() {
-        var filter;
-        Filter.valueHoverIndex = -1;
-        filter = this.model.parent.parent;
-        filter.state.valueHoverIndex = -1;
-        App.vent.trigger('value:mouseout');
-        App.commands.execute('set:header:strip:color', 'none');
-        return this;
-      },
-      _getModelIndex: function() {
-        if (this.model.collection == null) {
-          return;
-        }
-        return this.model.collection.models.indexOf(this.model);
-      }
-    });
-    Filter.ValuesView = Marionette.CompositeView.extend({
-      tagName: 'div',
-      className: 'atl__filter__values',
-      template: 'tilemap/submodules/filter/templates/filter_values',
-      childView: Filter.ValueView,
-      childViewContainer: 'ul',
-      initialize: function() {
-        this.listenTo(App.vent, 'key:click', this.rebuild);
-        return this.listenTo(this.model, 'change', this.render);
-      },
-      rebuild: function() {
-        this.model.rebuild();
-        return this.collection.rebuild();
-      }
-    });
-    Filter.KeyView = Marionette.ItemView.extend({
-      tagName: 'li',
-      className: 'button',
-      template: 'tilemap/submodules/filter/templates/filter_key',
-      childView: Filter.ValueView,
-      childViewContainer: 'ul',
-      initialize: function() {
-        this.updateActiveState();
-        return this.listenTo(this.model, 'change:_isActive', this.updateActiveState);
-      },
-      events: {
-        'click': 'handleClick'
-      },
-      updateActiveState: function() {
-        if (this.model.isActive()) {
-          return this.$el.addClass('button--active');
-        } else {
-          return this.$el.removeClass('button--active');
-        }
-      },
-      handleClick: function(e) {
-        var modelIndex;
-        e.stopPropagation();
-        if (!this.model.isActive()) {
-          modelIndex = this._getModelIndex();
-          App.vent.trigger('key:click', modelIndex);
-        }
-        return this;
-      },
-      _getModelIndex: function() {
-        return this.model.collection.models.indexOf(this.model);
-      }
-    });
-    Filter.KeysView = Marionette.CompositeView.extend({
-      tagName: 'div',
-      className: 'atl__filter__keys',
-      template: 'tilemap/submodules/filter/templates/filter_keys',
-      childView: Filter.KeyView,
-      childViewContainer: 'ul'
-    });
-    return Filter.RootView = Marionette.LayoutView.extend({
-      tagName: 'div',
-      className: 'atl__filter',
-      template: 'tilemap/submodules/filter/templates/root',
-      regions: {
-        keys: '#atl__filter__keys',
-        values: '#atl__filter__values'
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.Headline', function(Headline, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      return this.Controller.show();
-    });
-    return this.on('stop', function() {
-      this.Controller.destroy();
-      return this.stopListening();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.Headline', function(Headline, App, Backbone, Marionette, $, _) {
-    return Headline.Controller = {
-      show: function() {
-        Headline.rootView = this.getRootView();
-        Headline.rootView.render();
-        return App.vent.trigger('show:component:ready');
-      },
-      destroy: function() {
-        return Headline.rootView.destroy();
-      },
-      getRootView: function() {
-        var rootView;
-        rootView = new Headline.RootView({
-          el: '.atl__headline',
-          model: App.currentProjectModel
-        });
-        return rootView;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.Headline', function(Headline, App, Backbone, Marionette, $, _) {
-    return Headline.RootView = Marionette.ItemView.extend({
-      template: 'tilemap/submodules/headline/templates/root',
-      className: 'atl__headline',
-      events: {
-        'click .link': 'openInfoBox',
-        'click .atl__headline__title': 'openInfoBox'
-      },
-      openInfoBox: function() {
-        return App.commands.execute('activate:info:box');
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.Info', function(Info, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      return this.Controller.show();
-    });
-    return this.on('stop', function() {
-      this.Controller.destroy();
-      return this.stopListening();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.Info', function(Info, App, Backbone, Marionette, $, _) {
-    return Info.Controller = {
-      show: function() {
-        Info.rootView = this.getRootView();
-        return Info.rootView.render();
-      },
-      destroy: function() {
-        return Info.rootView.destroy();
-      },
-      getRootView: function() {
-        var filter, items, model, view;
-        filter = App.reqres.request('filter');
-        items = App.reqres.request('item:entities');
-        model = new Info.Model();
-        model.update(filter, items);
-        view = new Info.RootView({
-          el: '.atl__info',
-          model: model
-        });
-        return view;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.Info', function(Info, App, Backbone, Marionette, $, _) {
-    return Info.Model = Backbone.Model.extend({
-      update: function() {
-        var filter, info, items;
-        filter = App.reqres.request('filter');
-        items = App.reqres.request('item:entities');
-        info = Info.modelBuilder(filter, items);
-        return this.set(info);
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.Info', function(Info, App, Backbone, Marionette, $, _) {
-    return Info.modelBuilder = function(filter, items) {
-      var activeFilterChild, filterValue, formatItemList, hoveredItem, matchingItems, obj, valueIndex, varId;
-      formatItemList = function(items) {
-        if (items.length === 0) {
-          return ' ';
-        }
-        if (items.length === 1) {
-          return items[0];
-        }
-        if (items.length === 2) {
-          return items[0] + " and " + items[1];
-        }
-        if (items.length === 3) {
-          return items[0] + ", " + items[1] + " and " + items[2];
-        }
-        return items[0] + ", " + items[1] + " and " + (items.length - 2) + " others";
-      };
-      obj = {
-        key: ' ',
-        value: ' ',
-        items: ' '
-      };
-      matchingItems = [];
-      activeFilterChild = filter.getActiveChild();
-      obj.key = activeFilterChild.get('short_description');
-      varId = activeFilterChild.get('variable_id');
-      valueIndex = App.reqres.request('value:hovered');
-      if (valueIndex !== -1) {
-        filterValue = activeFilterChild.children[valueIndex];
-        items.each(function(item) {
-          var itemJSON;
-          itemJSON = item.toJSON();
-          if ((filterValue != null) && (filterValue.test != null) && filterValue.test(itemJSON, {
-            ignoreState: true
-          })) {
-            return matchingItems.push(itemJSON.name);
-          }
-        });
-        obj.items = formatItemList(matchingItems);
-        if (filterValue != null) {
-          obj.value = filterValue.get('value');
-        }
-      }
-      if (items.hovered != null) {
-        hoveredItem = items.hovered;
-        obj.items = hoveredItem.get('name');
-        obj.value = hoveredItem.get(varId);
-      }
-      return obj;
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.Info', function(Info, App, Backbone, Marionette, $, _) {
-    return Info.RootView = Marionette.ItemView.extend({
-      tagName: 'div',
-      className: 'atl__info',
-      template: 'tilemap/submodules/info/templates/root',
-      initialize: function() {
-        return this.listenTo(App.vent, 'value:mouseover value:mouseout item:mouseover item:mouseout key:click', function(index) {
-          this.model.update(index);
-          return this.render();
-        });
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      this.listenTo(App.vent, 'item:activate', this.Controller.updateAndReveal.bind(this.Controller));
-      return App.commands.setHandler('activate:info:box', this.Controller.updateAndReveal.bind(this.Controller));
-    });
-    return this.on('stop', function() {
-      this.stopListening();
-      return this.Controller.destroy();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
-    return InfoBox.Controller = {
-      create: function() {
-        InfoBox.rootView = this._getRootView();
-        return InfoBox.rootView.render();
-      },
-      updateAndReveal: function() {
-        this.update();
-        return this.reveal();
-      },
-      update: function() {
-        this.destroy();
-        this._ensureContainer();
-        return this.create();
-      },
-      reveal: function() {
-        return InfoBox.rootView.reveal();
-      },
-      hide: function() {
-        InfoBox.rootView.hide();
-        return App.vent.trigger('item:deactivate');
-      },
-      destroy: function() {
-        if (InfoBox.rootView != null) {
-          return InfoBox.rootView.destroy();
-        }
-      },
-      _ensureContainer: function() {
-        var $atl;
-        $atl = $('.atl__main');
-        if ($atl.find('.atl__info-box').length === 0) {
-          return $atl.append('<div class="atl__info-box"></div>');
-        }
-      },
-      _getRootView: function() {
-        var rootView;
-        rootView = new InfoBox.RootView({
-          model: this._getModel().model,
-          collection: this._getModel().collection,
-          el: '.atl__info-box'
-        });
-        return rootView;
-      },
-      _getModel: function() {
-        var activeItem, model;
-        activeItem = App.reqres.request('item:entities').active;
-        model = InfoBox.getModelObject(activeItem);
-        return model;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
-    var getSectionHtml;
-    InfoBox.SectionsCollection = Backbone.Collection.extend();
-    InfoBox.Model = App.Models.BaseModel.extend({
-      defaults: {
-        name: 'General Project Info'
-      }
-    });
-    InfoBox.getModelObject = function(item) {
-      var collectionData, model;
-      model = item != null ? item : App.currentProjectModel;
-      collectionData = item != null ? this.getItemSectionsCollection(item) : void 0;
-      return {
-        model: model,
-        collection: collectionData != null ? new InfoBox.SectionsCollection(collectionData) : void 0
-      };
-      return new InfoBox.Model(modelData);
-    };
-    InfoBox.getItemSectionsCollection = function(item) {
-      var infoBoxSections, project, sections, variables;
-      project = App.currentProjectModel;
-      infoBoxSections = project.get('data').infobox_variables;
-      variables = project.get('data').variables;
-      return sections = _.map(infoBoxSections.models, function(infoBoxSection) {
-        var obj, sectionTitle, text, variable, variableId;
-        variableId = infoBoxSection.get('variable_id');
-        variable = variables.findWhere({
-          id: variableId
-        });
-        sectionTitle = variable != null ? variable.get('display_title') : "Section";
-        text = item.get(variableId);
-        obj = {
-          heading: sectionTitle,
-          text: getSectionHtml(text)
-        };
-        return obj;
-      });
-    };
-    return getSectionHtml = function(raw) {
-      var formatters, html;
-      if ((raw == null) || _.isArray(raw)) {
-        return raw;
-      }
-      if (_.isNumber(raw)) {
-        return raw.toString();
-      }
-      html = marked(raw);
-      formatters = App.Util.formatters;
-      return formatters.htmlToHtml(html);
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.InfoBox', function(InfoBox, App, Backbone, Marionette, $, _) {
-    var TocView;
-    InfoBox.SectionView = Marionette.CompositeView.extend({
-      tagName: 'li',
-      className: 'atl__info-box__item',
-      template: 'tilemap/submodules/info_box/templates/section'
-    });
-    TocView = Marionette.ItemView.extend({
-      events: {
-        'click a': 'triggerScroll'
-      },
-      triggerScroll: function(e) {
-        return App.vent.trigger('scroll');
-      },
-      isEmpty: function() {
-        return this.$el.children().length < 2;
-      }
-    });
-    return InfoBox.RootView = Marionette.ItemView.extend({
-      initialize: function() {
-        return this.listenTo(App.vent, 'scroll', function() {
-          return this._setStickyNavLayout();
-        });
-      },
-      tagName: 'div',
-      className: 'atl__info-box fill-parent',
-      template: 'tilemap/submodules/info_box/templates/root',
-      events: {
-        'click .atl__info-box__close': 'purgeView'
-      },
-      templateHelpers: App.Util.formatters,
-      getCollectionHtml: function() {
-        var html;
-        if (this.collection != null) {
-          html = "";
-          this.collection.each((function(_this) {
-            return function(model) {
-              var view;
-              view = new InfoBox.SectionView({
-                model: model
-              });
-              view.render();
-              return html += view.el.innerHTML;
-            };
-          })(this));
-          return html;
-        }
-      },
-      onRender: function() {
-        this.$('.static-content').html(this.getCollectionHtml());
-        this._buildToc();
-        this._setStickyNavLayout();
-        this._setImage();
-        if (this.collection == null) {
-          return this._setThemeBackground();
-        }
-      },
-      onBeforeDestroy: function() {
-        if (this.attributionView != null) {
-          this.attributionView.destroy();
-        }
-        if (this.tocView != null) {
-          return this.tocView.destroy();
-        }
-      },
-      reveal: function() {
-        var $app;
-        $app = $('.atl');
-        $app.addClass('atl__info-box--active');
-        return this;
-      },
-      hide: function() {
-        var $app;
-        $app = $('.atl');
-        $app.removeClass('atl__info-box--active');
-        return this;
-      },
-      hideAndDestroy: function() {
-        var $app;
-        $app = $('.atl');
-        $app.removeClass('atl__info-box--active');
-        $app.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', (function(_this) {
-          return function(e) {
-            return _this.destroy();
-          };
-        })(this));
-        return this;
-      },
-      purgeView: function() {
-        return InfoBox.Controller.hide();
-      },
-      showAttributionLink: function(e) {
-        return $(e.target).toggleClass('atl__attribution--active');
-      },
-      _buildToc: function() {
-        $('#atl__toc__list').toc({
-          selectors: 'h1,h2',
-          container: '.static-content',
-          templates: {
-            h2: _.template('<%= title %>'),
-            h3: _.template('<%= title %>')
-          }
-        });
-        this.tocView = new TocView({
-          el: $('#atl__toc__list ul')
-        });
-        if (this.tocView.isEmpty()) {
-          return $('.atl__toc').hide();
-        }
-      },
-      _setStickyNavLayout: function(subClasses) {
-        var $elem, className, scrollTop;
-        scrollTop = $('.atl__info-box').scrollTop();
-        className = "atl__page-nav";
-        $elem = this.$("." + className);
-        if (scrollTop > $('.atl__title-bar').height()) {
-          return $elem.addClass(className + "--fixed");
-        } else {
-          return $elem.removeClass(className + "--fixed");
-        }
-      },
-      _setImage: function() {
-        var $el, imageName, img;
-        $el = this.$('.atl__title-bar__background');
-        $el.css('background-color', 'rgba(50, 50, 50, 0.1)');
-        if (!((this.model != null) && (this.model.getImageName != null))) {
-          return;
-        }
-        imageName = this.model.getImageName();
-        if (imageName != null) {
-          img = App.reqres.request('image:entity', {
-            name: imageName
-          });
-          return img.on('sync', (function(_this) {
-            return function() {
-              var backgroundImageCss;
-              backgroundImageCss = img.getBackgroundImageCss();
-              if (backgroundImageCss != null) {
-                $el.css('background-color', 'initial');
-                $el.css('background-image', backgroundImageCss);
-                return _this._appendImageAttribution(img.getAttributionHtml());
-              }
-            };
-          })(this));
-        }
-      },
-      _appendImageAttribution: function(html) {
-        var view;
-        view = new App.Base.AttributionView({
-          model: new Backbone.Model({
-            linkHtml: html
-          })
-        });
-        view.render();
-        $('.atl__title-bar').append(view.$el);
-        return this.attributionView = view;
-      },
-      _setThemeBackground: function() {
-        var $bg, $titleBar, color;
-        $titleBar = this.$('.atl__title-bar');
-        $bg = this.$('.atl__title-bar__background');
-        $titleBar.removeClass('atl__title-bar--image');
-        $titleBar.addClass('atl__title-bar--solid');
-        color = App.currentThemeColor;
-        if (color != null) {
-          return $bg.css('background-color', color);
-        } else {
-          return $bg.css('background-color', '');
-        }
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.Legend', function(Legend, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      this.Controller.show();
-      return App.reqres.setHandler('legend:value:hovered', function() {
-        return Legend.valueHoverIndex;
-      });
-    });
-    return this.on('stop', function() {
-      App.reqres.removeHandler('legend:value:hovered');
-      this.Controller.destroy();
-      return this.stopListening();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.Legend', function(Legend, App, Backbone, Marionette, $, _) {
-    return Legend.Controller = {
-      show: function() {
-        Legend.rootView = this.getRootView();
-        return Legend.rootView.render();
-      },
-      destroy: function() {
-        return Legend.rootView.destroy();
-      },
-      getRootView: function() {
-        var coll, filter, rootView;
-        filter = App.reqres.request('filter');
-        coll = new Backbone.Collection(filter.getActiveChild().children);
-        rootView = new Legend.RootView({
-          collection: coll,
-          el: '.atl__legend'
-        });
-        return rootView;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
-
-  this.Atlas.module('Tilemap.Legend', function(Legend, App, Backbone, Marionette, $, _) {
-    Legend.IconView = Marionette.ItemView.extend({
-      tagName: 'li',
-      className: 'atl__legend__icon',
-      template: 'tilemap/submodules/legend/templates/icon',
-      onRender: function() {
-        var cls;
-        cls = this.getBackgroundColorClass();
-        return this.$('.hexicon__hex').attr('class', "hexicon__hex " + cls);
-      },
-      events: {
-        'mouseenter': 'onMouseOver',
-        'mouseleave': 'onMouseOut',
-        'click': 'triggerValueClick'
-      },
-      highlight: function() {
-        return this.$el.addClass('atl__legend__icon--highlighted');
-      },
-      dehighlight: function() {
-        return this.$el.removeClass('atl__legend__icon--highlighted');
-      },
-      toggleActiveState: function() {
-        return this.$el.toggleClass('atl__legend__icon--inactive');
-      },
-      onMouseOver: function() {
-        var cls, filter, modelIndex;
-        modelIndex = this._getModelIndex();
-        Legend.valueHoverIndex = modelIndex;
-        filter = this.model.parent.parent;
-        filter.state.valueHoverIndex = modelIndex;
-        App.vent.trigger('value:mouseover', modelIndex);
-        cls = this.getBackgroundColorClass();
-        return App.commands.execute('set:header:strip:color', {
-          className: cls
-        });
-      },
-      onMouseOut: function() {
-        var filter;
-        App.commands.execute('set:header:strip:color', 'none');
-        Legend.valueHoverIndex = -1;
-        filter = this.model.parent.parent;
-        filter.state.valueHoverIndex = -1;
-        return App.vent.trigger('value:mouseout', -1);
-      },
-      getBackgroundColorClass: function() {
-        var colorIndex, i, k;
-        k = this.model.parent.parent.getValueCountOnActiveKey();
-        i = this._getModelIndex() + 1;
-        colorIndex = App.CSS.ClassBuilder.interpolate(i, k);
-        return "bg-c-" + colorIndex;
-      },
-      triggerValueClick: function() {
-        var modelIndex;
-        modelIndex = this._getModelIndex();
-        return App.vent.trigger('value:click', modelIndex);
-      },
-      _getModelIndex: function() {
-        return this.model.collection.models.indexOf(this.model);
-      }
-    });
-    return Legend.RootView = Marionette.CompositeView.extend({
-      tagName: 'div',
-      className: 'atl__legend',
-      template: 'tilemap/submodules/legend/templates/root',
-      childView: Legend.IconView,
-      childViewContainer: 'ul',
-      initialize: function() {
-        this.listenTo(App.vent, 'value:click', this.setActiveState);
-        this.listenTo(App.vent, 'item:mouseover item:mouseout value:mouseover value:mouseout', this.setHighlighting);
-        return this.listenTo(App.vent, 'key:click', function() {
-          var filter;
-          filter = App.reqres.request('filter');
-          return this.collection.reset(filter.getActiveChild().children);
-        });
-      },
-      setActiveState: function(index) {
-        var child;
-        child = this.children.findByIndex(index);
-        return child.toggleActiveState();
-      },
-      setHighlighting: function() {
-        var filter, hoveredItem, indeces;
-        hoveredItem = App.reqres.request('item:entities').hovered;
-        filter = App.reqres.request('filter');
-        if (hoveredItem != null) {
-          indeces = filter.getValueIndeces(hoveredItem);
-        } else {
-          indeces = [App.reqres.request('filter:value:hovered')];
-        }
-        return this.children.each(function(child, childIndex) {
-          if (indexOf.call(indeces, childIndex) >= 0) {
-            return child.highlight();
-          } else {
-            return child.dehighlight();
-          }
-        });
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.Map', function(Map, App, Backbone, Marionette, $, _) {
+  this.Atlas.module('Map', function(Map, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     this.on('start', function() {
       return this.Controller.show();
@@ -6200,7 +5276,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
 }).call(this);
 
 (function() {
-  this.Atlas.module('Tilemap.Map', function(Map, App, Backbone, Marionette, $, _) {
+  this.Atlas.module('Map', function(Map, App, Backbone, Marionette, $, _) {
     return Map.control = {
       center: function(latLng, widthRatio, heightRatio) {
         var map, mapSize, pt;
@@ -6261,7 +5337,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
 }).call(this);
 
 (function() {
-  this.Atlas.module('Tilemap.Map', function(Map, App, Backbone, Marionette, $, _) {
+  this.Atlas.module('Map', function(Map, App, Backbone, Marionette, $, _) {
     return Map.Controller = {
       show: function() {
         return $().ensureScript('L', '/assets/vendor/mapbox.js', this.showMain.bind(this));
@@ -6323,7 +5399,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
 }).call(this);
 
 (function() {
-  this.Atlas.module('Tilemap.Map', function(Map, App, Backbone, Marionette, $, _) {
+  this.Atlas.module('Map', function(Map, App, Backbone, Marionette, $, _) {
     return Map.RootView = Marionette.Object.extend({
       el: '#atl__map',
       initialize: function(options) {
@@ -6420,184 +5496,10 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
 }).call(this);
 
 (function() {
-  this.Atlas.module('Tilemap.Popup', function(Popup, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      this.listenTo(App.vent, 'item:mouseover', this.Controller.create);
-      this.listenTo(App.vent, 'item:mouseout', this.Controller.destroy);
-      return App.commands.setHandler('destroy:popup', (function(_this) {
-        return function() {
-          return _this.Controller.destroy();
-        };
-      })(this));
-    });
-    return this.on('stop', function() {
-      App.commands.removeHandler('destroy:popup');
-      this.Controller.destroy();
-      return this.stopListening();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.Popup', function(Popup, App, Backbone, Marionette, $, _) {
-    return Popup.Controller = {
-      create: function() {
-        if (Popup.rootView == null) {
-          Popup.rootView = Popup.Controller.getRootView();
-          return Popup.rootView.render();
-        }
-      },
-      destroy: function() {
-        if (Popup.rootView != null) {
-          Popup.rootView.destroy();
-          return delete Popup.rootView;
-        }
-      },
-      getRootView: function() {
-        var hoveredItem, items, popupModel, rootView;
-        items = App.reqres.request('item:entities');
-        hoveredItem = items.hovered;
-        popupModel = Popup.getModel(hoveredItem);
-        this._ensureContainer();
-        rootView = new Popup.RootView({
-          model: hoveredItem,
-          el: '.atl__popup'
-        });
-        return rootView;
-      },
-      _ensureContainer: function() {
-        var $atl;
-        $atl = $('.atl__main');
-        if ($atl.find('.atl__popup').length === 0) {
-          return $atl.append('<div class="atl__popup"></div>');
-        }
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.Popup', function(Popup, App, Backbone, Marionette, $, _) {
-    Popup.Model = Backbone.Model.extend({
-      defaults: {
-        name: 'something'
-      }
-    });
-    return Popup.getModel = function(item) {
-      var name;
-      name = (item != null) && (item.get != null) ? item.get('name') : '';
-      return new Popup.Model({
-        name: name
-      });
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.Popup', function(Popup, App, Backbone, Marionette, $, _) {
-    return Popup.RootView = Marionette.ItemView.extend({
-      tagName: 'a',
-      className: 'atl__popup',
-      template: 'tilemap/submodules/popup/templates/root',
-      events: {
-        'click': 'activateModel',
-        'hover': 'preventDefault',
-        'mouseover': 'preventDefault',
-        'mouseout': 'preventDefault'
-      },
-      activateModel: function() {
-        return App.vent.trigger('item:activate', this.model);
-      },
-      onRender: function() {
-        var pos;
-        if ((this.model != null) && (this.model.get('_itemType') === 'state')) {
-          this.$el.addClass('atl__popup--center');
-        }
-        pos = App.reqres.request('item:map:position', this.model);
-        this.$el.css({
-          top: pos.y,
-          left: pos.x
-        });
-        return this._renderLogo();
-      },
-      _renderLogo: function() {
-        var html;
-        html = Marionette.Renderer.render("tilemap/submodules/popup/templates/logo");
-        return this.$('#atl__popup__content__logo').html(html);
-      },
-      preventDefault: function(e) {
-        return e.preventDefault();
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    this.on('start', function() {
-      this.Controller.show();
-      App.searchTerm = "";
-      return App.reqres.setHandler('search:term', function() {
-        return App.searchTerm;
-      });
-    });
-    return this.on('stop', function() {
-      this.Controller.destroy();
-      return this.stopListening();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
-    return Search.Controller = {
-      show: function() {
-        Search.view = new App.Base.SearchView({
-          el: $('.atl__search'),
-          model: new Backbone.Model({
-            placeholder: 'Search Project'
-          })
-        });
-        return Search.view.render();
-      },
-      destroy: function() {
-        return Search.view.destroy();
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap.Search', function(Search, App, Backbone, Marionette, $, _) {
-    return Search.RootView = Marionette.ItemView.extend({
-      tagName: 'div',
-      className: 'atl__search',
-      template: 'tilemap/submodules/search/templates/root',
-      events: {
-        'keyup input': 'changeSearchTerm'
-      },
-      changeSearchTerm: function(e) {
-        Search.term = $(e.target)[0].value;
-        return App.vent.trigger('search:term:change');
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
   var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
-  this.Atlas.module("Tilemap.Map", function(Map, App, Backbone, Marionette, $, _) {
+  this.Atlas.module("Map", function(Map, App, Backbone, Marionette, $, _) {
     return Map.OverlayBaseView = (function(superClass) {
       extend(OverlayBaseView, superClass);
 
@@ -6745,7 +5647,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
   var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
-  this.Atlas.module("Tilemap.Map", function(Map, App, Backbone, Marionette, $, _) {
+  this.Atlas.module("Map", function(Map, App, Backbone, Marionette, $, _) {
     return Map.PathOverlayView = (function(superClass) {
       var getProjectedPoint;
 
@@ -6860,7 +5762,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
   var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
-  this.Atlas.module("Tilemap.Map", function(Map, App, Backbone, Marionette, $, _) {
+  this.Atlas.module("Map", function(Map, App, Backbone, Marionette, $, _) {
     return Map.PindropOverlayView = (function(superClass) {
       extend(PindropOverlayView, superClass);
 
@@ -7015,216 +5917,6 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
       return PindropOverlayView;
 
     })(Map.OverlayBaseView);
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap', function(Tilemap, App, Backbone, Marionette, $, _) {
-    var setItemEventListeners;
-    this.startWithParent = false;
-    Tilemap.submoduleKeys = ['Filter', 'Search', 'Legend', 'Info', 'Headline', 'Map', 'InfoBox', 'Popup'];
-    setItemEventListeners = (function(_this) {
-      return function() {
-        var items, setHeaderStripColor;
-        items = App.reqres.request('item:entities');
-        setHeaderStripColor = function() {
-          var cls, filter, hoveredItem, indeces;
-          filter = App.reqres.request('filter');
-          hoveredItem = items.hovered;
-          if (hoveredItem != null) {
-            indeces = filter.getFriendlyIndeces(hoveredItem, 15);
-            cls = "bg-c-" + indeces[0];
-            return App.commands.execute('set:header:strip:color', {
-              className: cls
-            });
-          } else {
-            return App.commands.execute('set:header:strip:color', 'none');
-          }
-        };
-        _this.listenTo(App.vent, 'item:activate', function(modelOrId) {
-          return items.setActive(modelOrId);
-        });
-        _this.listenTo(App.vent, 'item:deactivate', function() {
-          return items.setActive(-1);
-        });
-        _this.listenTo(App.vent, 'item:mouseover', function(modelOrId) {
-          items.setHovered(modelOrId);
-          return setHeaderStripColor();
-        });
-        return _this.listenTo(App.vent, 'item:mouseout', function() {
-          items.setHovered(-1);
-          return setHeaderStripColor();
-        });
-      };
-    })(this);
-    this.on('start', function() {
-      setItemEventListeners();
-      return this.Controller.show();
-    });
-    return this.on('stop', function() {
-      this.Controller.destroy();
-      return this.stopListening();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap', function(Tilemap, App, Backbone, Marionette, $, _) {
-    return Tilemap.Controller = {
-      show: function() {
-        this.showMainView();
-        return this.startSubmodules();
-      },
-      destroy: function() {
-        return this.destroyMainView();
-      },
-      showMainView: function() {
-        this.setMainRegion();
-        Tilemap.rootView = this.getView();
-        return Tilemap.region.show(Tilemap.rootView);
-      },
-      setMainRegion: function() {
-        return Tilemap.region = new Marionette.Region({
-          el: '#atl__main__temp'
-        });
-      },
-      destroyMainView: function() {
-        if (Tilemap.rootView != null) {
-          Tilemap.rootView.destroy();
-          return delete Tilemap.rootView;
-        }
-      },
-      startSubmodules: function() {
-        var i, len, ref, results, submoduleKey;
-        ref = Tilemap.submoduleKeys;
-        results = [];
-        for (i = 0, len = ref.length; i < len; i++) {
-          submoduleKey = ref[i];
-          results.push(Tilemap.submodules[submoduleKey].start());
-        }
-        return results;
-      },
-      getView: function() {
-        return new Tilemap.View();
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Tilemap', function(Tilemap, App, Backbone, Marionette, $, _) {
-    return Tilemap.View = Marionette.LayoutView.extend({
-      tagName: 'div',
-      className: 'atl__main fill-parent',
-      template: 'tilemap/templates/root',
-      initialize: function() {
-        this.listenTo(App.vent, 'subview:ready', function(subviewHash) {
-          var key, results, value;
-          results = [];
-          for (key in subviewHash) {
-            value = subviewHash[key];
-            results.push(this.getRegion(key).show(value));
-          }
-          return results;
-        });
-        $(window).on('resize', this.collapseIfSettingsBarIsOverflowing.bind(this));
-        this.listenTo(App.vent, 'show:component:ready', this.collapseIfSettingsBarIsOverflowing.bind(this));
-        return App.reqres.setHandler('is:settings:bar:overflowing', (function(_this) {
-          return function() {
-            return _this.isSettingsBarOverflowing();
-          };
-        })(this));
-      },
-      onBeforeDestroy: function() {
-        return $(window).off('resize', this.collapseIfSettingsBarIsOverflowing.bind(this));
-      },
-      filterHeight: 0,
-      headlineHeight: 0,
-      headerHeight: 0,
-      isSettingsBarOverflowing: function() {
-        var availableHeight, space, tolerance, useHeight;
-        tolerance = 60;
-        useHeight = this._getFilterHeight() + this._getHeadlineHeight() + this._getHeaderHeight() + tolerance;
-        availableHeight = $(window).height();
-        space = availableHeight - useHeight;
-        return space < 0;
-      },
-      collapseIfSettingsBarIsOverflowing: function() {
-        if (this.isSettingsBarOverflowing()) {
-          return $('.atl').addClass('atl--collapsed');
-        } else if (!App.uiState.isCollapsed) {
-          return $('.atl').removeClass('atl--collapsed');
-        }
-      },
-      _getFilterHeight: function() {
-        return this._getHeight($('.atl__filter'), 'filter');
-      },
-      _getHeadlineHeight: function() {
-        return this._getHeight($('.atl__headline'), 'headline');
-      },
-      _getHeaderHeight: function() {
-        return this._getHeight($('#header'), 'header');
-      },
-      _getHeight: function($el, name) {
-        var currentHeight, height;
-        currentHeight = $el.height();
-        if (this[name + 'Height'] == null) {
-          this[name + 'Height'] = 0;
-        }
-        if (this[name + 'Height'] < currentHeight) {
-          height = this[name + 'Height'] = currentHeight;
-        } else {
-          height = this[name + 'Height'];
-        }
-        return height;
-      },
-      regions: {
-        infoBox: '#atl__info-box',
-        map: '#atl__map',
-        info: '#atl__info',
-        popup: '#atl__popup'
-      },
-      preventDefault: function(e) {
-        return e.preventDefault();
-      },
-      events: {
-        'click #atl__set-filter-display': 'setFilterDisplay',
-        'click #atl__set-search-display': 'setSearchDisplay'
-      },
-      setFilterDisplay: function(e) {
-        e.preventDefault();
-        $('.atl').removeClass('atl--search-display').addClass('atl--filter-display');
-        $('#atl__set-search-display').removeClass('atl__binary-toggle__link--active');
-        $('#atl__set-filter-display').addClass('atl__binary-toggle__link--active');
-        return App.commands.execute('change:display:mode', 'filter');
-      },
-      setSearchDisplay: function(e) {
-        e.preventDefault();
-        $('.atl').removeClass('atl--filter-display').addClass('atl--search-display');
-        $('#atl__set-filter-display').removeClass('atl__binary-toggle__link--active');
-        $('#atl__set-search-display').addClass('atl__binary-toggle__link--active');
-        return App.commands.execute('change:display:mode', 'search');
-      }
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Projects.Show.Tilemap.Submodules', function(Submodules, App, Backbone, Marionette, $, _) {
-    this.startWithParent = false;
-    return App.reqres.setHandler('value:hovered', function() {
-      var f, l;
-      f = App.reqres.request('filter:value:hovered');
-      l = App.reqres.request('legend:value:hovered');
-      if ((f !== -1) && (f != null)) {
-        return f;
-      }
-      return l;
-    });
   });
 
 }).call(this);

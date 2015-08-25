@@ -2869,7 +2869,6 @@ Comp.Projects.Index.Projects.Project = React.createClass({
 
 Comp.Projects.Show = React.createClass({
   displayName: 'Projects.Show',
-  mixins: [Comp.Mixins.BackboneEvents],
   getInitialState: function() {
     return {
       ui: {
@@ -2911,7 +2910,6 @@ Comp.Projects.Show = React.createClass({
     cls = "atl";
     cls += " atl--" + this.state.ui.display + "-display";
     cls += ' atl--' + project.get('project_template_name').toLowerCase();
-    console.log(this.state);
     if (this.state.ui.isInfoBoxActive) {
       cls += ' atl__info-box--active';
     }
@@ -3028,10 +3026,15 @@ Comp.Projects.Show.Tilemap = React.createClass({
       "className": "atl__settings-bar"
     }, React.createElement(Comp.Projects.Show.Tilemap.Headline, React.__spread({}, this.props)), React.createElement(Comp.Projects.Show.Tilemap.DisplayToggle, React.__spread({}, this.props)), React.createElement(Comp.Projects.Show.Tilemap.Search, React.__spread({}, this.props)), React.createElement(Comp.Projects.Show.Tilemap.Filter, React.__spread({}, this.props, {
       "filter": this.getFilter()
-    }))), React.createElement(Comp.Projects.Show.Tilemap.Popup, React.__spread({}, this.props)), React.createElement(Comp.Projects.Show.Tilemap.InfoBox, React.__spread({}, this.props)));
+    }))), React.createElement(Comp.Projects.Show.Tilemap.Popup, React.__spread({}, this.props)), React.createElement(Comp.Projects.Show.Tilemap.InfoBox, React.__spread({}, this.props, {
+      "activeItem": this.getActiveItem()
+    })));
   },
   getFilter: function() {
     return this.props.project.get('data').filter;
+  },
+  getActiveItem: function() {
+    return this.props.project.get('data').items.active;
   },
   componentWillMount: function() {
     return this.setItemEventListeners();
@@ -3363,10 +3366,7 @@ Comp.Projects.Show.Tilemap.InfoBox = React.createClass({
       "id": "atl__related"
     }))), React.createElement("div", {
       "className": "atl-grid__2-3"
-    }, React.createElement(Comp.Projects.Show.Tilemap.InfoBox.Content, {
-      "project": this.props.project,
-      "App": this.props.App
-    })), React.createElement("div", {
+    }, React.createElement(Comp.Projects.Show.Tilemap.InfoBox.Content, React.__spread({}, this.props))), React.createElement("div", {
       "className": "atl-grid__3-3"
     }))));
   },
@@ -3412,7 +3412,6 @@ Comp.Projects.Show.Tilemap.InfoBox = React.createClass({
     var $el, App, transitionEventName;
     e.preventDefault();
     transitionEventName = this.getTransitionEventName();
-    console.log(transitionEventName);
     $el = $(React.findDOMNode(this.refs.main));
     $el.on(transitionEventName, (function(_this) {
       return function(e) {
@@ -3482,7 +3481,7 @@ Comp.Projects.Show.Tilemap.InfoBox.Content = React.createClass({
   render: function() {
     var activeItem, html, project;
     project = this.props.project;
-    activeItem = project.get('data').items.active;
+    activeItem = this.props.activeItem;
     html = activeItem != null ? this.getContentHtml() : project.get('body_text');
     return React.createElement("div", {
       "className": 'static-content',
@@ -3507,7 +3506,7 @@ Comp.Projects.Show.Tilemap.InfoBox.Content = React.createClass({
       formatters = App.Util.formatters;
       return formatters.htmlToHtml(html);
     };
-    activeItem = project.get('data').items.active;
+    activeItem = this.props.activeItem;
     infoBoxSections = project.get('data').infobox_variables;
     variables = project.get('data').variables;
     html = "";
@@ -3561,7 +3560,7 @@ Comp.Projects.Show.Tilemap.Map = (function (_React$Component) {
 			if (App == null) {
 				return;
 			}
-			App.Tilemap.Map.Controller.show();
+			App.Map.Controller.show();
 		}
 	}, {
 		key: "componentWillUnmount",
@@ -3570,7 +3569,7 @@ Comp.Projects.Show.Tilemap.Map = (function (_React$Component) {
 			if (App == null) {
 				return;
 			}
-			App.Tilemap.Map.Controller.destroy();
+			App.Map.Controller.destroy();
 		}
 	}, {
 		key: "displayName",
@@ -3581,15 +3580,15 @@ Comp.Projects.Show.Tilemap.Map = (function (_React$Component) {
 
 	return _class;
 })(React.Component);
-"use strict";
+'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 Comp.Projects.Show.Tilemap.Popup = (function (_React$Component) {
 	_inherits(_class, _React$Component);
@@ -3597,38 +3596,40 @@ Comp.Projects.Show.Tilemap.Popup = (function (_React$Component) {
 	function _class(props) {
 		_classCallCheck(this, _class);
 
-		_get(Object.getPrototypeOf(_class.prototype), "constructor", this).call(this, props);
+		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
 		this.state = {
 			x: 0,
-			y: 0
+			y: 0,
+			display: 'block',
+			type: 'state'
 		};
 	}
 
 	_createClass(_class, [{
-		key: "render",
+		key: 'render',
 		value: function render() {
-			var style = { x: this.state.x, y: this.state.y };
+			var style = { left: this.state.x, top: this.state.y, display: this.state.display };
 			return React.createElement(
-				"div",
-				{ className: "atl__popup", style: style },
+				'div',
+				{ className: 'atl__popup ' + this.getModifierClass(), style: style },
 				React.createElement(
-					"div",
-					{ className: "atl__popup__wrapper" },
+					'div',
+					{ className: 'atl__popup__wrapper' },
 					React.createElement(
-						"div",
-						{ className: "atl__popup__content" },
+						'div',
+						{ className: 'atl__popup__content' },
 						React.createElement(
-							"div",
-							{ id: "atl__popup__content__logo", className: "atl__popup__content__logo" },
+							'div',
+							{ id: 'atl__popup__content__logo', className: 'atl__popup__content__logo' },
 							this.renderLogo()
 						),
 						React.createElement(
-							"div",
-							{ className: "atl__popup__content__text" },
+							'div',
+							{ className: 'atl__popup__content__text' },
 							React.createElement(
-								"p",
+								'p',
 								null,
-								'name'
+								this.getName()
 							)
 						)
 					)
@@ -3636,40 +3637,76 @@ Comp.Projects.Show.Tilemap.Popup = (function (_React$Component) {
 			);
 		}
 	}, {
-		key: "renderLogo",
-		value: function renderLogo() {
-			return React.createElement(
-				"svg",
-				{ className: "hex-button", viewBox: "0 0 100 100" },
-				React.createElement(
-					"g",
-					{ className: "hex-button__border" },
-					React.createElement("path", { d: "M86.9,77.3L56,94.4c-3.3,1.9-8.7,1.9-12.1,0L13.1,77.3c-3.3-1.9-6-6.4-6-10.2V32.9c0-3.8,2.7-8.3,6-10.2L44,5.6c3.3-1.9,8.7-1.9,12.1,0l30.9,17.2c3.3,1.9,6,6.4,6,10.2v34.1C93,70.8,90.3,75.4,86.9,77.3" })
-				),
-				React.createElement(
-					"g",
-					{ className: "hex-button__down" },
-					React.createElement("path", { d: "M61.6,47c1.7-1.7,4.5-1.7,6.2,0c1.7,1.7,1.7,4.5,0,6.2L53.5,67.6l0,0L53.1,68c-0.8,0.8-2,1.3-3.1,1.3c-1.2,0-2.3-0.5-3.1-1.3l-0.3-0.3l0,0L32.2,53.3c-1.7-1.7-1.7-4.5,0-6.2c1.7-1.7,4.5-1.7,6.2,0l7.2,7.2V35.1c0-1.2,0.5-2.3,1.3-3.1c0.8-0.8,1.9-1.3,3.1-1.3c1.2,0,2.3,0.5,3.1,1.3c0.8,0.8,1.3,1.9,1.3,3.1v19.1L61.6,47z" })
-				)
-			);
+		key: 'getModifierClass',
+		value: function getModifierClass() {
+			if (this.state.type === 'state') {
+				return 'atl__popup--center';
+			}
+			return '';
 		}
 	}, {
-		key: "componentDidMount",
+		key: 'componentDidMount',
 		value: function componentDidMount() {
 			_.extend(this, Backbone.Events);
 			var App = this.props.App;
 			this.listenTo(App.vent, 'item:mouseover item:mouseout', this.setPosition.bind(this));
 		}
 	}, {
-		key: "componentWillUnmount",
+		key: 'componentWillUnmount',
 		value: function componentWillUnmount() {
 			this.stopListening();
 		}
 	}, {
-		key: "setPosition",
+		key: 'getHoveredItem',
+		value: function getHoveredItem() {
+			return this.props.project.get('data').items.hovered;
+		}
+	}, {
+		key: 'getName',
+		value: function getName() {
+			var hoveredItem = this.getHoveredItem();
+			if (hoveredItem == null) {
+				return '';
+			}
+			return hoveredItem.get('name');
+		}
+	}, {
+		key: 'renderLogo',
+		value: function renderLogo() {
+			return React.createElement(
+				'svg',
+				{ className: 'hex-button', viewBox: '0 0 100 100' },
+				React.createElement(
+					'g',
+					{ className: 'hex-button__border' },
+					React.createElement('path', { d: 'M86.9,77.3L56,94.4c-3.3,1.9-8.7,1.9-12.1,0L13.1,77.3c-3.3-1.9-6-6.4-6-10.2V32.9c0-3.8,2.7-8.3,6-10.2L44,5.6c3.3-1.9,8.7-1.9,12.1,0l30.9,17.2c3.3,1.9,6,6.4,6,10.2v34.1C93,70.8,90.3,75.4,86.9,77.3' })
+				),
+				React.createElement(
+					'g',
+					{ className: 'hex-button__down' },
+					React.createElement('path', { d: 'M61.6,47c1.7-1.7,4.5-1.7,6.2,0c1.7,1.7,1.7,4.5,0,6.2L53.5,67.6l0,0L53.1,68c-0.8,0.8-2,1.3-3.1,1.3c-1.2,0-2.3-0.5-3.1-1.3l-0.3-0.3l0,0L32.2,53.3c-1.7-1.7-1.7-4.5,0-6.2c1.7-1.7,4.5-1.7,6.2,0l7.2,7.2V35.1c0-1.2,0.5-2.3,1.3-3.1c0.8-0.8,1.9-1.3,3.1-1.3c1.2,0,2.3,0.5,3.1,1.3c0.8,0.8,1.3,1.9,1.3,3.1v19.1L61.6,47z' })
+				)
+			);
+		}
+	}, {
+		key: 'setPosition',
 		value: function setPosition() {
-			var project = this.props.project;
-			console.log(project);
+			var hoveredItem, App, position;
+			App = this.props.App;
+			if (App == null) {
+				return;
+			}
+			hoveredItem = this.getHoveredItem();
+			if (hoveredItem == null) {
+				return this.setState({ display: 'none' });
+			}
+			position = App.reqres.request('item:map:position', hoveredItem);
+			this.setState({
+				x: position.x,
+				y: position.y,
+				display: 'block',
+				type: hoveredItem.get('_itemType')
+			});
 		}
 	}]);
 

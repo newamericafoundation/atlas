@@ -1,9 +1,0 @@
-<div class="atl__popup__wrapper">
-	<div class="atl__popup__content">
-		<div id="atl__popup__content__logo" class="atl__popup__content__logo">
-		</div>
-		<div class="atl__popup__content__text">
-			<p><%= @name %></p>
-		</div>
-	</div>
-</div>

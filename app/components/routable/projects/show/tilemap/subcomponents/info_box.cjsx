@@ -31,7 +31,7 @@ Comp.Projects.Show.Tilemap.InfoBox = React.createClass
 						</div>
 					</div>
 					<div className="atl-grid__2-3">
-						<Comp.Projects.Show.Tilemap.InfoBox.Content project={ @props.project } App={@props.App} />
+						<Comp.Projects.Show.Tilemap.InfoBox.Content {...@props} />
 					</div>
 					<div className="atl-grid__3-3">
 					</div>
@@ -65,7 +65,6 @@ Comp.Projects.Show.Tilemap.InfoBox = React.createClass
 	close: (e) ->
 		e.preventDefault()
 		transitionEventName = @getTransitionEventName()
-		console.log transitionEventName
 		$el = $(React.findDOMNode(@refs.main))
 		$el.on transitionEventName, (e) =>
 			App.vent.trigger 'item:deactivate'
@@ -74,13 +73,15 @@ Comp.Projects.Show.Tilemap.InfoBox = React.createClass
 		@props.setUiState({ isInfoBoxActive: false })
 		App = @props.App
 		
-
+	# Get a list of transition event names.
+	# Each event is namespaced with an incremental id so that the same events are not reattached over and over again.
 	getTransitionEventName: () ->
 		events = [ 'webkitTransitionEnd', 'otransitionend', 'oTransitionEnd', 'msTransitionEnd', 'transitionend' ]
 		@setState { transitionEventNamespace: this.state.transitionEventNamespace + 1 }
 		eventName = events.map((event) => return "event.#{this.state.transitionEventNamespace}" ).join(' ')
 		eventName
 
+	# Set background image.
 	setImage: () ->
 		project = @props.project
 		App = @props.App
@@ -114,7 +115,7 @@ Comp.Projects.Show.Tilemap.InfoBox.Content = React.createClass
 
 	render: ->
 		project = @props.project
-		activeItem = project.get('data').items.active
+		activeItem = @props.activeItem
 		html = if activeItem? then @getContentHtml() else project.get('body_text')
 		<div className='static-content' dangerouslySetInnerHTML={{ __html: html }}></div>
 
@@ -136,7 +137,7 @@ Comp.Projects.Show.Tilemap.InfoBox.Content = React.createClass
 			formatters = App.Util.formatters
 			formatters.htmlToHtml(html)
 
-		activeItem = project.get('data').items.active
+		activeItem = @props.activeItem
 
 		infoBoxSections = project.get('data').infobox_variables
 		variables = project.get('data').variables

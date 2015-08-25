@@ -4,26 +4,53 @@ Comp.Projects.Show.Tilemap.Popup = class extends React.Component {
 		super(props);
 		this.state = {
 			x: 0,
-			y: 0
+			y: 0,
+			display: 'block',
+			type: 'state'
 		};
 	}
 
 	render() {
-		var style = { x: this.state.x, y: this.state.y };
+		var style = { left: this.state.x, top: this.state.y, display: this.state.display };
 		return (
-			<div className='atl__popup' style={ style }>
+			<div className={ 'atl__popup ' + this.getModifierClass() } style={ style }>
 				<div className="atl__popup__wrapper">
 					<div className="atl__popup__content">
 						<div id="atl__popup__content__logo" className="atl__popup__content__logo">
 							{ this.renderLogo() }
 						</div>
 						<div className="atl__popup__content__text">
-							<p>{ 'name' }</p>
+							<p>{ this.getName() }</p>
 						</div>
 					</div>
 				</div>
 			</div>
 		);
+	}
+
+	getModifierClass() {
+		if(this.state.type === 'state') { return 'atl__popup--center'; }
+		return '';
+	}
+
+	componentDidMount() {
+		_.extend(this, Backbone.Events);
+		var App = this.props.App;
+		this.listenTo(App.vent, 'item:mouseover item:mouseout', this.setPosition.bind(this));
+	}
+
+	componentWillUnmount() {
+		this.stopListening();
+	}
+
+	getHoveredItem() {
+		return this.props.project.get('data').items.hovered;
+	}
+
+	getName() {
+		var hoveredItem = this.getHoveredItem();
+		if (hoveredItem == null) { return ''; }
+		return hoveredItem.get('name');
 	}
 
 	renderLogo() {
@@ -39,19 +66,19 @@ Comp.Projects.Show.Tilemap.Popup = class extends React.Component {
 		);
 	}
 
-	componentDidMount() {
-		_.extend(this, Backbone.Events);
-		var App = this.props.App;
-		this.listenTo(App.vent, 'item:mouseover item:mouseout', this.setPosition.bind(this));
-	}
-
-	componentWillUnmount() {
-		this.stopListening();
-	}
-
 	setPosition() {
-		var project = this.props.project;
-		console.log(project);
+		var hoveredItem, App, position;
+		App = this.props.App;
+		if (App == null) { return; }
+		hoveredItem = this.getHoveredItem();
+		if (hoveredItem == null) { return this.setState({ display: 'none' }); }
+		position = App.reqres.request('item:map:position', hoveredItem);
+		this.setState({
+			x: position.x,
+			y: position.y,
+			display: 'block',
+			type: hoveredItem.get('_itemType')
+		});
 	}
 
 }

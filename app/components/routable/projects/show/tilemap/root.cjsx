@@ -20,11 +20,14 @@ Comp.Projects.Show.Tilemap = React.createClass
 			</div>
 
 			<Comp.Projects.Show.Tilemap.Popup {...@props} />
-			<Comp.Projects.Show.Tilemap.InfoBox {...@props} />
+			<Comp.Projects.Show.Tilemap.InfoBox {...@props} activeItem={ @getActiveItem() } />
 		</div>
 
 	getFilter: ->
 		@props.project.get('data').filter
+
+	getActiveItem: ->
+		@props.project.get('data').items.active
 
 	componentWillMount: ->
 		@setItemEventListeners()

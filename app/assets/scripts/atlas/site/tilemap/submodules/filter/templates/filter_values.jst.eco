@@ -1,5 +1,0 @@
-<%- @long_description %>
-<ul></ul>
-<div class='atl__help atl__help--right' id='atl__help__filter-values'>
-	Select the values you want to filter out. Corresponding map colors are indicated.
-</div>
