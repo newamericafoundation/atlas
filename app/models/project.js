@@ -202,24 +202,12 @@ exports.Model = base.Model.extend({
     },
 
     /**
-     * Set data request handlers on a Marionette app instance.
-     * @param {object} App - Marionette application instance. 
-     */
-    setMarionetteDataRequestHandlers: function(App) {
-        var data = this.get('data');
-        if (data != null) {
-            App.reqres.setHandler('item:entities', function(query) { return data.items; });
-        }
-    },
-
-    /**
      * Prepares model on the client.
      * @param {object} App - Marionette application instance. 
      */
-    prepOnClient: function(App) {
+    prepOnClient: function() {
         this.buildData();
         this.setHtmlToc('body_text');
-        this.setMarionetteDataRequestHandlers(App);
     }
 
 });

@@ -1,8 +1,7 @@
 {
-  "_setupHelp": "http://dotwell.io/taking-advantage-of-bower-in-your-rails-4-app/",
-  "name": "ed-atlas",
-  "version": "0.0.0",
-  "homepage": "https://github.com/pickled-plugins/naf-ed-project-generator",
+  "name": "atlas",
+  "version": "0.1.0",
+  "homepage": "https://github.com/pickled-plugins/atlas",
   "authors": [
     "Peter Szerzo <szerzo@newamerica.org>"
   ],
@@ -18,27 +17,20 @@
     "jquery": "~2.1.4",
     "normalize.css": "3.0.2",
     "backbone": "~1.2.1",
-    "marionette": "~2.4.1",
+    "marionette": "~2.4.2",
     "d3": "3.5.5",
     "mapbox.js": "~2.1.9",
     "topojson": "~1.6.19",
-    "accountant": "0.1.5",
     "jquery-mousewheel": "~3.1.12",
-    "chartist": "~0.8.0",
+    "chartist": "~0.8.3",
+    "chartist-html": "~0.1.2",
     "selectize": "~0.12.0",
     "selectize-scss": "~0.8.9",
     "moment": "~2.9.0",
     "leaflet": "~0.7.3",
     "marked": "~0.3.3",
-    "chartist-html": "~0.1.2",
     "numeral": "~1.5.3",
     "react": "~0.13.3",
     "underscore": "~1.8.3"
-  },
-  "resolutions": {
-    "selectize": "~0.11.2",
-    "marionette": "~2.4.1",
-    "sifter": "0.4.x",
-    "underscore": "1.8.3"
   }
 }

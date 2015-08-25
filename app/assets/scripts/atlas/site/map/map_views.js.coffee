@@ -31,7 +31,7 @@
 			@map.on 'dragend', (e) =>
 				# use functionality only if there is sufficient drag
 				#   as Leaflet sometimes detects slightly imperfect clicks as drags
-				items = App.reqres.request 'item:entities'
+				items = Map.props.project.get('data').items
 				if e.distance > 15 and items.hovered? 
 					@map.ignoreNextClick = true
 			# Expose map to the module. 
@@ -43,9 +43,6 @@
 			L.mapbox.accessToken = 'pk.eyJ1Ijoicm9zc3ZhbmRlcmxpbmRlIiwiYSI6ImRxc0hRR28ifQ.XwCYSPHrGbRvofTV-CIUqw'
 			@map = L.mapbox.map @elId, 'rossvanderlinde.874ab107',
 				attributionControl: true
-				#maxZoom: 8
-				#minZoom: 4
-				#maxBounds: L.latLngBounds L.latLng(-90, -270), L.latLng(+90, +270)
 				zoomControl: false
 				inertia: false
 			@$attribution = $('.leaflet-control-attribution')
@@ -57,7 +54,14 @@
 
 		# Add control buttons.
 		_addControl: ->
-			html = Marionette.Renderer.render('tilemap/templates/zoom_bar', {})
+			html = "<div class='atl__map-control'>
+				<div id='atl__map-attribution' class='atl__map-control__button bg-img-info--black'></div> 
+				<div id='atl__map-zoom-in'  class='atl__map-control__button bg-img-plus--black'></div>
+				<div id='atl__map-zoom-out' class='atl__map-control__button bg-img-minus--black'></div>
+				<div class='atl__help atl__help--left'>
+					View <b>copyright</b> information about the map and <b>zoom</b> in and out.
+				</div>
+			</div>"
 			@$el.append html
 			@$zoomInButton = $('#atl__map-zoom-in')
 			@$zoomOutButton = $('#atl__map-zoom-out')

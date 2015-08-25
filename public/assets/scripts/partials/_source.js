@@ -64,27 +64,6 @@
 }).call(this);
 
 (function() {
-  Marionette.Renderer.render = function(template, data) {
-    var i, len, path, paths;
-    if (window.JST == null) {
-      window.JST = {};
-    }
-    if (window.JST_ATL == null) {
-      window.JST_ATL = {};
-    }
-    paths = [JST_ATL['atlas/site/' + template + '.jst'], JST_ATL['atlas/' + template + '.jst']];
-    for (i = 0, len = paths.length; i < len; i++) {
-      path = paths[i];
-      if (path) {
-        return path(data);
-      }
-    }
-    throw "Template " + template + " not found!";
-  };
-
-}).call(this);
-
-(function() {
   this.Atlas = (function(Backbone, Marionette) {
     var App;
     App = new Marionette.Application();
@@ -96,6 +75,9 @@
       console.log('Hi, Mom!');
       router = new App.Router.Router();
       App.router = router;
+      $(document).on('mousewheel', function(e) {
+        return App.vent.trigger('scroll');
+      });
       App.dataCache = {};
       if (Backbone.history) {
         return Backbone.history.start({
@@ -2574,26 +2556,12 @@ exports.Model = base.Model.extend({
     },
 
     /**
-     * Set data request handlers on a Marionette app instance.
-     * @param {object} App - Marionette application instance. 
-     */
-    setMarionetteDataRequestHandlers: function setMarionetteDataRequestHandlers(App) {
-        var data = this.get('data');
-        if (data != null) {
-            App.reqres.setHandler('item:entities', function (query) {
-                return data.items;
-            });
-        }
-    },
-
-    /**
      * Prepares model on the client.
      * @param {object} App - Marionette application instance. 
      */
-    prepOnClient: function prepOnClient(App) {
+    prepOnClient: function prepOnClient() {
         this.buildData();
         this.setHtmlToc('body_text');
-        this.setMarionetteDataRequestHandlers(App);
     }
 
 });
@@ -5242,27 +5210,6 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
 }).call(this);
 
 (function() {
-  this.Atlas.module('Site', function(Site, App, Backbone, Marionette, $, _) {
-    this.startWithParent = true;
-    App.currentDisplayMode = 'filter';
-    App.commands.setHandler('change:display:mode', function(mode) {
-      App.currentDisplayMode = mode;
-      return App.vent.trigger('display:mode:change');
-    });
-    App.reqres.setHandler('current:project', function() {
-      return App.currentProjectModel;
-    });
-    App.vent.on('current:project:change', function(project) {
-      return App.currentProjectModel = project;
-    });
-    return $(document).on('mousewheel', function(e) {
-      return App.vent.trigger('scroll');
-    });
-  });
-
-}).call(this);
-
-(function() {
   this.Atlas.module('Map', function(Map, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     this.on('start', function() {
@@ -5349,11 +5296,8 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
         return $().ensureScript('d3', '/assets/vendor/d3.min.js', this.showOverlay.bind(this));
       },
       showOverlay: function() {
-        return this.renderOverlayView();
-      },
-      renderOverlayView: function() {
         var View, itemType, items, launch;
-        items = App.reqres.request('item:entities');
+        items = Map.props.project.get('data').items;
         itemType = items.getItemType();
         View = itemType === 'state' ? Map.PathOverlayView : Map.PindropOverlayView;
         launch = function(baseGeoData) {
@@ -5428,7 +5372,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
         this.map.on('dragend', (function(_this) {
           return function(e) {
             var items;
-            items = App.reqres.request('item:entities');
+            items = Map.props.project.get('data').items;
             if (e.distance > 15 && (items.hovered != null)) {
               return _this.map.ignoreNextClick = true;
             }
@@ -5451,7 +5395,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
       },
       _addControl: function() {
         var html;
-        html = Marionette.Renderer.render('tilemap/templates/zoom_bar', {});
+        html = "<div class='atl__map-control'> <div id='atl__map-attribution' class='atl__map-control__button bg-img-info--black'></div> <div id='atl__map-zoom-in'  class='atl__map-control__button bg-img-plus--black'></div> <div id='atl__map-zoom-out' class='atl__map-control__button bg-img-minus--black'></div> <div class='atl__help atl__help--left'> View <b>copyright</b> information about the map and <b>zoom</b> in and out. </div> </div>";
         this.$el.append(html);
         this.$zoomInButton = $('#atl__map-zoom-in');
         this.$zoomOutButton = $('#atl__map-zoom-out');
@@ -5512,18 +5456,22 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
         this.listenTo(App.vent, 'value:mouseover value:mouseout value:click search:term:change', this.update);
         App.reqres.setHandler('item:map:position', (function(_this) {
           return function(item) {
-            var feature, identityPath, latLong, longLatArrayCentroid, map;
-            identityPath = d3.geo.path().projection(function(d) {
-              return d;
-            });
-            feature = _this._getFeatureByModel(item);
-            longLatArrayCentroid = identityPath.centroid(feature);
-            latLong = L.latLng(longLatArrayCentroid[1], longLatArrayCentroid[0]);
-            map = Map.map;
-            return map.latLngToContainerPoint(latLong);
+            return _this.getItemMapPosition(item);
           };
         })(this));
         return this;
+      };
+
+      OverlayBaseView.prototype.getItemMapPosition = function(item) {
+        var feature, identityPath, latLong, longLatArrayCentroid, map;
+        identityPath = d3.geo.path().projection(function(d) {
+          return d;
+        });
+        feature = this._getFeatureByModel(item);
+        longLatArrayCentroid = identityPath.centroid(feature);
+        latLong = L.latLng(longLatArrayCentroid[1], longLatArrayCentroid[0]);
+        map = Map.map;
+        return map.latLngToContainerPoint(latLong);
       };
 
       OverlayBaseView.prototype.updateAnimated = function() {
@@ -5541,7 +5489,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
         })(this));
       };
 
-      OverlayBaseView.prototype.onFeatureMouseOut = function() {
+      OverlayBaseView.prototype.onFeatureMouseOut = function(feature) {
         return App.vent.trigger('item:mouseout');
       };
 
@@ -5557,7 +5505,6 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
       OverlayBaseView.prototype.onFeatureClick = function(feature) {
         var message;
         if ((Map.map != null) && Map.map.ignoreNextClick) {
-          App.commands.execute('destroy:popup');
           Map.map.ignoreNextClick = false;
           return;
         }
@@ -5593,12 +5540,13 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
       };
 
       OverlayBaseView.prototype.getFeatureDisplayState = function(feature) {
-        var filter, model, searchTerm;
-        filter = App.currentProjectModel.get('data').filter;
+        var display, filter, model, searchTerm;
+        display = Map.props.uiState.display;
+        filter = Map.props.project.get('data').filter;
         searchTerm = App.reqres.request('search:term');
         model = feature._model;
         if (model != null) {
-          return model.getDisplayState(filter, searchTerm, App.currentDisplayMode);
+          return model.getDisplayState(filter, searchTerm, display);
         }
       };
 
@@ -5715,7 +5663,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
 
       PathOverlayView.prototype.getFill = function(feature) {
         var filter, id, valueIndeces;
-        filter = App.currentProjectModel.get('data').filter;
+        filter = Map.props.project.get('data').filter;
         valueIndeces = filter.getFriendlyIndeces(feature._model, 15);
         if ((valueIndeces == null) || valueIndeces.length === 0) {
           return;
@@ -5729,7 +5677,6 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
 
       PathOverlayView.prototype.update = function() {
         var geoJson, path;
-        App.commands.execute('reset:patterns');
         path = this.getPath();
         geoJson = this.collection;
         this.g.selectAll('path').attr({
@@ -5830,7 +5777,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
 
       PindropOverlayView.prototype.getFills = function(feature) {
         var filter, valueIndeces;
-        filter = App.currentProjectModel.get('data').filter;
+        filter = Map.props.project.get('data').filter;
         valueIndeces = filter.getFriendlyIndeces(feature._model, 15);
         if ((valueIndeces == null) || valueIndeces.length === 0) {
           return;

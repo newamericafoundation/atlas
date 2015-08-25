@@ -6,7 +6,7 @@ Comp.Setup = React.createClass
 		App = @props.App
 		<div className="atl__setup">
 			<svg id="patterns">
-				<Comp.Setup.Patterns App={App} />
+				<Comp.Setup.Patterns App={App} size={30} />
 			</svg>
 		</div>
 
@@ -20,19 +20,19 @@ Comp.Setup.Patterns = React.createClass
 
 	render: ->
 		<defs>
-			{@_renderList()}
+			{@renderList()}
 		</defs>
-
-	_renderList: ->
-		# Need to start with a set number of empty patterns and modify as new patterns are requested.
-		#   it does not work when they are generated from scratch on the fly.
-		# @state.data.map (colorCodes, id) =>
-		for i in [0...20] by 1
-			colorCodes = @state.data[i]
-			<Comp.Setup.Pattern App={@props.App} id={i} key={i} colorCodes={colorCodes} />
 
 	getInitialState: ->
 		{ data: [] }
+
+	renderList: ->
+		# Need to start with a set number of empty patterns and modify as new patterns are requested.
+		#   it does not work when they are generated from scratch on the fly.
+		# @state.data.map (colorCodes, id) =>
+		for i in [0...this.props.size] by 1
+			colorCodes = @state.data[i]
+			<Comp.Setup.Pattern App={@props.App} id={i} key={i} colorCodes={colorCodes} />
 
 	componentDidMount: ->
 		App = @props.App
@@ -41,6 +41,7 @@ Comp.Setup.Patterns = React.createClass
 			App.reqres.setHandler 'get:pattern:id', @ensureAndGetPattern.bind(@)
 
 	componentWillUnmount: ->
+		App = @props.App
 		App.commands.clearHandler 'reset:patterns'
 
 	resetPatterns: ->
@@ -54,11 +55,17 @@ Comp.Setup.Patterns = React.createClass
 		for existingColorCodes, i in @state.data
 			if colorCodes.join('-') is existingColorCodes.join('-')
 				return i
-		# Define pattern.
-		@state.data.push colorCodes
-		@forceUpdate()
+		# If the pattern is not found, define it on the fly.
+		data = this.state.data
+		# If the size is exceeded, erase all patterns (suboptimal).
+		if (data.length > this.props.size - 2)
+			data = []
+		data.push colorCodes
+		@setState { data: data }
+		# Return the index of the newly defined color code.
 		return @state.data.length-1
 
+	# These are the readily assembled pattern templates are assembled programatically by the child component.
 	__testRenderTwoColorPattern: ->
 		<pattern id="diagonal-stripes" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
 		    <rect x="0" y="0" width="2" height="8" style={"stroke:none; fill:#{ 'roed' };"} />
@@ -81,14 +88,17 @@ Comp.Setup.Pattern = React.createClass
 	displayName: 'Setup.Pattern'
 
 	render: ->
-		if @props.colorCodes?
-			colorCount = @props.colorCodes.length
-			dim = if colorCount is 2 then 12 else 18
-			className = 'striped-pattern-' + @props.colorCodes.join('-')
+		return <pattern /> unless @props.colorCodes?
+		colorCount = @props.colorCodes.length
+		dim = if colorCount is 2 then 12 else 18
+		className = 'striped-pattern-' + @props.colorCodes.join('-')
 		<pattern id={'stripe-pattern-' + @props.id} className={className} x="0" y ="0" width={dim} height={dim} patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
 			{@_getPatternRects()}
 		</pattern>
 
+	# Custom color function that translates a color code into an rgb value.
+	# TODO: this function needs to be provided as props to the parent component.
+	#   this will make the component more general.
 	getColor: (colorCode) ->
 		App = @props.App
 		return App.CSS.Colors.toRgb(colorCode - 1) if App?

@@ -57,7 +57,7 @@
 
 
         getFills: (feature) ->
-            filter = App.currentProjectModel.get('data').filter
+            filter = Map.props.project.get('data').filter
             valueIndeces = filter.getFriendlyIndeces(feature._model, 15)
             return if not valueIndeces? or valueIndeces.length is 0
             return valueIndeces.map (valueIndex) ->

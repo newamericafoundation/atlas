@@ -69,7 +69,8 @@ Comp.Setup = React.createClass({
     }, React.createElement("svg", {
       "id": "patterns"
     }, React.createElement(Comp.Setup.Patterns, {
-      "App": App
+      "App": App,
+      "size": 30.
     })));
   }
 });
@@ -78,12 +79,17 @@ Comp.Setup.Patterns = React.createClass({
   displayName: 'Setup.Patterns',
   mixins: [Comp.Mixins.BackboneEvents],
   render: function() {
-    return React.createElement("defs", null, this._renderList());
+    return React.createElement("defs", null, this.renderList());
   },
-  _renderList: function() {
-    var colorCodes, i, j, results;
+  getInitialState: function() {
+    return {
+      data: []
+    };
+  },
+  renderList: function() {
+    var colorCodes, i, j, ref, results;
     results = [];
-    for (i = j = 0; j < 20; i = j += 1) {
+    for (i = j = 0, ref = this.props.size; j < ref; i = j += 1) {
       colorCodes = this.state.data[i];
       results.push(React.createElement(Comp.Setup.Pattern, {
         "App": this.props.App,
@@ -94,11 +100,6 @@ Comp.Setup.Patterns = React.createClass({
     }
     return results;
   },
-  getInitialState: function() {
-    return {
-      data: []
-    };
-  },
   componentDidMount: function() {
     var App;
     App = this.props.App;
@@ -108,6 +109,8 @@ Comp.Setup.Patterns = React.createClass({
     }
   },
   componentWillUnmount: function() {
+    var App;
+    App = this.props.App;
     return App.commands.clearHandler('reset:patterns');
   },
   resetPatterns: function() {
@@ -116,7 +119,7 @@ Comp.Setup.Patterns = React.createClass({
     });
   },
   ensureAndGetPattern: function(colorCodes) {
-    var existingColorCodes, i, j, len, ref;
+    var data, existingColorCodes, i, j, len, ref;
     ref = this.state.data;
     for (i = j = 0, len = ref.length; j < len; i = ++j) {
       existingColorCodes = ref[i];
@@ -124,8 +127,14 @@ Comp.Setup.Patterns = React.createClass({
         return i;
       }
     }
-    this.state.data.push(colorCodes);
-    this.forceUpdate();
+    data = this.state.data;
+    if (data.length > this.props.size - 2) {
+      data = [];
+    }
+    data.push(colorCodes);
+    this.setState({
+      data: data
+    });
     return this.state.data.length - 1;
   },
   __testRenderTwoColorPattern: function() {
@@ -198,11 +207,12 @@ Comp.Setup.Pattern = React.createClass({
   displayName: 'Setup.Pattern',
   render: function() {
     var className, colorCount, dim;
-    if (this.props.colorCodes != null) {
-      colorCount = this.props.colorCodes.length;
-      dim = colorCount === 2 ? 12 : 18;
-      className = 'striped-pattern-' + this.props.colorCodes.join('-');
+    if (this.props.colorCodes == null) {
+      return React.createElement("pattern", null);
     }
+    colorCount = this.props.colorCodes.length;
+    dim = colorCount === 2 ? 12 : 18;
+    className = 'striped-pattern-' + this.props.colorCodes.join('-');
     return React.createElement("pattern", {
       "id": 'stripe-pattern-' + this.props.id,
       "className": className,
@@ -2986,8 +2996,7 @@ Comp.Projects.Show = React.createClass({
       return project.on('sync', (function(_this) {
         return function() {
           if (project.exists()) {
-            project.prepOnClient(App);
-            App.vent.trigger('current:project:change', project);
+            project.prepOnClient();
             _this.setState({
               project: project
             });
@@ -3122,9 +3131,19 @@ Comp.Projects.Show.Tilemap.DisplayToggle = (function (_React$Component) {
 				);
 			});
 		}
+
+		//
 	}, {
 		key: 'setUiDisplay',
 		value: function setUiDisplay(name) {
+			var App;
+			if (this.props.uiState.display === name) {
+				return;
+			}
+			App = this.props.App;
+			if (App != null) {
+				App.vent.trigger('display:mode:change');
+			}
 			this.props.setUiState({ display: name });
 		}
 	}]);
@@ -3542,10 +3561,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 Comp.Projects.Show.Tilemap.Map = (function (_React$Component) {
 	_inherits(_class, _React$Component);
 
-	function _class() {
+	function _class(props) {
 		_classCallCheck(this, _class);
 
-		_get(Object.getPrototypeOf(_class.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(_class.prototype), "constructor", this).call(this, props);
 	}
 
 	_createClass(_class, [{
@@ -3560,7 +3579,11 @@ Comp.Projects.Show.Tilemap.Map = (function (_React$Component) {
 			if (App == null) {
 				return;
 			}
-			App.Map.Controller.show();
+			App.Map.props = {
+				project: this.props.project,
+				uiState: this.props.uiState
+			};
+			App.Map.start();
 		}
 	}, {
 		key: "componentWillUnmount",
@@ -3569,7 +3592,8 @@ Comp.Projects.Show.Tilemap.Map = (function (_React$Component) {
 			if (App == null) {
 				return;
 			}
-			App.Map.Controller.destroy();
+			App.Map.props = { project: undefined };
+			App.Map.stop();
 		}
 	}, {
 		key: "displayName",
@@ -3712,17 +3736,67 @@ Comp.Projects.Show.Tilemap.Popup = (function (_React$Component) {
 
 	return _class;
 })(React.Component);
-Comp.Projects.Show.Tilemap.Search = React.createClass({
-  render: function() {
-    return React.createElement("div", {
-      "className": 'atl__search'
-    }, React.createElement("input", {
-      "type": 'text',
-      "placeholder": 'Search Project'
-    }));
-  }
-});
+'use strict';
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Projects.Show.Tilemap.Search = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class(props) {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
+		this.state = {
+			searchTerm: ''
+		};
+	}
+
+	_createClass(_class, [{
+		key: 'render',
+		value: function render() {
+			return React.createElement(
+				'div',
+				{ className: 'atl__search' },
+				React.createElement('input', { type: 'text', placeholder: 'Search Project', onChange: this.setSearchTerm.bind(this) })
+			);
+		}
+	}, {
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			var _this = this;
+
+			var App = this.props.App;
+			if (App == null) {
+				return;
+			}
+			App.reqres.setHandler('search:term', function () {
+				return _this.state.searchTerm;
+			});
+		}
+	}, {
+		key: 'setSearchTerm',
+		value: function setSearchTerm(e) {
+			console.log(e.target.value.length);
+			var App = this.props.App;
+			if (App == null) {
+				return;
+			}
+			this.setState({
+				searchTerm: e.target.value
+			});
+			App.vent.trigger('search:term:change');
+		}
+	}]);
+
+	return _class;
+})(React.Component);
 Comp.Projects.Show.Explainer = React.createClass({
   displayName: 'Projects.Show.Explainer',
   render: function() {

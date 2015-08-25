@@ -46509,275 +46509,6 @@ ChartistHtml.ChartCollectionManager.prototype = {
     }
 }).call(this);
 
-var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty,
-  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
-
-Marionette.Accountant = {};
-
-Marionette.Accountant.CompositeView = (function(superClass) {
-  extend(CompositeView, superClass);
-
-  function CompositeView() {
-    var arg;
-    arg = arguments[0];
-    if (arg.model && arg.model.children) {
-      arg.collection = new Backbone.Collection(arg.model.children);
-    }
-    Marionette.CompositeView.apply(this, arguments);
-  }
-
-  return CompositeView;
-
-})(Marionette.CompositeView);
-
-Marionette.Accountant.CompositeModel = (function(superClass) {
-  extend(CompositeModel, superClass);
-
-  function CompositeModel() {
-    Backbone.Model.apply(this, arguments);
-    this.children = [];
-    this.doAccounting();
-  }
-
-  CompositeModel.prototype._getChildrenKey = function() {
-    var key, ref, value;
-    ref = this.attributes;
-    for (key in ref) {
-      value = ref[key];
-      if (_.isArray(value)) {
-        return key;
-      }
-    }
-  };
-
-  CompositeModel.prototype.doAccounting = function() {
-    var ChildModelConstructor, child, childModel, children, childrenKey, i, j, len, max, results;
-    childrenKey = this._getChildrenKey();
-    ChildModelConstructor = _.isFunction(this.childModel) ? this.childModel : Backbone.Model;
-    if (childrenKey) {
-      this.set('_childrenKey', childrenKey);
-      children = this.get(childrenKey);
-      this.unset(childrenKey);
-      max = children.length;
-      results = [];
-      for (i = j = 0, len = children.length; j < len; i = ++j) {
-        child = children[i];
-        childModel = new ChildModelConstructor(child);
-        childModel.parent = this;
-        childModel.set('_index', i);
-        results.push(this.children.push(childModel));
-      }
-      return results;
-    }
-  };
-
-  CompositeModel.prototype.toJSON = function() {
-    return Backbone.Model.prototype.toJSON.apply(this);
-  };
-
-  CompositeModel.prototype.toNestedJSON = function() {
-    var child, childrenKey, j, json, len, nestedJson, ref;
-    json = this.toJSON();
-    if (typeof json['_index'] !== 'undefined') {
-      delete json['_index'];
-    }
-    if (this.children) {
-      childrenKey = this.get('_childrenKey');
-      json[childrenKey] = [];
-      ref = this.children;
-      for (j = 0, len = ref.length; j < len; j++) {
-        child = ref[j];
-        nestedJson = child.toNestedJSON != null ? child.toNestedJSON() : child.toJSON();
-        delete nestedJson['_index'];
-        json[childrenKey].push(nestedJson);
-      }
-      delete json['_childrenKey'];
-    }
-    return json;
-  };
-
-  CompositeModel.prototype.getChildIndex = function() {
-    if (this.parent) {
-      return this.parent.children.indexOf(this);
-    }
-    return -1;
-  };
-
-  CompositeModel.prototype.getSiblingCount = function() {
-    if (this.parent) {
-      return this.parent.children.length;
-    }
-    return -1;
-  };
-
-  CompositeModel.prototype.getNextSibling = function() {
-    var ci, sc;
-    ci = this.getChildIndex();
-    sc = this.getSiblingCount();
-    if ((ci !== -1) && (sc !== -1) && (ci < sc)) {
-      return this.parent.children[ci + 1];
-    }
-  };
-
-  CompositeModel.prototype.getPreviousSibling = function() {
-    var ci, sc;
-    ci = this.getChildIndex();
-    sc = this.getSiblingCount();
-    if ((ci !== -1) && (sc !== -1) && (ci > 0)) {
-      return this.parent.children[ci - 1];
-    }
-  };
-
-  return CompositeModel;
-
-})(Backbone.Model);
-
-Marionette.Accountant.FilterItemView = (function(superClass) {
-  extend(FilterItemView, superClass);
-
-  function FilterItemView() {
-    Marionette.ItemView.apply(this, arguments);
-    this.setActiveState();
-    this.listenTo(this.model, 'change:_isActive', this.setActiveState);
-  }
-
-  FilterItemView.prototype.setActiveState = function() {
-    var isActive;
-    isActive = this.model.isActive();
-    if (this.inactiveSubclassName != null) {
-      if (isActive) {
-        return this.$el.removeClass(this.inactiveSubclassName);
-      } else {
-        return this.$el.addClass(this.inactiveSubclassName);
-      }
-    } else if (this.activeSubclassName != null) {
-      if (isActive) {
-        return this.$el.addClass(this.activeSubclassName);
-      } else {
-        return this.$el.removeClass(this.activeSubclassName);
-      }
-    }
-  };
-
-  FilterItemView.prototype.onBeforeDestroy = function() {
-    return this.stopListening();
-  };
-
-  return FilterItemView;
-
-})(Marionette.ItemView);
-
-Marionette.Accountant.FilterModel = (function(superClass) {
-  extend(FilterModel, superClass);
-
-  function FilterModel() {
-    return FilterModel.__super__.constructor.apply(this, arguments);
-  }
-
-  FilterModel.prototype._activate = function() {
-    return this.set('_isActive', true);
-  };
-
-  FilterModel.prototype._deactivate = function() {
-    return this.set('_isActive', false);
-  };
-
-  FilterModel.prototype.toggleActiveState = function() {
-    if (this.isActive()) {
-      if (!((this.collection != null) && this.collection.hasSingleActiveChild)) {
-        return this._deactivate();
-      }
-    } else {
-      this._activate();
-      if ((this.collection != null) && this.collection.hasSingleActiveChild) {
-        return this.collection.deactivateSiblings(this);
-      }
-    }
-  };
-
-  FilterModel.prototype.isActive = function() {
-    return this.get('_isActive');
-  };
-
-  FilterModel.prototype.test = function(testedModel, foreignKey) {
-    var foreignId, foreignIds, id;
-    if (!this.isActive()) {
-      return false;
-    }
-    id = this.get('id');
-    foreignId = testedModel.get(foreignKey + '_id');
-    if (foreignId != null) {
-      return id === foreignId;
-    }
-    foreignIds = testedModel.get(foreignKey + '_ids');
-    if (foreignIds != null) {
-      return (indexOf.call(foreignIds, id) >= 0);
-    }
-    return false;
-  };
-
-  return FilterModel;
-
-})(Backbone.Model);
-
-Marionette.Accountant.FilterCollection = (function(superClass) {
-  extend(FilterCollection, superClass);
-
-  function FilterCollection() {
-    Backbone.Collection.apply(this, arguments);
-    if (this.initializeActiveStatesOnReset) {
-      this.on('reset', this.initializeActiveStates);
-    }
-  }
-
-  FilterCollection.prototype.model = Marionette.Accountant.FilterModel;
-
-  FilterCollection.prototype.hasSingleActiveChild = false;
-
-  FilterCollection.prototype.deactivateSiblings = function(activeChild) {
-    var j, len, model, ref, results;
-    ref = this.models;
-    results = [];
-    for (j = 0, len = ref.length; j < len; j++) {
-      model = ref[j];
-      if (model !== activeChild) {
-        results.push(model._deactivate());
-      } else {
-        results.push(void 0);
-      }
-    }
-    return results;
-  };
-
-  FilterCollection.prototype.initializeActiveStates = function() {
-    var index, j, len, model, ref;
-    ref = this.models;
-    for (index = j = 0, len = ref.length; j < len; index = ++j) {
-      model = ref[index];
-      model.set('_isActive', !this.hasSingleActiveChild ? true : (index === 0 ? true : false));
-    }
-    return this.trigger('initialize:active:states');
-  };
-
-  FilterCollection.prototype.test = function(testedModel, foreignKey) {
-    var j, len, model, ref;
-    ref = this.models;
-    for (j = 0, len = ref.length; j < len; j++) {
-      model = ref[j];
-      if (model.test(testedModel, foreignKey)) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  return FilterCollection;
-
-})(Backbone.Collection);
-
-//# sourceMappingURL=marionette.accountant.js.map
-
 // Generated by CoffeeScript 1.6.2
 /** echo  * @license echo  * while read i do echo  *  done echo
 */
@@ -48895,7 +48626,8 @@ Comp.Setup = React.createClass({
     }, React.createElement("svg", {
       "id": "patterns"
     }, React.createElement(Comp.Setup.Patterns, {
-      "App": App
+      "App": App,
+      "size": 30.
     })));
   }
 });
@@ -48904,12 +48636,17 @@ Comp.Setup.Patterns = React.createClass({
   displayName: 'Setup.Patterns',
   mixins: [Comp.Mixins.BackboneEvents],
   render: function() {
-    return React.createElement("defs", null, this._renderList());
+    return React.createElement("defs", null, this.renderList());
   },
-  _renderList: function() {
-    var colorCodes, i, j, results;
+  getInitialState: function() {
+    return {
+      data: []
+    };
+  },
+  renderList: function() {
+    var colorCodes, i, j, ref, results;
     results = [];
-    for (i = j = 0; j < 20; i = j += 1) {
+    for (i = j = 0, ref = this.props.size; j < ref; i = j += 1) {
       colorCodes = this.state.data[i];
       results.push(React.createElement(Comp.Setup.Pattern, {
         "App": this.props.App,
@@ -48920,11 +48657,6 @@ Comp.Setup.Patterns = React.createClass({
     }
     return results;
   },
-  getInitialState: function() {
-    return {
-      data: []
-    };
-  },
   componentDidMount: function() {
     var App;
     App = this.props.App;
@@ -48934,6 +48666,8 @@ Comp.Setup.Patterns = React.createClass({
     }
   },
   componentWillUnmount: function() {
+    var App;
+    App = this.props.App;
     return App.commands.clearHandler('reset:patterns');
   },
   resetPatterns: function() {
@@ -48942,7 +48676,7 @@ Comp.Setup.Patterns = React.createClass({
     });
   },
   ensureAndGetPattern: function(colorCodes) {
-    var existingColorCodes, i, j, len, ref;
+    var data, existingColorCodes, i, j, len, ref;
     ref = this.state.data;
     for (i = j = 0, len = ref.length; j < len; i = ++j) {
       existingColorCodes = ref[i];
@@ -48950,8 +48684,14 @@ Comp.Setup.Patterns = React.createClass({
         return i;
       }
     }
-    this.state.data.push(colorCodes);
-    this.forceUpdate();
+    data = this.state.data;
+    if (data.length > this.props.size - 2) {
+      data = [];
+    }
+    data.push(colorCodes);
+    this.setState({
+      data: data
+    });
     return this.state.data.length - 1;
   },
   __testRenderTwoColorPattern: function() {
@@ -49024,11 +48764,12 @@ Comp.Setup.Pattern = React.createClass({
   displayName: 'Setup.Pattern',
   render: function() {
     var className, colorCount, dim;
-    if (this.props.colorCodes != null) {
-      colorCount = this.props.colorCodes.length;
-      dim = colorCount === 2 ? 12 : 18;
-      className = 'striped-pattern-' + this.props.colorCodes.join('-');
+    if (this.props.colorCodes == null) {
+      return React.createElement("pattern", null);
     }
+    colorCount = this.props.colorCodes.length;
+    dim = colorCount === 2 ? 12 : 18;
+    className = 'striped-pattern-' + this.props.colorCodes.join('-');
     return React.createElement("pattern", {
       "id": 'stripe-pattern-' + this.props.id,
       "className": className,
@@ -51812,8 +51553,7 @@ Comp.Projects.Show = React.createClass({
       return project.on('sync', (function(_this) {
         return function() {
           if (project.exists()) {
-            project.prepOnClient(App);
-            App.vent.trigger('current:project:change', project);
+            project.prepOnClient();
             _this.setState({
               project: project
             });
@@ -51948,9 +51688,19 @@ Comp.Projects.Show.Tilemap.DisplayToggle = (function (_React$Component) {
 				);
 			});
 		}
+
+		//
 	}, {
 		key: 'setUiDisplay',
 		value: function setUiDisplay(name) {
+			var App;
+			if (this.props.uiState.display === name) {
+				return;
+			}
+			App = this.props.App;
+			if (App != null) {
+				App.vent.trigger('display:mode:change');
+			}
 			this.props.setUiState({ display: name });
 		}
 	}]);
@@ -52368,10 +52118,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 Comp.Projects.Show.Tilemap.Map = (function (_React$Component) {
 	_inherits(_class, _React$Component);
 
-	function _class() {
+	function _class(props) {
 		_classCallCheck(this, _class);
 
-		_get(Object.getPrototypeOf(_class.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(_class.prototype), "constructor", this).call(this, props);
 	}
 
 	_createClass(_class, [{
@@ -52386,7 +52136,11 @@ Comp.Projects.Show.Tilemap.Map = (function (_React$Component) {
 			if (App == null) {
 				return;
 			}
-			App.Map.Controller.show();
+			App.Map.props = {
+				project: this.props.project,
+				uiState: this.props.uiState
+			};
+			App.Map.start();
 		}
 	}, {
 		key: "componentWillUnmount",
@@ -52395,7 +52149,8 @@ Comp.Projects.Show.Tilemap.Map = (function (_React$Component) {
 			if (App == null) {
 				return;
 			}
-			App.Map.Controller.destroy();
+			App.Map.props = { project: undefined };
+			App.Map.stop();
 		}
 	}, {
 		key: "displayName",
@@ -52538,17 +52293,67 @@ Comp.Projects.Show.Tilemap.Popup = (function (_React$Component) {
 
 	return _class;
 })(React.Component);
-Comp.Projects.Show.Tilemap.Search = React.createClass({
-  render: function() {
-    return React.createElement("div", {
-      "className": 'atl__search'
-    }, React.createElement("input", {
-      "type": 'text',
-      "placeholder": 'Search Project'
-    }));
-  }
-});
+'use strict';
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Projects.Show.Tilemap.Search = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class(props) {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
+		this.state = {
+			searchTerm: ''
+		};
+	}
+
+	_createClass(_class, [{
+		key: 'render',
+		value: function render() {
+			return React.createElement(
+				'div',
+				{ className: 'atl__search' },
+				React.createElement('input', { type: 'text', placeholder: 'Search Project', onChange: this.setSearchTerm.bind(this) })
+			);
+		}
+	}, {
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			var _this = this;
+
+			var App = this.props.App;
+			if (App == null) {
+				return;
+			}
+			App.reqres.setHandler('search:term', function () {
+				return _this.state.searchTerm;
+			});
+		}
+	}, {
+		key: 'setSearchTerm',
+		value: function setSearchTerm(e) {
+			console.log(e.target.value.length);
+			var App = this.props.App;
+			if (App == null) {
+				return;
+			}
+			this.setState({
+				searchTerm: e.target.value
+			});
+			App.vent.trigger('search:term:change');
+		}
+	}]);
+
+	return _class;
+})(React.Component);
 Comp.Projects.Show.Explainer = React.createClass({
   displayName: 'Projects.Show.Explainer',
   render: function() {
@@ -52813,27 +52618,6 @@ Comp.Projects.Show.Explainer.Related.Item = React.createClass({
 }).call(this);
 
 (function() {
-  Marionette.Renderer.render = function(template, data) {
-    var i, len, path, paths;
-    if (window.JST == null) {
-      window.JST = {};
-    }
-    if (window.JST_ATL == null) {
-      window.JST_ATL = {};
-    }
-    paths = [JST_ATL['atlas/site/' + template + '.jst'], JST_ATL['atlas/' + template + '.jst']];
-    for (i = 0, len = paths.length; i < len; i++) {
-      path = paths[i];
-      if (path) {
-        return path(data);
-      }
-    }
-    throw "Template " + template + " not found!";
-  };
-
-}).call(this);
-
-(function() {
   this.Atlas = (function(Backbone, Marionette) {
     var App;
     App = new Marionette.Application();
@@ -52845,6 +52629,9 @@ Comp.Projects.Show.Explainer.Related.Item = React.createClass({
       console.log('Hi, Mom!');
       router = new App.Router.Router();
       App.router = router;
+      $(document).on('mousewheel', function(e) {
+        return App.vent.trigger('scroll');
+      });
       App.dataCache = {};
       if (Backbone.history) {
         return Backbone.history.start({
@@ -55323,26 +55110,12 @@ exports.Model = base.Model.extend({
     },
 
     /**
-     * Set data request handlers on a Marionette app instance.
-     * @param {object} App - Marionette application instance. 
-     */
-    setMarionetteDataRequestHandlers: function setMarionetteDataRequestHandlers(App) {
-        var data = this.get('data');
-        if (data != null) {
-            App.reqres.setHandler('item:entities', function (query) {
-                return data.items;
-            });
-        }
-    },
-
-    /**
      * Prepares model on the client.
      * @param {object} App - Marionette application instance. 
      */
-    prepOnClient: function prepOnClient(App) {
+    prepOnClient: function prepOnClient() {
         this.buildData();
         this.setHtmlToc('body_text');
-        this.setMarionetteDataRequestHandlers(App);
     }
 
 });
@@ -57991,27 +57764,6 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
 }).call(this);
 
 (function() {
-  this.Atlas.module('Site', function(Site, App, Backbone, Marionette, $, _) {
-    this.startWithParent = true;
-    App.currentDisplayMode = 'filter';
-    App.commands.setHandler('change:display:mode', function(mode) {
-      App.currentDisplayMode = mode;
-      return App.vent.trigger('display:mode:change');
-    });
-    App.reqres.setHandler('current:project', function() {
-      return App.currentProjectModel;
-    });
-    App.vent.on('current:project:change', function(project) {
-      return App.currentProjectModel = project;
-    });
-    return $(document).on('mousewheel', function(e) {
-      return App.vent.trigger('scroll');
-    });
-  });
-
-}).call(this);
-
-(function() {
   this.Atlas.module('Map', function(Map, App, Backbone, Marionette, $, _) {
     this.startWithParent = false;
     this.on('start', function() {
@@ -58098,11 +57850,8 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
         return $().ensureScript('d3', '/assets/vendor/d3.min.js', this.showOverlay.bind(this));
       },
       showOverlay: function() {
-        return this.renderOverlayView();
-      },
-      renderOverlayView: function() {
         var View, itemType, items, launch;
-        items = App.reqres.request('item:entities');
+        items = Map.props.project.get('data').items;
         itemType = items.getItemType();
         View = itemType === 'state' ? Map.PathOverlayView : Map.PindropOverlayView;
         launch = function(baseGeoData) {
@@ -58177,7 +57926,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
         this.map.on('dragend', (function(_this) {
           return function(e) {
             var items;
-            items = App.reqres.request('item:entities');
+            items = Map.props.project.get('data').items;
             if (e.distance > 15 && (items.hovered != null)) {
               return _this.map.ignoreNextClick = true;
             }
@@ -58200,7 +57949,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
       },
       _addControl: function() {
         var html;
-        html = Marionette.Renderer.render('tilemap/templates/zoom_bar', {});
+        html = "<div class='atl__map-control'> <div id='atl__map-attribution' class='atl__map-control__button bg-img-info--black'></div> <div id='atl__map-zoom-in'  class='atl__map-control__button bg-img-plus--black'></div> <div id='atl__map-zoom-out' class='atl__map-control__button bg-img-minus--black'></div> <div class='atl__help atl__help--left'> View <b>copyright</b> information about the map and <b>zoom</b> in and out. </div> </div>";
         this.$el.append(html);
         this.$zoomInButton = $('#atl__map-zoom-in');
         this.$zoomOutButton = $('#atl__map-zoom-out');
@@ -58261,18 +58010,22 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
         this.listenTo(App.vent, 'value:mouseover value:mouseout value:click search:term:change', this.update);
         App.reqres.setHandler('item:map:position', (function(_this) {
           return function(item) {
-            var feature, identityPath, latLong, longLatArrayCentroid, map;
-            identityPath = d3.geo.path().projection(function(d) {
-              return d;
-            });
-            feature = _this._getFeatureByModel(item);
-            longLatArrayCentroid = identityPath.centroid(feature);
-            latLong = L.latLng(longLatArrayCentroid[1], longLatArrayCentroid[0]);
-            map = Map.map;
-            return map.latLngToContainerPoint(latLong);
+            return _this.getItemMapPosition(item);
           };
         })(this));
         return this;
+      };
+
+      OverlayBaseView.prototype.getItemMapPosition = function(item) {
+        var feature, identityPath, latLong, longLatArrayCentroid, map;
+        identityPath = d3.geo.path().projection(function(d) {
+          return d;
+        });
+        feature = this._getFeatureByModel(item);
+        longLatArrayCentroid = identityPath.centroid(feature);
+        latLong = L.latLng(longLatArrayCentroid[1], longLatArrayCentroid[0]);
+        map = Map.map;
+        return map.latLngToContainerPoint(latLong);
       };
 
       OverlayBaseView.prototype.updateAnimated = function() {
@@ -58290,7 +58043,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
         })(this));
       };
 
-      OverlayBaseView.prototype.onFeatureMouseOut = function() {
+      OverlayBaseView.prototype.onFeatureMouseOut = function(feature) {
         return App.vent.trigger('item:mouseout');
       };
 
@@ -58306,7 +58059,6 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
       OverlayBaseView.prototype.onFeatureClick = function(feature) {
         var message;
         if ((Map.map != null) && Map.map.ignoreNextClick) {
-          App.commands.execute('destroy:popup');
           Map.map.ignoreNextClick = false;
           return;
         }
@@ -58342,12 +58094,13 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
       };
 
       OverlayBaseView.prototype.getFeatureDisplayState = function(feature) {
-        var filter, model, searchTerm;
-        filter = App.currentProjectModel.get('data').filter;
+        var display, filter, model, searchTerm;
+        display = Map.props.uiState.display;
+        filter = Map.props.project.get('data').filter;
         searchTerm = App.reqres.request('search:term');
         model = feature._model;
         if (model != null) {
-          return model.getDisplayState(filter, searchTerm, App.currentDisplayMode);
+          return model.getDisplayState(filter, searchTerm, display);
         }
       };
 
@@ -58464,7 +58217,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
 
       PathOverlayView.prototype.getFill = function(feature) {
         var filter, id, valueIndeces;
-        filter = App.currentProjectModel.get('data').filter;
+        filter = Map.props.project.get('data').filter;
         valueIndeces = filter.getFriendlyIndeces(feature._model, 15);
         if ((valueIndeces == null) || valueIndeces.length === 0) {
           return;
@@ -58478,7 +58231,6 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
 
       PathOverlayView.prototype.update = function() {
         var geoJson, path;
-        App.commands.execute('reset:patterns');
         path = this.getPath();
         geoJson = this.collection;
         this.g.selectAll('path').attr({
@@ -58579,7 +58331,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
 
       PindropOverlayView.prototype.getFills = function(feature) {
         var filter, valueIndeces;
-        filter = App.currentProjectModel.get('data').filter;
+        filter = Map.props.project.get('data').filter;
         valueIndeces = filter.getFriendlyIndeces(feature._model, 15);
         if ((valueIndeces == null) || valueIndeces.length === 0) {
           return;

@@ -12,11 +12,8 @@
 			$().ensureScript 'd3', '/assets/vendor/d3.min.js', @showOverlay.bind(@)
 			
 		showOverlay: ->
-			@renderOverlayView()
 
-		renderOverlayView: ->
-
-			items = App.reqres.request('item:entities') 
+			items = Map.props.project.get('data').items
 			itemType = items.getItemType()
 
 			View = if itemType is 'state' then Map.PathOverlayView else Map.PindropOverlayView
@@ -34,6 +31,8 @@
 
 			@
 
+		# Get state geodata and store it on the application instance.
+		# TODO: factor out this method and make its storage path more clear (App.dataCache....).
 		getStateBaseGeoData: (next) ->
 			data = App['us-states-10m']
 			if data?

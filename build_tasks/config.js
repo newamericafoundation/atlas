@@ -26,7 +26,6 @@ module.exports = {
 		        './bower_components/chartist-html/build/chartist-html.js',
 		        './bower_components/moment/moment.js',
 		        './bower_components/numeral/numeral.js',
-		        './bower_components/accountant/dist/marionette.accountant.js',
 		        './app/assets/scripts/vendor/**/*.js'
 		    ],
 
@@ -38,7 +37,6 @@ module.exports = {
 		        './app/assets/scripts/atlas/util/**/*.js.coffee',
 		        './app/assets/scripts/atlas/__auto__models.js',
 		        './app/assets/scripts/atlas/entities/**/*.js.coffee',
-		        './app/assets/scripts/atlas/site/site.js.coffee',
 		        './app/assets/scripts/atlas/site/map/**/*.js.coffee'
 		    ],
 

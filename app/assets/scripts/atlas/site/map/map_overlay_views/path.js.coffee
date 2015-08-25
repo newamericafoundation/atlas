@@ -62,11 +62,14 @@
         # @param {object} feature
         # @returns {string} fill - Color string or stripe pattern url.
         getFill: (feature) ->
-            filter = App.currentProjectModel.get('data').filter
+            
+            filter = Map.props.project.get('data').filter
             valueIndeces = filter.getFriendlyIndeces(feature._model, 15)
             return if not valueIndeces? or valueIndeces.length is 0
+
             if valueIndeces.length is 1
                 return App.CSS.Colors.toRgb(valueIndeces[0]-1)
+
             # Communicate with Comp.Setup.Component to create and retrieve stripe pattern id
             id = App.reqres.request('get:pattern:id', valueIndeces)
             return "url(#stripe-pattern-#{id})"
@@ -74,7 +77,7 @@
 
         # Apply transform and classes on paths.
         update: () ->
-            App.commands.execute('reset:patterns')
+            # App.commands.execute('reset:patterns')
             path = @getPath()
             geoJson = @collection
             @g.selectAll('path')

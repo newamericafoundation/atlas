@@ -231,6 +231,7 @@ exports.Model = base.Model.extend({
 		name = this.get('name');
 		if (searchTerm == null || searchTerm.toLowerCase == null) { return false; }
 		if (name == null || name.toLowerCase == null) { return false; }
+		if (searchTerm === "") { return true; }
 		name = name.toLowerCase();
 		searchTerm = searchTerm.toLowerCase();
 		if (name === "") { return false; }

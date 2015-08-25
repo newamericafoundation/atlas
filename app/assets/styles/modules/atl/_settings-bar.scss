@@ -19,6 +19,10 @@
 		height: auto;
 	}
 
+	input {
+		color: map-get($palette, off-white);
+	}
+
 	@include collapsed;
 	.atl--collapsed & { @include collapsed; }
 

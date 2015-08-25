@@ -23,7 +23,12 @@ Comp.Projects.Show.Tilemap.DisplayToggle = class extends React.Component {
 		});
 	}
 
+	// 
 	setUiDisplay(name) {
+		var App;
+		if (this.props.uiState.display === name) { return; }
+		App = this.props.App;
+		if (App != null) { App.vent.trigger('display:mode:change'); }
 		this.props.setUiState({ display: name });
 	}
 

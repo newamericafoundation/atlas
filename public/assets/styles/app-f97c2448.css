@@ -4328,6 +4328,8 @@ label {
   transition: 0.2s;
   background: none;
   height: auto; }
+  .atl__settings-bar input {
+    color: #fffaef; }
   .atl--collapsed .atl__settings-bar {
     background: none;
     height: auto; }

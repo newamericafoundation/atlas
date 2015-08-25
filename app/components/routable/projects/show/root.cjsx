@@ -72,8 +72,7 @@ Comp.Projects.Show = React.createClass
 			project.on 'sync', => 
 				# Only 
 				if project.exists()
-					project.prepOnClient(App)
-					App.vent.trigger 'current:project:change', project
+					project.prepOnClient()
 					@setState { project: project }
 					@_fetchRelatedProjects()
 				else

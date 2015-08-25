@@ -6,7 +6,6 @@ var gulp = require('gulp'),
     insert = require('gulp-insert'),
     rename = require('gulp-rename'),
     gzip = require('gulp-gzip'),
-    eco = require('gulp-eco'),
     coffee = require('gulp-coffee'),
     uglify = require('gulp-uglify'),
     cjsx = require('gulp-cjsx'),
@@ -60,16 +59,6 @@ gulp.task('js-gzip-vendor', function() {
         .pipe(gulp.dest('public/assets/vendor'));
 });
 
-gulp.task('js-build-template', [ 'js-clean' ], function() {
-    return gulp.src(config.source.js.template)
-        .pipe(eco({
-            basePath: 'app/assets/scripts',
-            namespace: 'JST_ATL'
-        }))
-        .pipe(concat('_template.js'))
-        .pipe(gulp.dest('public/assets/scripts/partials'));
-});
-
 gulp.task('js-build-source', [ 'js-clean' ], function() {
     return gulp.src(config.source.js.main)
         .pipe(gulpIf(/[.]coffee$/, coffee()))
@@ -92,7 +81,7 @@ gulp.task('js-build-component', [ 'js-clean' ], function() {
         .pipe(gulp.dest('public/assets/scripts/partials'));
 });
 
-gulp.task('js-build', [ 'bundle-models', 'js-build-template', 'js-build-source', 'js-build-vendor', 'js-build-component' ], function() {
+gulp.task('js-build', [ 'bundle-models', 'js-build-source', 'js-build-vendor', 'js-build-component' ], function() {
     return gulp.src(['public/assets/scripts/partials/_template.js', 'public/assets/scripts/partials/_vendor.js', 'public/assets/scripts/partials/_component.js', 'public/assets/scripts/partials/_source.js'])
         .pipe(concat('app.js'))
         .pipe(config.production ? util.noop() : gulp.dest('public/assets/scripts'))

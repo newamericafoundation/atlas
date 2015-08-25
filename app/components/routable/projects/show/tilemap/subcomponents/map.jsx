@@ -1,5 +1,9 @@
 Comp.Projects.Show.Tilemap.Map = class extends React.Component {
 
+	constructor(props) {
+		super(props);
+	}
+
 	get displayName() { return 'Comp.Projects.Show.Tilemap.Map'; }
 
 	render() {
@@ -11,13 +15,18 @@ Comp.Projects.Show.Tilemap.Map = class extends React.Component {
 	componentDidMount() {
 		App = this.props.App;
 		if (App == null) { return; }
-		App.Map.Controller.show();
+		App.Map.props = { 
+			project: this.props.project,
+			uiState: this.props.uiState
+		};
+		App.Map.start();
 	}
 
 	componentWillUnmount() {
 		App = this.props.App;
 		if (App == null) { return; }
-		App.Map.Controller.destroy();
+		App.Map.props = { project: undefined };
+		App.Map.stop();
 	}
 
 }

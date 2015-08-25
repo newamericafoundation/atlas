@@ -6,16 +6,17 @@
         initialize: () ->
             @listenTo App.vent, 'key:click display:mode:change', @updateAnimated
             @listenTo App.vent, 'value:mouseover value:mouseout value:click search:term:change', @update
-
-            App.reqres.setHandler 'item:map:position', (item) =>
-                identityPath = d3.geo.path().projection (d) -> return d
-                feature = @_getFeatureByModel item
-                longLatArrayCentroid = identityPath.centroid(feature)
-                latLong = L.latLng longLatArrayCentroid[1], longLatArrayCentroid[0]
-                map = Map.map
-                return map.latLngToContainerPoint(latLong)
-
+            App.reqres.setHandler 'item:map:position', (item) => @getItemMapPosition(item)
             @
+
+        # Return pixel coordinates of a map display item's centroid.
+        getItemMapPosition: (item) ->
+            identityPath = d3.geo.path().projection (d) -> return d
+            feature = @_getFeatureByModel item
+            longLatArrayCentroid = identityPath.centroid(feature)
+            latLong = L.latLng longLatArrayCentroid[1], longLatArrayCentroid[0]
+            map = Map.map
+            return map.latLngToContainerPoint(latLong)
 
         # Fade out, update entire overlaypane and fade back in.
         updateAnimated: () ->
@@ -26,7 +27,7 @@
                 $el.animate({ opacity: 1 }, 750)
 
         # Callback.
-        onFeatureMouseOut: () ->
+        onFeatureMouseOut: (feature) ->
             App.vent.trigger 'item:mouseout'
 
         # Callback.
@@ -38,7 +39,6 @@
         # Callback.
         onFeatureClick: (feature) ->
             if Map.map? and Map.map.ignoreNextClick
-                App.commands.execute 'destroy:popup'
                 Map.map.ignoreNextClick = false
                 return
             d3.event.stopPropagation() if d3.event.stopPropagation?
@@ -63,12 +63,12 @@
 
         # Returns display state of a feature.
         getFeatureDisplayState: (feature) ->
-            filter = App.currentProjectModel.get('data').filter
-            # filter = App.reqres.request 'filter'
+            display = Map.props.uiState.display
+            filter = Map.props.project.get('data').filter
             searchTerm = App.reqres.request 'search:term'
             model = feature._model
             if model?
-                return model.getDisplayState(filter, searchTerm, App.currentDisplayMode)
+                return model.getDisplayState(filter, searchTerm, display)
 
         # Checks if bounds are finite.
         # @returns {boolean}
@@ -94,6 +94,7 @@
                 @svg.style { 'left': topLeft[0] + 'px', 'top': topLeft[1] + 'px' }
                 @g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")")
 
+        # Destroy overlay view along with all event listeners.
         destroy: () ->
             @stopListening()
             @g.selectAll('path').remove()

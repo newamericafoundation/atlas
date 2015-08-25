@@ -1194,6 +1194,9 @@ exports.Model = base.Model.extend({
 		if (name == null || name.toLowerCase == null) {
 			return false;
 		}
+		if (searchTerm === "") {
+			return true;
+		}
 		name = name.toLowerCase();
 		searchTerm = searchTerm.toLowerCase();
 		if (name === "") {
@@ -1583,26 +1586,12 @@ exports.Model = base.Model.extend({
     },
 
     /**
-     * Set data request handlers on a Marionette app instance.
-     * @param {object} App - Marionette application instance. 
-     */
-    setMarionetteDataRequestHandlers: function setMarionetteDataRequestHandlers(App) {
-        var data = this.get('data');
-        if (data != null) {
-            App.reqres.setHandler('item:entities', function (query) {
-                return data.items;
-            });
-        }
-    },
-
-    /**
      * Prepares model on the client.
      * @param {object} App - Marionette application instance. 
      */
-    prepOnClient: function prepOnClient(App) {
+    prepOnClient: function prepOnClient() {
         this.buildData();
         this.setHtmlToc('body_text');
-        this.setMarionetteDataRequestHandlers(App);
     }
 
 });
