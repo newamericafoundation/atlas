@@ -50,7 +50,7 @@ module.exports = {
 		        './app/components/non_routable/side_bar.cjsx',
 		        './app/components/non_routable/intranet/**/*.cjsx',
 		        './app/components/routable/about/**/*.cjsx',
-		        './app/components/routable/welcome/**/*.cjsx',
+		        './app/components/routable/welcome/**/*',
 		        './app/components/routable/projects/root.cjsx',
 		        './app/components/routable/projects/index/root.cjsx',
 		        './app/components/routable/projects/index/subcomponents/**/*.cjsx',

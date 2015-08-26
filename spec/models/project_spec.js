@@ -8,7 +8,8 @@ var assert = require('assert'),
 describe('project.Model', function() {
 
 
-	var model = new project.Model();
+	var pm,
+		model = new project.Model();
 
 
 	describe('url', function() {

@@ -7,16 +7,14 @@ var assert = require('assert'),
 
 describe('image.Model', function() {
 
-
-	var model = new image.Model();
-
+	var model;
 
 	describe('url', function() {
 
 		it('creates url by concatenating name to root url', function() {
 			var urlRoot = '/api/v1/images';
-			im = new image.Model({ name: 'picture' });
-			assert.equal(im.url(), '/api/v1/images?name=picture');
+			model = new image.Model({ name: 'picture' });
+			assert.equal(model.url(), '/api/v1/images?name=picture');
 		});
 
 	});

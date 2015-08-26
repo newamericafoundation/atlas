@@ -9,6 +9,19 @@
             App.reqres.setHandler 'item:map:position', (item) => @getItemMapPosition(item)
             @
 
+        setHeaderStripColor: ->
+            project = Map.props.project
+            items = project.get('data').items
+            filter = project.get('data').filter
+            hoveredItem = items.hovered
+            if hoveredItem?
+                indeces = filter.getFriendlyIndeces(hoveredItem, 15)
+                cls = "bg-c-#{indeces[0]}"
+                App.commands.execute 'set:header:strip:color', { className: cls }
+            else
+                App.commands.execute 'set:header:strip:color', 'none'
+
+
         # Return pixel coordinates of a map display item's centroid.
         getItemMapPosition: (item) ->
             identityPath = d3.geo.path().projection (d) -> return d
@@ -28,13 +41,21 @@
 
         # Callback.
         onFeatureMouseOut: (feature) ->
-            App.vent.trigger 'item:mouseout'
+            project = Map.props.project
+            items = project.get('data').items
+            items.setHovered -1
+            @setHeaderStripColor()
+            App.commands.execute 'update:tilemap'
 
         # Callback.
         onFeatureMouseOver: (feature) ->
             @bringFeatureToFront feature if @bringFeatureToFront?
-            message = if feature._model? then feature._model else feature.id
-            App.vent.trigger 'item:mouseover', message
+            project = Map.props.project
+            items = project.get('data').items
+            model = if feature._model? then feature._model else feature.id
+            items.setHovered model
+            @setHeaderStripColor()
+            App.commands.execute 'update:tilemap'
 
         # Callback.
         onFeatureClick: (feature) ->

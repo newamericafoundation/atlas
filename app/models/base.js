@@ -2,7 +2,7 @@ var Backbone = require('backbone'),
 	_ = require('underscore'),
 	$ = require('jquery');
 
-exports.Model = Backbone.Model.extend({
+var Model = Backbone.Model.extend({
 
 	/** 
 	 * Recognize and process data.
@@ -12,6 +12,12 @@ exports.Model = Backbone.Model.extend({
 	parse: function(data) {
 		data = this._adaptMongoId(data);
 		return data;
+	},
+
+	get: function(field, suffix) {
+		var getFnc = Backbone.Model.prototype.get;
+		if (suffix == null) { return getFnc.apply(this, [ field ]); }
+		return getFnc.apply(this, [ field + '_' + suffix ]);
 	},
 
 	/**
@@ -218,24 +224,31 @@ exports.Model = Backbone.Model.extend({
 
 });
 
-exports.Collection = Backbone.Collection.extend({
+var Collection = Backbone.Collection.extend({
 	
-	model: exports.Model,
+	model: Model,
 
 	/**
-	 * Recognize and process server response.
+	 * Recognize and process server response by applying the corresponding model's parse method.
 	 * @param {object} resp - Server response.
 	 * @returns {object} resp - Modified response.
 	 */
 	parse: function(resp) {
 		var i, max,
 			item;
-		if (exports.Model.prototype.parse == null) { return resp; }
+		var model = new this.model(),
+			modelParseMethod = model.parse.bind(model);
+		if (modelParseMethod == null) { return resp; }
 		for (i = 0, max = resp.length; i < max; i += 1) {
 			item = resp[i];
-			resp[i] = exports.Model.prototype.parse(item);
+			resp[i] = modelParseMethod(item);
 		}
 		return resp;
 	}
 
 });
+
+module.exports = {
+	Model: Model,
+	Collection: Collection
+};

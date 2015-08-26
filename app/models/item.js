@@ -238,6 +238,7 @@ exports.Model = base.Model.extend({
 		if (name.indexOf(searchTerm) === -1) { return false; }
 		return true;
 	}
+
 });
 
 
@@ -283,7 +284,7 @@ exports.Collection = base.Collection.extend({
 			this.hovered = hoveredModel;
 		} else {
 			id = parseInt(hoveredModel, 10);
-			this.hovered = id === -1 ? void 0 : this.findWhere({
+			this.hovered = (id === -1) ? undefined : this.findWhere({
 				id: id
 			});
 		}
@@ -368,6 +369,7 @@ exports.Collection = base.Collection.extend({
 	},
 	
 	richGeoJsonBuilders: {
+
 		state: function(collection, baseGeoData) {
 			var data, richGeoJson, setup;
 			richGeoJson = new rgf.Collection();
@@ -387,6 +389,7 @@ exports.Collection = base.Collection.extend({
 			setup(baseGeoData);
 			return richGeoJson;
 		},
+
 		pindrop: function(collection) {
 			var item, j, len, ref, richGeoJson;
 			richGeoJson = new rgf.Collection();
@@ -398,6 +401,7 @@ exports.Collection = base.Collection.extend({
 			richGeoJson.trigger('sync');
 			return richGeoJson;
 		}
+
 	},
 	
 	/** 

@@ -3,7 +3,7 @@ Comp.Projects.Show.Tilemap.Headline = class extends React.Component {
 	render() {
 		project = this.props.project;
 		return (
-			<div className='atl__headline'>
+			<div className='atl__headline' ref='root'>
 				<p className='atl__headline__sections' dangerouslySetInnerHTML={{__html: this.getSectionText() }}></p>
 				<h1 className='atl__headline__title'>{ project.get('title') }</h1>
 				<h2 className='atl__headline__description'>
@@ -14,8 +14,22 @@ Comp.Projects.Show.Tilemap.Headline = class extends React.Component {
 		);
 	}
 
+	componentDidMount() {
+		this.props.cacheHeight(this.getHeight());
+	}
+
+	componentDidUpdate() {
+		this.props.cacheHeight(this.getHeight());
+	}
+
+	getHeight() {
+		var $el = $(React.findDOMNode(this.refs.root));
+		return $el.height();
+	}
+
 	openInfoBox(e) {
 		e.preventDefault();
+		this.props.project.get('data').items.active = undefined;
 		this.props.setUiState({ isInfoBoxActive: true });
 	}
 

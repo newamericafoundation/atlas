@@ -1,17 +1,7 @@
 Comp.Projects.Show.Tilemap.Popup = class extends React.Component {
 
-	constructor(props) {
-		super(props);
-		this.state = {
-			x: 0,
-			y: 0,
-			display: 'block',
-			type: 'state'
-		};
-	}
-
 	render() {
-		var style = { left: this.state.x, top: this.state.y, display: this.state.display };
+		var style = this.getStyle();
 		return (
 			<div className={ 'atl__popup ' + this.getModifierClass() } style={ style }>
 				<div className="atl__popup__wrapper">
@@ -28,23 +18,15 @@ Comp.Projects.Show.Tilemap.Popup = class extends React.Component {
 		);
 	}
 
-	getModifierClass() {
-		if(this.state.type === 'state') { return 'atl__popup--center'; }
-		return '';
-	}
-
-	componentDidMount() {
-		_.extend(this, Backbone.Events);
-		var App = this.props.App;
-		this.listenTo(App.vent, 'item:mouseover item:mouseout', this.setPosition.bind(this));
-	}
-
-	componentWillUnmount() {
-		this.stopListening();
-	}
-
 	getHoveredItem() {
 		return this.props.project.get('data').items.hovered;
+	}
+
+	getModifierClass() {
+		var hoveredItem = this.getHoveredItem();
+		if (hoveredItem == null) { return ''; }
+		if(this.getHoveredItem().get('_itemType') === 'state') { return 'atl__popup--center'; }
+		return '';
 	}
 
 	getName() {
@@ -66,19 +48,19 @@ Comp.Projects.Show.Tilemap.Popup = class extends React.Component {
 		);
 	}
 
-	setPosition() {
+	getStyle() {
 		var hoveredItem, App, position;
 		App = this.props.App;
 		if (App == null) { return; }
 		hoveredItem = this.getHoveredItem();
-		if (hoveredItem == null) { return this.setState({ display: 'none' }); }
+		if (hoveredItem == null) { return { display: 'none' }; }
 		position = App.reqres.request('item:map:position', hoveredItem);
-		this.setState({
-			x: position.x,
-			y: position.y,
+		return {
+			left: position.x,
+			top: position.y,
 			display: 'block',
 			type: hoveredItem.get('_itemType')
-		});
+		}
 	}
 
 }

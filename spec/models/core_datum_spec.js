@@ -8,15 +8,14 @@ var assert = require('assert'),
 describe('coreDatum.Model', function() {
 
 
-	var model = new coreDatum.Model();
+	var model;
 
 
 	describe('url', function() {
 
 		it('creates url by concatenating name to root url', function() {
-			var urlRoot = '/api/v1/core_data';
-			cd = new coreDatum.Model({ name: 'something' });
-			assert.equal(cd.url(), '/api/v1/core_data?name=something');
+			model = new coreDatum.Model({ name: 'something' });
+			assert.equal(model.url(), '/api/v1/core_data?name=something');
 		});
 		
 	});

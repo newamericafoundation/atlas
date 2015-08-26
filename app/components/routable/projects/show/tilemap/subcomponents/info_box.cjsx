@@ -83,12 +83,13 @@ Comp.Projects.Show.Tilemap.InfoBox = React.createClass
 
 	# Set background image.
 	setImage: () ->
+		$el = $('.atl__title-bar__background')
+		$el.css('background-color', 'rgba(50, 50, 50, 0.1)')
+		$el.css('background-image', '')
 		project = @props.project
 		App = @props.App
 		activeItem = project.get('data').items.active
 		return unless activeItem?
-		$el = $('.atl__title-bar__background')
-		$el.css('background-color', 'rgba(50, 50, 50, 0.1)')
 		imageName = activeItem.getImageName()
 		if imageName?
 			img = App.reqres.request 'image:entity', { name: imageName }

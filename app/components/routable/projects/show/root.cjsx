@@ -6,6 +6,8 @@ Comp.Projects.Show = React.createClass
 		{
 			ui: {
 				display: 'filter',
+				isCollapsed: false,
+				isCollapsedMaster: false,
 				isInfoBoxActive: false,
 				isInfoBoxNarrow: false
 			}
@@ -21,9 +23,7 @@ Comp.Projects.Show = React.createClass
 	render: ->
 		<div className={ @_getClass() }>
 			<Comp.SideBar App={ @props.App } project={ @state.project } uiState={ @state.ui } setUiState={ @setUiState.bind(@) } />
-			<div id="atl__main" className="-id-atl__main fill-parent">
-				{ @_renderProject() }
-			</div>
+			{ @_renderProject() }
 		</div>
 
 	_getClass: ->
@@ -32,6 +32,7 @@ Comp.Projects.Show = React.createClass
 		data = project.get('data')
 		cls = "atl"
 		cls += " atl--#{this.state.ui.display}-display"
+		cls += ' atl--collapsed' if @state.ui.isCollapsedMaster or (not @state.ui.isCollapsedMaster and @state.ui.isCollapsed)
 		cls += ' atl--' + project.get('project_template_name').toLowerCase()
 		cls += ' atl__info-box--active' if @state.ui.isInfoBoxActive
 		cls += ' atl__info-box--narrow' if data? and (data.infobox_variables.length < 2)

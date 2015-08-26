@@ -64,7 +64,7 @@ var Backbone = window.Backbone,
     _ = window._,
     $ = window.$;
 
-exports.Model = Backbone.Model.extend({
+var Model = Backbone.Model.extend({
 
 	/** 
   * Recognize and process data.
@@ -74,6 +74,14 @@ exports.Model = Backbone.Model.extend({
 	parse: function parse(data) {
 		data = this._adaptMongoId(data);
 		return data;
+	},
+
+	get: function get(field, suffix) {
+		var getFnc = Backbone.Model.prototype.get;
+		if (suffix == null) {
+			return getFnc.apply(this, [field]);
+		}
+		return getFnc.apply(this, [field + '_' + suffix]);
 	},
 
 	/**
@@ -281,28 +289,35 @@ exports.Model = Backbone.Model.extend({
 
 });
 
-exports.Collection = Backbone.Collection.extend({
+var Collection = Backbone.Collection.extend({
 
-	model: exports.Model,
+	model: Model,
 
 	/**
-  * Recognize and process server response.
+  * Recognize and process server response by applying the corresponding model's parse method.
   * @param {object} resp - Server response.
   * @returns {object} resp - Modified response.
   */
 	parse: function parse(resp) {
 		var i, max, item;
-		if (exports.Model.prototype.parse == null) {
+		var model = new this.model(),
+		    modelParseMethod = model.parse.bind(model);
+		if (modelParseMethod == null) {
 			return resp;
 		}
 		for (i = 0, max = resp.length; i < max; i += 1) {
 			item = resp[i];
-			resp[i] = exports.Model.prototype.parse(item);
+			resp[i] = modelParseMethod(item);
 		}
 		return resp;
 	}
 
 });
+
+module.exports = {
+	Model: Model,
+	Collection: Collection
+};
 
 },{}],3:[function(require,module,exports){
 // Compiled from Marionette.Accountant
@@ -1207,6 +1222,7 @@ exports.Model = base.Model.extend({
 		}
 		return true;
 	}
+
 });
 
 exports.Collection = base.Collection.extend({
@@ -1251,7 +1267,7 @@ exports.Collection = base.Collection.extend({
 			this.hovered = hoveredModel;
 		} else {
 			id = parseInt(hoveredModel, 10);
-			this.hovered = id === -1 ? void 0 : this.findWhere({
+			this.hovered = id === -1 ? undefined : this.findWhere({
 				id: id
 			});
 		}
@@ -1333,6 +1349,7 @@ exports.Collection = base.Collection.extend({
 	},
 
 	richGeoJsonBuilders: {
+
 		state: function state(collection, baseGeoData) {
 			var data, richGeoJson, setup;
 			richGeoJson = new rgf.Collection();
@@ -1352,6 +1369,7 @@ exports.Collection = base.Collection.extend({
 			setup(baseGeoData);
 			return richGeoJson;
 		},
+
 		pindrop: function pindrop(collection) {
 			var item, j, len, ref, richGeoJson;
 			richGeoJson = new rgf.Collection();
@@ -1363,6 +1381,7 @@ exports.Collection = base.Collection.extend({
 			richGeoJson.trigger('sync');
 			return richGeoJson;
 		}
+
 	},
 
 	/** 

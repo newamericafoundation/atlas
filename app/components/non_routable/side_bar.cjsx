@@ -8,7 +8,7 @@ Comp.SideBar = React.createClass
 		cls = if @state['isActive'] then 'atl__side-bar atl__side-bar--active' else 'atl__side-bar'
 		<div className={cls} onClick={ @toggle }>
 			<div className="atl__side-bar__title">{ @state['hoveredButtonTitle'] }</div>
-			{ @_renderButtons() }
+			{ @renderButtons() }
 		</div>
 
 	getDefaultProps: ->
@@ -28,18 +28,18 @@ Comp.SideBar = React.createClass
 	toggle: ->
 		@setState { isActive: not @state['isActive'] }
 
-	_renderButtons: ->
-		list = @props.buttons.map @_renderButton
+	renderButtons: ->
+		list = @props.buttons.map @renderButton
 		<ul className="atl__side-bar__icons">
 			{list}
 		</ul>
 
-	_renderButton: (options, i) ->
+	renderButton: (options, i) ->
 		<li className="atl__side-bar__icon" onMouseEnter={ @onButtonMouseEnter.bind(@, options) } onMouseLeave={ @onButtonMouseLeave.bind(@, options) } onClick={ @[ '_' + options.method ] } key={'button-'+i}>
-			{ @_renderButtonContent(options, i) }
+			{ @renderButtonContent(options, i) }
 		</li>
 		
-	_renderButtonContent: (options, i) ->
+	renderButtonContent: (options, i) ->
 		# custom form button for download case
 		IconComp = Comp.Icons[options.reactIcon]
 		if options.method is 'download'
@@ -87,16 +87,8 @@ Comp.SideBar = React.createClass
 	# Button press method.
 	# 	Expand or collapse. To be renamed.
 	_collapse: (e) ->
-		App = @props.App
-		if App? and $?
-			# App.uiState.isCollapsed is highest authority in determining whether
-			#   settings bar is expanded or not, but only if there is space.
-			# TODO - clean up this complicated logic.
-			isCollapsed = App.uiState.isCollapsed or $('.atl').hasClass('atl--collapsed')
-			cannotExpand = App.reqres.request('is:settings:bar:overflowing')
-			unless (isCollapsed) and (cannotExpand)
-				App.uiState.isCollapsed = not App.uiState.isCollapsed
-				$('.atl').toggleClass 'atl--collapsed'
+		if this.props.setUiState?
+			this.props.setUiState({ isCollapsedMaster: !this.props.uiState.isCollapsedMaster });
 
 	# Button press method.
 	_help: (e) ->

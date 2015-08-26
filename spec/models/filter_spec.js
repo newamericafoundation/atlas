@@ -5,7 +5,7 @@ var assert = require('assert'),
 
 describe('filter tree', function() {
 
-    var obj;
+    var obj, filterTree;
 
     beforeEach(function() {
 

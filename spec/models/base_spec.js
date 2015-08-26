@@ -11,6 +11,21 @@ describe('base.Model', function() {
 	var model = new base.Model();
 
 
+	describe('get', function() {
+
+		it('gets an attribute by field without a suffix', function() {
+			var model = new base.Model({ name: 'Peter' });
+			assert.equal(model.get('name'), 'Peter');
+		});
+
+		it('gets an attribute by field with a suffix', function() {
+			var model = new base.Model({ name_2012: 'Peter' });
+			assert.equal(model.get('name', '2012'), 'Peter');
+		});
+
+	});
+
+
 	describe('addForeignField', function() {
 
 		it('adds single foreign field', function() {

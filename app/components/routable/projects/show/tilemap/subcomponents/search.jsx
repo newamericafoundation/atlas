@@ -15,20 +15,21 @@ Comp.Projects.Show.Tilemap.Search = class extends React.Component {
 		);
 	}
 
-	componentDidMount() {
+	componentWillMount() {
 		var App = this.props.App;
 		if (App == null) { return; }
-		App.reqres.setHandler('search:term', () => { return this.state.searchTerm; });
+		App.reqres.setHandler('search:term', () => { 
+			return this.state.searchTerm; 
+		});
 	}
 	
 	setSearchTerm(e) {
-		console.log(e.target.value.length);
-		var App = this.props.App;
-		if (App == null) { return; }
-		this.setState({
-			searchTerm: e.target.value
+		this.setState({ searchTerm: e.target.value }, () => {
+			var App;
+			App = this.props.App;
+			if (App == null) { return; }
+			App.vent.trigger('search:term:change');
 		});
-		App.vent.trigger('search:term:change');
 	}
 
 }

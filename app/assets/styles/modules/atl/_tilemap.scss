@@ -23,7 +23,7 @@
 	right:  25px;
 
 	@include bp-unstack-map-settings-bar {		
-		top: 30px;
+		top: $top-bar-height + 30px;
 	}
 
 	position: absolute;
@@ -39,6 +39,17 @@
 		&:hover { opacity: 1; }
 	}
 
+}
+
+.leaflet-container .leaflet-control-attribution {
+	@include attribution-box;
+	position: fixed;
+	right: 80px;
+	bottom: 95px;
+	@include bp-unstack-map-settings-bar {
+		top: $top-bar-height + 85px;
+		bottom: auto;
+	}
 }
 
 @mixin overlay-highlighted--region() {
@@ -94,16 +105,4 @@
 
 	&:hover, &--highlighted { .map-pin__outer { @include overlay-highlighted--pin(); } }
 	&--inactive { @include overlay-inactive(); }
-}
-
-
-.leaflet-container .leaflet-control-attribution {
-	@include attribution-box;
-	position: fixed;
-	right: 80px;
-	bottom: 95px;
-	@include bp-unstack-map-settings-bar {
-		top: 85px;
-		bottom: auto;
-	}
 }

@@ -146,9 +146,9 @@ describe('item.Model', function() {
 			assert.equal(im.matchesSearchTerm('Michigan'), false);
 		});
 
-		it('returns false if model name is an empty string', function() {
+		it('returns true if search term is an empty string', function() {
 			var im = new item.Model({ name: "" });
-			assert.equal(im.matchesSearchTerm(""), false);
+			assert.equal(im.matchesSearchTerm(""), true);
 		});
 
 	});

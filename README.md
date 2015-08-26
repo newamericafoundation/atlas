@@ -94,3 +94,12 @@ Turns out, if the fields is undefined, it must not be passed into the method..
 ### React Component Lifecycle Level 1.1
 
 ``componentDidMount`` methods will execute in the order grandchild - child - parent, whereas ``componentWillMount`` methods will execute the other way around. I found this knowledge useful when I transitioned a codebase from Marionette.js to React.js, and kept Marionette's global messaging system so that components could listen to it and updated themselves (since many of the props were objects, changing them internally didn't trigger an update).
+
+### React State Updates
+
+React's state update is not instantaneous, so the following code will not work as expected:
+
+	this.setState({ formFieldValue: e.target.value });
+	this.props.someEventEmitter.trigger('form:field:value:change', this.state.formFieldValue);
+
+Since state is not updated yet, the event will be triggered with the old state value. To 
