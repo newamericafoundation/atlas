@@ -54,7 +54,7 @@ module.exports = {
 		        './app/components/routable/projects/root.cjsx',
 		        './app/components/routable/projects/index/root.cjsx',
 		        './app/components/routable/projects/index/subcomponents/**/*.cjsx',
-		        './app/components/routable/projects/show/root.cjsx',
+		        './app/components/routable/projects/show/root.jsx',
 		        './app/components/routable/projects/show/tilemap/root.cjsx',
 		        './app/components/routable/projects/show/tilemap/subcomponents/**/*',
 		        './app/components/routable/projects/show/explainer/root.cjsx',

@@ -62,6 +62,7 @@ Comp.Projects.Show.Tilemap.InfoBox = React.createClass
 		return '<p>Active Data Html</p>' if activeItem?
 		return project.get('body_text')
 
+	# Close popup.
 	close: (e) ->
 		e.preventDefault()
 		transitionEventName = @getTransitionEventName()
@@ -99,7 +100,6 @@ Comp.Projects.Show.Tilemap.InfoBox = React.createClass
 					$el.css('background-color', 'initial')
 					$el.css('background-image', backgroundImageCss)
 					# @_appendImageAttribution(img.getAttributionHtml())
-
 
 	renderWebsite: ->
 		<li>

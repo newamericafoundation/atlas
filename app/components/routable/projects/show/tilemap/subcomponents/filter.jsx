@@ -1,21 +1,20 @@
 Comp.Projects.Show.Tilemap.Filter = class extends React.Component {
 
 	render() {
+		var HelpComp = Comp.Help;
 		return (
 			<div className='atl__filter' ref='root'>
-				<div id="atl__filter__keys" className="-id-atl__filter__keys">
-					<div className="atl__filter__keys">
-						<ul>
-							{ this.renderKeys() }
-						</ul>
-					</div>
+				<div className="atl__filter__keys">
+					<ul>
+						{ this.renderKeys() }
+					</ul>
+					<HelpComp position='right' text='Select the variable you want to filter by.' id='filter-keys' />
 				</div>
-				<div id="atl__filter__values" className="-id-atl__filter__values">
-					<div className="atl__filter__values">
-						<ul>
-							{ this.renderValues() }
-						</ul>
-					</div>
+				<div className="atl__filter__values">
+					<ul>
+						{ this.renderValues() }
+					</ul>
+					<HelpComp position='right' text='Select the values you want to filter out. Corresponding map colors are indicated.' id='filter-values' />
 				</div>
 			</div>
 		);
@@ -47,7 +46,7 @@ Comp.Projects.Show.Tilemap.Filter = class extends React.Component {
 
 	renderKeys() {
 		var keys = this.props.filter.children,
-			Cmp = Comp.Projects.Show.Tilemap.Filter.Key;
+			Cmp = Comp.Projects.Show.Tilemap.FilterKey;
 		return keys.map((key, i) => {
 			return (
 				<Cmp App={this.props.App} filterKey={key} />
@@ -57,7 +56,7 @@ Comp.Projects.Show.Tilemap.Filter = class extends React.Component {
 
 	renderValues() {
 		var values = this.props.filter.getActiveChild().children,
-			Cmp = Comp.Projects.Show.Tilemap.Filter.Value;
+			Cmp = Comp.Projects.Show.Tilemap.FilterValue;
 		return values.map((value, i) => {
 			return (
 				<Cmp App={this.props.App} filterValue={value} />
@@ -68,7 +67,7 @@ Comp.Projects.Show.Tilemap.Filter = class extends React.Component {
 }
 
 
-Comp.Projects.Show.Tilemap.Filter.Key = class extends React.Component {
+Comp.Projects.Show.Tilemap.FilterKey = class extends React.Component {
 
 	render() {
 		return (
@@ -97,7 +96,7 @@ Comp.Projects.Show.Tilemap.Filter.Key = class extends React.Component {
 }
 
 
-Comp.Projects.Show.Tilemap.Filter.Value = class extends React.Component {
+Comp.Projects.Show.Tilemap.FilterValue = class extends React.Component {
 
 	render() {
 		var IconComp = Comp.Icons.Hex;

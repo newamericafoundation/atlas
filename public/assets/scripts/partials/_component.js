@@ -1,11 +1,46 @@
 // Initialize components namespace.
-"use strict";
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var Comp = {};
 
 Comp.Mixins = {};
 
 Comp.Icons = {};
+
+// Render a help text segment that displays when help is activated.
+// Parent needs to be relatively positioned for this to work.
+Comp.Help = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class() {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).apply(this, arguments);
+	}
+
+	_createClass(_class, [{
+		key: 'render',
+		value: function render() {
+			var modifierClass = this.props.position ? 'atl__help--' + this.props.position : '',
+			    id = this.props.id ? 'atl__help__' + this.props.id : undefined;
+			return React.createElement(
+				'div',
+				{ className: 'atl__help ' + modifierClass, id: id },
+				this.props.text
+			);
+		}
+	}]);
+
+	return _class;
+})(React.Component);
 
 // Add Backbone Events to component.
 Comp.Mixins.BackboneEvents = {
@@ -2493,11 +2528,7 @@ Comp.Welcome = (function (_React$Component) {
 
 	return _class;
 })(React.Component);
-Comp.Projects = React.createClass({
-  render: function() {
-    return React.createElement("div", null);
-  }
-});
+Comp.Projects = {};
 
 Comp.Projects.Index = React.createClass({
   displayName: 'Projects.Index',
@@ -2921,154 +2952,183 @@ Comp.Projects.Index.Projects.Project = React.createClass({
   }
 });
 
-Comp.Projects.Show = React.createClass({
-  displayName: 'Projects.Show',
-  getInitialState: function() {
-    return {
-      ui: {
-        display: 'filter',
-        isCollapsed: false,
-        isCollapsedMaster: false,
-        isInfoBoxActive: false,
-        isInfoBoxNarrow: false
-      }
-    };
-  },
-  setUiState: function(uiStateChanges) {
-    var currentUiState, key, value;
-    currentUiState = this.state.ui;
-    for (key in uiStateChanges) {
-      value = uiStateChanges[key];
-      currentUiState[key] = value;
-    }
-    return this.forceUpdate();
-  },
-  render: function() {
-    return React.createElement("div", {
-      "className": this._getClass()
-    }, React.createElement(Comp.SideBar, {
-      "App": this.props.App,
-      "project": this.state.project,
-      "uiState": this.state.ui,
-      "setUiState": this.setUiState.bind(this)
-    }), this._renderProject());
-  },
-  _getClass: function() {
-    var cls, data, project;
-    project = this.state.project;
-    if (project == null) {
-      return "";
-    }
-    data = project.get('data');
-    cls = "atl";
-    cls += " atl--" + this.state.ui.display + "-display";
-    if (this.state.ui.isCollapsedMaster || (!this.state.ui.isCollapsedMaster && this.state.ui.isCollapsed)) {
-      cls += ' atl--collapsed';
-    }
-    cls += ' atl--' + project.get('project_template_name').toLowerCase();
-    if (this.state.ui.isInfoBoxActive) {
-      cls += ' atl__info-box--active';
-    }
-    if ((data != null) && (data.infobox_variables.length < 2)) {
-      cls += ' atl__info-box--narrow';
-    }
-    return cls;
-  },
-  _renderProject: function() {
-    if (this.state.project == null) {
-      return React.createElement(Comp.Loading, null);
-    }
-    if (this._isModelStatic()) {
-      return React.createElement(Comp.Projects.Show.Explainer, {
-        "App": this.props.App,
-        "uiState": this.state.ui,
-        "setUiState": this.setUiState.bind(this),
-        "project": this.state.project,
-        "related": this.state.related
-      });
-    }
-    if (this._isModelTilemap()) {
-      return React.createElement(Comp.Projects.Show.Tilemap, {
-        "App": this.props.App,
-        "uiState": this.state.ui,
-        "setUiState": this.setUiState.bind(this),
-        "project": this.state.project
-      });
-    }
-    return React.createElement(Comp.Loading, null);
-  },
-  _isModelStatic: function() {
-    var project, ref;
-    project = this.state.project;
-    if (!((project != null) && (project.get != null))) {
-      return false;
-    }
-    return ((ref = project.get('project_template_name')) === "Explainer" || ref === "Polling" || ref === "Policy Brief" || ref === "PolicyBrief");
-  },
-  _isModelTilemap: function() {
-    var project;
-    project = this.state.project;
-    if (!((project != null) && (project.get != null))) {
-      return false;
-    }
-    return project.get('project_template_name') === 'Tilemap';
-  },
-  _fetchRelatedProjects: function() {
-    var App, id, project, related;
-    App = this.props.App;
-    project = this.state.project;
-    if ((App != null) && (project != null)) {
-      id = project.get('id');
-      related = App.reqres.request('project:entities', {
-        queryString: "related_to=" + id,
-        cache: false
-      });
-      return related.on('reset', (function(_this) {
-        return function() {
-          return _this.setState({
-            related: related
-          });
-        };
-      })(this));
-    }
-  },
-  _fetchProject: function() {
-    var App, project;
-    App = this.props.App;
-    if (App != null) {
-      project = App.reqres.request('project:entity', {
-        atlas_url: App.currentAtlasUrl
-      });
-      return project.on('sync', (function(_this) {
-        return function() {
-          if (project.exists()) {
-            project.prepOnClient();
-            _this.setState({
-              project: project
-            });
-            return _this._fetchRelatedProjects();
-          } else {
-            return Backbone.history.navigate('welcome', {
-              trigger: true
-            });
-          }
-        };
-      })(this));
-    }
-  },
-  componentDidMount: function() {
-    var App;
-    App = this.props.App;
-    if (App != null) {
-      return this._fetchProject();
-    }
-  },
-  componentWillUnmount: function() {
-    var App;
-    return App = this.props.App;
-  }
-});
+'use strict';
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Projects.Show = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class(props) {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
+		this.state = {
+			ui: {
+				currentSpecifier: '2012', // if time-dependent data is visualized, this field holds the active specifier, such as the year
+				display: 'filter', // display type, e.g. filter or search
+				isCollapsed: false, // depends on screen size
+				isCollapsedMaster: false, // master toggle
+				isInfoBoxActive: false, // stores whether the info box is active
+				isInfoBoxNarrow: false // stores whether the info box is narrow
+			}
+		};
+	}
+
+	// This is a method passed down to all deep children so they can modify the state of the ui.
+
+	_createClass(_class, [{
+		key: 'setUiState',
+		value: function setUiState(uiStateChanges) {
+			var key,
+			    currentUiState = this.state.ui;
+			for (key in uiStateChanges) {
+				currentUiState[key] = uiStateChanges[key];
+			}
+			this.forceUpdate();
+		}
+	}, {
+		key: 'render',
+		value: function render() {
+			return React.createElement(
+				'div',
+				{ className: this.getClassName() },
+				React.createElement(Comp.SideBar, { App: this.props.App, project: this.state.project, uiState: this.state.ui, setUiState: this.setUiState.bind(this) }),
+				this.renderProject()
+			);
+		}
+	}, {
+		key: 'getClassName',
+		value: function getClassName() {
+			var cls, project, data;
+			cls = "atl";
+			project = this.state.project;
+			if (project == null) {
+				return cls;
+			}
+
+			cls += ' atl--' + this.state.ui.display + '-display';
+
+			if (this.state.ui.isCollapsedMaster || !this.state.ui.isCollapsedMaster && this.state.ui.isCollapsed) {
+				cls += ' atl--collapsed';
+			}
+
+			cls += ' atl--' + project.get('project_template_name').toLowerCase();
+
+			if (this.state.ui.isInfoBoxActive) {
+				cls += ' atl__info-box--active';
+			}
+
+			data = project.get('data');
+			if (data != null && data.infobox_variables.length < 2) {
+				cls += ' atl__info-box--narrow';
+			}
+
+			return cls;
+		}
+
+		// Pick and render template-specific project.
+	}, {
+		key: 'renderProject',
+		value: function renderProject() {
+			var LoadingComp = Comp.Loading,
+			    ExplainerComp = Comp.Projects.Show.Explainer,
+			    TilemapComp = Comp.Projects.Show.Tilemap;
+			if (this.state.project == null) {
+				return React.createElement(LoadingComp, null);
+			}
+			if (this._isModelStatic()) {
+				return React.createElement(ExplainerComp, { App: this.props.App, uiState: this.state.ui, setUiState: this.setUiState.bind(this), project: this.state.project, related: this.state.related });
+			}
+			if (this._isModelTilemap()) {
+				return React.createElement(TilemapComp, { App: this.props.App, uiState: this.state.ui, setUiState: this.setUiState.bind(this), project: this.state.project });
+			}
+			return React.createElement(LoadingComp, null);
+		}
+	}, {
+		key: '_isModelStatic',
+		value: function _isModelStatic() {
+			var project = this.state.project;
+			if (project == null) {
+				return false;
+			}
+			return ["Explainer", "Polling", "Policy Brief", "PolicyBrief"].indexOf(project.get('project_template_name')) > -1;
+		}
+	}, {
+		key: '_isModelTilemap',
+		value: function _isModelTilemap() {
+			var project = this.state.project;
+			if (project == null) {
+				return false;
+			}
+			return project.get('project_template_name') === 'Tilemap';
+		}
+
+		// Send separate network request fetching related projects.
+	}, {
+		key: 'fetchRelatedProjects',
+		value: function fetchRelatedProjects() {
+			var _this = this;
+
+			var App = this.props.App,
+			    project = this.state.project;
+			if (App == null || project == null) {
+				return;
+			}
+			var id = project.get('id');
+			var related = App.reqres.request('project:entities', { queryString: "related_to=#{id}", cache: false });
+			related.on('reset', function () {
+				_this.setState({ related: related });
+			});
+		}
+
+		// Send network request to get project data.
+	}, {
+		key: 'fetchProject',
+		value: function fetchProject() {
+			var _this2 = this;
+
+			var App = this.props.App;
+			if (App == null) {
+				return;
+			}
+			var project = App.reqres.request('project:entity', { atlas_url: App.currentAtlasUrl });
+			project.on('sync', function () {
+				// Only
+				if (project.exists()) {
+					project.prepOnClient();
+					_this2.setState({ project: project });
+					_this2.fetchRelatedProjects();
+				} else {
+					Backbone.history.navigate('welcome', { trigger: true });
+				}
+			});
+		}
+	}, {
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			// View is rendered before current project is synced.
+			var App = this.props.App;
+			if (App == null) {
+				return;
+			}
+			this.fetchProject();
+		}
+	}, {
+		key: 'componentWillUnmount',
+		value: function componentWillUnmount() {
+			var App = this.props.App;
+		}
+	}]);
+
+	return _class;
+})(React.Component);
 Comp.Projects.Show.Tilemap = React.createClass({
   mixins: [Comp.Mixins.BackboneEvents],
   displayName: 'Comp.Projects.Show.Tilemap',
@@ -3235,34 +3295,29 @@ Comp.Projects.Show.Tilemap.Filter = (function (_React$Component) {
 	_createClass(_class, [{
 		key: 'render',
 		value: function render() {
+			var HelpComp = Comp.Help;
 			return React.createElement(
 				'div',
 				{ className: 'atl__filter', ref: 'root' },
 				React.createElement(
 					'div',
-					{ id: 'atl__filter__keys', className: '-id-atl__filter__keys' },
+					{ className: 'atl__filter__keys' },
 					React.createElement(
-						'div',
-						{ className: 'atl__filter__keys' },
-						React.createElement(
-							'ul',
-							null,
-							this.renderKeys()
-						)
-					)
+						'ul',
+						null,
+						this.renderKeys()
+					),
+					React.createElement(HelpComp, { position: 'right', text: 'Select the variable you want to filter by.', id: 'filter-keys' })
 				),
 				React.createElement(
 					'div',
-					{ id: 'atl__filter__values', className: '-id-atl__filter__values' },
+					{ className: 'atl__filter__values' },
 					React.createElement(
-						'div',
-						{ className: 'atl__filter__values' },
-						React.createElement(
-							'ul',
-							null,
-							this.renderValues()
-						)
-					)
+						'ul',
+						null,
+						this.renderValues()
+					),
+					React.createElement(HelpComp, { position: 'right', text: 'Select the values you want to filter out. Corresponding map colors are indicated.', id: 'filter-values' })
 				)
 			);
 		}
@@ -3305,7 +3360,7 @@ Comp.Projects.Show.Tilemap.Filter = (function (_React$Component) {
 			var _this2 = this;
 
 			var keys = this.props.filter.children,
-			    Cmp = Comp.Projects.Show.Tilemap.Filter.Key;
+			    Cmp = Comp.Projects.Show.Tilemap.FilterKey;
 			return keys.map(function (key, i) {
 				return React.createElement(Cmp, { App: _this2.props.App, filterKey: key });
 			});
@@ -3316,7 +3371,7 @@ Comp.Projects.Show.Tilemap.Filter = (function (_React$Component) {
 			var _this3 = this;
 
 			var values = this.props.filter.getActiveChild().children,
-			    Cmp = Comp.Projects.Show.Tilemap.Filter.Value;
+			    Cmp = Comp.Projects.Show.Tilemap.FilterValue;
 			return values.map(function (value, i) {
 				return React.createElement(Cmp, { App: _this3.props.App, filterValue: value });
 			});
@@ -3326,7 +3381,7 @@ Comp.Projects.Show.Tilemap.Filter = (function (_React$Component) {
 	return _class;
 })(React.Component);
 
-Comp.Projects.Show.Tilemap.Filter.Key = (function (_React$Component2) {
+Comp.Projects.Show.Tilemap.FilterKey = (function (_React$Component2) {
 	_inherits(_class2, _React$Component2);
 
 	function _class2() {
@@ -3371,7 +3426,7 @@ Comp.Projects.Show.Tilemap.Filter.Key = (function (_React$Component2) {
 	return _class2;
 })(React.Component);
 
-Comp.Projects.Show.Tilemap.Filter.Value = (function (_React$Component3) {
+Comp.Projects.Show.Tilemap.FilterValue = (function (_React$Component3) {
 	_inherits(_class3, _React$Component3);
 
 	function _class3() {
