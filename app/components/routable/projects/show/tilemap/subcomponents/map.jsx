@@ -13,7 +13,7 @@ Comp.Projects.Show.Tilemap.Map = class extends React.Component {
 	}
 
 	componentDidMount() {
-		App = this.props.App;
+		var App = this.props.App;
 		if (App == null) { return; }
 		App.Map.props = { 
 			project: this.props.project,
@@ -23,7 +23,7 @@ Comp.Projects.Show.Tilemap.Map = class extends React.Component {
 	}
 
 	componentWillUnmount() {
-		App = this.props.App;
+		var App = this.props.App;
 		if (App == null) { return; }
 		App.Map.props = { project: undefined };
 		App.Map.stop();

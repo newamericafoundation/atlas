@@ -11,6 +11,7 @@ Comp.Projects.Show.Tilemap.SettingsBar = class extends React.Component {
 			filter: 0,
 			header: 80
 		};
+		this.shouldCheckCollapse = true;
 	}
 
 	render() {
@@ -25,25 +26,29 @@ Comp.Projects.Show.Tilemap.SettingsBar = class extends React.Component {
 		
 	}
 
-	componentDidMount() {
+	componentWillMount() {
 		this.checkOverflow();
 		$(window).on('resize', () => {
-			this.forceUpdate();
+			this.checkOverflow();
 		});
 	}
 
-	componentDidUpdate() {
+	componentWillUpdate() {
 		this.checkOverflow();
 	}
 
 	checkOverflow() {
-		var totalHeight, isCollapsed;
+		var totalHeight, isCollapsed,
+			App = this.props.App;
+		if (App == null) { return; }
 		this.heights.window = $(window).height();
 		totalHeight = this.heights.headline + this.heights.filter + this.heights.header;
 		isCollapsed = totalHeight > this.heights.window;
+		// if (App.uiState.isCollapsed !== isCollapsed) {
+		// 	App.uiState.isCollapsed = isCollapsed;
+		// }
 		if (this.props.uiState.isCollapsed !== isCollapsed) {
-			// TODO: solve infinite update loop
-			// this.props.setUiState({ isCollapsed: isCollapsed });
+			this.props.setUiState({ isCollapsed: isCollapsed });
 		}
 	}
 

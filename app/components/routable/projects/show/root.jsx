@@ -1,7 +1,5 @@
 Comp.Projects.Show = class extends React.Component {
 
-	displayName: 'Projects.Show'
-
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -36,14 +34,24 @@ Comp.Projects.Show = class extends React.Component {
 	}
 
 	getClassName() {
-		var cls, project, data;
+		var cls, project, data, App;
+
+		App = this.props.App;
+
 		cls = "atl";
 		project = this.state.project;
 		if (project == null) { return cls; }
 		
 		cls += ` atl--${this.state.ui.display}-display`;
 
-		if ((this.state.ui.isCollapsedMaster) || (!this.state.ui.isCollapsedMaster && this.state.ui.isCollapsed)) {
+		// isCollapsed as a ui state is stored both on the Marionette object and the component state.
+		// this is because of infinite update loop problems on the Settings Bar component
+		// that checks if their contents are overflowing (check can only happen after a dom update,
+		// which triggers a recursive update loop).
+		// TODO: better solution.
+		//var isCollapsedByDimension = (App && App.uiState.isCollapsed);
+		var isCollapsedByDimension = (this.state.ui.isCollapsed);
+		if ((this.state.ui.isCollapsedMaster) || (!this.state.ui.isCollapsedMaster && isCollapsedByDimension)) {
 			cls += ' atl--collapsed';
 		}
 		

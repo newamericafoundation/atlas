@@ -14,11 +14,42 @@ Comp.SideBar = React.createClass
 	getDefaultProps: ->
 		props = 
 			buttons: [
-				{ title: 'Explore Atlas', method: 'projects', icon: 'grid', reactIcon: 'Grid', isToggleable: false }
-				{ title: 'Collapse/Expand', method: 'collapse', icon: 'contract', reactIcon: 'Contract', activeReactIcon: 'Expand', isToggleable: false }
-				{ title: 'Help', method: 'help', icon: 'help', reactIcon: 'Help', isToggleable: false }
-				{ title: 'Print', method: 'print', icon: 'print', reactIcon: 'Print', isToggleable: false }
-				{ title: 'Download Data', method: 'download', icon: 'download', reactIcon: 'Download', isToggleable: false }
+				{ 
+					title: 'Explore Atlas',
+					contentType: 'link',
+					method: 'projects', 
+					reactIconName: 'Grid', 
+					isToggleable: false 
+				}
+				{ 
+					title: 'Collapse/Expand',
+					contentType: 'button',
+					method: 'collapse', 
+					reactIconName: 'Contract', 
+					activeReactIconName: 'Expand', 
+					isToggleable: false 
+				}
+				{ 
+					title: 'Help',
+					contentType: 'button'
+					method: 'help', 
+					reactIconName: 'Help', 
+					isToggleable: false 
+				}
+				{ 
+					title: 'Print',
+					contentType: 'button'
+					method: 'print', 
+					reactIconName: 'Print', 
+					isToggleable: false 
+				}
+				{ 
+					title: 'Download Data',
+					contentType: 'form',
+					method: 'download',
+					reactIconName: 'Download',
+					isToggleable: false
+				}
 			]
 		return props
 
@@ -41,7 +72,7 @@ Comp.SideBar = React.createClass
 		
 	renderButtonContent: (options, i) ->
 		# custom form button for download case
-		IconComp = Comp.Icons[options.reactIcon]
+		IconComp = Comp.Icons[options.reactIconName]
 		if options.method is 'download'
 			atlas_url = @_getAtlasUrl()
 			return <form action='/api/v1/projects/print' method='post'> 
@@ -113,15 +144,22 @@ Comp.SideBar.Button = React.createClass
 		</li>
 
 	renderContent: ->
-		<div></div>
+		if (this.props.contentType)
+			return 1
 
-	renderRegularContent: ->
-		<div></div>
+	# renderButtonContent: ->
+	# 	<div>
+	# 		<IconComp />
+	# 	</div>
 
-	renderMiniFormContent: ->
-		<form>
-		</form>
+	# renderFormContent: ->
+	# 	<form action='/api/v1/projects/print' method='post'> 
+	# 		<IconComp />
+	# 		<input type="hidden" name="atlas_url" value="atlas_url" />
+	# 		<input type="submit" value="" />
+	# 	</form>
 
-	renderLinkContent: ->
-		<a>
-		</a>
+	# renderLinkContent: ->
+	# 	<a href='mailto:atlas@newamerica.org'>
+	# 		<IconComp />
+	# 	</a>

@@ -2146,34 +2146,34 @@ Comp.SideBar = React.createClass({
       buttons: [
         {
           title: 'Explore Atlas',
+          contentType: 'link',
           method: 'projects',
-          icon: 'grid',
-          reactIcon: 'Grid',
+          reactIconName: 'Grid',
           isToggleable: false
         }, {
           title: 'Collapse/Expand',
+          contentType: 'button',
           method: 'collapse',
-          icon: 'contract',
-          reactIcon: 'Contract',
-          activeReactIcon: 'Expand',
+          reactIconName: 'Contract',
+          activeReactIconName: 'Expand',
           isToggleable: false
         }, {
           title: 'Help',
+          contentType: 'button',
           method: 'help',
-          icon: 'help',
-          reactIcon: 'Help',
+          reactIconName: 'Help',
           isToggleable: false
         }, {
           title: 'Print',
+          contentType: 'button',
           method: 'print',
-          icon: 'print',
-          reactIcon: 'Print',
+          reactIconName: 'Print',
           isToggleable: false
         }, {
           title: 'Download Data',
+          contentType: 'form',
           method: 'download',
-          icon: 'download',
-          reactIcon: 'Download',
+          reactIconName: 'Download',
           isToggleable: false
         }
       ]
@@ -2208,7 +2208,7 @@ Comp.SideBar = React.createClass({
   },
   renderButtonContent: function(options, i) {
     var IconComp, atlas_url;
-    IconComp = Comp.Icons[options.reactIcon];
+    IconComp = Comp.Icons[options.reactIconName];
     if (options.method === 'download') {
       atlas_url = this._getAtlasUrl();
       return React.createElement("form", {
@@ -2297,16 +2297,9 @@ Comp.SideBar.Button = React.createClass({
     }, this.renderContent());
   },
   renderContent: function() {
-    return React.createElement("div", null);
-  },
-  renderRegularContent: function() {
-    return React.createElement("div", null);
-  },
-  renderMiniFormContent: function() {
-    return React.createElement("form", null);
-  },
-  renderLinkContent: function() {
-    return React.createElement("a", null);
+    if (this.props.contentType) {
+      return 1;
+    }
   }
 });
 
@@ -2541,8 +2534,7 @@ Comp.Projects.Index = React.createClass({
         {
           title: 'Submit Comment',
           method: 'comment',
-          icon: 'comment',
-          reactIcon: 'Comment',
+          reactIconName: 'Comment',
           isToggleable: false
         }
       ]
@@ -3006,7 +2998,10 @@ Comp.Projects.Show = (function (_React$Component) {
 	}, {
 		key: 'getClassName',
 		value: function getClassName() {
-			var cls, project, data;
+			var cls, project, data, App;
+
+			App = this.props.App;
+
 			cls = "atl";
 			project = this.state.project;
 			if (project == null) {
@@ -3015,7 +3010,14 @@ Comp.Projects.Show = (function (_React$Component) {
 
 			cls += ' atl--' + this.state.ui.display + '-display';
 
-			if (this.state.ui.isCollapsedMaster || !this.state.ui.isCollapsedMaster && this.state.ui.isCollapsed) {
+			// isCollapsed as a ui state is stored both on the Marionette object and the component state.
+			// this is because of infinite update loop problems on the Settings Bar component
+			// that checks if their contents are overflowing (check can only happen after a dom update,
+			// which triggers a recursive update loop).
+			// TODO: better solution.
+			//var isCollapsedByDimension = (App && App.uiState.isCollapsed);
+			var isCollapsedByDimension = this.state.ui.isCollapsed;
+			if (this.state.ui.isCollapsedMaster || !this.state.ui.isCollapsedMaster && isCollapsedByDimension) {
 				cls += ' atl--collapsed';
 			}
 
@@ -3286,10 +3288,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== 'function' 
 Comp.Projects.Show.Tilemap.Filter = (function (_React$Component) {
 	_inherits(_class, _React$Component);
 
-	function _class() {
+	function _class(props) {
 		_classCallCheck(this, _class);
 
-		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).apply(this, arguments);
+		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
+		this.maxHeight = 0;
 	}
 
 	_createClass(_class, [{
@@ -3325,7 +3328,13 @@ Comp.Projects.Show.Tilemap.Filter = (function (_React$Component) {
 		key: 'getHeight',
 		value: function getHeight() {
 			var $el = $(React.findDOMNode(this.refs.root));
-			return $el.height();
+			var height = $el.height();
+			if (height > this.maxHeight) {
+				this.maxHeight = height;
+			} else {
+				height = this.maxHeight;
+			}
+			return height;
 		}
 	}, {
 		key: 'componentDidMount',
@@ -3333,7 +3342,7 @@ Comp.Projects.Show.Tilemap.Filter = (function (_React$Component) {
 			var _this = this;
 
 			this.props.cacheHeight(this.getHeight());
-			App = this.props.App;
+			var App = this.props.App;
 			if (App == null) {
 				return;
 			}
@@ -3496,6 +3505,7 @@ Comp.Projects.Show.Tilemap.FilterValue = (function (_React$Component3) {
 	}, {
 		key: 'toggle',
 		value: function toggle() {
+			var App;
 			this.props.filterValue.toggle();
 			App = this.props.App;
 			if (App == null) {
@@ -3520,16 +3530,16 @@ function _inherits(subClass, superClass) { if (typeof superClass !== 'function' 
 Comp.Projects.Show.Tilemap.Headline = (function (_React$Component) {
 	_inherits(_class, _React$Component);
 
-	function _class() {
+	function _class(props) {
 		_classCallCheck(this, _class);
 
-		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).apply(this, arguments);
+		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
+		this.maxHeight = 0;
 	}
 
 	_createClass(_class, [{
 		key: 'render',
 		value: function render() {
-			project = this.props.project;
 			return React.createElement(
 				'div',
 				{ className: 'atl__headline', ref: 'root' },
@@ -3537,12 +3547,12 @@ Comp.Projects.Show.Tilemap.Headline = (function (_React$Component) {
 				React.createElement(
 					'h1',
 					{ className: 'atl__headline__title' },
-					project.get('title')
+					this.getTitle()
 				),
 				React.createElement(
 					'h2',
 					{ className: 'atl__headline__description' },
-					project.get('short_description'),
+					this.getShortDescription(),
 					React.createElement(
 						'a',
 						{ href: '#', className: 'link', onClick: this.openInfoBox.bind(this) },
@@ -3565,24 +3575,56 @@ Comp.Projects.Show.Tilemap.Headline = (function (_React$Component) {
 		key: 'getHeight',
 		value: function getHeight() {
 			var $el = $(React.findDOMNode(this.refs.root));
-			return $el.height();
+			var height = $el.height();
+			if (height > this.maxHeight) {
+				this.maxHeight = height;
+			} else {
+				height = this.maxHeight;
+			}
+			return height;
 		}
 	}, {
 		key: 'openInfoBox',
 		value: function openInfoBox(e) {
+			var project = this.props.project;
+			if (project == null) {
+				return;
+			}
 			e.preventDefault();
 			this.props.project.get('data').items.active = undefined;
 			this.props.setUiState({ isInfoBoxActive: true });
 		}
 	}, {
+		key: 'getShortDescription',
+		value: function getShortDescription() {
+			var project = this.props.project;
+			if (project == null) {
+				return;
+			}
+			return project.get('short_description');
+		}
+	}, {
 		key: 'getSectionText',
 		value: function getSectionText() {
+			var project, projectSectionNames;
 			project = this.props.project;
+			if (project == null) {
+				return;
+			}
 			projectSectionNames = project.get('project_section_names');
 			if (projectSectionNames == null) {
 				return '';
 			}
 			return projectSectionNames.join(',<br>').toUpperCase();
+		}
+	}, {
+		key: 'getTitle',
+		value: function getTitle() {
+			var project = this.props.project;
+			if (project == null) {
+				return;
+			}
+			return project.get('title');
 		}
 	}]);
 
@@ -3818,7 +3860,7 @@ Comp.Projects.Show.Tilemap.Map = (function (_React$Component) {
 	}, {
 		key: "componentDidMount",
 		value: function componentDidMount() {
-			App = this.props.App;
+			var App = this.props.App;
 			if (App == null) {
 				return;
 			}
@@ -3831,7 +3873,7 @@ Comp.Projects.Show.Tilemap.Map = (function (_React$Component) {
 	}, {
 		key: "componentWillUnmount",
 		value: function componentWillUnmount() {
-			App = this.props.App;
+			var App = this.props.App;
 			if (App == null) {
 				return;
 			}
@@ -4055,6 +4097,7 @@ Comp.Projects.Show.Tilemap.SettingsBar = (function (_React$Component) {
 			filter: 0,
 			header: 80
 		};
+		this.shouldCheckCollapse = true;
 	}
 
 	_createClass(_class, [{
@@ -4070,30 +4113,37 @@ Comp.Projects.Show.Tilemap.SettingsBar = (function (_React$Component) {
 			);
 		}
 	}, {
-		key: 'componentDidMount',
-		value: function componentDidMount() {
+		key: 'componentWillMount',
+		value: function componentWillMount() {
 			var _this = this;
 
 			this.checkOverflow();
 			$(window).on('resize', function () {
-				_this.forceUpdate();
+				_this.checkOverflow();
 			});
 		}
 	}, {
-		key: 'componentDidUpdate',
-		value: function componentDidUpdate() {
+		key: 'componentWillUpdate',
+		value: function componentWillUpdate() {
 			this.checkOverflow();
 		}
 	}, {
 		key: 'checkOverflow',
 		value: function checkOverflow() {
-			var totalHeight, isCollapsed;
+			var totalHeight,
+			    isCollapsed,
+			    App = this.props.App;
+			if (App == null) {
+				return;
+			}
 			this.heights.window = $(window).height();
 			totalHeight = this.heights.headline + this.heights.filter + this.heights.header;
 			isCollapsed = totalHeight > this.heights.window;
+			// if (App.uiState.isCollapsed !== isCollapsed) {
+			// 	App.uiState.isCollapsed = isCollapsed;
+			// }
 			if (this.props.uiState.isCollapsed !== isCollapsed) {
-				// TODO: solve infinite update loop
-				// this.props.setUiState({ isCollapsed: isCollapsed });
+				this.props.setUiState({ isCollapsed: isCollapsed });
 			}
 		}
 	}, {
@@ -4336,39 +4386,104 @@ Comp.Projects.Show.Explainer = React.createClass({
   }
 });
 
-Comp.Projects.Show.Explainer.Related = React.createClass({
-  displayName: 'Projects.Show.Explainer.Related',
-  render: function() {
-    return React.createElement("div", {
-      "className": "atl__related"
-    }, React.createElement("p", null, "Related Pages"), React.createElement("ul", null, this.renderList()));
-  },
-  renderList: function() {
-    var relatedItems;
-    relatedItems = this.props.related;
-    if (relatedItems == null) {
-      return;
-    }
-    return relatedItems.map(function(item, i) {
-      return React.createElement("li", {
-        "key": 'related-' + i
-      }, React.createElement(Comp.Projects.Show.Explainer.Related.Item, {
-        "relatedItem": item
-      }));
-    });
-  }
-});
+"use strict";
 
-Comp.Projects.Show.Explainer.Related.Item = React.createClass({
-  displayName: 'Projects.Show.Explainer.Related.Item',
-  render: function() {
-    var item;
-    item = this.props.relatedItem;
-    return React.createElement("a", {
-      "className": "link",
-      "href": "/" + item.get('atlas_url'),
-      "onClick": this.navigate
-    }, item.get('title'));
-  },
-  navigate: function(e) {}
-});
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Projects.Show.Explainer.Related = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class() {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class, [{
+		key: "render",
+		value: function render() {
+			if (this.isListEmpty()) {
+				return React.createElement("div", { className: "atl__related" });
+			}
+			return React.createElement(
+				"div",
+				{ className: "atl__related" },
+				React.createElement(
+					"p",
+					null,
+					"Related Pages"
+				),
+				React.createElement(
+					"ul",
+					null,
+					this.renderList()
+				)
+			);
+		}
+	}, {
+		key: "renderList",
+		value: function renderList() {
+			var relatedItems = this.props.related;
+			if (relatedItems == null) {
+				return;
+			}
+			return relatedItems.map(function (item, i) {
+				var Cmp = Comp.Projects.Show.Explainer.RelatedItem;
+				return React.createElement(
+					"li",
+					{ key: 'related-' + i },
+					React.createElement(Cmp, { relatedItem: item })
+				);
+			});
+		}
+	}, {
+		key: "isListEmpty",
+		value: function isListEmpty() {
+			var relatedItems = this.props.related;
+			console.log(relatedItems);
+			if (relatedItems == null) {
+				return true;
+			}
+			return relatedItems.length === 0;
+		}
+	}]);
+
+	return _class;
+})(React.Component);
+
+Comp.Projects.Show.Explainer.RelatedItem = (function (_React$Component2) {
+	_inherits(_class2, _React$Component2);
+
+	function _class2() {
+		_classCallCheck(this, _class2);
+
+		_get(Object.getPrototypeOf(_class2.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class2, [{
+		key: "render",
+		value: function render() {
+			var item = this.props.relatedItem;
+			return React.createElement(
+				"a",
+				{ className: "link", href: "/" + item.get('atlas_url'), onClick: this.navigate.bind(this) },
+				item.get('title')
+			);
+		}
+	}, {
+		key: "navigate",
+		value: function navigate(e) {
+			e.preventDefault();
+			var item = this.props.relatedItem;
+			Backbone.history.navigate("/" + item.get('atlas_url'), { trigger: true });
+		}
+	}]);
+
+	return _class2;
+})(React.Component);

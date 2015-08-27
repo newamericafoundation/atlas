@@ -15,13 +15,13 @@
 			'*notFound': 'welcome_index'
 
 		renderReactLayout: (opt = {}) ->
-			el = $('body')[0]
+			el = $('#site')[0]
 			opt.App = App
 			c = React.createElement(Comp.Layout, opt)
 			React.render(c, el)
 
 		renderReactCustomLayout: (opt = {}) ->
-			el = $('body')[0]
+			el = $('#site')[0]
 			opt.App = App
 			c = React.createElement(Comp.Dashboard, opt)
 			React.render(c, el)

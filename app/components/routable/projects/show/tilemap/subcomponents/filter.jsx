@@ -1,5 +1,10 @@
 Comp.Projects.Show.Tilemap.Filter = class extends React.Component {
 
+	constructor(props) {
+		super(props);
+		this.maxHeight = 0;
+	}
+
 	render() {
 		var HelpComp = Comp.Help;
 		return (
@@ -22,12 +27,15 @@ Comp.Projects.Show.Tilemap.Filter = class extends React.Component {
 
 	getHeight() {
 		var $el = $(React.findDOMNode(this.refs.root));
-		return $el.height();
+		var height = $el.height();
+		if (height > this.maxHeight) { this.maxHeight = height; }
+		else { height = this.maxHeight }
+		return height;
 	}
 
 	componentDidMount() {
 		this.props.cacheHeight(this.getHeight());
-		App = this.props.App;
+		var App = this.props.App;
 		if (App == null) { return; }
 		_.extend(this, Backbone.Events);
 		this.listenTo(App.vent, 'key:click value:click', () => {
@@ -143,6 +151,7 @@ Comp.Projects.Show.Tilemap.FilterValue = class extends React.Component {
 	}
 
 	toggle() {
+		var App;
 		this.props.filterValue.toggle();
 		App = this.props.App;
 		if (App == null) { return; }

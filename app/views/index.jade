@@ -2,15 +2,21 @@ extend layout
 
 block content
 
-	- if (typeof reactOutput !== 'undefined') {
-		!= reactOutput
-	- } else {
-		div(class="loading-icon")
-			div Loading...
-	- }
+	div(class='fill-parent', id='site')
+		- if (typeof reactOutput !== 'undefined') {
+			!= reactOutput
+		- } else {
+			div(class="loading-icon")
+				div Loading...
+		- }
 			
-
-	script(src="/assets/scripts/#{js}")
+	- if (process.env.NODE_ENV === 'production') {
+		script(src="/assets/scripts/build/#{js}")
+	- } else {
+		script(src='/assets/scripts/partials/vendor.js')
+		script(src='/assets/scripts/partials/component.js')
+		script(src='/assets/scripts/partials/source.js')
+	- }
 	script(type='text/javascript').
 		$(function() { 
 			Atlas.start();

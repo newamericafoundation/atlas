@@ -8,11 +8,13 @@ module.exports = {
 
     	js: {
 
+    		// Vendor scripts that are lazy-loaded when needed, then kept on the window.
 			vendorAsync: [
 		        './bower_components/d3/d3.min.js', 
 		        './bower_components/mapbox.js/mapbox.js'
 		    ],
 
+		    // bower scripts
 		    vendor: [
 		        './bower_components/jquery/dist/jquery.js',
 		        './bower_components/marked/lib/marked.js',
@@ -25,14 +27,15 @@ module.exports = {
 		        './bower_components/chartist/dist/chartist.js',
 		        './bower_components/chartist-html/build/chartist-html.js',
 		        './bower_components/moment/moment.js',
-		        './bower_components/numeral/numeral.js',
-		        './app/assets/scripts/vendor/**/*.js'
+		        './bower_components/numeral/numeral.js'
 		    ],
 
-		    main: [
+		    // main application code
+		    source: [
+		    	'./app/assets/scripts/vendor/**/*.js',
 		        './app/assets/scripts/config/**/*.js.coffee',
 		        './app/assets/scripts/atlas/atlas.js.coffee',
-		        './app/assets/scripts/atlas/routes/**/*.js.coffee',
+		        './app/assets/scripts/atlas/routes/**/*',
 		        './app/assets/scripts/atlas/base/**/*.js.coffee',
 		        './app/assets/scripts/atlas/util/**/*.js.coffee',
 		        './app/assets/scripts/atlas/__auto__models.js',
@@ -40,6 +43,7 @@ module.exports = {
 		        './app/assets/scripts/atlas/site/map/**/*.js.coffee'
 		    ],
 
+		    // view and controller code
 		    component: [
 		        './app/components/init.jsx',
 		        './app/components/non_routable/loading.jsx',
@@ -59,17 +63,9 @@ module.exports = {
 		        './app/components/routable/projects/show/tilemap/subcomponents/**/*',
 		        './app/components/routable/projects/show/explainer/root.cjsx',
 		        './app/components/routable/projects/show/explainer/subcomponents/**/*'
-		    ],
-
-		    template: [
-		        './app/assets/scripts/**/*.jst.eco'
 		    ]
 
     	}
-
-    },
-
-    destination: {
 
     }
 

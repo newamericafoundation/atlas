@@ -6,7 +6,7 @@ Comp.Projects.Index = React.createClass
 
 	render: ->
 		<div className="atl fill-parent">
-			<Comp.SideBar buttons={[{title: 'Submit Comment', method: 'comment', icon: 'comment', reactIcon: 'Comment', isToggleable: false }]} />
+			<Comp.SideBar buttons={[{title: 'Submit Comment', method: 'comment', reactIconName: 'Comment', isToggleable: false }]} />
 			<div id="atl__main" className="-id-atl__main fill-parent">
 				<div className="atl__main">
 					<div className="atl__nav bg-c-off-white">

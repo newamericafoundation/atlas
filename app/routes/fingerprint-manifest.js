@@ -1,4 +1,4 @@
-var jsFp = require('../../public/assets/scripts/rev-manifest.json')['app.js'],
+var jsFp = require('../../public/assets/scripts/build/rev-manifest.json')['app.js'],
 	cssFp = require('../../public/assets/styles/rev-manifest.json')['app.css'];
 
 var deleteGzipExtension = function(fileName) {

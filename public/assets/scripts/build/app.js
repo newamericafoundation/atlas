@@ -9286,8 +9286,9 @@ block.normal = merge({}, block);
  */
 
 block.gfm = merge({}, block.normal, {
-  fences: /^ *(`{3,}|~{3,}) *(\S+)? *\n([\s\S]+?)\s*\1 *(?:\n+|$)/,
-  paragraph: /^/
+  fences: /^ *(`{3,}|~{3,})[ \.]*(\S+)? *\n([\s\S]*?)\s*\1 *(?:\n+|$)/,
+  paragraph: /^/,
+  heading: /^ *(#{1,6}) +([^\n]+?) *#* *(?:\n+|$)/
 });
 
 block.gfm.paragraph = replace(block.paragraph)
@@ -9399,7 +9400,7 @@ Lexer.prototype.token = function(src, top, bq) {
       this.tokens.push({
         type: 'code',
         lang: cap[2],
-        text: cap[3]
+        text: cap[3] || ''
       });
       continue;
     }
@@ -9570,7 +9571,8 @@ Lexer.prototype.token = function(src, top, bq) {
         type: this.options.sanitize
           ? 'paragraph'
           : 'html',
-        pre: cap[1] === 'pre' || cap[1] === 'script' || cap[1] === 'style',
+        pre: !this.options.sanitizer
+          && (cap[1] === 'pre' || cap[1] === 'script' || cap[1] === 'style'),
         text: cap[0]
       });
       continue;
@@ -9665,7 +9667,7 @@ var inline = {
   reflink: /^!?\[(inside)\]\s*\[([^\]]*)\]/,
   nolink: /^!?\[((?:\[[^\]]*\]|[^\[\]])*)\]/,
   strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
-  em: /^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
+  em: /^\b_((?:[^_]|__)+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
   code: /^(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,
   br: /^ {2,}\n(?!\s*$)/,
   del: noop,
@@ -9817,8 +9819,10 @@ InlineLexer.prototype.output = function(src) {
       }
       src = src.substring(cap[0].length);
       out += this.options.sanitize
-        ? escape(cap[0])
-        : cap[0];
+        ? this.options.sanitizer
+          ? this.options.sanitizer(cap[0])
+          : escape(cap[0])
+        : cap[0]
       continue;
     }
 
@@ -9889,7 +9893,7 @@ InlineLexer.prototype.output = function(src) {
     // text
     if (cap = this.rules.text.exec(src)) {
       src = src.substring(cap[0].length);
-      out += escape(this.smartypants(cap[0]));
+      out += this.renderer.text(escape(this.smartypants(cap[0])));
       continue;
     }
 
@@ -9923,7 +9927,9 @@ InlineLexer.prototype.smartypants = function(text) {
   if (!this.options.smartypants) return text;
   return text
     // em-dashes
-    .replace(/--/g, '\u2014')
+    .replace(/---/g, '\u2014')
+    // en-dashes
+    .replace(/--/g, '\u2013')
     // opening singles
     .replace(/(^|[-\u2014/(\[{"\s])'/g, '$1\u2018')
     // closing singles & apostrophes
@@ -9941,6 +9947,7 @@ InlineLexer.prototype.smartypants = function(text) {
  */
 
 InlineLexer.prototype.mangle = function(text) {
+  if (!this.options.mangle) return text;
   var out = ''
     , l = text.length
     , i = 0
@@ -10098,6 +10105,10 @@ Renderer.prototype.image = function(href, title, text) {
   }
   out += this.options.xhtml ? '/>' : '>';
   return out;
+};
+
+Renderer.prototype.text = function(text) {
+  return text;
 };
 
 /**
@@ -10443,6 +10454,8 @@ marked.defaults = {
   breaks: false,
   pedantic: false,
   sanitize: false,
+  sanitizer: null,
+  mangle: true,
   smartLists: false,
   silent: false,
   highlight: null,
@@ -42535,10 +42548,6 @@ ChartistHtml.ChartManager.prototype = {
 			chart = new Chartist[chartType]('.' + chartClass, this.data, opt.options, opt.responsiveOptions);
 		}
 
-		chart.on('draw', function(context) {
-			console.log(context);
-		});
-
 		chart.on('created', function() {
 			if(!self._isRendered) {
 				self.chart = chart;
@@ -55033,3 +55042,18923 @@ jQuery.fn.toc.defaults = {
 };
 
 })(jQuery);
+// Initialize components namespace.
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Comp = {};
+
+Comp.Mixins = {};
+
+Comp.Icons = {};
+
+// Render a help text segment that displays when help is activated.
+// Parent needs to be relatively positioned for this to work.
+Comp.Help = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class() {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).apply(this, arguments);
+	}
+
+	_createClass(_class, [{
+		key: 'render',
+		value: function render() {
+			var modifierClass = this.props.position ? 'atl__help--' + this.props.position : '',
+			    id = this.props.id ? 'atl__help__' + this.props.id : undefined;
+			return React.createElement(
+				'div',
+				{ className: 'atl__help ' + modifierClass, id: id },
+				this.props.text
+			);
+		}
+	}]);
+
+	return _class;
+})(React.Component);
+
+// Add Backbone Events to component.
+Comp.Mixins.BackboneEvents = {
+
+	componentWillMount: function componentWillMount() {
+		if (_ && Backbone) {
+			_.extend(this, Backbone.Events);
+		}
+	},
+
+	componentWillUnmount: function componentWillUnmount() {
+		if (this.stopListening) {
+			this.stopListening();
+		}
+	}
+
+};
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Loading = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class() {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).apply(this, arguments);
+	}
+
+	_createClass(_class, [{
+		key: 'render',
+		value: function render() {
+			return React.createElement(
+				'div',
+				{ className: 'loading-icon' },
+				React.createElement(
+					'div',
+					null,
+					'Loading...'
+				)
+			);
+		}
+	}]);
+
+	return _class;
+})(React.Component);
+Comp.Setup = React.createClass({
+  displayName: 'Setup',
+  render: function() {
+    var App;
+    App = this.props.App;
+    return React.createElement("div", {
+      "className": "atl__setup"
+    }, React.createElement("svg", {
+      "id": "patterns"
+    }, React.createElement(Comp.Setup.Patterns, {
+      "App": App,
+      "size": 30.
+    })));
+  }
+});
+
+Comp.Setup.Patterns = React.createClass({
+  displayName: 'Setup.Patterns',
+  mixins: [Comp.Mixins.BackboneEvents],
+  render: function() {
+    return React.createElement("defs", null, this.renderList());
+  },
+  getInitialState: function() {
+    return {
+      data: []
+    };
+  },
+  renderList: function() {
+    var colorCodes, i, j, ref, results;
+    results = [];
+    for (i = j = 0, ref = this.props.size; j < ref; i = j += 1) {
+      colorCodes = this.state.data[i];
+      results.push(React.createElement(Comp.Setup.Pattern, {
+        "App": this.props.App,
+        "id": i,
+        "key": i,
+        "colorCodes": colorCodes
+      }));
+    }
+    return results;
+  },
+  componentDidMount: function() {
+    var App;
+    App = this.props.App;
+    if (App != null) {
+      App.commands.setHandler('reset:patterns', this.resetPatterns.bind(this));
+      return App.reqres.setHandler('get:pattern:id', this.ensureAndGetPattern.bind(this));
+    }
+  },
+  componentWillUnmount: function() {
+    var App;
+    App = this.props.App;
+    return App.commands.clearHandler('reset:patterns');
+  },
+  resetPatterns: function() {
+    return this.setState({
+      data: []
+    });
+  },
+  ensureAndGetPattern: function(colorCodes) {
+    var data, existingColorCodes, i, j, len, ref;
+    ref = this.state.data;
+    for (i = j = 0, len = ref.length; j < len; i = ++j) {
+      existingColorCodes = ref[i];
+      if (colorCodes.join('-') === existingColorCodes.join('-')) {
+        return i;
+      }
+    }
+    data = this.state.data;
+    if (data.length > this.props.size - 2) {
+      data = [];
+    }
+    data.push(colorCodes);
+    this.setState({
+      data: data
+    });
+    return this.state.data.length - 1;
+  },
+  __testRenderTwoColorPattern: function() {
+    return React.createElement("pattern", {
+      "id": "diagonal-stripes",
+      "x": "0",
+      "y": "0",
+      "width": "8",
+      "height": "8",
+      "patternUnits": "userSpaceOnUse",
+      "patternTransform": "rotate(45)"
+    }, React.createElement("rect", {
+      "x": "0",
+      "y": "0",
+      "width": "2",
+      "height": "8",
+      "style": "stroke:none; fill:" + 'roed' + ";"
+    }), React.createElement("rect", {
+      "x": "2",
+      "y": "0",
+      "width": "2",
+      "height": "8",
+      "style": "stroke:none; fill:" + 'roed' + ";"
+    }), React.createElement("rect", {
+      "x": "4",
+      "y": "0",
+      "width": "2",
+      "height": "8",
+      "style": "stroke:none; fill:" + 'hvid' + ";"
+    }), React.createElement("rect", {
+      "x": "6",
+      "y": "0",
+      "width": "2",
+      "height": "8",
+      "style": "stroke:none; fill:" + 'hvid' + ";"
+    }));
+  },
+  __testRenderThreeColorPattern: function() {
+    return React.createElement("pattern", {
+      "id": "diagonal-stripes",
+      "x": "0",
+      "y": "0",
+      "width": "18",
+      "height": "18",
+      "patternUnits": "userSpaceOnUse",
+      "patternTransform": "rotate(45)"
+    }, React.createElement("rect", {
+      "x": "0",
+      "y": "0",
+      "width": "6",
+      "height": "18",
+      "style": "stroke:none; fill:" + 'schwarz' + ";"
+    }), React.createElement("rect", {
+      "x": "6",
+      "y": "0",
+      "width": "6",
+      "height": "18",
+      "style": "stroke:none; fill:" + 'rot' + ";"
+    }), React.createElement("rect", {
+      "x": "12",
+      "y": "0",
+      "width": "6",
+      "height": "18",
+      "style": "stroke:none; fill:" + 'gold' + ";"
+    }));
+  }
+});
+
+Comp.Setup.Pattern = React.createClass({
+  displayName: 'Setup.Pattern',
+  render: function() {
+    var className, colorCount, dim;
+    if (this.props.colorCodes == null) {
+      return React.createElement("pattern", null);
+    }
+    colorCount = this.props.colorCodes.length;
+    dim = colorCount === 2 ? 12 : 18;
+    className = 'striped-pattern-' + this.props.colorCodes.join('-');
+    return React.createElement("pattern", {
+      "id": 'stripe-pattern-' + this.props.id,
+      "className": className,
+      "x": "0",
+      "y": "0",
+      "width": dim,
+      "height": dim,
+      "patternUnits": "userSpaceOnUse",
+      "patternTransform": "rotate(45)"
+    }, this._getPatternRects());
+  },
+  getColor: function(colorCode) {
+    var App;
+    App = this.props.App;
+    if (App != null) {
+      return App.CSS.Colors.toRgb(colorCode - 1);
+    }
+  },
+  componentDidMount: function() {
+    return this.setPatternTransform();
+  },
+  componentDidUpdate: function() {
+    return this.setPatternTransform();
+  },
+  setPatternTransform: function() {
+    return React.findDOMNode(this).setAttribute('patternTransform', 'rotate(45)');
+  },
+  _getPatternRects: function(n) {
+    var j, results;
+    if (this.props.colorCodes == null) {
+      return;
+    }
+    n = this.props.colorCodes.length;
+    return (function() {
+      results = [];
+      for (var j = 0; 0 <= n ? j < n : j > n; 0 <= n ? j++ : j--){ results.push(j); }
+      return results;
+    }).apply(this).map((function(_this) {
+      return function(i) {
+        var color, height, style;
+        height = n === 2 ? 12 : 18;
+        color = _this.getColor(_this.props.colorCodes[i]);
+        style = {
+          'stroke': 'none',
+          'fill': color
+        };
+        return React.createElement("rect", {
+          "key": i,
+          "x": 6 * i,
+          "y": "0",
+          "width": "6",
+          "height": height,
+          "style": style
+        });
+      };
+    })(this));
+  }
+});
+
+Comp.Icons.Hex = React.createClass({
+  render: function() {
+    return React.createElement("svg", {
+      "className": this.props.className,
+      "viewBox": "0 0 100 100"
+    }, React.createElement("g", {
+      "className": "hexicon__hex " + this.props.colorClassName
+    }, React.createElement("path", {
+      "d": "M86.9,77.3L56,94.4c-3.3,1.9-8.7,1.9-12.1,0L13.1,77.3c-3.3-1.9-6-6.4-6-10.2V32.9c0-3.8,2.7-8.3,6-10.2 L44,5.6c3.3-1.9,8.7-1.9,12.1,0l30.9,17.2c3.3,1.9,6,6.4,6,10.2v34.1C93,70.8,90.3,75.4,86.9,77.3"
+    })), React.createElement("g", {
+      "className": "hexicon__yes"
+    }, React.createElement("polygon", {
+      "points": "70.3,31.9 44.3,57.8 30.1,43.6 22.5,51.2 36.7,65.4 36.7,65.4 44.3,73 77.9,39.5 	"
+    })), React.createElement("g", {
+      "className": "hexicon__no"
+    }, React.createElement("polygon", {
+      "points": "72,35.8 64.4,28.2 50.2,42.4 35.9,28.2 28.3,35.8 42.6,50 28.3,64.2 35.9,71.8 50.2,57.6 64.4,71.8 72,64.2 57.8,50"
+    })));
+  }
+});
+
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Icons.Adp = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class() {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement("path", { d: "M83.2,66.6v-0.9h0.7c0.5,0,0.6,0.1,0.6,0.4c0,0.3-0.1,0.5-0.7,0.5 M83.7,67.2c0.2,0,0.4,0,0.5,0.2 c0.2,0.2,0.2,0.5,0.2,0.8c0,0.2,0.1,0.5,0.1,0.7h0.7c-0.1-0.3-0.2-0.7-0.2-1.1C85,67.3,85,67.1,84.4,67v0c0.5-0.1,0.8-0.4,0.8-0.9 c0-0.8-0.7-1-1.4-1h-1.2v3.7h0.6v-1.6H83.7z M83.9,70.2c1.7,0,3.1-1.4,3.1-3.1c0-1.7-1.4-3.1-3.1-3.1c-1.7,0-3.1,1.4-3.1,3.1 C80.7,68.8,82.1,70.2,83.9,70.2z M83.9,69.6c-1.4,0-2.6-1.2-2.6-2.6c0-1.4,1.2-2.6,2.6-2.6c1.4,0,2.6,1.2,2.6,2.6 C86.4,68.4,85.3,69.6,83.9,69.6z" }),
+					React.createElement("path", { d: "M78.6,38.5h-5v5h5c1.2,0,2.2,1,2.2,2.2c0,1.2-1,2.2-2.2,2.2h-5v5h5c4,0,7.2-3.2,7.2-7.2 C85.8,41.7,82.5,38.5,78.6,38.5 M49.8,65.1c6,0,11.2-3.5,13.7-8.6h6.4v8.6h3.6v-8.6h5c6,0,10.8-4.8,10.8-10.8 c0-6-4.8-10.8-10.8-10.8h-8.6v13h-5.1c-1-7.3-7.3-13-15-13H32.1L14.5,65.1h4.2l5-8.6h18.1v8.6H49.8z M94.4,45.7 c0,8.7-7.1,15.8-15.8,15.8v8.6H64.9v-6.7c-3.7,4.1-9.1,6.7-15,6.7h-13v-8.6H26.6l-5,8.6h-16l23.5-40.3h20.7c6,0,11.3,2.6,15,6.7 v-6.7h13.7C87.3,29.8,94.4,36.9,94.4,45.7z M36.8,38.5v9.4h-8l-2.9,5h16V38.5H36.8z M61.4,50c0,6.4-5.2,11.5-11.5,11.5h-4.4v-5h4.4 c3.6,0,6.5-2.9,6.5-6.5c0-3.6-2.9-6.5-6.5-6.5h-4.4v-5h4.4C56.2,38.5,61.4,43.6,61.4,50z" })
+				)
+			);
+		}
+	}]);
+
+	return _class;
+})(React.Component);
+
+Comp.Icons.AroundTheWorld = (function (_React$Component2) {
+	_inherits(_class2, _React$Component2);
+
+	function _class2() {
+		_classCallCheck(this, _class2);
+
+		_get(Object.getPrototypeOf(_class2.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class2, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement("path", { d: "M80.3,29.4c3.3,5.3,5.3,11.3,5.8,17.6h-13c0-0.2,0-0.4,0-0.6l0-0.2c0-0.7-0.1-1.4-0.2-2 c0-0.3-0.1-0.6-0.1-1c-0.1-0.7-0.2-1.4-0.3-2.1l0-0.3c0-0.1,0-0.3-0.1-0.4c-0.2-1-0.3-1.9-0.5-2.8c0-0.1,0-0.1-0.1-0.2l0-0.2 c-0.1-0.3-0.2-0.7-0.3-1c0,0-0.1,0-0.1,0.1c-1.9,1.6-3.6,3-5.1,4.3c0,0.3,0.1,0.5,0.1,0.8c0,0.2,0.1,0.5,0.1,0.7l0,0.1 c0.1,0.6,0.2,1.1,0.2,1.8c0,0.3,0.1,0.6,0.1,0.9c0.1,0.6,0.1,1.2,0.1,1.8l0,0.3c0,0,0,0.1,0,0.1h-8.2c-0.8,0.7-1.7,1.5-2.6,2.3 c-1.5,1.4-2.8,2.6-4,3.7h14.7c0,0.8-0.1,1.7-0.2,2.8c0,0.2,0,0.4-0.1,0.5l0,0.3c-0.2,1.2-0.3,2.2-0.5,3.2l0,0.1 c-0.2,0.9-0.4,1.9-0.7,3.1c-0.1,0.3-0.1,0.5-0.2,0.8c-0.3,0.9-0.5,1.8-0.8,2.5c-0.8-0.3-1.7-0.5-2.8-0.8c-0.3-0.1-0.5-0.1-0.8-0.2 c-1.3-0.3-2.3-0.5-3.3-0.7c0,0-0.1,0-0.2,0c-1-0.2-2-0.3-3.3-0.5c-0.3,0-0.6-0.1-0.9-0.1c-1.1-0.1-2.1-0.2-3-0.2V63l-6-0.6v1.3 c-1,0-2,0.1-3,0.2c-0.3,0-0.6,0.1-0.9,0.1c-1.3,0.1-2.3,0.3-3.3,0.5c-0.1,0-0.1,0-0.2,0c-1,0.2-2.1,0.4-3.3,0.7 c-0.3,0.1-0.6,0.1-0.8,0.2c-1.1,0.3-1.9,0.5-2.8,0.8c-0.3-0.7-0.5-1.6-0.8-2.5c-0.1-0.3-0.1-0.5-0.2-0.8c-0.3-1.2-0.5-2.2-0.7-3.1 l0-0.1c-0.2-0.9-0.3-1.9-0.5-3.2c0-0.3-0.1-0.5-0.1-0.8c-0.1-1-0.2-1.9-0.2-2.8h2.2l0.6-6h-2.8c0,0,0-0.1,0-0.1l0-0.3 c0-0.6,0.1-1.2,0.1-1.8c0-0.3,0.1-0.5,0.1-0.8l0-0.1c0.1-0.6,0.1-1.1,0.2-1.7c0-0.3,0.1-0.6,0.1-0.8c0.1-0.7,0.3-1.5,0.4-2.1 c0-0.1,0-0.1,0-0.2l0-0.1c0.2-0.8,0.4-1.6,0.6-2.4c0-0.1,0.1-0.3,0.1-0.4l0.1-0.3c0.2-0.6,0.3-1.1,0.5-1.7c0.1-0.3,0.2-0.5,0.3-0.8 c0.2-0.5,0.4-1.1,0.6-1.6l0.1-0.3c0-0.1,0.1-0.2,0.1-0.3c0.8,0.2,1.6,0.5,2.6,0.7c0.3,0.1,0.5,0.1,0.8,0.2c1.2,0.3,2.1,0.5,3.1,0.6 l0.1,0c0.9,0.2,1.9,0.3,3.2,0.4c0.3,0,0.5,0.1,0.8,0.1c1,0.1,1.9,0.2,2.7,0.2v3.8c0.6-0.4,1.1-0.8,1.8-1.2c4.2-2.7,7.7-5,11.2-7.1 c1.9-1.2,4-2.4,6.5-3.9c0.8-0.5,1.8-1,2.8-1.6c-0.1-0.2-0.2-0.3-0.3-0.5l-0.1-0.1c-0.3-0.5-0.6-1-0.9-1.4c-0.2-0.3-0.4-0.6-0.6-0.9 c-0.3-0.4-0.6-0.9-0.9-1.3L63.7,19c-0.1-0.2-0.3-0.4-0.4-0.6c-0.3-0.4-0.6-0.8-0.9-1.2l-0.2-0.2c-0.1-0.2-0.2-0.3-0.4-0.5 c-0.4-0.4-0.7-0.9-1.1-1.3L60.6,15c-0.1-0.1-0.2-0.2-0.3-0.3c-0.5-0.6-1-1.1-1.5-1.6l-0.3-0.3c0,0-0.1-0.1-0.1-0.1 c5.1,1.5,9.8,4.1,13.9,7.5c2.3-1.2,4.7-2.4,7.3-3.5C71.3,8.6,59.9,3.6,47.3,3.6C21.7,3.6,0.9,24.4,0.9,50 c0,25.6,20.8,46.4,46.4,46.4c25.6,0,46.4-20.8,46.4-46.4c0-9.1-2.6-17.6-7.2-24.7C84.4,26.5,82.2,28,80.3,29.4z M50.3,13.3 c0.1,0.1,0.3,0.2,0.4,0.3c0,0,0.1,0.1,0.1,0.1l0.1,0.1c0.4,0.3,0.7,0.6,1.1,1c0.1,0.1,0.2,0.2,0.3,0.3l0.2,0.1 c0.3,0.3,0.6,0.6,0.9,0.9c0.1,0.1,0.2,0.2,0.3,0.3l0.3,0.3c0.3,0.3,0.6,0.6,0.9,0.9c0.2,0.2,0.3,0.4,0.5,0.5l0.1,0.1 c0.3,0.3,0.6,0.7,0.9,1c0.2,0.2,0.4,0.5,0.6,0.7c0.3,0.4,0.6,0.7,0.9,1.1l0.1,0.2c0.2,0.2,0.3,0.4,0.5,0.6c0.3,0.4,0.6,0.8,0.9,1.3 l0.2,0.3c0.1,0.2,0.2,0.3,0.3,0.5c0.3,0.5,0.7,1.1,1,1.6c-0.6,0.2-1.2,0.3-1.8,0.5c-0.2,0.1-0.4,0.1-0.6,0.1 c-0.9,0.2-1.8,0.4-2.6,0.5c-0.1,0-0.1,0-0.2,0c-0.1,0-0.2,0-0.2,0c-0.7,0.1-1.5,0.2-2.3,0.3c-0.3,0-0.5,0.1-0.8,0.1 c-0.7,0.1-1.4,0.1-2.1,0.2V13.3z M31.2,80.5L31.2,80.5L31.2,80.5L31.2,80.5z M36.7,21.2L36.7,21.2c0.4-0.5,0.7-0.9,1-1.2 c0.2-0.2,0.4-0.5,0.6-0.7c0.3-0.4,0.6-0.7,0.9-1c0.2-0.2,0.4-0.4,0.6-0.6c0.3-0.3,0.6-0.6,0.9-0.9c0.2-0.2,0.4-0.4,0.5-0.5 c0.3-0.3,0.6-0.6,1-0.9l0.2-0.1c0.1-0.1,0.2-0.2,0.3-0.3c0.4-0.4,0.8-0.7,1.2-1.1l-0.3-0.5h0l0.4,0.4c0.1-0.1,0.3-0.2,0.4-0.3v14 c-0.7,0-1.4-0.1-2.1-0.2c-0.3,0-0.5-0.1-0.8-0.1c-0.8-0.1-1.5-0.2-2.2-0.3l-0.2,0c-0.1,0-0.2,0-0.2,0c-0.9-0.1-1.7-0.3-2.6-0.5 c-0.1,0-0.3-0.1-0.4-0.1l-0.2-0.1c-0.6-0.1-1.2-0.3-1.7-0.4c0.3-0.5,0.6-1.1,1-1.6c0.1-0.2,0.2-0.3,0.3-0.5l0.2-0.3 c0.3-0.5,0.6-0.9,0.9-1.3C36.4,21.7,36.5,21.5,36.7,21.2z M36.1,12.7c0,0-0.1,0.1-0.1,0.1l-0.1,0.1c-0.1,0.1-0.1,0.1-0.2,0.2 c-0.5,0.5-1,1-1.5,1.6c-0.1,0.1-0.2,0.2-0.3,0.3l-0.1,0.2c-0.4,0.4-0.7,0.8-1.1,1.3c-0.1,0.2-0.3,0.3-0.4,0.5l-0.2,0.2 c-0.3,0.4-0.6,0.8-0.9,1.2c-0.2,0.3-0.4,0.5-0.6,0.8c-0.3,0.4-0.6,0.9-0.9,1.3l-0.1,0.1c-0.2,0.2-0.3,0.5-0.5,0.7 c-0.3,0.5-0.6,0.9-0.9,1.4L28.3,23c-0.1,0.2-0.2,0.4-0.3,0.6c-0.1,0-0.2-0.1-0.4-0.2l-0.2-0.1c-0.2-0.1-0.3-0.1-0.5-0.2 c-1-0.4-1.8-0.9-2.6-1.3c-0.1,0-0.2-0.1-0.2-0.1L24,21.7c-0.7-0.4-1.3-0.8-2-1.2C26.1,16.9,30.9,14.3,36.1,12.7z M17.6,24.8 C17.7,24.9,17.7,24.9,17.6,24.8l0.2,0.1c0.2,0.1,0.4,0.3,0.6,0.4c1.1,0.7,2,1.2,2.9,1.7c0.1,0,0.1,0.1,0.2,0.1 c0.1,0,0.1,0.1,0.2,0.1c0.8,0.5,1.7,0.9,2.7,1.3c0.3,0.1,0.5,0.2,0.8,0.4c0.1,0,0.1,0.1,0.2,0.1c0,0,0,0,0,0.1 c0,0.1-0.1,0.2-0.1,0.2c-0.3,0.8-0.5,1.4-0.8,2c-0.1,0.2-0.2,0.5-0.2,0.7l-0.1,0.2c-0.2,0.6-0.4,1.2-0.6,1.9l0,0.2 c-0.1,0.2-0.1,0.5-0.2,0.7c-0.2,0.7-0.4,1.5-0.6,2.3c0,0.1,0,0.1,0,0.2l0,0.2c-0.2,0.8-0.4,1.7-0.5,2.8c0,0.1,0,0.3-0.1,0.4 l-0.1,0.3c-0.1,0.8-0.2,1.5-0.3,2.1c0,0.3-0.1,0.6-0.1,1c-0.1,0.7-0.1,1.4-0.2,2l0,0.2c0,0.2,0,0.4,0,0.6h-13 C9.1,38.8,12.3,31.1,17.6,24.8z M17.4,72.3l-0.2,0.1c-0.4,0.3-0.7,0.5-1.1,0.8c-4.4-5.9-7-12.9-7.6-20.2h13c0,0,0,0,0,0l0,0.2 c0,0.7,0.1,1.4,0.1,2c0,0.3,0,0.5,0.1,0.8c0.1,0.6,0.1,1.2,0.2,1.8c0,0.2,0.1,0.5,0.1,0.7c0.1,0.9,0.3,1.7,0.4,2.4l0,0.2 c0.1,0.7,0.3,1.5,0.5,2.2c0,0.2,0.1,0.3,0.1,0.5l0.1,0.3c0.1,0.6,0.3,1.1,0.5,1.7c0.1,0.2,0.1,0.5,0.2,0.7c0.2,0.6,0.4,1.3,0.6,1.9 l0,0c-0.6,0.3-1.2,0.6-1.7,0.8l-0.6,0.3c-1.5,0.8-2.9,1.6-4.3,2.5C17.6,72.1,17.5,72.2,17.4,72.3z M20,77.8l0.2-0.2 c0.9-0.6,1.7-1.1,2.5-1.6c0.1,0,0.1-0.1,0.2-0.1c0.8-0.5,1.7-1,2.8-1.5c0.2-0.1,0.4-0.2,0.6-0.3l0.1,0c0.1,0,0.2-0.1,0.3-0.1 c0.3,0.7,0.7,1.4,1,2l0.2,0.3c0.4,0.8,0.9,1.5,1.3,2.2l0.1,0.2c0.5,0.7,0.9,1.4,1.4,2.1c0,0,0,0.1,0.1,0.1c0.5,0.7,0.9,1.3,1.5,2 l0,0.1c0.4,0.6,0.9,1.1,1.4,1.7l0.1,0.1c0,0,0.1,0.1,0.1,0.1c0.4,0.5,0.8,0.9,1.4,1.6l0.2,0.2c0.2,0.2,0.4,0.5,0.7,0.7 C30.1,85.5,24.6,82.2,20,77.8z M44.3,86.6c-0.1,0-0.1-0.1-0.2-0.1L44,86.4c-0.1-0.1-0.2-0.2-0.4-0.3c-0.4-0.3-0.8-0.7-1.2-1 l-0.1-0.1c-0.1-0.1-0.1-0.1-0.2-0.2c-0.5-0.5-1-1-1.6-1.5c-0.1-0.1-0.2-0.2-0.3-0.3l-0.2-0.2c-0.4-0.4-0.8-0.8-1.2-1.3 c-0.1-0.2-0.3-0.3-0.4-0.5l-0.2-0.2c-0.3-0.4-0.7-0.8-1.1-1.3c-0.2-0.3-0.4-0.5-0.6-0.8c-0.4-0.5-0.7-0.9-1-1.4l-0.1-0.1 c-0.2-0.2-0.3-0.5-0.5-0.7c-0.4-0.5-0.7-1.2-1.2-1.9l-0.2-0.2c-0.1-0.1-0.1-0.2-0.2-0.4c-0.4-0.7-0.8-1.5-1.2-2.2 c0.7-0.2,1.4-0.4,2.1-0.6c0.2-0.1,0.5-0.1,0.7-0.2c1-0.3,2-0.5,2.9-0.6l0.1,0c0.1,0,0.1,0,0.2,0c0.8-0.1,1.7-0.3,2.7-0.4 c0.3,0,0.5-0.1,0.8-0.1c0.9-0.1,1.7-0.2,2.5-0.2V86.6z M57.3,79.6c-0.4,0.4-0.7,0.9-1.1,1.3l-0.1,0.1c-0.2,0.2-0.4,0.4-0.5,0.6 c-0.4,0.4-0.8,0.9-1.2,1.3L54.3,83c-0.1,0.1-0.2,0.2-0.3,0.3c-0.5,0.5-1,1-1.6,1.5c-0.1,0.1-0.1,0.1-0.2,0.2L52.2,85 c-0.4,0.4-0.8,0.7-1.2,1c-0.1,0.1-0.2,0.2-0.4,0.3l-0.1,0.1c-0.1,0.1-0.1,0.1-0.2,0.2v-17c0.8,0,1.6,0.1,2.5,0.2 c0.3,0,0.5,0.1,0.8,0.1c1,0.1,1.9,0.2,2.7,0.4c0.1,0,0.1,0,0.2,0l0.1,0c0.9,0.2,1.8,0.4,2.9,0.6c0.3,0.1,0.5,0.1,0.8,0.2 c0.7,0.2,1.4,0.4,2.1,0.6c-0.4,0.8-0.8,1.5-1.2,2.2c-0.1,0.1-0.1,0.2-0.2,0.3c-0.1,0.1-0.1,0.2-0.2,0.3c-0.4,0.7-0.8,1.3-1.2,1.9 c-0.2,0.2-0.3,0.5-0.5,0.7l-0.1,0.1c-0.4,0.5-0.7,1-1,1.4C57.7,79,57.5,79.3,57.3,79.6z M58.5,87.3c0.2-0.2,0.5-0.5,0.7-0.7 l0.2-0.2c0.4-0.5,0.9-1,1.3-1.5l0.2-0.2c0.5-0.6,0.9-1.1,1.4-1.8l0.1-0.1c0.5-0.6,1-1.3,1.4-1.9l0.1-0.1c0.4-0.6,0.9-1.3,1.4-2.1 l0.1-0.2c0.4-0.6,0.8-1.3,1.3-2.2l0.2-0.3c0.3-0.6,0.7-1.3,1-2c0.1,0,0.2,0.1,0.3,0.1l0.7,0.3c1,0.5,1.9,1,2.8,1.5l0.1,0 c0.1,0,0.1,0.1,0.2,0.1c0.8,0.5,1.6,1,2.5,1.6l0.1,0c0.1,0,0.1,0.1,0.2,0.1C70,82.2,64.5,85.5,58.5,87.3z M78.5,73.2 c-0.4-0.3-0.7-0.5-1.1-0.8L76.8,72c-0.8-0.5-1.4-0.9-2-1.3c0,0-0.1,0-0.1-0.1c-0.6-0.4-1.3-0.8-2.1-1.2c-0.2-0.1-0.3-0.2-0.5-0.3 l-0.2-0.1c-0.6-0.3-1.1-0.5-1.7-0.8l0,0c0.2-0.6,0.4-1.2,0.6-1.9c0.1-0.2,0.1-0.5,0.2-0.7c0.2-0.6,0.3-1.1,0.5-1.7l0.1-0.3 c0-0.1,0.1-0.3,0.1-0.4c0.2-0.8,0.3-1.5,0.5-2.2l0-0.1c0.1-0.7,0.3-1.5,0.4-2.4c0-0.2,0-0.3,0.1-0.5l0-0.2c0.1-0.6,0.2-1.2,0.2-1.8 c0-0.3,0.1-0.5,0.1-0.8c0.1-0.7,0.1-1.3,0.1-2l0-0.2c0,0,0,0,0,0h13C85.5,60.3,82.9,67.3,78.5,73.2z" }),
+					React.createElement("path", { d: "M99,20.2c-0.1-0.6-0.3-1.1-0.6-1.7c-0.3-0.6-0.8-1.1-1.4-1.5c-0.6-0.4-1.2-0.6-1.9-0.7 c-0.6-0.1-1.2-0.2-1.8-0.2c0,0-0.1,0-0.1,0c-2.5,0-4.9,0.7-7.3,1.5c-4.7,1.6-9.4,3.9-14,6.3c-2.3,1.2-4.5,2.5-6.7,3.8 c-2.2,1.3-4.3,2.6-6.4,3.8c-4.1,2.5-7.9,5-11.1,7.1c-3.2,2.1-5.9,3.9-7.7,5.2c-0.5,0.4-1,0.7-1.4,1L34,39.1l-2,19l19,2l-4.6-5.6 c0.3-0.3,0.7-0.7,1.2-1.1c1.6-1.5,3.9-3.7,6.7-6.2c2.8-2.5,6.1-5.5,9.6-8.5c1.8-1.5,3.6-3.1,5.5-4.7c1.9-1.6,3.9-3.1,5.8-4.6 c4-3,8-5.9,12.1-8c2-1,4-1.9,5.9-2.2c0.4-0.1,0.9-0.1,1.3-0.1c0,0,0,0,0,0c0.4,0,0.8,0.1,1.1,0.2c0.3,0.1,0.6,0.3,0.8,0.5 c0.2,0.3,0.4,0.6,0.5,0.9c0.5,1.5,0.3,3.3,0.1,4.7c-0.2,1.5-0.6,2.8-0.9,3.8c-0.6,2.1-1.1,3.3-1.1,3.3s0.7-1.1,1.7-3.1 c0.5-1,1-2.3,1.5-3.8c0.2-0.8,0.5-1.6,0.6-2.5C99.1,22.3,99.2,21.3,99,20.2z" })
+				)
+			);
+		}
+	}]);
+
+	return _class2;
+})(React.Component);
+
+Comp.Icons.Badge = (function (_React$Component3) {
+	_inherits(_class3, _React$Component3);
+
+	function _class3() {
+		_classCallCheck(this, _class3);
+
+		_get(Object.getPrototypeOf(_class3.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class3, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement("path", { d: "M45.1,16.8L29.7,6.5l-4.4,6.6l16.6,11.1c0-0.3,0-0.5,0-0.8C41.8,20.7,43.1,18.3,45.1,16.8 z" }),
+					React.createElement("path", { d: "M58.2,23.4c0,0.3,0,0.5,0,0.8l16.6-11.1l-4.4-6.6L54.9,16.8 C56.9,18.3,58.2,20.7,58.2,23.4z" }),
+					React.createElement("path", { d: "M72.1,30.1H57.4v4.1h2.3c1,0,1.8,0.8,1.8,1.8c0,1-0.8,1.8-1.8,1.8H40.3c-1,0-1.8-0.8-1.8-1.8 c0-1,0.8-1.8,1.8-1.8h2.3v-4.1H27.9c-2.3,0-4.3,1.9-4.3,4.2v54.9c0,2.3,1.9,4.2,4.3,4.2h44.2c2.3,0,4.2-1.9,4.2-4.2V34.4 C76.4,32,74.5,30.1,72.1,30.1z M69.9,85c0,1.3-1.1,2.4-2.4,2.4h-35c-1.3,0-2.4-1.1-2.4-2.4V44.4c0-1.3,1.1-2.4,2.4-2.4h35 c1.3,0,2.4,1.1,2.4,2.4V85z" }),
+					React.createElement("path", { d: "M55.4,29.4c-1.4,1.3-3.4,2.1-5.4,2.1c-2.1,0-4-0.8-5.4-2.1v6.1h10.9V29.4z" }),
+					React.createElement("path", { d: "M50,29.1c3.1,0,5.7-2.6,5.7-5.7c0-3.1-2.6-5.7-5.7-5.7c-3.1,0-5.7,2.6-5.7,5.7 C44.3,26.5,46.9,29.1,50,29.1z" }),
+					React.createElement("path", { d: "M52.7,63.7c3.7-1.2,6.4-4.6,6.4-8.8c0-5.1-4.1-9.2-9.2-9.2c-5.1,0-9.2,4.1-9.2,9.2c0,4.1,2.7,7.6,6.4,8.8 c-8,1.8-10.4,8.1-10.4,20h26.3C63.1,71.7,60.7,65.4,52.7,63.7z M48.3,68.8c0-0.3,0.2-0.5,0.5-0.5h2.4c0.3,0,0.5,0.2,0.5,0.5v1.1 c0,0.3,0,0.5-0.1,0.5c0,0-0.2,0.1-0.5,0.3l-0.8,0.5c-0.2,0.1-0.6,0.1-0.8,0l-0.8-0.5c-0.2-0.1-0.4-0.3-0.5-0.3c0,0-0.1-0.2-0.1-0.5 V68.8z M52.2,78.8l-1.9,1.6c-0.2,0.2-0.5,0.2-0.7,0l-1.9-1.6c-0.2-0.2-0.3-0.5-0.3-0.8l0.9-6.2c0-0.3,0.2-0.4,0.5-0.2l0.8,0.5 c0.2,0.1,0.6,0.1,0.8,0l0.8-0.5c0.2-0.1,0.4,0,0.5,0.2l0.9,6.2C52.6,78.3,52.4,78.7,52.2,78.8z" })
+				)
+			);
+		}
+	}]);
+
+	return _class3;
+})(React.Component);
+
+Comp.Icons.Briefcase = (function (_React$Component4) {
+	_inherits(_class4, _React$Component4);
+
+	function _class4() {
+		_classCallCheck(this, _class4);
+
+		_get(Object.getPrototypeOf(_class4.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class4, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M45.8,65.8V52.9h8.9v12.9H45.8z M95.5,52.9L87.4,61H57v7H43.6v-7H9.8l-5.4-5.4v30.8 l2.1,2.1h86.8l2.1-2.1V52.9z M2.5,50.4V26.7L5.2,24h27.9c0.1-0.1,0.1-0.3,0.1-0.5v-9c0-1.7,1.4-3.1,3.1-3.1h27.4 c1.7,0,3.1,1.4,3.1,3.1v9c0,0.2,0,0.3,0.1,0.5h27.9l2.7,2.7v20.8l-11.1,9.9H57.1v-6.7H43.5v6.7H10.7L2.5,50.4z M38.5,23.5 c0,0.2,0,0.3,0.1,0.5h22.8c0.1-0.1,0.1-0.3,0.1-0.5v-5.1c0-0.6-0.5-1.1-1.1-1.1H39.5c-0.6,0-1.1,0.5-1.1,1.1V23.5z" })
+			);
+		}
+	}]);
+
+	return _class4;
+})(React.Component);
+
+Comp.Icons.Build = (function (_React$Component5) {
+	_inherits(_class5, _React$Component5);
+
+	function _class5() {
+		_classCallCheck(this, _class5);
+
+		_get(Object.getPrototypeOf(_class5.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class5, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M84.3,29.6c2.5,0,4.8-1,6.6-2.7l6.4-6.4c0.7-0.7,1.1-1.7,1.1-2.7c0-1-0.4-2-1.1-2.7l-7.7-7.7 c-1.4-1.4-4-1.4-5.4,0l-6.4,6.4c-2.7,2.6-3.4,6.5-2.1,9.8L58.5,40.6l-6.9-6.9c1.3-7.9-1.3-16.1-7-21.8c-4.7-4.7-11.1-7.4-17.8-7.4 c-3,0-6,0.5-8.8,1.6c-1.2,0.5-2.1,1.5-2.4,2.8c-0.3,1.3,0.1,2.6,1,3.5l10.3,10.3l-1.5,5.6l-5.6,1.5L9.5,19.5c-0.9-0.9-2.2-1.3-3.5-1 c-1.3,0.3-2.3,1.2-2.8,2.4C-0.2,30.1,2.1,40.6,9,47.5c5.7,5.7,13.8,8.3,21.8,7l1.1,1.1L15.7,71.9C9.9,77.7,9,86,13.8,90.8 c2,2,4.7,3.1,7.7,3.1c4,0,8-1.8,11.2-5l16.2-16.2l18.5,18.5c2.8,2.8,6.5,4.3,10.4,4.3c3.9,0,7.6-1.5,10.4-4.3 c2.8-2.8,4.3-6.5,4.3-10.4c0-3.9-1.5-7.6-4.3-10.4L63.9,46L81,29C82,29.3,83.1,29.6,84.3,29.6z M27.3,83.4c-1.7,1.7-3.9,2.7-5.8,2.7 c-0.7,0-1.6-0.1-2.3-0.8c-1.5-1.5-1-5.1,1.9-8.1l16.1-16.1l6.2,6.2L27.3,83.4z M84.9,80.7c0,1.9-0.7,3.7-2.1,5 c-2.7,2.7-7.3,2.7-10,0l-38-38c-0.7-0.7-1.7-1.1-2.7-1.1c-0.3,0-0.6,0-0.9,0.1c-6,1.5-12.4-0.2-16.7-4.6c-3.2-3.2-5-7.6-5.1-12 l6.7,6.7c1,1,2.4,1.3,3.7,1l9.8-2.6c1.3-0.4,2.4-1.4,2.7-2.7l2.6-9.9c0.4-1.3,0-2.7-1-3.7l-6.7-6.7c4.5,0.1,8.8,1.9,12,5.1 c4.4,4.4,6.1,10.6,4.6,16.7c-0.3,1.3,0.1,2.7,1,3.6l38,38C84.1,77.1,84.9,78.8,84.9,80.7z M83.1,19.1l3.7-3.7l2.3,2.3l-3.7,3.7 c-0.8,0.8-1.5,0.8-2.3,0c0,0,0,0,0,0c0,0,0,0,0,0C82.5,20.8,82.5,19.8,83.1,19.1z" }),
+				React.createElement("circle", { cx: "77.2", cy: "79.9", r: "3.2" })
+			);
+		}
+	}]);
+
+	return _class5;
+})(React.Component);
+
+Comp.Icons.Building = (function (_React$Component6) {
+	_inherits(_class6, _React$Component6);
+
+	function _class6() {
+		_classCallCheck(this, _class6);
+
+		_get(Object.getPrototypeOf(_class6.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class6, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M87.6,86.5V41.1c0-2.9-2.3-5.2-5.2-5.2h-27V14.4c0-2.9-2.3-5.2-5.2-5.2H17.6 c-2.9,0-5.2,2.3-5.2,5.2v72.1H3.9v4.3h92.2v-4.3H87.6z M27.2,76.9h-6v-6h6V76.9z M27.2,63.8h-6v-6h6V63.8z M27.2,50.7h-6v-6h6V50.7z M27.2,37.6h-6v-6h6V37.6z M27.2,24.6h-6v-6h6V24.6z M37.3,76.9h-6v-6h6V76.9z M37.3,63.8h-6v-6h6V63.8z M37.3,50.7h-6v-6h6V50.7z M37.3,37.6h-6v-6h6V37.6z M37.3,24.6h-6v-6h6V24.6z M47.4,76.9h-6v-6h6V76.9z M47.4,63.8h-6v-6h6V63.8z M47.4,50.7h-6v-6h6V50.7z M47.4,37.6h-6v-6h6V37.6z M47.4,24.6h-6v-6h6V24.6z M63.6,78.6h-4.8v-4.8h4.8V78.6z M63.6,69.1h-4.8v-4.8h4.8V69.1z M63.6,59.5 h-4.8v-4.8h4.8V59.5z M63.6,49.9h-4.8V45h4.8V49.9z M71.7,78.6h-4.8v-4.8h4.8V78.6z M71.7,69.1h-4.8v-4.8h4.8V69.1z M71.7,59.5h-4.8 v-4.8h4.8V59.5z M71.7,49.9h-4.8V45h4.8V49.9z M79.8,78.6H75v-4.8h4.8V78.6z M79.8,69.1H75v-4.8h4.8V69.1z M79.8,59.5H75v-4.8h4.8 V59.5z M79.8,49.9H75V45h4.8V49.9z" })
+			);
+		}
+	}]);
+
+	return _class6;
+})(React.Component);
+
+Comp.Icons.Calendar = (function (_React$Component7) {
+	_inherits(_class7, _React$Component7);
+
+	function _class7() {
+		_classCallCheck(this, _class7);
+
+		_get(Object.getPrototypeOf(_class7.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class7, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement("path", { d: "M89.2,72.8H73.4c-5.8,0-6.9,3.8-6.9,8.3v14.1H15.2c-2.4,0-4.4-2-4.4-4.4v-62h78.3V72.8z M22.3,13.1h8.5v8c0,2.3-1.9,4.2-4.3,4.2c-2.3,0-4.2-1.9-4.2-4.2V13.1z M70,13.1h8.5v8c0,2.3-1.9,4.2-4.2,4.2 c-2.3,0-4.2-1.9-4.2-4.2V13.1z M84.8,12.8h-6.2V4.9c0-2.3-1.9-4.2-4.2-4.2C72,0.7,70,2.6,70,4.9v7.9H30.8V4.9 c0-2.3-1.9-4.2-4.3-4.2c-2.3,0-4.2,1.9-4.2,4.2v7.9h-7.1c-4.7,0-8.5,3.8-8.5,8.5v69.6c0,4.7,3.8,8.5,8.5,8.5h51.4h0.2l4.1-4.1 l18.3-18.3l4.1-4.1V21.3C93.3,16.6,89.5,12.8,84.8,12.8" }),
+					React.createElement("rect", { x: "17.2", y: "37.6", width: "14", height: "14" }),
+					React.createElement("rect", { x: "34.5", y: "37.6", width: "14", height: "14" }),
+					React.createElement("rect", { x: "51.7", y: "37.6", width: "14", height: "14" }),
+					React.createElement("rect", { x: "68.9", y: "37.6", width: "14", height: "14" }),
+					React.createElement("rect", { x: "17.2", y: "54.8", width: "14", height: "14" }),
+					React.createElement("rect", { x: "34.5", y: "54.8", width: "14", height: "14" }),
+					React.createElement("rect", { x: "51.7", y: "54.8", width: "14", height: "14" }),
+					React.createElement("rect", { x: "68.9", y: "54.8", width: "14", height: "14" }),
+					React.createElement("rect", { x: "17.2", y: "72.1", width: "14", height: "14" }),
+					React.createElement("rect", { x: "34.5", y: "72.1", width: "14", height: "14" })
+				)
+			);
+		}
+	}]);
+
+	return _class7;
+})(React.Component);
+
+Comp.Icons.Clipboard = (function (_React$Component8) {
+	_inherits(_class8, _React$Component8);
+
+	function _class8() {
+		_classCallCheck(this, _class8);
+
+		_get(Object.getPrototypeOf(_class8.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class8, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M80.8,11.5h-6.1c0.1,0.2,0.2,0.4,0.3,0.6l2.5,7c0.6,1.7,0.4,3.4-0.5,4.8c-1,1.4-2.5,2.1-4.3,2.1H27.4 c-1.8,0-3.4-0.8-4.3-2.1c-1-1.4-1.1-3.1-0.5-4.8l2.5-7c0.1-0.2,0.2-0.4,0.3-0.6h-6.1c-1.9,0-3.4,1.5-3.4,3.4v80.8 c0,1.9,1.5,3.4,3.4,3.4h61.6c1.9,0,3.4-1.5,3.4-3.4V14.9C84.2,13,82.7,11.5,80.8,11.5z M25.7,43.7h38.2v4.4H25.7V43.7z M25.7,63.1 h38.2v4.4H25.7V63.1z M63.9,86.8H25.7v-4.4h38.2V86.8z M74.3,77.1H25.7v-4.4h48.6V77.1z M74.3,57.8H25.7v-4.4h48.6V57.8z M74.3,38.4 H25.7v-4.4h48.6V38.4z M75.1,20l-2.5-7C72,11.1,69.9,9.7,68,9.7h-7.6c-1.5,0-3-0.8-3.1-1.8c-0.1-0.7-1.3-7-7.2-7s-7.1,6.3-7.2,7 c-0.1,1-1.6,1.8-3.1,1.8H32c-1.9,0-4,1.5-4.7,3.3l-2.5,7c-0.3,0.9-0.3,1.8,0.2,2.5c0.5,0.7,1.3,1.1,2.3,1.1h45.3 c1,0,1.8-0.4,2.3-1.1C75.4,21.8,75.5,20.9,75.1,20z M50,8.1c-1.2,0-2.2-1-2.2-2.2c0-1.2,1-2.2,2.2-2.2c1.2,0,2.2,1,2.2,2.2 C52.2,7.1,51.2,8.1,50,8.1z" })
+			);
+		}
+	}]);
+
+	return _class8;
+})(React.Component);
+
+Comp.Icons.Comment = (function (_React$Component9) {
+	_inherits(_class9, _React$Component9);
+
+	function _class9() {
+		_classCallCheck(this, _class9);
+
+		_get(Object.getPrototypeOf(_class9.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class9, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement("path", { d: "M50,8.2C24.6,8.2,3.9,24.9,3.9,45.4c0,13.1,8.6,25.2,22.4,31.9c-2.2,2.9-5.1,5.2-8.6,6.9 c-1.6,0.8-2.5,2.6-2.1,4.3c0.3,1.8,1.8,3.1,3.6,3.2c1.1,0.1,2.3,0.1,3.4,0.1c10.1,0,19.2-3.3,25.7-9.3c0.6,0,1.2,0,1.8,0 c25.4,0,46.1-16.7,46.1-37.2C96.1,24.9,75.4,8.2,50,8.2z M50,74.7c-1,0-2.1-0.1-3.1-0.1c-1.2,0-2.3,0.4-3.1,1.2 c-3.1,3.2-7.1,5.5-11.7,6.8c0.9-1.1,1.7-2.2,2.4-3.4c0.3-0.5,0.5-1,0.8-1.5l0.2-0.5c0.5-1,0.6-2.2,0.1-3.2c-0.4-1-1.2-1.9-2.3-2.3 c-13.1-4.9-21.6-15.2-21.6-26.3c0-16.1,17.1-29.3,38.2-29.3c21.1,0,38.2,13.1,38.2,29.3S71.1,74.7,50,74.7z" }),
+					React.createElement("path", { d: "M32.3,41c-3.2,0-5.8,2.6-5.8,5.8c0,3.2,2.6,5.8,5.8,5.8c3.2,0,5.8-2.6,5.8-5.8C38,43.6,35.4,41,32.3,41z" }),
+					React.createElement("path", { d: "M50,41c-3.2,0-5.8,2.6-5.8,5.8c0,3.2,2.6,5.8,5.8,5.8c3.2,0,5.8-2.6,5.8-5.8C55.8,43.6,53.2,41,50,41z" }),
+					React.createElement("path", { d: "M67.7,41c-3.2,0-5.8,2.6-5.8,5.8c0,3.2,2.6,5.8,5.8,5.8c3.2,0,5.8-2.6,5.8-5.8C73.5,43.6,70.9,41,67.7,41z" })
+				)
+			);
+		}
+	}]);
+
+	return _class9;
+})(React.Component);
+
+Comp.Icons.Clock = (function (_React$Component10) {
+	_inherits(_class10, _React$Component10);
+
+	function _class10() {
+		_classCallCheck(this, _class10);
+
+		_get(Object.getPrototypeOf(_class10.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class10, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement("path", { d: "M50,16c-2.3,0-4,1.9-4,4.1v28.2L34.6,59.6c-1.6,1.6-1.7,4.2,0,5.9c0.8,0.8,1.9,1.2,2.9,1.2 c1.1,0,2.1-0.4,2.9-1.2l12-12c0.1-0.1,0.1-0.2,0.1-0.3c0.9-0.8,1.4-1.9,1.4-3.2V20.1C54,17.8,52.3,16,50,16z" }),
+					React.createElement("path", { d: "M98,50C98,50,98,50,98,50C98,23.3,76.7,1.7,50,1.7C23.4,1.7,2,23.3,2,50c0,0,0,0,0,0v0c0,0,0,0,0,0 c0,26.7,21.4,48.3,48,48.3C76.7,98.3,98,76.7,98,50C98,50,98,50,98,50L98,50z M71.8,83.6l-1.1-2c-0.6-1-1.9-1.3-2.8-0.7 c-1,0.6-1.3,1.8-0.8,2.8l1.1,2c-4.4,2.3-9.3,3.7-14.4,4.2c-0.6-1.5-2.1-2.5-3.8-2.5c-1.7,0-3.2,1-3.8,2.5c-5.1-0.5-10-2-14.4-4.2 l1.1-2c0.6-1,0.2-2.3-0.8-2.8c-1-0.6-2.3-0.2-2.8,0.8l-1.1,2c-4.7-3.1-8.7-7.1-11.8-11.8l2-1.1c1-0.6,1.3-1.8,0.8-2.8 c-0.6-1-1.8-1.3-2.8-0.8l-2,1.1c-2.3-4.4-3.7-9.3-4.2-14.4c1.5-0.6,2.5-2.1,2.5-3.8c0-1.7-1-3.2-2.5-3.8c0.5-5.1,2-10,4.2-14.4 l2,1.1c0.3,0.2,0.7,0.3,1,0.3c0.7,0,1.4-0.4,1.8-1c0.6-1,0.2-2.3-0.8-2.8l-2-1.1c3.1-4.7,7.1-8.7,11.8-11.8l1.1,2 c0.4,0.7,1.1,1,1.8,1c0.4,0,0.7-0.1,1-0.3c1-0.6,1.3-1.8,0.8-2.8l-1.1-2c4.4-2.3,9.2-3.7,14.4-4.2c0.6,1.5,2.1,2.5,3.8,2.5 c1.7,0,3.2-1,3.8-2.5c5.1,0.5,10,2,14.4,4.2l-1.1,2c-0.6,1-0.2,2.3,0.8,2.8c0.3,0.2,0.7,0.3,1,0.3c0.7,0,1.4-0.4,1.8-1l1.1-2 c4.7,3.1,8.7,7.1,11.8,11.8l-2,1.1c-1,0.6-1.3,1.8-0.8,2.8c0.4,0.7,1.1,1,1.8,1c0.4,0,0.7-0.1,1-0.3l2-1.1 c2.2,4.4,3.7,9.2,4.2,14.4c-1.5,0.6-2.5,2.1-2.5,3.8c0,1.7,1,3.2,2.5,3.8c-0.5,5.1-2,10-4.2,14.4l-2-1.1c-1-0.6-2.3-0.2-2.8,0.8 c-0.6,1-0.2,2.3,0.8,2.8l2,1.1C80.5,76.5,76.5,80.5,71.8,83.6z" })
+				)
+			);
+		}
+	}]);
+
+	return _class10;
+})(React.Component);
+
+Comp.Icons.Contacts = (function (_React$Component11) {
+	_inherits(_class11, _React$Component11);
+
+	function _class11() {
+		_classCallCheck(this, _class11);
+
+		_get(Object.getPrototypeOf(_class11.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class11, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement("path", { d: "M25.5,55H10.5c-3.3,0-5.9-2-5.9-4.5v-1.2c0-2.5,2.7-4.5,5.9-4.5h15.1c3.3,0,5.9,2,5.9,4.5 v1.2C31.5,53.1,28.8,55,25.5,55z" }),
+					React.createElement("path", { d: "M25.5,78.6H10.5c-3.3,0-5.9-2-5.9-4.5V73c0-2.5,2.7-4.5,5.9-4.5h15.1c3.3,0,5.9,2,5.9,4.5 v1.2C31.5,76.6,28.8,78.6,25.5,78.6z" }),
+					React.createElement("path", { d: "M25.5,31.5H10.5c-3.3,0-5.9-2-5.9-4.5v-1.2c0-2.5,2.7-4.5,5.9-4.5h15.1 c3.3,0,5.9,2,5.9,4.5V27C31.5,29.5,28.8,31.5,25.5,31.5z" }),
+					React.createElement("path", { d: "M95.4,27.2v-1.6c0-3.3-2.7-5.9-5.9-5.9h-0.8v-3.3c0-6.6-5.3-11.9-11.9-11.9H26.5 c-6.6,0-11.9,5.3-11.9,11.9V18h10.9c5.2,0,9.3,3.4,9.3,7.8V27c0,4.4-4.1,7.8-9.3,7.8H14.7v6.7h10.9c5.2,0,9.3,3.4,9.3,7.8v1.2 c0,4.4-4.1,7.8-9.3,7.8H14.7v6.7h10.9c5.2,0,9.3,3.4,9.3,7.8v1.2c0,4.4-4.1,7.8-9.3,7.8H14.7v1.6c0,6.6,5.3,11.9,11.9,11.9h50.3 c6.6,0,11.9-5.3,11.9-11.9V60.1h0.8c3.3,0,5.9-2.7,5.9-5.9v-1.6c0-3.3-2.7-5.9-5.9-5.9c3.3,0,5.9-2.7,5.9-5.9v-1.6 c0-3.3-2.7-5.9-5.9-5.9C92.8,33.2,95.4,30.5,95.4,27.2z M50.3,36.6c0.2-0.1,0.4,0,0.6,0.1c0,0,0,0,0-0.1c0-5.3,3.4-8.5,7.6-8.5 c4.2,0,7.6,3.2,7.6,8.5c0,0,0,0,0,0.1c0.2-0.1,0.4-0.1,0.6-0.1c0.6,0.2,1,1,0.5,2.5c-0.4,1.5-1.1,2.1-1.8,1.9c0,0-0.1,0-0.1-0.1 c-1.2,3.5-3.8,6.3-6.8,6.3c-3,0-5.6-2.8-6.8-6.3c0,0-0.1,0-0.1,0.1c-0.6,0.2-1.3-0.4-1.8-1.9C49.3,37.6,49.6,36.8,50.3,36.6z M58.4,71.9C48,71.9,40,69.4,40,66.4c0-2.5,0-12.7,10.2-14.1c2.3-0.3,0.9-2.9,5.4-3.6c0.6-0.1,5-0.1,5.7,0c4.5,0.7,3.1,3.2,5.4,3.6 c10.2,1.4,10.2,11.7,10.2,14.1C76.9,69.4,68.8,71.9,58.4,71.9z" })
+				)
+			);
+		}
+	}]);
+
+	return _class11;
+})(React.Component);
+
+Comp.Icons.Contract = (function (_React$Component12) {
+	_inherits(_class12, _React$Component12);
+
+	function _class12() {
+		_classCallCheck(this, _class12);
+
+		_get(Object.getPrototypeOf(_class12.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class12, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M10.7,39C8.6,39,7,37.5,7,35.5S8.6,32,10.7,32h15.4L2.1,7.7C1.4,7,1,6,1,4.9c0-1.1,0.4-2.1,1.1-2.8 C2.8,1.4,3.7,1,4.6,1c1,0,1.9,0.4,2.7,1.1L31,26V10.7C31,8.5,32.5,7,34.5,7S38,8.5,38,10.7v24.2c0,0.2,0.3,2.2-0.5,3 c-0.8,0.8-2.2,1-2.2,1L35.1,39H10.7z" }),
+				React.createElement("path", { d: "M5.1,99c-1.1,0-2.2-0.4-2.9-1.2c-1.5-1.5-1.5-4,0-5.5L26.1,68H10.7C8.5,68,7,66.5,7,64.5S8.5,61,10.7,61H35 v0.2c1,0.1,2.2,0.4,2.8,1.1c0.8,0.8,1.2,2.8,1.2,2.9v24.4c0,2.2-1.5,3.7-3.5,3.7S32,91.7,32,89.5V74.1L7.7,97.9 C7.1,98.6,6.1,99,5.1,99z" }),
+				React.createElement("path", { d: "M65.1,39c-0.3,0-2.3-0.4-3-1.2c-0.8-0.8-1-2.9-1-2.9V10.5c0-2.2,1.5-3.7,3.5-3.7c2,0,3.5,1.6,3.5,3.7v15.4 L92.3,2.1c0.7-0.7,1.6-1,2.7-1c1.1,0,2.2,0.4,2.9,1.2c1.5,1.5,1.5,4,0,5.5L73.9,32h15.4c2.2,0,3.7,1.5,3.7,3.5S91.5,39,89.3,39H65.1 z" }),
+				React.createElement("path", { d: "M95.1,99c-1.1,0-2-0.4-2.7-1.1L68,73.9v15.4c0,2.2-1.5,3.7-3.5,3.7c-2,0-3.5-1.6-3.5-3.7V65.1 c0-0.3,0.4-2.3,1.2-3c0.8-0.8,2.9-1,3-1h24.4c2.2,0,3.7,1.5,3.7,3.5S91.7,68,89.5,68H74.1l23.8,24.3c0.7,0.7,1.1,1.7,1,2.8 c0,1.1-0.5,2.1-1.2,2.8C97.1,98.6,96.1,99,95.1,99z" })
+			);
+		}
+	}]);
+
+	return _class12;
+})(React.Component);
+
+Comp.Icons.CreditCard = (function (_React$Component13) {
+	_inherits(_class13, _React$Component13);
+
+	function _class13() {
+		_classCallCheck(this, _class13);
+
+		_get(Object.getPrototypeOf(_class13.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class13, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M53.4,8.3c0.8-0.9,2.1-0.9,3-0.1l19.8,18.2l8.9,8.2l2.3,2.1c0.9,0.8,0.9,2.1,0.1,3L38.9,92.7 c-0.8,0.9-2.1,0.9-3,0.1l-2.3-2.1l-8.9-8.2L4.9,64.4c-0.8-0.8-0.9-2.1-0.1-3L53.4,8.3L53.4,8.3z M51,6.1L2.4,59.2 c-2,2.2-1.8,5.5,0.3,7.5l19.8,18.2l8.9,8.2l2.3,2.1c2.2,2,5.5,1.8,7.5-0.3l48.6-53.1c2-2.2,1.8-5.5-0.3-7.5l-2.3-2.1L78.3,24 L58.5,5.8C56.4,3.8,53,4,51,6.1L51,6.1z" }),
+				React.createElement(
+					"g",
+					null,
+					React.createElement("rect", { x: "24.5", y: "71.4", transform: "matrix(0.6752 -0.7376 0.7376 0.6752 -44.6653 43.2619)", width: "4.6", height: "1.9" }),
+					React.createElement("path", { d: "M32.3,67.7l-1.4-1.3l-0.8-0.7l-1.4-1.3l-0.8-0.7h0l0.7-0.8l0,0l3.1-3.4l-0.3-0.3c-0.9-0.8-2.2-0.7-3,0.1 l-4.9,5.4l1.9,1.7l0.8,0.7l1.4,1.3l0.8,0.7l1.4,1.3l0.8,0.7l1.9,1.7l2.6-2.8l-1.9-1.7L32.3,67.7z" }),
+					React.createElement("path", { d: "M26.7,75.4l0.3,0.3c0.9,0.8,2.2,0.7,3-0.1l1.6-1.8L29.8,72L26.7,75.4z" }),
+					React.createElement("path", { d: "M22.8,65.6l-1.6,1.8c-0.8,0.9-0.7,2.2,0.1,3l0.3,0.3l3.1-3.4L22.8,65.6z" }),
+					React.createElement("rect", { x: "22.3", y: "69.4", transform: "matrix(0.6755 -0.7374 0.7374 0.6755 -43.8803 40.9519)", width: "4.6", height: "1.9" }),
+					React.createElement("rect", { x: "31.6", y: "63.6", transform: "matrix(-0.6753 0.7375 -0.7375 -0.6753 104.4225 83.2171)", width: "4.6", height: "1.9" }),
+					React.createElement("rect", { x: "30.7", y: "60.3", transform: "matrix(-0.7379 -0.6749 0.6749 -0.7379 12.8374 130.1273)", width: "1.9", height: "4.6" }),
+					React.createElement("path", { d: "M35.7,69.3l1.6-1.8c0.8-0.9,0.7-2.2-0.1-3l-0.3-0.3l-3.1,3.4L35.7,69.3z" })
+				),
+				React.createElement("path", { d: "M91.9,40.1h-1.1c0.8-2,0.3-4.4-1.3-5.9l-2.3-2.1L78.3,24L58.5,5.8C56.4,3.8,53,4,51,6.1L19.9,40.1h0 c-2.9,0-5.3,2.4-5.3,5.3v0.5L2.4,59.2c-2,2.2-1.8,5.5,0.3,7.5l11.9,10.9l0,6.7l0,3.1c0,2.9,2.4,5.3,5.3,5.3l11.2,0l0.3,0.3l2.3,2.1 c2.2,2,5.5,1.8,7.5-0.3l1.9-2.1l48.8,0c2.9,0,5.3-2.4,5.3-5.3l0-3.1l0-12.1l0-26.9C97.2,42.5,94.8,40.1,91.9,40.1z M91.9,43.3 c1.2,0,2.1,0.9,2.1,2.1l0,26.9l0,1.1l-33.2,0l27.6-30.1L91.9,43.3z M19.9,89.6c-1.2,0-2.1-0.9-2.1-2.1l0-3.1l0-0.9l3.2,0l1.6,1.5 l5.1,4.7L19.9,89.6z M35.9,92.8L35.9,92.8l-2.3-2.1l-1.2-1.1l-6.7-6.1l-1-0.9l-6.9-6.3l-2.1-1.9l-1.1-1l-9.7-8.9 c-0.8-0.8-0.9-2.1-0.1-3l9.9-10.8l3.2-3.5l3.5-3.9l2.9-3.2L53.4,8.3c0.8-0.9,2.1-0.9,3-0.1l19.8,18.2l8.9,8.2l2.3,2.1 c0.9,0.8,0.9,2.1,0.1,3L87,40.1l-2.9,3.2L56.5,73.4l-9.2,10l-5.6,6.1l-2.8,3.1c0,0-0.1,0.1-0.1,0.1C38,93.5,36.7,93.5,35.9,92.8z M94,84.4l0,3.1c0,1.2-0.9,2.1-2.1,2.1l-45.9,0l5.6-6.1l42.4,0V84.4z" })
+			);
+		}
+	}]);
+
+	return _class13;
+})(React.Component);
+
+Comp.Icons.Dictionary = (function (_React$Component14) {
+	_inherits(_class14, _React$Component14);
+
+	function _class14() {
+		_classCallCheck(this, _class14);
+
+		_get(Object.getPrototypeOf(_class14.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class14, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M88.9,0H61.1C56.6,0,52.7,2.5,50,5.7C47.4,2.5,43.6,0,38.9,0H11.1C5,0,0,5,0,11.1v68.5 c0,6.1,5,11.1,11.1,11.1H37c5.3,0,9.2,4.2,9.3,5.6v0c0,2,1.7,3.7,3.7,3.7c2,0,3.7-1.6,3.7-3.6c0,0,0-0.1,0-0.1 c0-1.3,4.1-5.6,9.3-5.6h25.9c6.1,0,11.1-5,11.1-11.1V11.1C100,5,95,0,88.9,0z M37,83.3H11.1c-2,0-3.7-1.7-3.7-3.7V11.1 c0-2,1.7-3.7,3.7-3.7h27.8c4.5,0,9.2,5.5,9.2,7.6c0,1.4,0.1,1.8,0.1,2.9v69.2C45.2,84.9,41.3,83.3,37,83.3z M92.6,79.6 c0,2-1.7,3.7-3.7,3.7H63c-4.2,0-8.1,1.6-11.1,3.9V18c0-0.9,0-1.8,0-3.2c0-2.1,5.1-7.4,9.2-7.4h27.8c2,0,3.7,1.7,3.7,3.7V79.6z" })
+			);
+		}
+	}]);
+
+	return _class14;
+})(React.Component);
+
+Comp.Icons.Down = (function (_React$Component15) {
+	_inherits(_class15, _React$Component15);
+
+	function _class15() {
+		_classCallCheck(this, _class15);
+
+		_get(Object.getPrototypeOf(_class15.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class15, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M54.2,95L87,62.3c2.6-2.6,2.8-6.5,0.2-9.1c-2.6-2.6-6.5-2.4-9.1,0.2L56.3,75.2l0-66.1c0-3.6-2.9-6.6-6.5-6.6 c-3.6,0-6.5,2.9-6.5,6.5l0,66.1L21.4,53.4c-2.6-2.6-6.5-2.8-9.1-0.2c-2.6,2.6-2.4,6.5,0.2,9.1l33,33c0,0,2.2,2.3,4.2,2.3 C51.7,97.5,54.2,95,54.2,95L54.2,95z" })
+			);
+		}
+	}]);
+
+	return _class15;
+})(React.Component);
+
+Comp.Icons.Download = (function (_React$Component16) {
+	_inherits(_class16, _React$Component16);
+
+	function _class16() {
+		_classCallCheck(this, _class16);
+
+		_get(Object.getPrototypeOf(_class16.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class16, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M11.8,97c-2.7,0-4.9-2.3-4.9-5s2.2-5,4.9-5h76.5c2.7,0,4.9,2.3,4.9,5s-2.2,5-4.9,5H11.8z" }),
+				React.createElement("path", { d: "M53.4,78.5l25.2-25.2c2-2,2.1-5,0.2-7c-2-2-5-1.8-7,0.2L55,63.3l0-50.9c0-2.8-2.3-5-5-5c-2.8,0-5,2.2-5,5 l0,50.9L28.2,46.5c-2-2-5-2.1-7-0.2c-2,2-1.8,5,0.2,7l25.4,25.4c0,0,1.7,1.8,3.3,1.8C51.5,80.5,53.4,78.5,53.4,78.5L53.4,78.5z" })
+			);
+		}
+	}]);
+
+	return _class16;
+})(React.Component);
+
+Comp.Icons.Drive = (function (_React$Component17) {
+	_inherits(_class17, _React$Component17);
+
+	function _class17() {
+		_classCallCheck(this, _class17);
+
+		_get(Object.getPrototypeOf(_class17.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class17, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement("polygon", { points: "1.6,65.7 15.3,90.8 48.4,33.7 34.4,9.1 \t" }),
+					React.createElement("polygon", { points: "83.6,92.4 98.4,67 32.7,67.2 29.9,71.9 18,92.5 \t" }),
+					React.createElement("polygon", { points: "32.2,66.5 32.2,66.5 32.2,66.5 \t" }),
+					React.createElement("polygon", { points: "86.2,63.9 91,63.9 91,63.9 98.4,63.8 65.4,7.6 37.2,7.5 51.9,33.4 51.9,33.4 69.3,63.9 \t" }),
+					React.createElement("polygon", { points: "51.2,33.7 51.2,33.7 51.2,33.7 \t" }),
+					React.createElement("rect", { x: "68.8", y: "64.7", width: "0", height: "0" }),
+					React.createElement("polygon", { points: "91,64.6 91,64.6 91,64.6 \t" })
+				)
+			);
+		}
+	}]);
+
+	return _class17;
+})(React.Component);
+
+Comp.Icons.DropdownDown = (function (_React$Component18) {
+	_inherits(_class18, _React$Component18);
+
+	function _class18() {
+		_classCallCheck(this, _class18);
+
+		_get(Object.getPrototypeOf(_class18.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class18, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M25.1,39.9c0-1.2,0.5-2.3,1.3-3.2c1.7-1.7,4.6-1.8,6.3,0L50,54.1l17.3-17.3c1.8-1.7,4.6-1.7,6.3,0 c0.8,0.8,1.3,2,1.3,3.2c0,1.2-0.5,2.3-1.3,3.2L53.2,63.6c-0.8,0.8-2,1.3-3.2,1.3c-1.2,0-2.3-0.5-3.2-1.3L26.4,43.1 C25.5,42.3,25.1,41.1,25.1,39.9z" })
+			);
+		}
+	}]);
+
+	return _class18;
+})(React.Component);
+
+Comp.Icons.DropdownUp = (function (_React$Component19) {
+	_inherits(_class19, _React$Component19);
+
+	function _class19() {
+		_classCallCheck(this, _class19);
+
+		_get(Object.getPrototypeOf(_class19.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class19, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M74.9,60.4c0,1.2-0.5,2.3-1.3,3.2c-1.7,1.7-4.6,1.8-6.3,0L50,46.3L32.7,63.6c-1.8,1.7-4.6,1.7-6.3,0 c-0.8-0.8-1.3-2-1.3-3.2c0-1.2,0.5-2.3,1.3-3.2l20.5-20.4c0.8-0.8,2-1.3,3.2-1.3c1.2,0,2.3,0.5,3.2,1.3l20.5,20.4 C74.5,58.1,74.9,59.2,74.9,60.4z" })
+			);
+		}
+	}]);
+
+	return _class19;
+})(React.Component);
+
+Comp.Icons.Edit = (function (_React$Component20) {
+	_inherits(_class20, _React$Component20);
+
+	function _class20() {
+		_classCallCheck(this, _class20);
+
+		_get(Object.getPrototypeOf(_class20.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class20, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { "fill-rule": "evenodd", "clip-rule": "evenodd", d: "M47,13.5l18.5,10.7l-3,5.1L44,18.7L47,13.5z M16.4,91.5h67.3v7.3H16.4V91.5z M16.4,87.9l6.4-3.9l-6.2-3.6L16.4,87.9z M25.2,82.5l0.8-0.5l9.6-5.9l-9.3-5.3L17,65.4l-0.3,11.2 l0,0.9L25.2,82.5z M63,2.3l4.2,2.4c3.9,2.3,5.3,7.3,3,11.3l-3.5,6.1L48.2,11.4l3.5-6.1C54,1.4,59.1,0,63,2.3L63,2.3z M61.3,31.5 L36.7,74L18.3,63.3l24.5-42.5L61.3,31.5z" })
+			);
+		}
+	}]);
+
+	return _class20;
+})(React.Component);
+
+Comp.Icons.Embed = (function (_React$Component21) {
+	_inherits(_class21, _React$Component21);
+
+	function _class21() {
+		_classCallCheck(this, _class21);
+
+		_get(Object.getPrototypeOf(_class21.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class21, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M29.3,69.8c-0.9,0-1.8-0.4-2.5-1L10.7,52.7c-1.4-1.4-1.4-3.6,0-5l16.1-16.1c0.7-0.7,1.5-1,2.5-1 c0.9,0,1.8,0.4,2.5,1c0.7,0.7,1,1.5,1,2.5c0,0.9-0.4,1.8-1,2.5L18.2,50.2l13.6,13.6c0.7,0.7,1,1.6,1,2.5c0,0.9-0.4,1.8-1,2.5 C31.1,69.4,30.2,69.8,29.3,69.8z" }),
+				React.createElement("path", { d: "M70.7,69.8c-0.9,0-1.8-0.4-2.5-1c-1.4-1.4-1.4-3.6,0-5l13.6-13.6L68.2,36.6c-1.4-1.4-1.4-3.6,0-5 c0.7-0.7,1.6-1,2.5-1c0.9,0,1.8,0.4,2.5,1l16.1,16.1c0.7,0.7,1,1.6,1,2.5c0,0.9-0.4,1.8-1,2.5L73.2,68.7 C72.6,69.4,71.7,69.8,70.7,69.8z" }),
+				React.createElement("path", { d: "M40.9,85.7C40.9,85.7,40.9,85.7,40.9,85.7c-0.3,0-0.6,0-0.9-0.1c-1.9-0.5-3-2.4-2.5-4.3l17.3-64 c0.4-1.5,1.8-2.6,3.4-2.6c0.3,0,0.6,0,0.9,0.1c1.9,0.5,3,2.4,2.5,4.3l-17.3,64C43.9,84.6,42.5,85.7,40.9,85.7z" })
+			);
+		}
+	}]);
+
+	return _class21;
+})(React.Component);
+
+Comp.Icons.Envelope = (function (_React$Component22) {
+	_inherits(_class22, _React$Component22);
+
+	function _class22() {
+		_classCallCheck(this, _class22);
+
+		_get(Object.getPrototypeOf(_class22.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class22, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M42.8,69.4l-4.7-3.4h23.8l-4.7,3.4H42.8z M97.4,42.2L65.3,67.1l32.9,24.5v-50C97.9,41.9,97.6,42.1,97.4,42.2 z M3.1,40.1l0.3,0.2L18,51.1l0,0l2.7,2V20.8c0-1.4,1.1-2.5,2.5-2.5h53.4c1.4,0,2.5,1.1,2.5,2.5v32.4l1.4-1v0l15.7-11.6 c0.2-0.1,0.4-0.3,0.6-0.5c0.1-0.1,0.3-0.1,0.4-0.2c0,0,0,0,0,0c0,0,0,0,0,0c-0.1-0.1-0.2-0.2-0.4-0.2c-0.2-0.2-0.4-0.3-0.6-0.5 L82,28.5v-7.7c0-2.9-2.4-5.2-5.2-5.2H64.3L51.8,6.3C51.4,6,50.7,5.8,50,5.8c-0.7,0-1.4,0.2-1.8,0.6l-12.5,9.2H23.3 c-2.9,0-5.2,2.4-5.2,5.2v7.7L3.3,39.4l-0.3,0.2c-0.1,0.1-0.3,0.1-0.4,0.2l0,0l0,0C2.8,39.9,2.9,40,3.1,40.1z M71.5,46.6H28.5V50 h42.9V46.6z M71.5,58.9v-2.6H28.5v2.6l1.1,0.8h40.7L71.5,58.9z M52.1,77.4C51.5,77.8,50.8,78,50,78c-0.8,0-1.5-0.2-2.1-0.7 l-11.4-8.8L2.7,93.8c0.4,0.3,0.8,0.4,1.3,0.4H96c0.5,0,0.9-0.2,1.3-0.4L63.4,68.6L52.1,77.4z M2.6,42.3c-0.2-0.2-0.5-0.4-0.8-0.6v50 l32.9-24.5L2.6,42.3z M71.5,36.7H28.5v3.4h42.9V36.7z M71.5,26.9H28.5v3.4h42.9V26.9z" })
+			);
+		}
+	}]);
+
+	return _class22;
+})(React.Component);
+
+Comp.Icons.Expand = (function (_React$Component23) {
+	_inherits(_class23, _React$Component23);
+
+	function _class23() {
+		_classCallCheck(this, _class23);
+
+		_get(Object.getPrototypeOf(_class23.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class23, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M34.6,38.8c-1,0-2.1-0.4-2.8-1.1L8,14v15.2c0,2.1-1,3.7-3,3.7s-3-1.6-3-3.7v-24c0-0.2-0.3-1.8,0.4-2.6 C3.3,1.8,4.6,2,4.7,2h24.2c2.1,0,3.7,1,3.7,3S31,8,28.8,8H13.6l23.7,24.1c0.7,0.7,1.1,1.8,1.1,2.8c0,1.1-0.4,2.1-1.1,2.8 C36.5,38.4,35.6,38.8,34.6,38.8z" }),
+				React.createElement("path", { d: "M5,98c-0.1,0-1.7,0.1-2.5-0.7C1.7,96.5,2,94.9,2,94.8V70.7C2,68.6,3,67,5,67s3,1.6,3,3.7v15.2l24-23.6 c0.7-0.7,1.7-1,2.7-1c1,0,2.1,0.4,2.8,1.1c1.5,1.5,1.5,4.1,0,5.5L13.8,92H29c2.1,0,3.7,1,3.7,3s-1.6,3-3.7,3H5z" }),
+				React.createElement("path", { d: "M64.7,38.5c-1.1,0-2.2-0.4-2.9-1.1c-0.7-0.7-1.1-1.6-1.1-2.7c0-1,0.4-2.1,1.1-2.8L85.5,8H70.3 c-2.1,0-3.7-1-3.7-3s1.6-3,3.7-3h24c0.2,0,2.3-0.2,3.1,0.6c0.8,0.8,1.1,2.4,1.1,2.4l0,24.1c0,2.1-1.3,3.7-3.2,3.7 c-2,0-3.2-1.6-3.2-3.7V13.8L67.7,37.5C67,38.1,65.8,38.5,64.7,38.5z" }),
+				React.createElement("path", { d: "M70.5,98c-2.1,0-3.7-1-3.7-3s1.6-3,3.7-3h15.2L62.2,67.6c-0.7-0.7-1.1-1.8-1-3c0-1.1,0.4-2.2,1.1-2.9 c0.7-0.7,1.7-1.1,2.7-1.1c1,0,2.2,0.4,2.9,1.1L92,85.4V70.2c0-2.1,1-3.7,3-3.7s3,1.6,3,3.7v24c0,0.3,0,2.4-0.8,3.1 c-0.8,0.8-2.5,0.9-2.6,0.9l0.1-0.2H70.5z" })
+			);
+		}
+	}]);
+
+	return _class23;
+})(React.Component);
+
+Comp.Icons.Filter = (function (_React$Component24) {
+	_inherits(_class24, _React$Component24);
+
+	function _class24() {
+		_classCallCheck(this, _class24);
+
+		_get(Object.getPrototypeOf(_class24.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class24, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M50,21.2c-0.8,0-1.6,0-2.4,0c-12-0.3-22.4-2.4-29-4.1c-4.2-1.1-4.2-3.5-0.1-4.7c6.8-1.8,17.8-4,31.5-4 c14,0,24.8,2.2,31.5,4c4.2,1.1,4.1,3.6-0.1,4.7c-6.6,1.7-17,3.9-29,4.1C51.6,21.2,50.8,21.2,50,21.2 M6,14C6,14.2,6,14.5,6,14.8 c0,0.6,0.1,1.1,0.2,1.6c0.2,0.7,0.5,1.4,1,2.1l29.1,40.3c1.6,2.2,3.3,6.1,3.3,8.8v27.6c0,3.4,2.1,4.3,4.6,2.1l14-11.9 c1.3-1.1,2.3-3.3,2.3-5V67.6c0-2.7,1.6-6.7,3.2-8.8l29-40.3c0.5-0.7,0.8-1.4,1-2.2c0.1-0.5,0.2-1,0.2-1.5c0-0.3,0-0.6-0.1-0.9 C92.2,1.8,54.4,1.5,50,1.5C45.6,1.5,7.6,1.8,6,14" })
+			);
+		}
+	}]);
+
+	return _class24;
+})(React.Component);
+
+Comp.Icons.Food = (function (_React$Component25) {
+	_inherits(_class25, _React$Component25);
+
+	function _class25() {
+		_classCallCheck(this, _class25);
+
+		_get(Object.getPrototypeOf(_class25.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class25, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M96.1,96.2c-0.7,0.8-1.6,1.4-2.5,1.7c-0.5,0.1-1,0.2-1.5,0.2c-1.5,0-3.1-0.6-4.3-1.9L38.9,46.4 c-0.2,0.1-0.4,0.1-0.6,0.2c-1.5,0.4-3.2,0.7-4.9,0.7c-6.9,0-14.8-3.4-19.7-8.4C6,31,1.2,14.1,7.9,6.3c1.5-1.8,3.5-2.9,5.7-3.6 C15.1,2.2,16.7,2,18.4,2c6.9,0,14.8,3.5,19.7,8.4c6.2,6.3,10.5,18.3,8.6,26.9L95.5,87C98,89.6,98.3,93.7,96.1,96.2z M60.9,45.4 c4.8,2.2,10.9,1.1,15-3.2l18-19l0,0L94,23c1.1-1.2,1.2-3.2,0.1-4.5c-1.1-1.2-2.9-1.3-4.1-0.1l-0.1,0.1l0,0L72.2,37.3 c-1.1,1.1-2.6,1.3-3.6,0.2c-1-1.2-0.8-2.8,0.3-3.9c0,0,0,0,0,0l17.8-18.8c1.1-1.2,1.2-3.2,0.1-4.5C85.7,9,83.8,9,82.7,10.2l-0.1,0.1 l0,0L64.8,29c-1.1,1.1-2.6,1.4-3.6,0.2c-1-1.2-0.8-2.8,0.3-4L79.2,6.6h0l0.1-0.1c1.1-1.2,1.2-3.2,0.1-4.5c-1.1-1.3-2.9-1.3-4.1-0.1 L57.2,21c-4.3,4.3-6.5,10.1-5,15C53.5,40.2,56,43.2,60.9,45.4z M38.6,52.4l-34,35.9c-2.4,2.6-3,6.3-0.6,8.9c2.3,2.7,5.8,2.2,8.2-0.4 l34.5-36.4L38.6,52.4z" })
+			);
+		}
+	}]);
+
+	return _class25;
+})(React.Component);
+
+Comp.Icons.Globe = (function (_React$Component26) {
+	_inherits(_class26, _React$Component26);
+
+	function _class26() {
+		_classCallCheck(this, _class26);
+
+		_get(Object.getPrototypeOf(_class26.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class26, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M50,2.6C23.9,2.6,2.6,23.9,2.6,50S23.9,97.4,50,97.4c26.1,0,47.4-21.3,47.4-47.4S76.1,2.6,50,2.6z M15,29 v0.3c0-0.1,0-0.1-0.1-0.2C15,29,15,29,15,29z M43.1,90.2c-2.1-2.3,1.1-8.1,0.5-10.6c-0.4-1.5-2.6-3.1-3.7-4.4 c-1.1-1.4-2.7-3-3.5-4.6c-1-2.1-0.5-2.9,0.4-4.5c0.7-1.2,0.6-2.3,1.1-3.5c0.2-0.4,1.8-2,1.6-2.4c0-0.1,0-0.1,0-0.2 c-1.2-0.1-2.3,0.1-3.2-0.6c-0.8-0.6-1-2.4-1.7-3.1c-1.8-1.6-4.7-0.7-6.7-2.1c-1.8-1.3-3.8-2.5-5-4.3c-1.1-1.7-1.5-6-3.6-6.4 c0,2.1-0.3,2.7,0.6,4.8c0.6,1.2,1.7,4.1-1,3.4c-0.1-2.1-0.1-3.8-0.6-5.7c-0.5-1.9-2-3.8-2.4-5.8c-0.4-1.9-0.2-3.9-0.2-5.8 c0-2-0.7-3.7-0.8-5.5c1.3-2.1,2.7-4.1,4.4-5.9c1.2-1.3,2.4-2.5,4-3.2c1.6-0.6,3.4-1.5,5.1-1.9c1.8-0.4,3.9-0.4,5.8-0.5 C34,16.2,32.6,15,35,15.2c1.4,0.1,1.8,1.5,3.4,0.8c-0.7-0.7-2.9-2.1-0.7-2.4c0-0.8,0-1.6,0.1-2.3c0.5-0.3,1-0.5,1.5-0.7 c2.5-0.7,5-1.1,7.6-1.3c0.4,0.1,0.7,0.2,1,0.3c0.2-0.1,0.4-0.3,0.6-0.4c0.5,0,0.9,0,1.4,0c5.7,0,11.1,1.2,16,3.3 c0.3,0.4,0.5,0.7,0.9,1c0.7,0.5,2.2,0.9,0.7,1.1c-0.5,0.1-0.9-0.2-1.2,0.2c-0.4,0.5,0.2,0.9-0.7,1.3c-0.8,0.4-1.9-0.4-2.3,0.6 c-0.4,0.9,0.4,2.1,0.1,3c-0.3,1.1-1.7,0.9-2.7,0.8c-2-0.1-4.2-1.5-5.4-3.1c-0.4-0.5-1.3-2-0.9-2.7c0.3-0.6,0.9-0.2,1.2-0.6 c0.3-0.4-0.2-1.1-0.6-1.3c-0.1,0.8-0.6,1-1.2,0.7c-0.9-0.5-0.4-1.5-0.9-2.2c-0.7-1.1-2.4-0.7-3.5-1.1c-0.6-0.2-1-0.4-1.5-0.6 c-0.4,0.2-0.7,0.5-1.1,0.6c-0.9,0.3-1.9,0.3-2.7,0.9c-2.3,1.8,0.4,1.8,1.7,2.1c1.7,0.4,2.6,2.1,4,2.6c1.9,0.8,2.7-0.3,2.4,2.6 c-1.1,0.3-2.1-0.2-2.7-1.1c0.5,0.8,0.8,1.8,0.7,2.9c-1.8,0.6-2.6-0.2-4.1-0.8c-1.2-0.5-2.7-0.3-3.8-1c-0.1-0.3-0.1-0.6,0-0.9 c1.3,0,2.7-0.1,2.1-1.8c-2.4-0.2-2.9,0.9-4.4,2.3c3.6,1.2,0.4,2.4-1.6,2.3c-1.7-0.1-4.3-0.4-5.3,1.7c-0.9,2,2.1,2.5,3.7,3 c1,0.3,1.4,0.1,2.1,0.9c0.7,0.8,0.3,1.8,1.4,2.4c0.5-0.9-0.4-1.9-0.2-2.4c0.5-1.2,1.2-0.5,2.4-1c-0.6-1.3-2.4-1.8-2-3.2 c0.4-1.5,2.5-1.5,3.8-1.4c2,0.1,2,1.1,3.4,1.6c2.2,0.7,2.2-0.8,3.7,1.6c1.6,2.5,3.2,3.7,5.3,5.6c3.8,3.5-3,3.4-3.8,0.8 c0.3-0.1,0.8-0.5,1-0.6c-1.4-0.6-4.5-0.6-6.2-0.2c-0.1,0.4-0.1,0.6,0,1c1.5,0.1,1.9,0.1,2.7,0.7c0.3,0.2-0.1,1,0.4,1.3 c0.3,0.2,1.6-0.1,2-0.1c0.4,2.3-4.9,1.4-6.1,2.2c0,0.5-0.3,0.9-0.3,1.4c-3-0.4-2.8,2.5-3.8,4.2c-0.7,1.3-2.3,2.2-3.2,3.4 c-0.4,0.6-1.2,1.1-1.1,1.9c0.1,1.4,1.7,0.7,1.7,1.9c0,2.5-3.3-0.1-3.8-1.4c-3-0.6-6.9-1-8,2.4c-0.5,1.4,0.1,3.4,1.8,3.6 c1.5,0.1,0.9-0.9,2-1.3c0.6-0.2,1.7,0,2.3,0c0.5,1.4,0.3,2.1,1,3.2c0.9,1.2,0.9,1,1.4,2.5c0.4,1.1,0.7,2.2,2,2.7 c1.3,0.4,2.9-0.5,3,1.4c2.4,0.1,4.4,0,6.3,1.5c1.4,1.1,2.1,2.4,3.8,2.9c2.7,0.9,3.5,0.6,4.2,3.4c0.3,1.3-0.7,1.7,1.2,2.1 c1.1,0.2,2.5-0.5,3.6-0.4c1.9,0.1,3.8,1.2,3.8,3.4c0,1.2-0.5,1.5-1,2.4c-0.6,1.1-0.7,2.6-1.4,3.7c-1.3,2.1-3.7,1.2-5.2,3.1 c-0.5,0.7-0.3,1.7-1.1,2.5c-0.6,0.5-2.3,0.6-2.8,1c-1,0.8-0.5,1.4-1.5,2.4c-0.6,0.6-2.2,0.3-2.9,0.6c-1.2,0.6-1.9,1.8-2.8,2.4 C45.3,90.6,44.2,90.4,43.1,90.2z M84,66.7c0.2-1.5,0.4-3,0.8-4.4c0.4-1.5,0.6-2.9,0.5-4.5c0-0.7,0-1.9-0.5-2.4 c-0.2-0.2-1.7-0.9-2-0.9c-0.9,0-1.8,1.4-2.7,1.6c-1.1,0.3-2-0.4-2.7-1.1c-0.9-1-1.9-1.6-2.8-2.6c-1.1-1.1-1.3-2.6-1.3-4.1 c0-1.5,0.2-2.6,0.6-4c0.2-0.6,0.4-1.2,0.5-1.9c0.3-1.3,0.4-0.6,1-1.3c0.6-0.7,0.9-1.9,1.4-2.8c0.5-0.9,1-1.6,1.7-2.2 c-1.7-0.7-1.7-3.6-1.1-5.2c0.8-0.1,3.3,0.3,2-1.5c-0.4-0.6-1.7-0.4-1-1.5c0.4-0.6,1.2-0.6,1.8-0.6c0.1-0.7,0.4-1,1-1.2l-0.2-0.1 c-0.6-0.5-1.4-1.2-1.9-1.8c-0.6-0.6-1-2.4-0.1-2.7c2.5,2.6,4.7,5.5,6.5,8.6c0.1,0.2,0.1,0.4,0.2,0.6c0.3,0.8,0.8,1.6,1.1,2.4 c0.2,0.4,0.4,0.7,0.6,1c0.6,1.5,1.2,2.9,1.6,4.5c0,0.1,0,0.3-0.1,0.4c-1.1-0.4-1.7-2.3-2.4-3.3c0,0.4,0,0.8-0.1,1.1 c-0.2,0-0.5-0.1-0.6-0.2c-0.3-0.6-0.7-1.2-1.1-1.8c0.1,0.2,0.1,0.4,0,0.6c-1.2,0-0.9-1.4-1.2-2.1c-0.3-0.9-1.2-1.4-2.1-0.7 c-0.6,0.5-0.6,1.6-1.1,2.2c-0.3,0.3-0.6,0.4-0.8,0.6c-0.3,0.3-0.6,0.3-0.4,0.9c1-0.3,1.8-0.4,3-0.3c0.8,0.1,2.2-0.1,2.7,0.3 c0.3,0.3,0.3,0.8,0.4,1.2c0.2,0.4,0.4,0.6,0.7,1c0.4,0.6,1,2.2,1.8,2.1c0-0.2,0.1-0.5,0-0.7c1.4,0.5,1.9,3,2.1,4.4 c0.3,2.6,0.5,5.5,0.5,8.3c-0.4,7-2.6,13.5-6.1,19.1C84.2,70.3,83.9,67.7,84,66.7z" })
+			);
+		}
+	}]);
+
+	return _class26;
+})(React.Component);
+
+Comp.Icons.Graph = (function (_React$Component27) {
+	_inherits(_class27, _React$Component27);
+
+	function _class27() {
+		_classCallCheck(this, _class27);
+
+		_get(Object.getPrototypeOf(_class27.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class27, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M93.5,90H10V6.5c0-2.2-1.3-4-3.5-4C4.3,2.5,3,4.3,3,6.5v87C3,95.7,4.3,97,6.5,97h87c2.2,0,4-1.3,4-3.5 C97.5,91.3,95.7,90,93.5,90z" }),
+				React.createElement("path", { d: "M37,60.1c0-1.9-1.5-3.1-3.3-3.1H20.2c-1.9,0-3.2,1.2-3.2,3.1v18.8c0,1.9,1.3,3.1,3.2,3.1h13.5 c1.9,0,3.3-1.3,3.3-3.1V60.1z M23,63h8v13h-8V63z" }),
+				React.createElement("path", { d: "M90,11.6C90,9.7,88.5,8,86.6,8H73.1C71.3,8,70,9.7,70,11.6v67.3c0,1.9,1.3,3.1,3.1,3.1h13.5 c1.9,0,3.4-1.3,3.4-3.1V11.6z M77,15h7v61h-7V15z" }),
+				React.createElement("path", { d: "M63,36.3c0-1.9-1-3.3-2.9-3.3H46.7c-1.9,0-3.7,1.4-3.7,3.3v42.6c0,1.9,1.8,3.1,3.7,3.1h13.5 c1.9,0,2.9-1.3,2.9-3.1V36.3z M50,40h8v36h-8V40z" })
+			);
+		}
+	}]);
+
+	return _class27;
+})(React.Component);
+
+Comp.Icons.Grid = (function (_React$Component28) {
+	_inherits(_class28, _React$Component28);
+
+	function _class28() {
+		_classCallCheck(this, _class28);
+
+		_get(Object.getPrototypeOf(_class28.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class28, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement("rect", { x: "6.5", y: "6.5", width: "24.8", height: "24.8" }),
+					React.createElement("rect", { x: "37.6", y: "6.5", width: "24.8", height: "24.8" }),
+					React.createElement("rect", { x: "68.7", y: "6.5", width: "24.8", height: "24.8" }),
+					React.createElement("rect", { x: "6.5", y: "37.6", width: "24.8", height: "24.8" }),
+					React.createElement("rect", { x: "37.6", y: "37.6", width: "24.8", height: "24.8" }),
+					React.createElement("rect", { x: "68.7", y: "37.6", width: "24.8", height: "24.8" }),
+					React.createElement("rect", { x: "6.5", y: "68.7", width: "24.8", height: "24.8" }),
+					React.createElement("rect", { x: "37.6", y: "68.7", width: "24.8", height: "24.8" }),
+					React.createElement("rect", { x: "68.7", y: "68.7", width: "24.8", height: "24.8" })
+				)
+			);
+		}
+	}]);
+
+	return _class28;
+})(React.Component);
+
+Comp.Icons.Help = (function (_React$Component29) {
+	_inherits(_class29, _React$Component29);
+
+	function _class29() {
+		_classCallCheck(this, _class29);
+
+		_get(Object.getPrototypeOf(_class29.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class29, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M50,0.7C22.8,0.7,0.7,22.8,0.7,50S22.8,99.3,50,99.3S99.3,77.2,99.3,50S77.2,0.7,50,0.7z M50,78 c-2.4,0-4.3-2-4.3-4.3c0-2.4,1.9-4.3,4.3-4.3c2.4,0,4.3,1.9,4.3,4.3C54.3,76.1,52.4,78,50,78z M60,51.9c-3,2.5-5.6,4.6-5.6,7.9 c0,2.4-1.9,4.3-4.3,4.3c-2.4,0-4.3-1.9-4.3-4.3c0-5.8,4.2-8.8,8.4-11.8c3.8-2.7,7.4-5.3,7.4-9.9c0-5.9-4.3-9.5-11.4-9.5 c-10.3,0-11.4,7.3-11.4,10.5c0,1.8-1.5,3.4-3.4,3.4c-1.9,0-3.4-1.5-3.4-3.4C31.8,30.9,37.5,22,50,22c11.9,0,18.2,8.1,18.2,16.2 C68.2,45.2,63.8,48.8,60,51.9z" })
+			);
+		}
+	}]);
+
+	return _class29;
+})(React.Component);
+
+Comp.Icons.Home = (function (_React$Component30) {
+	_inherits(_class30, _React$Component30);
+
+	function _class30() {
+		_classCallCheck(this, _class30);
+
+		_get(Object.getPrototypeOf(_class30.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class30, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement("path", { d: "M91.7,57.4c-1.4,0-2.8-0.5-3.9-1.6L49.8,18L12.3,55.8c-2.2,2.2-5.7,2.2-7.9,0 c-2.2-2.2-2.2-5.7,0-7.9L45.9,6.2c1-1,2.5-1.6,3.9-1.6c0,0,0,0,0,0c1.5,0,2.9,0.6,3.9,1.6l41.9,41.8c2.2,2.2,2.2,5.7,0,7.9 C94.6,56.9,93.1,57.4,91.7,57.4z" }),
+					React.createElement("path", { d: "M78.4,28.1c0.1-0.2,0.1-0.5,0.1-0.7V12.1c0-1.2-0.9-2.1-2.1-2.1h-9.8 c-1.2,0-2.1,0.9-2.1,2.1v2.3L78.4,28.1z" }),
+					React.createElement("path", { d: "M78.4,28.2L78.4,28.2L64.5,14.4v-2.3c0-1.2,1-2.2,2.2-2.2h9.8c1.2,0,2.2,1,2.2,2.2v15.3 c0,0.2,0,0.5-0.1,0.7L78.4,28.2z M64.7,14.3L78.4,28c0.1-0.2,0.1-0.4,0.1-0.6V12.1c0-1.1-0.9-2-2-2h-9.8c-1.1,0-2,0.9-2,2V14.3z" }),
+					React.createElement("path", { d: "M50,20.8L16.4,54.4v41.1h23.4v-32c0-1.2,0.9-2.1,2.1-2.1H58c1.2,0,2.1,0.9,2.1,2.1v32h23.4 V54.4L50,20.8z" })
+				)
+			);
+		}
+	}]);
+
+	return _class30;
+})(React.Component);
+
+Comp.Icons.Info = (function (_React$Component31) {
+	_inherits(_class31, _React$Component31);
+
+	function _class31() {
+		_classCallCheck(this, _class31);
+
+		_get(Object.getPrototypeOf(_class31.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class31, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M50,1C22.9,1,1,22.9,1,50c0,27.1,21.9,49,49,49c27.1,0,49-21.9,49-49C99,22.9,77.1,1,50,1z M49.5,75.8 c-2.3,0-4.5-1.6-4.5-4.1v-8.5v-6.4v-8.4c0-2.4,2.2-4.1,4.5-4.1c2.4,0,4.5,1.7,4.5,4.1v8.4v6.4v8.5C54,74.1,51.9,75.8,49.5,75.8z M54.5,33.8c0,2.7-2.2,5-5,5c-2.7,0-5-2.2-5-5c0-2.7,2.2-5,5-5C52.3,28.9,54.5,31.1,54.5,33.8z" })
+			);
+		}
+	}]);
+
+	return _class31;
+})(React.Component);
+
+Comp.Icons.Jazz = (function (_React$Component32) {
+	_inherits(_class32, _React$Component32);
+
+	function _class32() {
+		_classCallCheck(this, _class32);
+
+		_get(Object.getPrototypeOf(_class32.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class32, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement("path", { d: "M25.1,32.2c0,4.2,0,8.3,0,12.5c0,0,0.1,0,0.1,0c0.1-0.2,0.2-0.4,0.3-0.7 c2.3-5.5,8.2-8.4,13.8-6.9c1.8,0.5,3.2,1.5,4.4,3.2c0.2-1.1,0.3-2.1,0.4-3.2c2.3,0,4.7,0,7,0c0,8.3,0,16.6,0,24.9c-2.3,0-4.6,0-7,0 c-0.1-0.9-0.2-1.8-0.3-2.9c-0.1,0.1-0.2,0.2-0.3,0.3c-1.5,2.1-3.6,3-6.1,3.2c-5.5,0.4-10.1-2.6-12.1-7.7c-0.1-0.1-0.1-0.3-0.2-0.4 c-0.3,1.3-0.6,2.6-1.1,3.9c-1.9,4.9-5.6,7.7-10.7,8.8c-1.5,0.3-3.1,0.4-4.7,0.4c-1.7,0.1-3.4,0-5.1,0c0-2.9,0-5.7,0-8.6 c1.9,0,3.8,0,5.7,0c1.5,0,2.7-0.5,3.8-1.6c1.7-1.6,2.3-3.7,2.3-5.9c0-5.3,0-10.6,0-15.9c0-1.2,0-2.4,0-3.6 C18.7,32.2,21.9,32.2,25.1,32.2z M37.4,55.1c2.9,0,5.4-2.4,5.4-5.3c0-2.9-2.5-5.3-5.4-5.3c-2.9,0-5.3,2.4-5.3,5.3 C32.1,52.6,34.5,55.1,37.4,55.1z" }),
+					React.createElement("path", { d: "M52.2,44.5c0-2.5,0-4.9,0-7.3c7.1,0,14.3,0,21.5,0c0,0.2,0,0.5,0,0.7c0,2,0,3.9,0,5.9 c0,0.5-0.1,0.8-0.5,1.1c-3.5,3.2-6.9,6.3-10.3,9.5c-0.2,0.1-0.3,0.3-0.5,0.5c3.8,0,7.5,0,11.3,0c0,2.4,0,4.8,0,7.1 c-7.2,0-14.3,0-21.5,0c0-0.3,0-0.5,0-0.7c0-1.9,0-3.8,0-5.7c0-0.5,0.1-0.8,0.5-1.2c3.1-3.1,6.3-6.3,9.4-9.5 c0.1-0.1,0.3-0.3,0.5-0.6C59.1,44.5,55.7,44.5,52.2,44.5z" }),
+					React.createElement("path", { d: "M74.7,44.6c0-2.5,0-4.9,0-7.3c7.1,0,14.2,0,21.4,0c0,1,0,2.1,0,3.1c0,1.2,0,2.3,0,3.5 c0,0.5-0.1,0.8-0.5,1.2c-3.4,3.1-6.7,6.3-10.1,9.4c-0.2,0.2-0.4,0.3-0.5,0.6c3.7,0,7.5,0,11.3,0c0,2.4,0,4.7,0,7.1 c-7.2,0-14.3,0-21.5,0c0-0.1-0.1-0.1-0.1-0.2c0-2.2,0-4.3,0-6.5c0-0.3,0.2-0.6,0.4-0.8c3-3.1,6-6.1,9-9.1c0.3-0.3,0.6-0.5,0.9-0.8 c0-0.1-0.1-0.1-0.1-0.2C81.6,44.6,78.2,44.6,74.7,44.6z" })
+				)
+			);
+		}
+	}]);
+
+	return _class32;
+})(React.Component);
+
+Comp.Icons.Laptop = (function (_React$Component33) {
+	_inherits(_class33, _React$Component33);
+
+	function _class33() {
+		_classCallCheck(this, _class33);
+
+		_get(Object.getPrototypeOf(_class33.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class33, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement("path", { d: "M1.2,74.2c0,4.4,2.4,8.2,5.4,8.7h86.8c3-0.5,5.4-4.2,5.4-8.7H1.2z" }),
+					React.createElement("path", { d: "M85.8,17.1H14.2c-2.1,0-3.9,1.7-3.9,3.9v47.6c0,2.1,1.7,3.9,3.9,3.9h71.7 c2.1,0,3.9-1.7,3.9-3.9V21C89.7,18.9,88,17.1,85.8,17.1z M80.6,61.3c0,1.7-1.4,3-3.2,3H22.6c-1.8,0-3.2-1.4-3.2-3V27.7 c0-1.7,1.4-3,3.2-3h54.7c1.8,0,3.2,1.4,3.2,3V61.3z" }),
+					React.createElement("rect", { x: "73.7", y: "77.1", width: "6.4", height: "2.3" }),
+					React.createElement("rect", { x: "82.2", y: "77.1", width: "6.4", height: "2.3" }),
+					React.createElement("polygon", { points: "71.5,49.5 57.3,44.1 62.7,58.3 66.2,54.8 70.4,58.9 72.1,57.2 67.9,53.1 \t" })
+				)
+			);
+		}
+	}]);
+
+	return _class33;
+})(React.Component);
+
+Comp.Icons.Left = (function (_React$Component34) {
+	_inherits(_class34, _React$Component34);
+
+	function _class34() {
+		_classCallCheck(this, _class34);
+
+		_get(Object.getPrototypeOf(_class34.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class34, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M5,54l32.8,32.8c2.6,2.6,6.5,2.8,9.1,0.2c2.6-2.6,2.4-6.5-0.2-9.1L24.8,56.2l66.1,0c3.6,0,6.6-2.9,6.6-6.5 c0-3.6-2.9-6.5-6.5-6.5l-66.1,0l21.8-21.8c2.6-2.6,2.8-6.5,0.2-9.1c-2.6-2.6-6.5-2.4-9.1,0.2l-33,33c0,0-2.3,2.2-2.3,4.2 C2.5,51.5,5,54,5,54L5,54z" })
+			);
+		}
+	}]);
+
+	return _class34;
+})(React.Component);
+
+Comp.Icons.Like = (function (_React$Component35) {
+	_inherits(_class35, _React$Component35);
+
+	function _class35() {
+		_classCallCheck(this, _class35);
+
+		_get(Object.getPrototypeOf(_class35.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class35, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M21.4,97.5c-1.7,0-3.3-1.2-3.8-2.8L3.8,47.6c-0.3-1-0.2-2.1,0.3-3c0.5-0.9,1.3-1.6,2.3-1.9l23.6-7 c0.4-0.1,0.7-0.2,1.1-0.2c0.7,0,1.3,0.2,1.9,0.5c0.7,0.4,1.3,1,1.6,1.7l0,0c4.2-4.1,9.8-10.5,12.2-14.6l0,0c1.5-5.4,1-11.6,0.9-12.8 c-0.2-1.7,0.3-3.4,1.5-4.7c2.7-3,7.9-3.1,8.5-3.1c2,0,4,1,5.6,2.7c3.3,3.6,4.8,10,4.2,17.6c-0.1,0.9-0.2,1.8-0.3,2.8l0,0.3 c-0.1,0.6-0.2,1.2-0.3,1.9c-0.1,0.8-0.1,1.5-0.1,2.3v0c1.9,0.7,7,1.6,15.1,1.6l1.6,0c7.2,0,13.1,5.8,13.1,13c0,2.8-0.9,5.4-2.5,7.7 c0.2,0.9,0.2,1.8,0.2,2.7c-0.2,2.9-1.5,5.7-3.7,7.7l0,0.2c-0.2,3.7-2.3,7.2-5.6,9.2l0,0c-0.1,0.3-0.2,0.6-0.3,0.8 c-1.4,3.8-5.4,5.9-11.2,5.9c-1,0-2-0.1-3.2-0.2c-2.3-0.3-5.9-0.6-10-0.9l-6.2-0.5c-1.9-0.2-3.8-0.3-5.5-0.3c-0.8,0-1.5,0-2.2,0.1 l2.5,8.6c0.3,1,0.2,2.1-0.3,3c-0.5,0.9-1.3,1.6-2.3,1.9l-23.6,7C22.1,97.4,21.8,97.5,21.4,97.5z M12.4,49.3l11.6,39.4L40.1,84 l-2.4-8c-0.3-0.4-0.5-0.8-0.6-1.2l-8.5-28.7c-0.1-0.4-0.2-0.9-0.1-1.3l-0.1-0.4l-16.1,4.7L12.4,49.3z M48.4,69 c1.8,0,3.9,0.1,6.2,0.3l6.3,0.5c4.2,0.4,7.8,0.7,10.2,1c0.8,0.1,1.5,0.1,2.2,0.1c2.7,0,3.7-0.7,3.8-0.8l0,0c0.1-0.4,0.2-0.8,0.3-1.2 c0.2-1.5,1.2-2.8,2.6-3.3c1.5-0.5,2.5-1.8,2.6-3.3c0-0.3,0-0.5-0.1-0.9c-0.3-1.6,0.5-3.3,1.9-4.1c1.1-0.6,1.8-1.7,1.8-2.9 c0-0.6-0.1-1.1-0.3-1.7c-0.7-1.5-0.3-3.3,1-4.5c1.1-1,1.7-2.3,1.7-3.8c0-2.8-2.3-5.1-5.1-5.1c-0.2,0-0.8,0-1.7,0 c-11.6,0-18.6-1.4-21.3-4.2c-1.1-1.1-1.7-2.6-1.7-4.1c0-1.3,0.1-2.7,0.2-4.2c0.1-0.8,0.2-1.4,0.3-2l0.1-0.4c0.1-0.8,0.2-1.6,0.3-2.3 c0.6-7.1-1.3-11-2.3-11.8c-0.5,0-1.2,0.2-1.8,0.3v0c0.2,2.6,0.4,9.3-1.4,15.2c-0.1,0.2-0.2,0.5-0.3,0.7c-3,5.5-11,14.5-16.7,19.6 L44,69.2C45.4,69.1,46.9,69,48.4,69z" })
+			);
+		}
+	}]);
+
+	return _class35;
+})(React.Component);
+
+Comp.Icons.Link = (function (_React$Component36) {
+	_inherits(_class36, _React$Component36);
+
+	function _class36() {
+		_classCallCheck(this, _class36);
+
+		_get(Object.getPrototypeOf(_class36.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class36, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement("path", { d: "M29.3,70.7c0.8,0.8,1.8,1.2,2.8,1.2c1,0,2-0.4,2.8-1.2L69.6,36c1.6-1.6,1.6-4.1,0-5.6 c-1.6-1.6-4.1-1.6-5.6,0L29.3,65.1C27.8,66.6,27.8,69.1,29.3,70.7z" }),
+					React.createElement("path", { d: "M91.2,10L90,8.9c-8.3-8.3-21.8-8.3-30.1,0l-9.9,9.9c-4.4,4.4-6.7,10.6-6.1,16.9c0.2,2.2,2.1,3.8,4.3,3.6 c2.2-0.2,3.8-2.1,3.6-4.3c-0.3-3.9,1-7.8,3.8-10.6l9.9-9.9c5.2-5.2,13.7-5.2,18.9,0l1.1,1.1c5.2,5.2,5.2,13.7,0,18.9l-9.9,9.9 c-2.8,2.8-6.6,4.2-10.6,3.8C63,48,61,49.5,60.8,51.7c-0.2,2.2,1.4,4.1,3.6,4.3c0.7,0.1,1.3,0.1,1.9,0.1c5.6,0,11-2.2,14.9-6.2 l9.9-9.9C99.4,31.8,99.5,18.3,91.2,10z" }),
+					React.createElement("path", { d: "M51.7,60.8c-2.2,0.2-3.8,2.1-3.6,4.3c0.4,3.9-1,7.8-3.8,10.5l-9.9,9.9c-5.2,5.2-13.7,5.2-18.9,0l-1.1-1.1 c-2.5-2.5-3.9-5.9-3.9-9.4c0-3.6,1.4-6.9,3.9-9.4l9.9-9.9c2.8-2.8,6.6-4.1,10.6-3.8c2.2,0.2,4.1-1.4,4.3-3.6 c0.2-2.2-1.4-4.1-3.6-4.3c-6.3-0.5-12.5,1.7-16.9,6.1l-9.9,9.9c-4,4-6.2,9.4-6.2,15.1c0,5.7,2.2,11,6.2,15l1.1,1.1 c4.2,4.1,9.6,6.2,15.1,6.2s10.9-2.1,15-6.2l9.9-9.9c4.4-4.4,6.6-10.6,6.1-16.9C55.8,62.2,53.9,60.6,51.7,60.8z" })
+				)
+			);
+		}
+	}]);
+
+	return _class36;
+})(React.Component);
+
+Comp.Icons.List = (function (_React$Component37) {
+	_inherits(_class37, _React$Component37);
+
+	function _class37() {
+		_classCallCheck(this, _class37);
+
+		_get(Object.getPrototypeOf(_class37.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class37, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement(
+						"g",
+						null,
+						React.createElement("path", { d: "M87.2,30.1H30.6c-3.5,0-6.3-2.8-6.3-6.3c0-3.5,2.8-6.3,6.3-6.3h56.6c3.5,0,6.3,2.8,6.3,6.3 C93.5,27.3,90.7,30.1,87.2,30.1L87.2,30.1z" })
+					),
+					React.createElement("circle", { cx: "12.8", cy: "23.8", r: "6.3" }),
+					React.createElement(
+						"g",
+						null,
+						React.createElement("path", { d: "M87.2,56.8H30.6c-3.5,0-6.3-2.8-6.3-6.3c0-3.5,2.8-6.3,6.3-6.3h56.6c3.5,0,6.3,2.8,6.3,6.3 C93.5,54,90.7,56.8,87.2,56.8L87.2,56.8z" })
+					),
+					React.createElement("circle", { cx: "12.8", cy: "50.5", r: "6.3" }),
+					React.createElement(
+						"g",
+						null,
+						React.createElement("path", { d: "M87.2,83.6H30.6c-3.5,0-6.3-2.8-6.3-6.3c0-3.5,2.8-6.3,6.3-6.3h56.6c3.5,0,6.3,2.8,6.3,6.3 C93.5,80.8,90.7,83.6,87.2,83.6L87.2,83.6z" })
+					),
+					React.createElement("circle", { cx: "12.8", cy: "77.3", r: "6.3" })
+				)
+			);
+		}
+	}]);
+
+	return _class37;
+})(React.Component);
+
+Comp.Icons.Map = (function (_React$Component38) {
+	_inherits(_class38, _React$Component38);
+
+	function _class38() {
+		_classCallCheck(this, _class38);
+
+		_get(Object.getPrototypeOf(_class38.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class38, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { "fill-rule": "evenodd", "clip-rule": "evenodd", d: "M29,12.4l-20.6-3l0,0c-0.2,0-0.3,0-0.5,0c-1,0-2,0.5-2.7,1.2 c-0.8,0.8-1.3,1.8-1.4,2.9c0,0.2,0,0.5,0,0.7v68.4c0,0.3,0,0.6,0.1,0.9c0.2,1.1,0.7,2.1,1.5,2.8c0.7,0.7,1.6,1.2,2.6,1.2 c0.2,0,0.4,0,0.6,0L29,83.8c0.3-0.1,0.6-0.1,0.9-0.2c0.3-0.1,0.6-0.2,0.8-0.3l0.2-0.1l0.2,0.1c0.3,0.1,0.5,0.2,0.8,0.3 c0.3,0.1,0.6,0.1,0.9,0.2l20.6,3.7c0.3,0,0.5,0.1,0.8,0c0.3,0,0.5-0.1,0.8-0.1l0.2,0l0.2,0c0.2,0.1,0.5,0.1,0.8,0.1 c0.3,0,0.5,0,0.8,0l4.4-0.8l-0.2-0.2c-3-3.3-6.1-6.8-8.9-10.1V78v0v0l0,0.1v0c0,0.3-0.2,0.7-0.4,0.9c-0.3,0.3-0.6,0.4-1,0.4h0h-0.1 l0,0l-15.4-1.6c-0.4,0-0.7-0.2-1-0.4c-0.3-0.2-0.4-0.6-0.4-1l0,0V54.7l7.9-13.9c0.3,0.1,0.6,0.1,0.9,0.1c0.5,0,0.9-0.1,1.3-0.3 c0.8-1.8,1.7-3.5,2.8-5.1l-0.4-0.1c-0.4-2.1-1.9-3.6-3.7-3.6c-2.1,0-3.8,2.1-3.8,4.6c0,0.6,0.1,1.1,0.2,1.6l-5.3,9.3V19.8l0,0 c0-0.4,0.2-0.7,0.4-1c0.2-0.2,0.6-0.4,1-0.4L50.8,17h0h0h0c0.4,0,0.7,0.1,1,0.4l0,0c0.2,0.2,0.4,0.6,0.4,0.9v0l0,0v0v0v11.2 c1.8-1.5,3.8-2.8,6-3.9v-7.2v0l0,0l0,0v0c0-0.4,0.2-0.7,0.4-0.9c0.3-0.3,0.6-0.4,1-0.4h0h0h0l15.4,1.4c0.4,0,0.7,0.2,1,0.4l0,0 c0.3,0.3,0.4,0.6,0.4,1v3.2c2.1,0.4,4.1,0.9,6,1.7v-7.5c0-1.3-0.5-2.3-1.3-3.1l0,0c-0.9-0.9-2.2-1.5-3.6-1.7L57,9.4 c-0.3,0-0.5,0-0.8,0l0,0c-0.3,0-0.5,0.1-0.8,0.2l-0.2,0.1l-0.2-0.1c-0.2-0.1-0.5-0.1-0.8-0.2h0c-0.3,0-0.5,0-0.8,0l-20.6,3 c-0.3,0-0.6,0.1-0.9,0.2c-0.3,0.1-0.6,0.2-0.8,0.3L30.9,13l-0.2-0.1c-0.3-0.1-0.5-0.2-0.8-0.3C29.6,12.5,29.3,12.5,29,12.4L29,12.4z M71.4,90.6C65.2,83.4,56.3,74.3,51,66.8c-3-4.2-4.5-9.2-4.5-14.3c0-13.8,11.2-24.9,24.9-24.9c13.8,0,24.9,11.2,24.9,24.9 c0,5.2-1.6,10.1-4.5,14.3C86.5,74.3,77.6,83.4,71.4,90.6L71.4,90.6z M71.4,34.1c10.1,0,18.4,8.2,18.4,18.4 c0,10.1-8.2,18.4-18.4,18.4c-10.1,0-18.4-8.2-18.4-18.4C53.1,42.3,61.3,34.1,71.4,34.1L71.4,34.1z M18.8,59.5 c-2.1,0-3.8,2.1-3.8,4.6c0,2.5,1.7,4.6,3.8,4.6c2.1,0,3.8-2.1,3.8-4.6c0-0.1,0-0.2,0-0.3l5.4-3.6v16.2v0v0c0,0.4-0.2,0.7-0.4,1 c-0.3,0.2-0.6,0.4-1,0.4l-15.4,1.6l0,0H11h0c-0.4,0-0.7-0.2-0.9-0.4l0,0c-0.2-0.2-0.4-0.6-0.4-0.9l0,0V78l0,0V18.5l0,0v-0.1v0 c0-0.4,0.2-0.7,0.4-0.9c0.2-0.3,0.6-0.4,1-0.4l0,0h0.1h0l15.4,1.4c0.4,0,0.7,0.2,1,0.4c0.3,0.2,0.4,0.6,0.4,1v0v0v35.8l-7,4.7 C20.4,59.8,19.6,59.5,18.8,59.5z" })
+			);
+		}
+	}]);
+
+	return _class38;
+})(React.Component);
+
+Comp.Icons.Minus = (function (_React$Component39) {
+	_inherits(_class39, _React$Component39);
+
+	function _class39() {
+		_classCallCheck(this, _class39);
+
+		_get(Object.getPrototypeOf(_class39.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class39, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M50,1C22.9,1,1,22.9,1,50c0,27.1,21.9,49,49,49c27.1,0,49-21.9,49-49C99,22.9,77.1,1,50,1z M74,50.7 c0,2.4-1.5,4.3-3.9,4.3H55.4H44.4H29.9c-2.4,0-4.9-1.8-4.9-4.3v-1.4c0-2.4,2.5-4.3,4.9-4.3h14.5h11.1h14.7c2.4,0,3.9,1.9,3.9,4.3 V50.7z" })
+			);
+		}
+	}]);
+
+	return _class39;
+})(React.Component);
+
+Comp.Icons.Naf = (function (_React$Component40) {
+	_inherits(_class40, _React$Component40);
+
+	function _class40() {
+		_classCallCheck(this, _class40);
+
+		_get(Object.getPrototypeOf(_class40.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class40, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement("rect", { x: "0.1", y: "72", width: "99.9", height: "14" }),
+					React.createElement("rect", { x: "0.1", y: "43.4", width: "99.9", height: "14.3" }),
+					React.createElement("rect", { x: "24.7", y: "14.8", width: "75.3", height: "14.3" }),
+					React.createElement("path", { d: "M0,22c0-4.4,3.6-8,8-8c4.4,0,8,3.6,8,8c0,4.4-3.6,8-8,8C3.6,30,0,26.4,0,22" })
+				)
+			);
+		}
+	}]);
+
+	return _class40;
+})(React.Component);
+
+Comp.Icons.No = (function (_React$Component41) {
+	_inherits(_class41, _React$Component41);
+
+	function _class41() {
+		_classCallCheck(this, _class41);
+
+		_get(Object.getPrototypeOf(_class41.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class41, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M80.8,86.8c-1.6,0-3.1-0.6-4.2-1.8L50,58.5L23.4,85c-1.1,1.1-2.6,1.8-4.2,1.8c-1.6,0-3.1-0.6-4.2-1.8 c-1.1-1.1-1.8-2.6-1.8-4.2c0-1.6,0.6-3.1,1.8-4.2L41.5,50L15,23.4c-1.1-1.1-1.8-2.6-1.8-4.2c0-1.6,0.6-3.1,1.8-4.2 c1.1-1.1,2.6-1.8,4.2-1.8c1.6,0,3.1,0.6,4.2,1.8L50,41.5L76.6,15c1.1-1.1,2.6-1.8,4.2-1.8l0,0c1.6,0,3.1,0.6,4.2,1.8 c2.3,2.3,2.3,6.1,0,8.5L58.5,50L85,76.6c2.3,2.3,2.3,6.1,0,8.5C83.9,86.2,82.4,86.8,80.8,86.8z" })
+			);
+		}
+	}]);
+
+	return _class41;
+})(React.Component);
+
+Comp.Icons.Page = (function (_React$Component42) {
+	_inherits(_class42, _React$Component42);
+
+	function _class42() {
+		_classCallCheck(this, _class42);
+
+		_get(Object.getPrototypeOf(_class42.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class42, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement("path", { d: "M82.4,92.6c0,0.8-0.4,1.1-0.5,1.2H18.1c-0.1,0-0.5-0.4-0.5-1.2V7.4c0-0.8,0.4-1.1,0.5-1.2 h36.6c3.5,0,6.4,2.8,6.5,6.3l0.5,14.4l18.6,3.2c1,0.1,2.1,1.4,2.1,2.4V92.6z M69.3,8.9c-4-4.5-9.8-7.1-15.8-7.1H18.1 c-2.7,0-5,2.5-5,5.6v85.2c0,3.1,2.2,5.6,5,5.6h63.8c2.7,0,5-2.5,5-5.6V31.2c0-1.6-0.6-3.1-1.6-4.3L69.3,8.9z" }),
+					React.createElement("rect", { x: "25.1", y: "36.8", width: "50.8", height: "6" }),
+					React.createElement("rect", { x: "25.1", y: "22.9", width: "22.2", height: "6" }),
+					React.createElement("rect", { x: "24.1", y: "64.9", width: "51.9", height: "6" }),
+					React.createElement("rect", { x: "24.1", y: "51", width: "51.9", height: "6" }),
+					React.createElement("rect", { x: "24.1", y: "79.1", width: "25.9", height: "6" })
+				)
+			);
+		}
+	}]);
+
+	return _class42;
+})(React.Component);
+
+Comp.Icons.Pages = (function (_React$Component43) {
+	_inherits(_class43, _React$Component43);
+
+	function _class43() {
+		_classCallCheck(this, _class43);
+
+		_get(Object.getPrototypeOf(_class43.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class43, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M80.2,9.6H19.7c-1.9,0-3.4,1.5-3.4,3.4v79.3c0,1.9,1.5,3.4,3.4,3.4h60.5c1.9,0,3.4-1.5,3.4-3.4V13 C83.6,11.1,82.1,9.6,80.2,9.6z M26.3,60.3h47.1v4.3H26.3V60.3z M57.7,50h15.7v4.3H57.7V50z M57.7,39.7h15.7v4.3H57.7V39.7z M57.7,29.4h15.7v4.3H57.7V29.4z M63.6,83.6H26.1v-4.3h37.5V83.6z M73.9,74H26.1v-4.3h47.7V74z M38.9,56.4 c-6.7,0-12.2-5.6-12.2-12.5V7c0-2.2,1.8-4,4-4h12.6c1.6,0,2.9,1.3,2.9,2.9v32.2c0,4.2-3.3,7.6-7.4,7.6s-7.4-3.4-7.4-7.6v-23h3.3v23 c0,2.4,1.9,4.3,4.1,4.3s4.1-1.9,4.1-4.3V6.2H30.7c-0.4,0-0.8,0.4-0.8,0.8v36.9c0,5.1,4,9.2,8.9,9.2s8.9-4.1,8.9-9.2V15.5H51v28.5 C51,50.8,45.6,56.4,38.9,56.4z" })
+			);
+		}
+	}]);
+
+	return _class43;
+})(React.Component);
+
+Comp.Icons.People = (function (_React$Component44) {
+	_inherits(_class44, _React$Component44);
+
+	function _class44() {
+		_classCallCheck(this, _class44);
+
+		_get(Object.getPrototypeOf(_class44.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class44, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M59.6,13.7c0-3.2,2.6-5.8,5.8-5.8c3.2,0,5.8,2.6,5.8,5.8c0,3.2-2.6,5.8-5.8,5.8 C62.2,19.5,59.6,16.9,59.6,13.7z M61.2,28.7l0.1,0.1c2.1-3,5.3-5.2,9.1-5.8c-0.2-0.8-0.4-1.6-0.4-2.5c-0.6-0.1-1.2-0.2-1.9-0.3 c-0.8,0.4-1.8,0.7-2.8,0.7c-1,0-2-0.2-2.8-0.7c-0.8,0.1-1.5,0.2-2.2,0.3c-0.1,2.7-1.2,5.1-3,6.9C58.8,27.8,60.1,28.2,61.2,28.7z M29.6,23c0.2-0.8,0.4-1.6,0.4-2.4c0.6-0.1,1.3-0.3,2.1-0.3c0.8,0.4,1.8,0.7,2.8,0.7c1,0,2-0.2,2.8-0.7c0.7,0.1,1.3,0.2,1.8,0.3 c0.1,2.7,1.2,5.2,3,7c-1.4,0.3-2.6,0.7-3.7,1.2l-0.2,0.1C36.6,25.8,33.3,23.6,29.6,23z M34.9,19.5c3.2,0,5.8-2.6,5.8-5.8 c0-3.2-2.6-5.8-5.8-5.8c-3.2,0-5.8,2.6-5.8,5.8C29.1,16.9,31.7,19.5,34.9,19.5z M71.5,79.4v7.4c-1.9,1.3-4.3,2.4-7.1,3.2v-8.8 L63,90.4c-3.8,1-8.2,1.6-12.9,1.6c-4.7,0-9.2-0.6-13-1.6l-1.5-9.3V90c-3-0.9-5.6-2.2-7.6-3.6v-7c0-7.4,2.5-14.2,16.4-15.6 c1.7,0.9,3.6,1.4,5.6,1.4c2,0,3.9-0.5,5.6-1.4C69.7,65.2,71.5,72,71.5,79.4z M50,39.2c-6.4,0-11.6,5.2-11.6,11.6 c0,6.4,5.2,11.6,11.6,11.6c6.4,0,11.6-5.2,11.6-11.6C61.6,44.4,56.4,39.2,50,39.2z M15.6,36.7c0-6.4,5.2-11.6,11.6-11.6 c6.4,0,11.6,5.2,11.6,11.6c0,6.4-5.2,11.6-11.6,11.6C20.8,48.3,15.6,43.1,15.6,36.7z M39.8,61.4c-2.8-2.7-4.5-6.4-4.5-10.6 c0-0.3,0-0.5,0-0.8c-0.8-0.1-1.6-0.2-2.5-0.3c-1.7,0.9-3.6,1.4-5.6,1.4c-2,0-3.9-0.5-5.6-1.4C7.7,51.1,5.2,57.9,5.2,65.3v7 c1.9,1.4,4.5,2.6,7.6,3.6v-8.8l1.5,9.3c3.2,0.8,6.8,1.4,10.6,1.5C25.4,68.8,30.3,63.4,39.8,61.4z M41.8,20.1c0-4.5,3.6-8.1,8.1-8.1 c4.5,0,8.1,3.6,8.1,8.1c0,4.5-3.6,8.1-8.1,8.1C45.5,28.2,41.8,24.6,41.8,20.1z M60.2,30.8c-1.6-0.8-3.6-1.3-6.3-1.6 c-1.2,0.6-2.5,1-3.9,1c-1.4,0-2.8-0.3-3.9-0.9c-2.6,0.3-4.6,0.8-6.2,1.5c0.8,1.8,1.3,3.8,1.3,5.9c0,1.4-0.2,2.7-0.6,4 c2.5-2.3,5.8-3.7,9.5-3.7c3.7,0,7,1.4,9.5,3.7c-0.4-1.3-0.6-2.6-0.6-3.9C58.9,34.6,59.4,32.6,60.2,30.8z M84.5,29.3 c9.7,1,11,5.8,11,10.9v5.2c-1.3,0.9-3,1.6-4.9,2.2v-6.2l-1.1,6.5c-1.3,0.3-2.7,0.6-4.2,0.8c-1.2-0.4-2.6-0.7-4.1-1 c3.3-2.5,5.5-6.6,5.5-11.1C86.7,34,85.9,31.4,84.5,29.3z M83.4,27.7c3-1.2,5.2-4.1,5.2-7.5c0-4.5-3.6-8.1-8.1-8.1 c-4.5,0-8.1,3.6-8.1,8.1c0,0.9,0.2,1.8,0.4,2.6C77,22.8,80.8,24.7,83.4,27.7z M13.3,36.7c0,4.5,2.2,8.5,5.5,11.1 c-1.5,0.2-2.9,0.6-4.1,1c-1.5-0.2-2.9-0.5-4.2-0.8l-1.1-6.5v6.2c-1.9-0.6-3.6-1.4-4.9-2.2v-5.2c0-5.2,1.2-9.9,11-10.9 C14.1,31.4,13.3,34,13.3,36.7z M27.2,22.8c0.3-0.8,0.4-1.7,0.4-2.6c0-4.5-3.6-8.1-8.1-8.1c-4.5,0-8.1,3.6-8.1,8.1 c0,3.4,2.1,6.4,5.2,7.5C19.2,24.7,23,22.8,27.2,22.8z M94.8,65.3v7c-1.9,1.4-4.5,2.6-7.6,3.6v-8.8l-1.5,9.3 c-3.3,0.9-7.1,1.4-11.1,1.6c-0.3-6.7-2.6-14-14.4-16.5c2.8-2.7,4.5-6.4,4.5-10.6c0-0.3,0-0.5,0-0.8c0.8-0.1,1.6-0.2,2.5-0.3 c1.7,0.9,3.6,1.4,5.6,1.4c2,0,3.9-0.5,5.6-1.4C92.3,51.1,94.8,57.9,94.8,65.3z M72.8,48.3c6.4,0,11.6-5.2,11.6-11.6 c0-6.4-5.2-11.6-11.6-11.6c-6.4,0-11.6,5.2-11.6,11.6C61.2,43.1,66.4,48.3,72.8,48.3z" })
+			);
+		}
+	}]);
+
+	return _class44;
+})(React.Component);
+
+Comp.Icons.Phone = (function (_React$Component45) {
+	_inherits(_class45, _React$Component45);
+
+	function _class45() {
+		_classCallCheck(this, _class45);
+
+		_get(Object.getPrototypeOf(_class45.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class45, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M34.6,70L7.5,85.5c-0.2-0.4-0.5-0.7-0.7-1.1l-1.5-2.6c-0.3-0.5-0.4-1-0.3-1.5c0-0.9,0.5-1.7,1.3-2.2 l22.6-12.9c0.8-0.5,1.8-0.5,2.5,0c0.4,0.2,0.8,0.6,1.1,1l1.5,2.6C34.2,69.3,34.4,69.6,34.6,70z M66.2,36l2.4,1.8 c0.3,0.2,0.7,0.5,1,0.7l18.5-25.2c-0.3-0.3-0.7-0.5-1-0.8l-2.4-1.8c-0.4-0.3-0.9-0.5-1.4-0.5c-0.9,0-1.8,0.3-2.3,1.1l-15.3,21 C65.1,33,65,34,65.3,34.8C65.5,35.2,65.8,35.7,66.2,36z M95.4,31.9c-2.5,9.3-13.4,24.2-29,38.2C52.2,82.9,37.6,91.5,27.9,94.1 c-1.9,0.7-4,1-6.1,0.8c-0.5,0-1-0.1-1.4-0.2c-2-0.4-4.1-1.2-6-2.3C12.1,91,9.9,89,8.2,86.5l26.9-15.4c0.3,0.7,0.6,1.4,0.8,2.2 c3.3,3.4,14-1.1,24.2-10.2c10.2-9.1,15.8-19.4,12.7-23l0,0c-0.7-0.3-1.4-0.7-2.1-1.1l18.4-25c2.2,2,4,4.4,5.1,6.9 c0.9,1.9,1.4,3.9,1.6,5.8C96.1,28.2,95.9,29.9,95.4,31.9C95.4,31.9,95.4,31.9,95.4,31.9z M75.2,49.1c1.6-2.8,2.4-5.3,2.6-7.4 c-1-0.2-2-0.4-3-0.8c1.1,2.2,0.4,5.6-1.9,9.7c-2.5,4.5-6.6,9.4-11.6,13.9c-7.1,6.3-14.7,10.7-20,11.5c-0.6,0.1-1.1,0.1-1.6,0.1 c-1.3,0-2.4-0.3-3.3-0.8l0,0c0.2,1,0.4,2,0.4,3c0.1,0,0.2,0,0.3,0c0.6,0,1.1,0,1.8-0.1C45,77.3,53.8,72.3,61.9,65 C67.6,59.9,72.3,54.2,75.2,49.1z M34.1,51.1c-0.9,0-1.6-0.3-2.1-0.9c-1-1.1-1.2-2.9-1.1-3.8c0.3-5.3,3.2-10,7.8-12.6 c2.4-1.4,5.2-2.2,8-2.2c0.3,0,0.6,0,0.9,0c0.9,0,2.6,0.6,3.5,1.6c0.5,0.6,0.8,1.3,0.7,2.1c-0.1,0.4-0.3,0.8-0.6,1.1 c-0.8,0.6-2.1,0.7-2.4,0.7c-0.2,0-0.4,0-0.6,0c-0.5-0.1-0.9-0.1-1.4-0.1c-1.9,0-3.6,0.5-5.3,1.4c-3.5,2-5.5,6-5.2,10 c0,0.6-0.4,1.5-0.9,2.1C34.9,50.9,34.5,51.1,34.1,51.1L34.1,51.1z M20.7,51c-0.1,0-0.1,0-0.2,0l-0.1,0c-0.8-0.1-1.5-0.4-2.1-1.1 c-0.5-0.5-0.8-1.2-0.8-1.9l0,0l0-0.2c0-0.2,0-0.8,0.1-1.8c0.8-9.8,6.3-18.6,14.8-23.5c4.6-2.7,9.8-4.1,15.1-4.1c0.5,0,1,0,1.5,0 l1.7,0.1l0,0c0.4,0.1,1,0.4,1.4,0.9c0.6,0.6,0.9,1.5,0.9,2.3l0,0.2c0,0.7-0.3,1.3-0.8,1.7c-0.3,0.2-0.6,0.3-1,0.3 c-0.1,0-0.2,0-0.4,0l-1.8-0.1c-0.5,0-1.1-0.1-1.6-0.1c-4.4,0-8.7,1.2-12.5,3.4c-7.2,4.2-11.8,11.8-12.2,20.2l-0.1,1.6 c0.1,0.7-0.1,1.2-0.5,1.6C21.9,50.8,21.3,51,20.7,51z M7.1,50.8c-0.1,0-0.1,0-0.2,0c-0.8-0.1-1.5-0.4-2-1c-0.5-0.5-0.8-1.2-0.8-1.9 v0l0-0.1c0-0.1,0-0.6,0.1-1.8C5.4,31.5,13.5,18.4,26,11.1c6.8-4,14.5-6.1,22.3-6.1c0.7,0,1.4,0,2.1,0.1l1.6,0.1 c0.5,0.1,1,0.4,1.4,0.8c0.5,0.6,0.8,1.4,0.8,2.2c0,0.9-0.3,1.6-0.8,2c-0.3,0.2-0.6,0.3-0.9,0.3c-0.1,0-0.1,0-0.2,0l-1.5-0.1 c-0.8-0.1-1.7-0.1-2.5-0.1c-6.9,0-13.7,1.8-19.6,5.3c-11.1,6.5-18.3,18.1-19.2,31l-0.1,1.7c0,0.7-0.2,1.3-0.7,1.8 C8.3,50.6,7.7,50.8,7.1,50.8z" })
+			);
+		}
+	}]);
+
+	return _class45;
+})(React.Component);
+
+Comp.Icons.Plus = (function (_React$Component46) {
+	_inherits(_class46, _React$Component46);
+
+	function _class46() {
+		_classCallCheck(this, _class46);
+
+		_get(Object.getPrototypeOf(_class46.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class46, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M50,1C22.9,1,1,22.9,1,50c0,27.1,21.9,49,49,49c27.1,0,49-21.9,49-49C99,22.9,77.1,1,50,1z M74,50.7 c0,2.4-1.5,4.3-3.9,4.3H55v15.1c0,2.4-1.6,4.9-4,4.9h-2.2c-2.4,0-3.8-2.5-3.8-4.9V55H29.9c-2.4,0-4.9-1.8-4.9-4.3v-1.4 c0-2.4,2.5-4.3,4.9-4.3H45V29.9c0-2.4,1.3-3.9,3.8-3.9H51c2.4,0,4,1.5,4,3.9V45h15.1c2.4,0,3.9,1.9,3.9,4.3V50.7z" })
+			);
+		}
+	}]);
+
+	return _class46;
+})(React.Component);
+
+Comp.Icons.Print = (function (_React$Component47) {
+	_inherits(_class47, _React$Component47);
+
+	function _class47() {
+		_classCallCheck(this, _class47);
+
+		_get(Object.getPrototypeOf(_class47.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class47, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { "fill-rule": "evenodd", "clip-rule": "evenodd", d: "M19.1,52.7v7.9h61.8v-7.8c0-0.6,0.3-1.2,0.8-1.6 c0.5-0.4,1.1-0.6,1.7-0.4c6.1,1.2,14,6.5,14,16.2c0,2.8,0,11.6,0,16.6c0,3.7-3,6.6-6.6,6.6H9.3c-3.6,0-6.6-3-6.6-6.6 c0-5,0-13.8,0-16.6c0-8.8,6.7-15.1,14-16.2c0.6-0.1,1.2,0.1,1.7,0.5C18.8,51.5,19.1,52.1,19.1,52.7L19.1,52.7z M76.9,56.6V31.8v-3.3 L58.2,9.8h-3.3H28.5c-2.9,0-5.3,2.4-5.3,5.3v41.5h7.1V17.7c0-0.4,0.4-0.8,0.8-0.8h23.9v5.2v2c0,4.2,3.5,7.7,7.7,7.7h7.2v24.8H76.9 L76.9,56.6z M63.3,17.8l-0.9-0.9h0L63.3,17.8L63.3,17.8z M19.1,84.3h61.8v-3.9H19.1V84.3z" })
+			);
+		}
+	}]);
+
+	return _class47;
+})(React.Component);
+
+Comp.Icons.ReportProblem = (function (_React$Component48) {
+	_inherits(_class48, _React$Component48);
+
+	function _class48() {
+		_classCallCheck(this, _class48);
+
+		_get(Object.getPrototypeOf(_class48.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class48, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M97.5,87.9L74.8,48.6L52.2,9.4c-0.2-0.5-0.6-0.9-1.1-1.2c-1.4-0.8-3.1-0.3-3.9,1L24.4,48.6l0,0l0,0L1.8,87.7 c-0.3,0.5-0.5,0.9-0.5,1.6c0,1.6,1.3,2.8,2.9,2.8h45.4H95v0.2c1,0,1-0.1,1.4-0.4C97.8,91,98.3,89.3,97.5,87.9z M53,79h-6v-8h6V79z M52.8,65h-6.5l-0.4-26h7.4L52.8,65z" })
+			);
+		}
+	}]);
+
+	return _class48;
+})(React.Component);
+
+Comp.Icons.Right = (function (_React$Component49) {
+	_inherits(_class49, _React$Component49);
+
+	function _class49() {
+		_classCallCheck(this, _class49);
+
+		_get(Object.getPrototypeOf(_class49.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class49, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M95.2,45.2L62.4,12.4c-2.6-2.6-6.5-2.8-9.1-0.2c-2.6,2.6-2.4,6.5,0.2,9.1l21.8,21.8l-66.1,0 c-3.6,0-6.6,2.9-6.6,6.5c0,3.6,2.9,6.5,6.5,6.5l66.1,0L53.5,78c-2.6,2.6-2.8,6.5-0.2,9.1c2.6,2.6,6.5,2.4,9.1-0.2l33-33 c0,0,2.3-2.2,2.3-4.2C97.7,47.7,95.2,45.2,95.2,45.2L95.2,45.2z" })
+			);
+		}
+	}]);
+
+	return _class49;
+})(React.Component);
+
+Comp.Icons.Salesforce = (function (_React$Component50) {
+	_inherits(_class50, _React$Component50);
+
+	function _class50() {
+		_classCallCheck(this, _class50);
+
+		_get(Object.getPrototypeOf(_class50.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class50, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement("path", { d: "M40,45c-0.7,0-1.2,0.3-1.6,0.8c-0.2,0.3-0.4,0.8-0.4,1.3l3.9,0c0-0.5-0.1-1-0.4-1.3 C41.2,45.3,40.8,45,40,45z" }),
+					React.createElement("path", { d: "M84,45c-0.7,0-1.2,0.3-1.6,0.8c-0.2,0.3-0.4,0.8-0.4,1.3l3.9,0c0-0.5-0.1-1-0.4-1.3 C85.2,45.3,84.7,45,84,45z" }),
+					React.createElement("path", { d: "M62.1,45c-0.7,0-1.2,0.2-1.6,0.8C60.2,46.3,60,47,60,48c0,0.9,0.2,1.7,0.5,2.2 c0.3,0.5,0.9,0.8,1.6,0.8c0.7,0,1.2-0.3,1.6-0.8c0.3-0.5,0.5-1.3,0.5-2.2c0-0.9-0.2-1.7-0.5-2.2C63.4,45.3,62.8,45,62.1,45z" }),
+					React.createElement("path", { d: "M26.2,48.6c-0.3,0.2-0.5,0.6-0.5,1.1c0,0.3,0.1,0.5,0.2,0.7c0.1,0.1,0.1,0.2,0.3,0.3 c0,0,0.5,0.4,1.6,0.3c0.8,0,1.5-0.2,1.5-0.2v-2.5c0,0-0.7-0.1-1.5-0.1C26.7,48.2,26.2,48.6,26.2,48.6z" }),
+					React.createElement("path", { d: "M76.9,25.8c-2.9,0-5.7,0.6-8.3,1.8c-2.9-5.2-8.4-8.7-14.6-8.7c-4.7,0-9,2-12,5.2c-3.4-4.4-8.7-7.2-14.6-7.2 c-10.2,0-18.4,8.2-18.4,18.4c0,2.6,0.5,5.1,1.5,7.3c-4.7,2.8-7.9,7.9-7.9,13.8c0,8.8,7.1,16,15.8,16c1.1,0,2.2-0.1,3.2-0.3 c2.4,6.5,8.6,11.1,16,11.1c7,0,13.1-4.3,15.7-10.4c2,1,4.2,1.5,6.5,1.5c5.6,0,10.5-3.1,13-7.6c1.3,0.3,2.6,0.4,4,0.4 c11.3,0,20.4-9.2,20.4-20.6C97.3,35.1,88.2,25.8,76.9,25.8z M22.9,49.7c0,1.7-1.2,2.7-3.1,2.7c-1,0-1.9-0.1-2.8-0.7 c-0.2-0.1-0.4-0.2-0.5-0.3c0,0-0.1-0.1,0-0.2l0.4-1.1C16.8,50,17,50,17,50.1c0.1,0.1,0.2,0.1,0.3,0.2c1.1,0.7,2.2,0.7,2.5,0.7 c0.8,0,1.4-0.4,1.4-1v0c0-0.7-0.8-0.9-1.7-1.2l-0.2-0.1c-1.3-0.4-2.7-0.9-2.7-2.5v0c0-1.5,1.2-2.6,3-2.6l0.2,0c1,0,2.1,0.3,2.8,0.7 c0.1,0,0.1,0.1,0.1,0.2c0,0.1-0.4,1-0.4,1.1c-0.1,0.2-0.3,0.1-0.3,0.1c-0.6-0.4-1.6-0.6-2.5-0.6c-0.8,0-1.2,0.4-1.2,0.9v0 c0,0.6,0.8,0.9,1.8,1.2l0.2,0.1C21.6,47.6,22.9,48.2,22.9,49.7L22.9,49.7z M30.9,51.9c0,0-0.2,0.1-0.4,0.1c-0.2,0-0.8,0.2-1.4,0.3 c-0.5,0.1-1.1,0.1-1.7,0.1c-0.5,0-1-0.1-1.5-0.1c-0.4-0.1-0.8-0.3-1.1-0.5c-0.3-0.2-0.5-0.5-0.7-0.9c-0.2-0.3-0.3-0.8-0.3-1.3 c0-0.5,0.1-0.9,0.3-1.3c0.2-0.4,0.5-0.7,0.8-0.9c0.3-0.2,0.7-0.4,1.1-0.5c0.4-0.1,0.9-0.2,1.4-0.2c0.3,0,0.6,0,0.9,0 c0,0,0.4,0,0.9,0.1v-0.2c0-0.7-0.2-1.1-0.5-1.3C28.5,45.1,28,45,27.5,45c0,0-1.3,0-2.4,0.6c0,0-0.1,0-0.1,0s-0.1,0-0.2-0.1l-0.4-1 c-0.1-0.2,0.1-0.2,0.1-0.2c0.5-0.4,1.7-0.6,1.7-0.6c0.4-0.1,1.1-0.1,1.5-0.1c1.1,0,1.9,0.3,2.5,0.8c0.6,0.5,0.9,1.3,0.9,2.4l0,5 C31,51.7,31,51.9,30.9,51.9z M34.6,52.1c0,0.1-0.1,0.2-0.2,0.2H33c-0.1,0-0.2-0.1-0.2-0.2V40.3c0-0.1,0.1-0.2,0.2-0.2h1.5 c0.1,0,0.2,0.1,0.2,0.2V52.1z M43.7,48.3c0,0.1-0.2,0.1-0.2,0.1l-5.5,0c0,0.8,0.2,1.4,0.6,1.8c0.4,0.4,1,0.6,1.9,0.6 c1.3,0,1.9-0.3,2.3-0.4c0,0,0.2-0.1,0.2,0.1l0.4,1c0.1,0.2,0,0.2,0,0.3c-0.3,0.2-1.2,0.5-2.8,0.5c-0.8,0-1.4-0.1-2-0.3 c-0.6-0.2-1-0.5-1.4-0.9c-0.4-0.4-0.6-0.9-0.8-1.4c-0.2-0.5-0.2-1.1-0.2-1.8c0-0.6,0.1-1.2,0.2-1.8c0.2-0.5,0.4-1,0.7-1.4 c0.3-0.4,0.8-0.7,1.3-1c0.5-0.2,1.1-0.4,1.8-0.4c0.6,0,1.1,0.1,1.6,0.3c0.3,0.1,0.7,0.4,1,0.8c0.2,0.2,0.6,0.8,0.7,1.3 C43.8,47.2,43.7,48.2,43.7,48.3z M48.2,52.4c-1,0-1.9-0.1-2.8-0.7c-0.2-0.1-0.4-0.2-0.5-0.3c0,0-0.1-0.1,0-0.2l0.4-1.1 c0.1-0.2,0.2-0.1,0.3-0.1c0.1,0.1,0.2,0.1,0.3,0.2c1.1,0.7,2.2,0.7,2.5,0.7c0.8,0,1.4-0.4,1.4-1v0c0-0.7-0.8-0.9-1.7-1.2l-0.2-0.1 c-1.3-0.4-2.7-0.9-2.7-2.5v0c0-1.5,1.2-2.6,3-2.6l0.2,0c1,0,2.1,0.3,2.8,0.7c0.1,0,0.1,0.1,0.1,0.2c0,0.1-0.4,1-0.4,1.1 c-0.1,0.2-0.3,0.1-0.3,0.1C49.8,45.2,48.8,45,48,45c-0.8,0-1.2,0.4-1.2,0.9v0c0,0.6,0.8,0.9,1.8,1.2l0.2,0.1c1.3,0.4,2.6,1,2.6,2.5 v0C51.4,51.4,50.2,52.4,48.2,52.4z M57.8,45c0,0.2-0.2,0.2-0.2,0.2h-1.8l-1.2,7c-0.1,0.7-0.3,1.3-0.5,1.8c-0.2,0.5-0.4,0.9-0.7,1.2 c-0.3,0.3-0.6,0.6-1,0.7c-0.4,0.1-0.8,0.2-1.3,0.2c-0.2,0-0.5,0-0.8-0.1C50,56,49.9,56,49.7,55.9c-0.1,0-0.1-0.1-0.1-0.2 c0-0.1,0.4-1,0.4-1.1c0.1-0.1,0.2-0.1,0.2-0.1c0.1,0,0.2,0.1,0.3,0.1c0.1,0,0.3,0,0.4,0c0.2,0,0.5,0,0.6-0.1 c0.2-0.1,0.4-0.2,0.5-0.4c0.1-0.2,0.3-0.4,0.4-0.8c0.1-0.3,0.2-0.8,0.3-1.4l1.2-6.9h-1.2c-0.1,0-0.2-0.1-0.2-0.2l0.2-1.1 c0-0.2,0.2-0.2,0.2-0.2h1.2l0.1-0.4c0.2-1.1,0.6-1.9,1.1-2.5c0.5-0.6,1.3-0.8,2.3-0.8c0.3,0,0.5,0,0.7,0.1c0.2,0,0.4,0.1,0.5,0.1 c0,0,0.1,0.1,0.1,0.2l-0.4,1.2c0,0.1-0.1,0.1-0.2,0.1c0,0-0.1,0-0.3-0.1c-0.1,0-0.3,0-0.5,0c-0.2,0-0.4,0-0.6,0.1 c-0.2,0.1-0.3,0.2-0.5,0.3c-0.1,0.1-0.3,0.3-0.4,0.6c-0.2,0.6-0.3,1.2-0.3,1.2h1.8c0.1,0,0.2,0.1,0.2,0.2L57.8,45z M65.8,49.7 c-0.2,0.5-0.4,1-0.7,1.4c-0.3,0.4-0.8,0.7-1.2,0.9c-0.5,0.2-1.1,0.3-1.7,0.3c-0.7,0-1.2-0.1-1.7-0.3c-0.5-0.2-0.9-0.5-1.2-0.9 c-0.3-0.4-0.6-0.9-0.7-1.4c-0.2-0.5-0.2-1.1-0.2-1.7c0-0.6,0.1-1.2,0.2-1.7c0.2-0.5,0.4-1,0.7-1.4c0.3-0.4,0.7-0.7,1.2-0.9 c0.5-0.2,1.1-0.3,1.7-0.3c0.7,0,1.2,0.1,1.7,0.3c0.5,0.2,0.9,0.5,1.2,0.9c0.3,0.4,0.6,0.9,0.7,1.4c0.2,0.5,0.2,1.1,0.2,1.7 C66.1,48.6,66,49.2,65.8,49.7z M72.6,44c-0.1,0.1-0.3,0.9-0.4,1.2c0,0.1-0.1,0.2-0.2,0.1c0,0-0.3-0.1-0.6-0.1c-0.2,0-0.5,0-0.7,0.1 c-0.3,0.1-0.5,0.2-0.7,0.4c-0.2,0.2-0.4,0.5-0.5,0.8c-0.1,0.3-0.2,0.9-0.2,1.4v4.1c0,0.1-0.1,0.2-0.2,0.2h-1.4 c-0.1,0-0.2-0.1-0.2-0.2v-8.2c0-0.1,0.1-0.2,0.2-0.2h1.4c0.1,0,0.2,0.1,0.2,0.2l0,0.7c0.2-0.3,0.6-0.5,0.9-0.7 c0.3-0.2,0.7-0.3,1.4-0.2c0.4,0,0.8,0.1,0.9,0.2C72.6,43.8,72.7,43.9,72.6,44z M79.5,52c-0.6,0.2-1.5,0.4-2.3,0.4 c-1.4,0-2.5-0.4-3.2-1.2c-0.7-0.8-1.1-1.9-1.1-3.2c0-0.6,0.1-1.2,0.3-1.7c0.2-0.5,0.4-1,0.8-1.4c0.3-0.4,0.8-0.7,1.3-0.9 c0.5-0.2,1.1-0.3,1.8-0.3c0.5,0,0.9,0,1.2,0.1c0.4,0.1,0.9,0.2,1.1,0.3c0,0,0.1,0.1,0.1,0.2c-0.2,0.4-0.3,0.7-0.4,1.1 c-0.1,0.2-0.2,0.1-0.2,0.1c-0.5-0.2-1-0.2-1.7-0.2c-0.8,0-1.4,0.3-1.8,0.8C75,46.4,74.7,47,74.7,48c0,1,0.2,1.8,0.7,2.2 c0.4,0.5,1.1,0.7,1.9,0.7c0.3,0,0.6,0,0.9-0.1c0.3,0,0.5-0.1,0.8-0.2c0,0,0.2-0.1,0.2,0.1l0.4,1.1C79.6,51.9,79.5,52,79.5,52z M87.6,48.3c0,0.1-0.2,0.1-0.2,0.1l-5.5,0c0,0.8,0.2,1.4,0.6,1.8c0.4,0.4,1,0.6,1.9,0.6c1.3,0,1.9-0.3,2.3-0.4c0,0,0.2-0.1,0.2,0.1 l0.4,1c0.1,0.2,0,0.2,0,0.3c-0.3,0.2-1.2,0.5-2.8,0.5c-0.8,0-1.4-0.1-2-0.3c-0.6-0.2-1-0.5-1.4-0.9c-0.4-0.4-0.6-0.9-0.8-1.4 c-0.2-0.5-0.2-1.1-0.2-1.8c0-0.6,0.1-1.2,0.2-1.8c0.2-0.5,0.4-1,0.7-1.4c0.3-0.4,0.8-0.7,1.3-1c0.5-0.2,1.1-0.4,1.8-0.4 c0.6,0,1.1,0.1,1.6,0.3c0.3,0.1,0.7,0.4,1,0.8c0.2,0.2,0.6,0.8,0.7,1.3C87.8,47.2,87.6,48.2,87.6,48.3z" })
+				)
+			);
+		}
+	}]);
+
+	return _class50;
+})(React.Component);
+
+Comp.Icons.Search = (function (_React$Component51) {
+	_inherits(_class51, _React$Component51);
+
+	function _class51() {
+		_classCallCheck(this, _class51);
+
+		_get(Object.getPrototypeOf(_class51.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class51, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M19.6,50.7c-0.8,0-1.6-0.4-2-1.2c-2.1-3.6-3.2-7.8-3.2-12c0-10.9,7.2-20.4,17.6-23.2 c0.2-0.1,0.4-0.1,0.6-0.1c1,0,1.9,0.7,2.2,1.7c0.3,1.2-0.4,2.5-1.6,2.8c-8.4,2.2-14.2,10-14.2,18.8c0,3.4,0.9,6.8,2.6,9.7 c0.3,0.5,0.4,1.1,0.2,1.7c-0.2,0.6-0.5,1.1-1.1,1.4C20.4,50.6,20,50.7,19.6,50.7z" }),
+				React.createElement("path", { d: "M32.2,14.9C22.1,17.6,15,26.9,15,37.6c0,4.1,1.1,8.2,3.1,11.7c0.3,0.6,0.9,0.9,1.5,0.9 c0.3,0,0.6-0.1,0.9-0.2c0.9-0.5,1.2-1.6,0.7-2.4c-1.7-3-2.6-6.5-2.6-10c0-9,6-17,14.6-19.3c0.9-0.3,1.5-1.2,1.3-2.2 C34.2,15.2,33.2,14.6,32.2,14.9z" }),
+				React.createElement("path", { d: "M93,98.4c-1.2,0-2.4-0.5-3.3-1.4L68.8,76.1l-9.5-9.5c-6.3,4.7-13.7,7.2-21.6,7.2 c-19.9,0-36.1-16.2-36.1-36.1c0-19.9,16.2-36.1,36.1-36.1c19.9,0,36.1,16.2,36.1,36.1c0,8.2-2.8,16.1-7.9,22.5l9.6,9.5l20.7,20.7 c0.9,0.9,1.4,2,1.4,3.3c0,1.2-0.5,2.4-1.4,3.3C95.3,97.9,94.2,98.4,93,98.4z M37.7,9.7c-15.4,0-28,12.6-28,28s12.6,28,28,28 c15.4,0,28-12.6,28-28S53.1,9.7,37.7,9.7z" })
+			);
+		}
+	}]);
+
+	return _class51;
+})(React.Component);
+
+Comp.Icons.Settings = (function (_React$Component52) {
+	_inherits(_class52, _React$Component52);
+
+	function _class52() {
+		_classCallCheck(this, _class52);
+
+		_get(Object.getPrototypeOf(_class52.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class52, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement("path", { d: "M90.7,38.1l-6.9-0.2l-1.5-3.1l4.6-4.7c1.3-1.3,2-3,2-4.8c0-1.8-0.7-3.5-2-4.8l-7.3-7.3c-1.3-1.3-3-2-4.8-2 c-1.8,0-3.5,0.7-4.8,2l-5.3,4.6L61,16.5V9.9C61,6.2,58.9,2,55.1,2H44.9c-3.7,0-6.8,3.6-6.8,7.3l-0.2,6.9l-3.1,1.5l-4.7-4.6 c-2.6-2.6-7.1-2.5-9.6,0l-7.2,7.3c-1.3,1.3-2,3-2,4.8c0,1.8,0.7,3.5,2,4.8l4.6,5.3L16.5,39H9.9C6.2,39,2,41.1,2,44.9v10.3 c0,3.7,3.6,6.8,7.3,6.8l6.9,0.2l1.5,3.1l-4.6,4.7c-1.3,1.3-2,3-2,4.8c0,1.8,0.7,3.5,2,4.8l7.3,7.3c2.6,2.6,7,2.6,9.6,0l4.8-4.6 l3.1,1.2v6.6c0,3.7,3.1,7.9,6.9,7.9h10.3c3.7,0,6.8-3.6,6.8-7.3l0.2-6.9l3.1-1.5l4.7,4.6c2.6,2.5,7,2.5,9.6,0l7.2-7.3 c1.3-1.3,2-3,2-4.8c0-1.8-0.7-3.5-2-4.8l-4.6-4.8l1.2-3.1h6.6c3.7,0,7.9-3.1,7.9-6.9V44.9C98,41.1,94.4,38.1,90.7,38.1z M90,54 h-6.5c-3.2,0-6.5,2.3-7.4,5.1L75,61.8c-1.4,2.9-0.8,6.8,1.5,9.1l3.8,3.8l-5.6,5.6l-3.8-3.8c-1.4-1.4-3.5-2.3-5.7-2.3 c-1.2,0-2.4,0.3-3.2,0.7L59.3,76c-3.1,1-5.3,4.2-5.3,7.5V90h-8v-6.5c0-3.3-2.2-6.4-5.1-7.4L38.2,75c-2.9-1.4-6.9-0.8-9.1,1.5 l-3.8,3.8l-5.6-5.6l3.9-3.8c2.3-2.3,2.9-6.2,1.6-8.8L24,59.3c-1-3.1-4.2-5.3-7.5-5.3H10v-8h6.5c3.2,0,6.4-2.3,7.4-5.1l1.1-2.7 c1.4-2.9,0.8-6.8-1.5-9.1l-3.8-3.8l5.6-5.6l3.8,3.8c1.4,1.4,3.5,2.3,5.7,2.3c1.2,0,2.4-0.3,3.2-0.7l2.7-1.1c3.1-1,5.4-4.2,5.4-7.5 V10h8v6.5c0,3.2,2.3,6.4,5.1,7.4l2.7,1.1c2.9,1.4,6.8,0.8,9.1-1.5l3.8-3.8l5.6,5.6l-3.9,3.9c-2.3,2.3-2.9,6.2-1.6,8.8l1.1,2.7 c1,3.1,4.2,5.4,7.5,5.4H90V54z" }),
+					React.createElement("path", { d: "M50,32.5c-9.6,0-17.5,7.9-17.5,17.5S40.4,67.5,50,67.5c9.7,0,17.5-7.9,17.5-17.5S59.7,32.5,50,32.5z M50,59.5c-5.3,0-9.5-4.3-9.5-9.5s4.3-9.5,9.5-9.5c5.3,0,9.5,4.3,9.5,9.5S55.3,59.5,50,59.5z" })
+				)
+			);
+		}
+	}]);
+
+	return _class52;
+})(React.Component);
+
+Comp.Icons.Share = (function (_React$Component53) {
+	_inherits(_class53, _React$Component53);
+
+	function _class53() {
+		_classCallCheck(this, _class53);
+
+		_get(Object.getPrototypeOf(_class53.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class53, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement(
+						"g",
+						null,
+						React.createElement("path", { d: "M18,65.6c-8.6,0-15.6-7-15.6-15.6s7-15.6,15.6-15.6c8.6,0,15.6,7,15.6,15.6S26.6,65.6,18,65.6L18,65.6z M18,42.4c-4.2,0-7.6,3.4-7.6,7.6s3.4,7.6,7.6,7.6c4.2,0,7.6-3.4,7.6-7.6S22.1,42.4,18,42.4L18,42.4z" })
+					),
+					React.createElement(
+						"g",
+						null,
+						React.createElement(
+							"g",
+							null,
+							React.createElement("path", { d: "M82,31.2c-8.6,0-15.6-7-15.6-15.6C66.4,7,73.4,0,82,0c8.6,0,15.6,7,15.6,15.6 C97.7,24.2,90.7,31.2,82,31.2L82,31.2z M82,8.1c-4.2,0-7.6,3.4-7.6,7.6c0,4.2,3.4,7.6,7.6,7.6c4.2,0,7.6-3.4,7.6-7.6 C89.6,11.4,86.2,8.1,82,8.1L82,8.1z" })
+						),
+						React.createElement(
+							"g",
+							null,
+							React.createElement("path", { d: "M82,100c-8.6,0-15.6-7-15.6-15.6c0-8.6,7-15.6,15.6-15.6c8.6,0,15.6,7,15.6,15.6C97.7,93,90.7,100,82,100 L82,100z M82,76.8c-4.2,0-7.6,3.4-7.6,7.6c0,4.2,3.4,7.6,7.6,7.6c4.2,0,7.6-3.4,7.6-7.6C89.6,80.2,86.2,76.8,82,76.8L82,76.8z" })
+						)
+					),
+					React.createElement(
+						"g",
+						null,
+						React.createElement(
+							"g",
+							null,
+							React.createElement("path", { d: "M70.1,82.3c-0.7,0-1.4-0.2-2-0.5L27,58c-1.9-1.1-2.6-3.6-1.5-5.5c1.1-1.9,3.6-2.6,5.5-1.5l41.1,23.7 c1.9,1.1,2.6,3.6,1.5,5.5C72.9,81.6,71.5,82.3,70.1,82.3L70.1,82.3z" })
+						),
+						React.createElement(
+							"g",
+							null,
+							React.createElement("path", { d: "M29,49.5c-1.4,0-2.7-0.7-3.5-2c-1.1-1.9-0.5-4.4,1.5-5.5l41.1-23.7c1.9-1.1,4.4-0.5,5.5,1.5 c1.1,1.9,0.4,4.4-1.5,5.5L31,48.9C30.4,49.3,29.7,49.5,29,49.5L29,49.5z" })
+						)
+					)
+				)
+			);
+		}
+	}]);
+
+	return _class53;
+})(React.Component);
+
+Comp.Icons.Shipping = (function (_React$Component54) {
+	_inherits(_class54, _React$Component54);
+
+	function _class54() {
+		_classCallCheck(this, _class54);
+
+		_get(Object.getPrototypeOf(_class54.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class54, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement("path", { d: "M82.8,36.4L82.8,36.4l15.8-9.2L65.9,8.2L50,17.4L34.2,8.2L1.3,27.2l15.9,9.2l0,0l0,0L1.3,45.6l18.6,10.7 v17.5l30.1,18l29.8-18V56.5l18.9-10.9L82.8,36.4L82.8,36.4z M65.9,12.3l25.8,14.9l-12.3,7.2L53.5,19.5L65.9,12.3z M8.4,27.2 l25.8-14.9l12.3,7.2L20.7,34.3L8.4,27.2z M8.4,45.6l12.3-7.2l25.8,14.9l-12.3,7.2L8.4,45.6z M48.2,86.6L23.4,71.8V58.3l10.7,6.2 l14.1-8.2V86.6z M50,51.2L24.2,36.4L50,21.5l25.8,14.9L50,51.2z M76.3,71.8L51.8,86.6V56.3l14.1,8.2l10.4-6V71.8z M91.6,45.6 L65.9,60.4l-12.3-7.2l25.8-14.9L91.6,45.6z" })
+				)
+			);
+		}
+	}]);
+
+	return _class54;
+})(React.Component);
+
+Comp.Icons.Trophy = (function (_React$Component55) {
+	_inherits(_class55, _React$Component55);
+
+	function _class55() {
+		_classCallCheck(this, _class55);
+
+		_get(Object.getPrototypeOf(_class55.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class55, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M87,32.4c-1.3,1.9-3.3,3.8-6.6,5.3c-2.1,1-3.9,1.8-5.5,2.7c0.3-0.6,0.5-1.2,0.8-1.8 c1.9-4.6,3.2-12.2,4-18.7c0.6-0.2,2-0.5,3.3-0.5c0.9,0,1.8,0.1,2.5,0.5c0.7,0.3,1.3,0.7,1.9,1.6c0.9,1.3,1.4,3.1,1.4,5.1 C88.8,28.5,88.3,30.5,87,32.4 M61.4,29.4l-4.1,3.9l1,5.6c0,0.1,0,0.3,0,0.4c0,0.7-0.3,1.4-0.9,1.8c-0.4,0.3-0.9,0.4-1.3,0.4 c-0.4,0-0.7-0.1-1-0.3l-5-2.6l-5,2.6c-0.3,0.2-0.7,0.3-1,0.3c-0.5,0-0.9-0.1-1.3-0.4c-0.6-0.4-0.9-1.1-0.9-1.8c0-0.1,0-0.3,0-0.4 l1-5.6l-4-3.9c-0.4-0.4-0.7-1-0.7-1.6c0-0.2,0-0.5,0.1-0.7c0.3-0.8,1-1.4,1.8-1.5l5.6-0.8l2.5-5.1c0.4-0.8,1.2-1.3,2-1.3 c0.9,0,1.6,0.5,2,1.3v0l2.5,5.1l5.6,0.8c0.9,0.1,1.6,0.7,1.8,1.5c0.1,0.2,0.1,0.5,0.1,0.7C62,28.4,61.8,29,61.4,29.4 M24.8,40.3 c-1.5-0.8-3.3-1.7-5.2-2.6c-3.3-1.5-5.3-3.4-6.6-5.3c-1.3-1.9-1.8-3.9-1.8-5.8c0-1.9,0.6-3.8,1.4-5.1l0,0c0.6-0.9,1.1-1.3,1.9-1.6 c0.7-0.3,1.6-0.5,2.5-0.5c1,0,2,0.2,2.7,0.3c0.3,0.1,0.5,0.1,0.6,0.2c0.8,6.5,2.1,14.1,4,18.7c0.3,0.6,0.5,1.2,0.8,1.8 C25,40.4,24.9,40.3,24.8,40.3 M93.3,17.6c-1.3-2-3.2-3.5-5-4.2c-1.9-0.8-3.7-1-5.3-1c-0.9,0-1.8,0.1-2.6,0.2c0.2-2,0.3-3.5,0.3-4.5 h0.6c2,0,3.6-1.6,3.6-3.6c0-2-1.6-3.6-3.6-3.6H18.6c-2,0-3.6,1.6-3.6,3.6c0,2,1.6,3.6,3.6,3.6h0.6c0.1,0.9,0.2,2.5,0.3,4.5 c-0.8-0.1-1.6-0.2-2.6-0.2c-1.6,0-3.5,0.2-5.3,1c-1.9,0.8-3.7,2.2-5,4.2C5,20.1,4,23.2,4,26.6c0,3.2,0.9,6.7,3,9.8 c2.1,3.1,5.3,5.9,9.6,7.9c2.9,1.3,5.2,2.5,6.4,3.3c0.4,0.3,0.7,0.5,0.9,0.7c-1,1.7-0.3,3.9,1.4,4.9c1.7,1,3.9,0.3,4.9-1.4 c0.1-0.2,0.2-0.4,0.3-0.6c1.8,3.1,3.9,5.8,6.4,8.3c-1.6,0.3-2.9,1.8-2.9,3.5c0,1.9,1.4,3.4,3.3,3.6L33,84.8h-1.1 c-2.9,0-5.2,2.3-5.2,5.2v3.9c0,2.9,2.3,5.2,5.2,5.2h36.2c2.9,0,5.2-2.3,5.2-5.2V90c0-2.9-2.3-5.2-5.2-5.2H67l-4.2-18.3 c1.8-0.2,3.3-1.7,3.3-3.6c0-1.7-1.2-3.2-2.9-3.5c2.5-2.5,4.6-5.3,6.4-8.3c0.1,0.2,0.2,0.4,0.3,0.6c1,1.7,3.1,2.3,4.9,1.4 c1.7-1,2.3-3.1,1.4-4.9c0.1-0.1,0.1-0.2,0.3-0.3c0.5-0.4,1.4-1,2.6-1.6c1.2-0.6,2.7-1.3,4.4-2.1c4.3-2,7.5-4.7,9.6-7.9 c2.1-3.1,3-6.6,3-9.8C96,23.2,95,20.1,93.3,17.6" })
+			);
+		}
+	}]);
+
+	return _class55;
+})(React.Component);
+
+Comp.Icons.Up = (function (_React$Component56) {
+	_inherits(_class56, _React$Component56);
+
+	function _class56() {
+		_classCallCheck(this, _class56);
+
+		_get(Object.getPrototypeOf(_class56.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class56, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M45.4,5L12.6,37.7c-2.6,2.6-2.8,6.5-0.2,9.1c2.6,2.6,6.5,2.4,9.1-0.2l21.8-21.8l0,66.1 c0,3.6,2.9,6.6,6.5,6.6c3.6,0,6.5-2.9,6.5-6.5l0-66.1l21.8,21.8c2.6,2.6,6.5,2.8,9.1,0.2c2.6-2.6,2.4-6.5-0.2-9.1l-33-33 c0,0-2.2-2.3-4.2-2.3C47.9,2.5,45.4,5,45.4,5L45.4,5z" })
+			);
+		}
+	}]);
+
+	return _class56;
+})(React.Component);
+
+Comp.Icons.Weather = (function (_React$Component57) {
+	_inherits(_class57, _React$Component57);
+
+	function _class57() {
+		_classCallCheck(this, _class57);
+
+		_get(Object.getPrototypeOf(_class57.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class57, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement(
+						"g",
+						null,
+						React.createElement("path", { d: "M74.5,79H18c-1.5,0-2.9-0.4-4.2-1.1c-7-2.5-11.7-9.2-11.7-16.7c0-8.9,6.4-16.2,15-17.5 c1.7-9.1,9.7-15.9,19.1-15.9c7,0,13.3,3.7,16.8,9.6c1.1-0.2,2.3-0.3,3.4-0.3c8.5,0,15.7,6,17.3,14.1c8-0.4,14.5,6,14.5,13.8 C88.4,72.8,82.1,79,74.5,79z M36.3,33c-7.5,0-13.8,5.8-14.3,13.3l-0.2,2.3l-2.3,0.1c-6.9,0.2-12.3,5.7-12.3,12.6 c0,5.4,3.4,10.1,8.5,11.9l0.4,0.2c0.6,0.3,1.2,0.5,1.9,0.5h56.5c4.8,0,8.7-3.9,8.7-8.7c0-5.5-5.1-10-10.9-8.4l-3.1,0.8l-0.1-3.2 c-0.3-6.8-5.8-12-12.6-12c-1.3,0-2.7,0.2-4,0.6l-2.2,0.7l-0.9-2.1C47.1,36.4,42,33,36.3,33z" })
+					),
+					React.createElement(
+						"g",
+						null,
+						React.createElement("path", { d: "M87.2,38c-1.5-5.9-6.8-10.2-13.1-10.2c-0.7,0-1.4,0.1-2.1,0.2c-2.7-4.3-7.4-6.9-12.5-6.9 c-4.5,0-8.6,2.1-11.3,5.3c1.6,0.7,3,1.8,4.1,3.1c1.8-2,4.4-3.3,7.2-3.3c3.8,0,7.3,2.3,8.9,5.8l0.9,2.1l2.2-0.7 c0.9-0.3,1.8-0.4,2.7-0.4c4.5,0,8.2,3.5,8.4,8.1l0.1,3.2l3.1-0.8c3.8-1,7.1,1.9,7.1,5.4c0,2.5-1.7,4.7-4,5.4 c1.2,1.3,2,2.8,2.5,4.5c3.9-1.6,6.6-5.4,6.6-9.9C97.9,42.8,93.1,38,87.2,38z" })
+					)
+				)
+			);
+		}
+	}]);
+
+	return _class57;
+})(React.Component);
+
+Comp.Icons.Web = (function (_React$Component58) {
+	_inherits(_class58, _React$Component58);
+
+	function _class58() {
+		_classCallCheck(this, _class58);
+
+		_get(Object.getPrototypeOf(_class58.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class58, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement("polygon", { points: "74.9,60.9 57.4,44.9 57.4,91.7 69.5,79.7 74.9,90.2 78.2,96.5 84.6,93.2 76.2,77  92.4,77 \t" }),
+					React.createElement("path", { d: "M93.7,43.2c-0.1-0.7-0.2-1.4-0.3-2.1c-0.1-0.5-0.1-1-0.2-1.5c0,0,0,0,0,0 c-2.1-11.7-8.8-21.8-18.3-28.3c-5-3.5-10.8-5.9-17.1-7.1c0,0,0,0,0,0c-0.6-0.1-1.2-0.2-1.7-0.2c-0.6-0.1-1.3-0.2-1.9-0.3 c-1.4-0.1-2.8-0.2-4.2-0.2h0c-1.4,0-2.8,0.1-4.2,0.2c-0.6,0.1-1.3,0.2-1.9,0.3c-0.6,0.1-1.2,0.1-1.7,0.2c0,0,0,0,0,0 C36,5.3,30.3,7.7,25.3,11.1C15.8,17.6,8.9,27.8,6.8,39.6c0,0,0,0,0,0c-0.1,0.5-0.1,1.1-0.2,1.6c-0.1,0.7-0.2,1.3-0.3,2 c-0.1,1.4-0.2,2.8-0.2,4.2c0,1.4,0.1,2.8,0.2,4.1c0.1,0.7,0.2,1.4,0.3,2.1c0.1,0.5,0.1,1,0.2,1.5c0,0,0,0,0,0 C8.9,67,15.8,77.2,25.3,83.7c5,3.4,10.7,5.8,16.9,6.9c0,0,0,0,0,0c0.5,0.1,1.1,0.1,1.6,0.2c0.7,0.1,1.3,0.2,2,0.3 c1.4,0.1,2.7,0.2,4.1,0.2h0c0,0,0.1,0,0.1,0v-0.4v-9.8c0,0-0.1,0-0.1,0h0c-2,0-3.9-0.2-5.7-0.5c-1.4-4.4-2.8-10.2-3.6-17.4 c3,0.2,6.1,0.3,9.3,0.3h0c0,0,0.1,0,0.1,0v-5.8c0,0-0.1,0-0.1,0h0c-3.5,0-6.8-0.1-9.9-0.3c-0.2-3.1-0.3-6.4-0.3-9.9 c0-3.5,0.1-6.8,0.3-9.9c3.1-0.2,6.4-0.3,9.9-0.3h0c3.5,0,6.8,0.1,9.9,0.3c0,0.2,0,0.3,0,0.5c0.9,0.3,1.7,0.8,2.5,1.5l3.6,3.3 c0-1.6-0.1-3.2-0.2-4.8c3.4,0.4,6.4,0.9,9.2,1.4c3.1,0.6,5.9,1.4,8.2,2.1c0.3,1.9,0.5,3.8,0.5,5.7c0,2-0.2,3.9-0.5,5.7 c-1.4,0.5-2.9,0.9-4.5,1.3l3.4,3.2l8.1,7.4c1.4-3.1,2.3-6.4,3-9.8c0,0,0,0,0,0c0.1-0.6,0.2-1.1,0.2-1.7c0.1-0.6,0.2-1.2,0.3-1.8 c0.1-1.4,0.2-2.8,0.2-4.3C93.9,46,93.8,44.6,93.7,43.2z M16.8,53.2c-0.3-1.9-0.5-3.8-0.5-5.8c0-2,0.2-3.9,0.5-5.7 c2.4-0.8,5.2-1.5,8.4-2.2c2.7-0.5,5.7-1,9-1.4c-0.2,3-0.3,6.1-0.3,9.3c0,3.2,0.1,6.3,0.3,9.3c-3.3-0.4-6.3-0.9-9-1.4 C22.1,54.7,19.2,53.9,16.8,53.2z M25.3,70.2c-2.8-3-5-6.5-6.6-10.4c2.1,0.5,4.2,1,6.6,1.5c3,0.6,6.1,1,9.5,1.4 c0.6,5.9,1.6,11.3,2.8,16C32.9,76.8,28.7,73.9,25.3,70.2z M34.7,32.1c-3.3,0.3-6.5,0.8-9.5,1.4c-2.3,0.4-4.5,0.9-6.6,1.5 c1.5-3.9,3.8-7.4,6.6-10.4c3.4-3.7,7.6-6.6,12.3-8.5C36.3,20.8,35.4,26.2,34.7,32.1z M50,31.3L50,31.3c-3.2,0-6.3,0.1-9.3,0.3 c0.8-7.2,2.1-13,3.6-17.4c1.9-0.3,3.8-0.5,5.7-0.5h0c2,0,3.9,0.2,5.7,0.5c1.4,4.4,2.8,10.2,3.6,17.4C56.3,31.4,53.2,31.3,50,31.3z M74.9,33.5c-3-0.6-6.3-1.1-9.7-1.4c-0.6-5.9-1.6-11.3-2.8-16c4.8,1.9,9.1,4.9,12.5,8.7c2.7,3,4.9,6.4,6.4,10.2 C79.3,34.4,77.2,34,74.9,33.5z" })
+				)
+			);
+		}
+	}]);
+
+	return _class58;
+})(React.Component);
+
+Comp.Icons.Wifi = (function (_React$Component59) {
+	_inherits(_class59, _React$Component59);
+
+	function _class59() {
+		_classCallCheck(this, _class59);
+
+		_get(Object.getPrototypeOf(_class59.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class59, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement("path", { d: "M50,73.9c-4.4,0-8,3.6-8,8c0,1,0.2,1.9,0.5,2.8c0.5,1.4,1.5,2.7,2.7,3.6c1.3,1,3,1.6,4.8,1.6 c1.8,0,3.4-0.6,4.8-1.6c1.3-0.9,2.2-2.2,2.8-3.8c0.3-0.8,0.5-1.7,0.5-2.7C58,77.5,54.4,73.9,50,73.9z" }),
+					React.createElement("path", { d: "M50,53.3c-9.2,0-17.3,4.3-22.6,11l6.2,8.4C36.9,67,43,63.2,50,63.2c7,0,13.1,3.9,16.4,9.6l6.2-8.4 C67.3,57.6,59.2,53.3,50,53.3z" }),
+					React.createElement("path", { d: "M14.1,46.4l5.9,8c7.4-8.1,18.1-13.1,29.9-13.1c11.8,0,22.5,5.1,29.9,13.1l5.9-8C76.7,37.1,64,31.4,50,31.4 C36,31.4,23.3,37.1,14.1,46.4z" }),
+					React.createElement("path", { d: "M50,10c-18.8,0-35.8,7.2-48.7,19l5.9,8C18.4,26.4,33.5,19.9,50,19.9c16.5,0,31.6,6.5,42.7,17.1l5.9-8 C85.8,17.2,68.8,10,50,10z" })
+				)
+			);
+		}
+	}]);
+
+	return _class59;
+})(React.Component);
+
+Comp.Icons.Yes = (function (_React$Component60) {
+	_inherits(_class60, _React$Component60);
+
+	function _class60() {
+		_classCallCheck(this, _class60);
+
+		_get(Object.getPrototypeOf(_class60.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class60, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M91.6,13.6c-1.1-0.9-2.4-1.4-3.8-1.4c-1.8,0-3.5,0.8-4.7,2.2L35.4,72.6L16.6,52.8c-1.1-1.2-2.7-1.9-4.4-1.9 c-1.6,0-3,0.6-4.2,1.7c-1.2,1.1-1.8,2.6-1.9,4.2c0,1.6,0.6,3.1,1.7,4.3l23.6,24.7c1.1,1.2,2.7,1.9,4.4,1.9c0.1,0,0.2,0,0.2,0 c1.7-0.1,3.3-0.9,4.4-2.2l52-63.4C94.5,19.6,94.2,15.7,91.6,13.6z" })
+			);
+		}
+	}]);
+
+	return _class60;
+})(React.Component);
+Comp.Layout = React.createClass({
+  mixins: [Comp.Mixins.BackboneEvents],
+  displayName: 'Layout',
+  render: function() {
+    return React.createElement("div", {
+      "className": "wrapper"
+    }, React.createElement(Comp.Setup, {
+      "App": this.props.App
+    }), React.createElement(Comp.Header, {
+      "App": this.props.App,
+      "headerTitle": this.props.headerTitle,
+      "theme": this.props.theme
+    }), this.getRoutable());
+  },
+  getRoutable: function() {
+    var Component, compNameKey, compNameKeys, i, len;
+    if (this.props.routableComponentName == null) {
+      return;
+    }
+    compNameKeys = this.props.routableComponentName.split('.');
+    Component = Comp;
+    for (i = 0, len = compNameKeys.length; i < len; i++) {
+      compNameKey = compNameKeys[i];
+      Component = Component[compNameKey];
+    }
+    return React.createElement(Component, {
+      "App": this.props.App
+    });
+  }
+});
+
+Comp.Header = React.createClass({
+  mixins: [Comp.Mixins.BackboneEvents],
+  displayName: 'Header',
+  render: function() {
+    return React.createElement("div", {
+      "className": 'header ' + this.getBackgroundColorClass()
+    }, React.createElement("div", {
+      "className": "header__corner"
+    }, React.createElement("a", {
+      "className": "bg-img-naf--off-white",
+      "id": "header__welcome-link",
+      "href": "/welcome",
+      "onClick": this.navigate
+    })), React.createElement("div", {
+      "className": "header__main"
+    }, React.createElement("h1", {
+      "className": "header__main__cursive-prefix"
+    }), React.createElement("h1", {
+      "className": "header__main__site-name"
+    }, this.getHeaderTitle()), React.createElement("p", {
+      "className": "header__main__title"
+    })), React.createElement(Comp.Header.NavCircles, {
+      "App": this.props.App
+    }), React.createElement("div", {
+      "className": "header__strip",
+      "ref": "strip"
+    }));
+  },
+  getBackgroundColorClass: function() {
+    switch (this.props.theme) {
+      case 'atlas':
+        return 'bg-c-grey--base';
+      case 'naf':
+        return 'bg-c-naf-green';
+      default:
+        return '';
+    }
+  },
+  getHeaderTitle: function() {
+    if (this.props.headerTitle == null) {
+      return;
+    }
+    if (this.props.headerTitle.toUpperCase == null) {
+      return this.props.headerTitle;
+    }
+    return this.props.headerTitle.toUpperCase();
+  },
+  componentDidMount: function() {
+    return this._setStripHandler();
+  },
+  navigate: function(e) {
+    if (typeof Backbone !== "undefined" && Backbone !== null) {
+      e.preventDefault();
+      return Backbone.history.navigate('/welcome', {
+        trigger: true
+      });
+    }
+  },
+  _setStripHandler: function() {
+    var $strip, App, stripClassName;
+    App = this.props.App;
+    stripClassName = 'header__strip';
+    if ((App != null) && (typeof $ !== "undefined" && $ !== null)) {
+      $strip = $(React.findDOMNode(this.refs.strip));
+      return App.commands.setHandler('set:header:strip:color', (function(_this) {
+        return function(options) {
+          if ((options == null) || (options === 'none')) {
+            $strip.attr('class', stripClassName);
+            return $strip.css('background-color', '');
+          } else if (options.color != null) {
+            $strip.attr('class', stripClassName);
+            return $strip.css('background-color', options.color);
+          } else if (options.className != null) {
+            $strip.css('background-color', '');
+            $strip.attr('class', stripClassName);
+            return $strip.addClass(options.className);
+          }
+        };
+      })(this));
+    }
+  }
+});
+
+Comp.Header.NavCircles = React.createClass({
+  displayName: 'Header.NavCircles',
+  mixins: [Comp.Mixins.BackboneEvents],
+  render: function() {
+    return React.createElement("div", {
+      "className": "header__nav-circles"
+    }, React.createElement("ul", {
+      "className": "nav-circles"
+    }, this.renderList()));
+  },
+  renderList: function() {
+    return ['welcome', 'menu', 'show'].map((function(_this) {
+      return function(item, i) {
+        var cls;
+        cls = i === _this.state['activeIndex'] ? 'nav-circle nav-circle--active' : 'nav-circle';
+        return React.createElement("li", {
+          "className": cls,
+          "key": i
+        }, React.createElement("a", {
+          "href": '/' + item,
+          "onClick": _this.navigate
+        }));
+      };
+    })(this));
+  },
+  componentDidMount: function() {
+    var App;
+    App = this.props.App;
+    if ((App != null) && (this.listenTo != null)) {
+      return this.listenTo(App.vent, 'router:current:action:change', function(index) {
+        return this.setState({
+          activeIndex: index
+        });
+      });
+    }
+  },
+  navigate: function(e) {
+    var $target, App;
+    e.preventDefault();
+    $target = $(e.target);
+    App = this.props.App;
+    if (App != null) {
+      return App.router.navigate($target.attr('href'));
+    }
+  },
+  getInitialState: function() {
+    return {
+      activeIndex: 0
+    };
+  }
+});
+
+Comp.SideBar = React.createClass({
+  displayName: 'SideBar',
+  mixins: [Comp.Mixins.BackboneEvents],
+  render: function() {
+    var cls;
+    cls = this.state['isActive'] ? 'atl__side-bar atl__side-bar--active' : 'atl__side-bar';
+    return React.createElement("div", {
+      "className": cls,
+      "onClick": this.toggle
+    }, React.createElement("div", {
+      "className": "atl__side-bar__title"
+    }, this.state['hoveredButtonTitle']), this.renderButtons());
+  },
+  getDefaultProps: function() {
+    var props;
+    props = {
+      buttons: [
+        {
+          title: 'Explore Atlas',
+          contentType: 'link',
+          method: 'projects',
+          reactIconName: 'Grid',
+          isToggleable: false
+        }, {
+          title: 'Collapse/Expand',
+          contentType: 'button',
+          method: 'collapse',
+          reactIconName: 'Contract',
+          activeReactIconName: 'Expand',
+          isToggleable: false
+        }, {
+          title: 'Help',
+          contentType: 'button',
+          method: 'help',
+          reactIconName: 'Help',
+          isToggleable: false
+        }, {
+          title: 'Print',
+          contentType: 'button',
+          method: 'print',
+          reactIconName: 'Print',
+          isToggleable: false
+        }, {
+          title: 'Download Data',
+          contentType: 'form',
+          method: 'download',
+          reactIconName: 'Download',
+          isToggleable: false
+        }
+      ]
+    };
+    return props;
+  },
+  getInitialState: function() {
+    return {
+      isActive: false
+    };
+  },
+  toggle: function() {
+    return this.setState({
+      isActive: !this.state['isActive']
+    });
+  },
+  renderButtons: function() {
+    var list;
+    list = this.props.buttons.map(this.renderButton);
+    return React.createElement("ul", {
+      "className": "atl__side-bar__icons"
+    }, list);
+  },
+  renderButton: function(options, i) {
+    return React.createElement("li", {
+      "className": "atl__side-bar__icon",
+      "onMouseEnter": this.onButtonMouseEnter.bind(this, options),
+      "onMouseLeave": this.onButtonMouseLeave.bind(this, options),
+      "onClick": this['_' + options.method],
+      "key": 'button-' + i
+    }, this.renderButtonContent(options, i));
+  },
+  renderButtonContent: function(options, i) {
+    var IconComp, atlas_url;
+    console.log(options);
+    IconComp = Comp.Icons[options.reactIconName];
+    console.log(IconComp);
+    if (options.method === 'download') {
+      atlas_url = this._getAtlasUrl();
+      return React.createElement("form", {
+        "action": '/api/v1/projects/print',
+        "method": 'post'
+      }, React.createElement(IconComp, null), React.createElement("input", {
+        "type": "hidden",
+        "name": "atlas_url",
+        "value": atlas_url
+      }), React.createElement("input", {
+        "type": "submit",
+        "value": ""
+      }));
+    } else if (options.method === 'comment') {
+      return React.createElement("a", {
+        "href": 'mailto:atlas@newamerica.org'
+      }, React.createElement(IconComp, null));
+    } else {
+      return React.createElement("div", null, React.createElement(IconComp, null));
+    }
+  },
+  onButtonMouseEnter: function(options) {
+    return this.setState({
+      hoveredButtonTitle: options.title
+    });
+  },
+  onButtonMouseLeave: function(options) {
+    return this.setState({
+      hoveredButtonTitle: ''
+    });
+  },
+  _getAtlasUrl: function() {
+    var atlas_url, project;
+    project = this.props.project;
+    if (project != null) {
+      return atlas_url = project.get('atlas_url');
+    }
+  },
+  _projects: function() {
+    if (typeof Backbone !== "undefined" && Backbone !== null) {
+      return Backbone.history.navigate('menu', {
+        trigger: true
+      });
+    }
+  },
+  _edit: function() {
+    var App, project, url;
+    App = this.props.App;
+    project = this.props.project;
+    if ((App != null) && (project != null)) {
+      Backbone.history.navigate('');
+      url = project.buildUrl();
+      return window.location.href = url;
+    }
+  },
+  _collapse: function(e) {
+    if (this.props.setUiState != null) {
+      return this.props.setUiState({
+        isCollapsedMaster: !this.props.uiState.isCollapsedMaster
+      });
+    }
+  },
+  _help: function(e) {
+    if (typeof $ !== "undefined" && $ !== null) {
+      return $('.atl').toggleClass('atl--help');
+    }
+  },
+  _print: function() {
+    if (typeof window !== "undefined" && window !== null) {
+      return window.print();
+    }
+  },
+  _download: function() {
+    return 'keep default action';
+  }
+});
+
+Comp.SideBar.Button = React.createClass({
+  render: function() {
+    return React.createElement("li", {
+      "className": "atl__side-bar__icon",
+      "onMouseEnter": this.onButtonMouseEnter.bind(this, options),
+      "onMouseLeave": this.onButtonMouseLeave.bind(this, options),
+      "onClick": this['_' + options.method],
+      "key": 'button-' + i
+    }, this.renderContent());
+  },
+  renderContent: function() {
+    if (this.props.contentType) {
+      return 1;
+    }
+  }
+});
+
+Comp.Dashboard = React.createClass({
+  displayName: 'Dashboard',
+  render: function() {
+    return React.createElement("div", {
+      "className": 'wrapper'
+    }, React.createElement("div", {
+      "className": 'header bg-c-naf-green'
+    }, React.createElement("div", {
+      "className": "header__corner"
+    }, React.createElement("a", {
+      "className": "bg-img-naf--off-white",
+      "id": "header__welcome-link",
+      "href": "/welcome",
+      "onClick": this.navigate
+    })), React.createElement("div", {
+      "className": "header__main"
+    }, React.createElement("h1", null, "NEW AMERICA")), React.createElement(Comp.SideBar, null)), React.createElement("div", {
+      "className": 'dashboard bg-c--off-white'
+    }, React.createElement(Comp.Floor, {
+      "plan": this.getFloorPlan()
+    }), React.createElement("div", {
+      "className": 'dashboard__welcome'
+    }, React.createElement("h1", null, new Date().toISOString().slice(11, 16)), React.createElement("p", null, "Good afternoon, Anne-Marie!"))));
+  },
+  getFloorPlan: function() {
+    var obj;
+    return obj = {
+      name: '9th Floor',
+      coordinates: [[5, 5], [150, 5], [150, 40], [300, 40], [300, 5], [400, 5], [400, 300], [5, 300]],
+      rooms: [
+        {
+          name: 'A',
+          coordinates: [[10, 10], [50, 10], [50, 40], [10, 40]]
+        }, {
+          name: 'B',
+          coordinates: [[10, 250], [50, 250], [50, 295], [10, 295]]
+        }, {
+          name: 'C',
+          coordinates: [[180, 45], [240, 45], [240, 80], [180, 80]]
+        }
+      ]
+    };
+  }
+});
+
+Comp.Floor = React.createClass({
+  render: function() {
+    return React.createElement("svg", {
+      "className": 'floor',
+      "id": this.getId()
+    }, React.createElement("polygon", {
+      "className": 'floor__plan',
+      "points": this.getPoints()
+    }), React.createElement("g", {
+      "className": 'floor__rooms'
+    }, this.renderRooms()));
+  },
+  renderRooms: function() {
+    return this.props.plan.rooms.map(function(room) {
+      return React.createElement(Comp.Floor.Room, {
+        "plan": room
+      });
+    });
+  },
+  getId: function() {
+    return 'floor-' + this.props.plan.name.replace(/\s+/g, '');
+  },
+  getPoints: function() {
+    var coord, points;
+    coord = this.props.plan.coordinates;
+    points = coord.map(function(pointArray) {
+      return pointArray.join(',');
+    });
+    return points.join(',');
+  }
+});
+
+Comp.Floor.Room = React.createClass({
+  render: function() {
+    return React.createElement("polygon", {
+      "className": 'floor__room',
+      "points": this.getPoints(),
+      "onClick": this.activate,
+      "onMouseEnter": this.log
+    });
+  },
+  getModifierClass: function() {
+    if (this.state.isActive) {
+      return 'floor__room--active';
+    } else {
+      return '';
+    }
+  },
+  getInitialState: function() {
+    return {
+      isActive: false
+    };
+  },
+  getPoints: function() {
+    var coord, points;
+    coord = this.props.plan.coordinates;
+    points = coord.map(function(pointArray) {
+      return pointArray.join(',');
+    });
+    return points.join(',');
+  },
+  log: function() {
+    return console.log('welcome to room ' + this.props.plan.name);
+  }
+});
+
+Comp.About = React.createClass({
+  render: function() {
+    return React.createElement("div", {
+      "className": "about"
+    }, React.createElement("h1", {
+      "class": "title"
+    }, "About Atlas"));
+  }
+});
+
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Welcome = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class(props) {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), "constructor", this).call(this, props);
+		this.state = {
+			hasImageLoaded: false
+		};
+	}
+
+	_createClass(_class, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"div",
+				{ className: "welcome", style: this.getRootVisibilityStyle() },
+				React.createElement("div", { className: "welcome__terrain", style: this.getBackgroundImageStyle() }),
+				React.createElement(
+					"div",
+					{ className: "welcome__title" },
+					React.createElement(
+						"h1",
+						{ className: "welcome__title__name" },
+						"ATLAS"
+					),
+					React.createElement(
+						"h1",
+						{ className: "welcome__title__alias c-2-0" },
+						"=ANALYSIS"
+					)
+				),
+				React.createElement("div", { className: "welcome__strip bg-c-2-0" }),
+				React.createElement(
+					"div",
+					{ className: "welcome__subtitle" },
+					"A policy analysis tool from New America's Education Program"
+				),
+				React.createElement(
+					"div",
+					{ className: "welcome__main-nav" },
+					React.createElement("a", { href: "/menu", onClick: this.navigate.bind(this), className: "bg-img-grid--off-white", id: "welcome__main-nav__button" }),
+					React.createElement(
+						"p",
+						{ className: "center" },
+						"View All Projects"
+					)
+				)
+			);
+		}
+	}, {
+		key: "getBackgroundImageStyle",
+		value: function getBackgroundImageStyle() {
+			return { 'background-image': 'url("/assets/images/iStock_000065438623_720.jpg")' };
+		}
+	}, {
+		key: "getRootVisibilityStyle",
+		value: function getRootVisibilityStyle() {
+			if (this.state.hasImageLoaded === false) {
+				return { display: 'none' };
+			}
+			return { display: 'block' };
+		}
+	}, {
+		key: "componentDidMount",
+		value: function componentDidMount() {
+			var _this = this;
+
+			$('<img>').attr({ src: "/assets/images/iStock_000065438623_720.jpg" }).load(function () {
+				_this.setState({ hasImageLoaded: true });
+			});
+		}
+	}, {
+		key: "navigate",
+		value: function navigate(e) {
+			App = this.props.App;
+			if (App == null) {
+				return;
+			}
+			e.preventDefault();
+			App.router.navigate('menu');
+		}
+	}]);
+
+	return _class;
+})(React.Component);
+Comp.Projects = {};
+
+Comp.Projects.Index = React.createClass({
+  displayName: 'Projects.Index',
+  mixins: [Comp.Mixins.BackboneEvents],
+  render: function() {
+    return React.createElement("div", {
+      "className": "atl fill-parent"
+    }, React.createElement(Comp.SideBar, {
+      "buttons": [
+        {
+          title: 'Submit Comment',
+          method: 'comment',
+          reactIconName: 'Comment',
+          isToggleable: false
+        }
+      ]
+    }), React.createElement("div", {
+      "id": "atl__main",
+      "className": "-id-atl__main fill-parent"
+    }, React.createElement("div", {
+      "className": "atl__main"
+    }, React.createElement("div", {
+      "className": "atl__nav bg-c-off-white"
+    }, React.createElement("h1", {
+      "className": "title title--compact"
+    }, "Explore Atlas"), React.createElement(Comp.Projects.Index.ProjectTemplates, {
+      "App": this.props.App,
+      "projectTemplates": this.props.App.dataCache.projectTemplates
+    }), React.createElement(Comp.Projects.Index.ProjectSections, {
+      "App": this.props.App,
+      "projectSections": this.props.App.dataCache.projectSections
+    })), React.createElement(Comp.Projects.Index.Projects, {
+      "App": this.props.App,
+      "projects": this.props.App.dataCache.projects,
+      "projectTemplates": this.props.App.dataCache.projectTemplates,
+      "projectSections": this.props.App.dataCache.projectSections
+    }))));
+  },
+  componentDidMount: function() {
+    this._fetchProjects();
+    this._fetchProjectSections();
+    this._fetchProjectTemplates();
+    return this._updateOnFilterChange();
+  },
+  _updateOnFilterChange: function() {
+    var App;
+    App = this.props.App;
+    if (App != null) {
+      return this.listenTo(App.vent, 'project:filter:change', this.forceUpdate);
+    }
+  },
+  _fetchProjects: function() {
+    var App, projects;
+    App = this.props.App;
+    if (App != null) {
+      projects = App.reqres.request("project:entities", {
+        cache: true
+      });
+      if ((projects.length != null) && projects.length > 0) {
+        App.dataCache.projects = projects;
+        this.forceUpdate();
+      }
+      return projects.on('reset', (function(_this) {
+        return function() {
+          App.dataCache.projects = projects;
+          return _this.forceUpdate();
+        };
+      })(this));
+    }
+  },
+  _fetchProjectSections: function() {
+    var App, projectSections;
+    App = this.props.App;
+    if (App != null) {
+      projectSections = App.reqres.request("project:section:entities", {
+        cache: true
+      });
+      App.dataCache.projectSections = projectSections;
+      return this.forceUpdate();
+    }
+  },
+  _fetchProjectTemplates: function() {
+    var App, projectTemplates;
+    App = this.props.App;
+    if (App != null) {
+      projectTemplates = App.reqres.request("project:template:entities", {
+        cache: true
+      });
+      App.dataCache.projectTemplates = projectTemplates;
+      return this.forceUpdate();
+    }
+  }
+});
+
+Comp.Projects.Index.ProjectSections = React.createClass({
+  displayName: 'Projects.Index.ProjectSections',
+  render: function() {
+    return React.createElement("ul", {
+      "className": "atl__project-section-filter"
+    }, this._renderList());
+  },
+  _renderList: function() {
+    if (this.props.projectSections == null) {
+      return;
+    }
+    return this.props.projectSections.map((function(_this) {
+      return function(item, i) {
+        return React.createElement(Comp.Projects.Index.ProjectSections.Item, {
+          "App": _this.props.App,
+          "projectSection": item,
+          "key": i
+        });
+      };
+    })(this));
+  }
+});
+
+Comp.Projects.Index.ProjectSections.Item = React.createClass({
+  displayName: 'Projects.Index.ProjectSections.Item',
+  render: function() {
+    var projectSection;
+    projectSection = this.props.projectSection;
+    return React.createElement("li", {
+      "className": "toggle-button toggle-button--black " + this.getModifierClass(),
+      "onClick": this.toggleActiveState
+    }, React.createElement(Comp.Icons.Hex, {
+      "className": 'toggle-button__icon'
+    }), React.createElement("div", {
+      "className": "toggle-button__text"
+    }, React.createElement("p", null, projectSection.get('name'))));
+  },
+  getModifierClass: function() {
+    if (this.props.projectSection.get('_isActive') === false) {
+      return 'toggle-button--inactive';
+    }
+    return '';
+  },
+  toggleActiveState: function() {
+    var App;
+    this.props.projectSection.toggleActiveState();
+    App = this.props.App;
+    if (App != null) {
+      return App.vent.trigger('project:filter:change');
+    }
+  }
+});
+
+Comp.Projects.Index.ProjectTemplates = React.createClass({
+  displayName: 'Projects.Index.ProjectTemplates',
+  render: function() {
+    return React.createElement("ul", {
+      "className": "atl__project-template-filter"
+    }, this._renderList());
+  },
+  _renderList: function() {
+    if (this.props.projectTemplates == null) {
+      return;
+    }
+    return this.props.projectTemplates.map((function(_this) {
+      return function(item, i) {
+        return React.createElement(Comp.Projects.Index.ProjectTemplates.Item, {
+          "App": _this.props.App,
+          "projectTemplate": item,
+          "key": i
+        });
+      };
+    })(this));
+  }
+});
+
+Comp.Projects.Index.ProjectTemplates.Item = React.createClass({
+  displayName: 'Projects.Index.ProjectTemplates.Item',
+  render: function() {
+    var projectTemplate;
+    projectTemplate = this.props.projectTemplate;
+    return React.createElement("li", {
+      "className": "icon-button " + this._getModifierClasses(),
+      "onClick": this.toggleActiveState
+    }, React.createElement("div", {
+      "className": "icon-button__icon bg-img-" + (this._getIcon()) + "--black"
+    }), React.createElement("p", {
+      "className": "icon-button__text"
+    }, projectTemplate.get('display_name')));
+  },
+  _getModifierClasses: function() {
+    var classes, projectTemplate;
+    classes = [];
+    projectTemplate = this.props.projectTemplate;
+    if (projectTemplate.get('id') === '2') {
+      classes.push('hidden');
+    }
+    if (projectTemplate.get('_isActive')) {
+      classes.push('icon-button--active');
+    }
+    if (classes.length === 0) {
+      return '';
+    }
+    return classes.join(' ');
+  },
+  _getIcon: function() {
+    var templateName;
+    templateName = this.props.projectTemplate.get('name');
+    switch (templateName) {
+      case 'Tilemap':
+        return 'map';
+      case 'Explainer':
+        return 'dictionary';
+      case 'Polling':
+        return 'graph';
+    }
+  },
+  toggleActiveState: function() {
+    var App;
+    this.props.projectTemplate.toggleActiveState();
+    App = this.props.App;
+    if (App != null) {
+      return App.vent.trigger('project:filter:change');
+    }
+  }
+});
+
+var modulo = function(a, b) { return (+a % (b = +b) + b) % b; };
+
+Comp.Projects.Index.Projects = React.createClass({
+  displayName: 'Projects.Index.Projects',
+  mixins: [Comp.Mixins.BackboneEvents],
+  render: function() {
+    return React.createElement("div", {
+      "className": "atl__projects"
+    }, this._renderList());
+  },
+  _renderList: function() {
+    if (this.props.projects == null) {
+      return;
+    }
+    return this.props.projects.map((function(_this) {
+      return function(project, i) {
+        return React.createElement(Comp.Projects.Index.Projects.Project, {
+          "key": i,
+          "App": _this.props.App,
+          "project": project,
+          "projects": _this.props.projects,
+          "projectSections": _this.props.projectSections,
+          "projectTemplates": _this.props.projectTemplates
+        });
+      };
+    })(this));
+  },
+  componentDidUpdate: function() {
+    var projects;
+    projects = this.props.projects;
+    if (projects != null) {
+      return this._injectProjectImages();
+    }
+  },
+  _injectProjectImages: function() {
+    var projects;
+    projects = this.props.projects;
+    if (projects.imagesAlreadyInjected) {
+      return;
+    }
+    return $.ajax({
+      url: 'api/v1/projects/image',
+      type: 'get',
+      success: (function(_this) {
+        return function(data) {
+          var dataWithImage, datum, j, len, project;
+          dataWithImage = [];
+          for (j = 0, len = data.length; j < len; j++) {
+            datum = data[j];
+            if (datum.encoded_image != null) {
+              project = projects.findWhere({
+                atlas_url: datum.atlas_url
+              });
+              project.set('encoded_image', datum.encoded_image);
+              project.set('image_credit', datum.image_credit);
+            }
+          }
+          projects.imagesAlreadyInjected = true;
+          return _this.forceUpdate();
+        };
+      })(this)
+    });
+  }
+});
+
+Comp.Projects.Index.Projects.Project = React.createClass({
+  displayName: 'Projects.Index.Projects.Item',
+  render: function() {
+    var project;
+    project = this.props.project;
+    return React.createElement("a", {
+      "className": "atl__project " + this.getModifierClasses(),
+      "onMouseEnter": this.applyBackgroundColor,
+      "onMouseLeave": this.removeBackgroundColor,
+      "onClick": this.launch,
+      "href": project.get('atlas_url')
+    }, React.createElement("div", {
+      "className": "atl__project__background atl__project__background--unselected",
+      "style": this.getBackgroundStyle()
+    }, React.createElement("div", {
+      "className": "center--content"
+    }, React.createElement("p", {
+      "className": "atl__project__background__initials"
+    }, this.getInitials()))), React.createElement("div", {
+      "className": "atl__project__text",
+      "ref": "project-text"
+    }, React.createElement("div", {
+      "className": "center--content"
+    }, React.createElement("h1", null, project.get('title')))), this.renderAttribution());
+  },
+  renderAttribution: function() {
+    var project;
+    project = this.props.project;
+    if (!((project.get('image_credit') != null) && project.get('image_credit') !== '')) {
+      return;
+    }
+    return React.createElement("div", {
+      "className": "atl__attribution bg-img-info--black"
+    }, React.createElement("div", {
+      "className": "atl__attribution__link"
+    }, React.createElement("p", null, 'Image Credit'), React.createElement("div", null, 'Shutterstock')));
+  },
+  getBackgroundStyle: function() {
+    var project, url;
+    project = this.props.project;
+    if (!((project != null) && (project.get('encoded_image') != null))) {
+      return;
+    }
+    url = "url('data:image/png;base64," + (project.get('encoded_image').replace(/(\r\n|\n|\r)/gm, '')) + "')";
+    return {
+      'backgroundImage': url
+    };
+  },
+  getInitials: function() {
+    var initials, project, title;
+    project = this.props.project;
+    if (project.get('encoded_image') != null) {
+      return '';
+    }
+    title = project.get('title');
+    if (title != null) {
+      initials = title.substring(0, 1) + title.substring(1, 2).toLowerCase();
+    }
+    return initials;
+  },
+  getModifierClasses: function() {
+    var classes, project;
+    classes = [];
+    project = this.props.project;
+    if (project.get('project_template_id') === "1") {
+      classes.push('atl__project--explainer');
+    }
+    if (project.get('is_section_overview') === 'Yes') {
+      classes.push('atl__project--overview');
+    }
+    if (!this.test()) {
+      classes.push('atl__project--hidden');
+    }
+    if (classes.length === 0) {
+      return '';
+    }
+    return classes.join(' ');
+  },
+  test: function() {
+    var project, projectSections, projectTemplates;
+    project = this.props.project;
+    projectSections = this.props.projectSections;
+    projectTemplates = this.props.projectTemplates;
+    if (!((projectSections != null) && (projectTemplates != null))) {
+      return false;
+    }
+    return projectSections.test(project, 'project_section') && projectTemplates.test(project, 'project_template');
+  },
+  launch: function(e) {
+    var App, href;
+    e.preventDefault();
+    href = this.props.project.get('atlas_url');
+    App = this.props.App;
+    if (App != null) {
+      App.currentThemeColor = this.getColor().replace('0.8', '1.0');
+    }
+    if (typeof Backbone !== "undefined" && Backbone !== null) {
+      return Backbone.history.navigate(href, {
+        trigger: true
+      });
+    }
+  },
+  applyBackgroundColor: function() {
+    var $el, App, color;
+    color = this.getColor();
+    $el = $(React.findDOMNode(this.refs['project-text']));
+    $el.css('background-color', color);
+    App = this.props.App;
+    if (App != null) {
+      return App.commands.execute('set:header:strip:color', {
+        color: color
+      });
+    }
+  },
+  removeBackgroundColor: function() {
+    var $el, App;
+    $el = $(React.findDOMNode(this.refs['project-text']));
+    $el.css('background-color', '');
+    App = this.props.App;
+    if (App != null) {
+      return App.commands.execute('set:header:strip:color', 'none');
+    }
+  },
+  getColor: function() {
+    var App, color, index, project, projects;
+    App = this.props.App;
+    project = this.props.project;
+    projects = this.props.projects;
+    if ((App != null) && (project != null) && (projects != null)) {
+      index = projects.indexOf(project);
+      color = App.CSS.Colors.toRgba(modulo(index, 15), 0.8);
+      return color;
+    }
+  }
+});
+
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Projects.Show = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class(props) {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
+		this.state = {
+			ui: {
+				currentSpecifier: '2012', // if time-dependent data is visualized, this field holds the active specifier, such as the year
+				display: 'filter', // display type, e.g. filter or search
+				isCollapsed: false, // depends on screen size
+				isCollapsedMaster: false, // master toggle
+				isInfoBoxActive: false, // stores whether the info box is active
+				isInfoBoxNarrow: false // stores whether the info box is narrow
+			}
+		};
+	}
+
+	// This is a method passed down to all deep children so they can modify the state of the ui.
+
+	_createClass(_class, [{
+		key: 'setUiState',
+		value: function setUiState(uiStateChanges) {
+			var key,
+			    currentUiState = this.state.ui;
+			for (key in uiStateChanges) {
+				currentUiState[key] = uiStateChanges[key];
+			}
+			this.forceUpdate();
+		}
+	}, {
+		key: 'render',
+		value: function render() {
+			return React.createElement(
+				'div',
+				{ className: this.getClassName() },
+				React.createElement(Comp.SideBar, { App: this.props.App, project: this.state.project, uiState: this.state.ui, setUiState: this.setUiState.bind(this) }),
+				this.renderProject()
+			);
+		}
+	}, {
+		key: 'getClassName',
+		value: function getClassName() {
+			var cls, project, data, App;
+
+			App = this.props.App;
+
+			cls = "atl";
+			project = this.state.project;
+			if (project == null) {
+				return cls;
+			}
+
+			cls += ' atl--' + this.state.ui.display + '-display';
+
+			// isCollapsed as a ui state is stored both on the Marionette object and the component state.
+			// this is because of infinite update loop problems on the Settings Bar component
+			// that checks if their contents are overflowing (check can only happen after a dom update,
+			// which triggers a recursive update loop).
+			// TODO: better solution.
+			//var isCollapsedByDimension = (App && App.uiState.isCollapsed);
+			var isCollapsedByDimension = this.state.ui.isCollapsed;
+			if (this.state.ui.isCollapsedMaster || !this.state.ui.isCollapsedMaster && isCollapsedByDimension) {
+				cls += ' atl--collapsed';
+			}
+
+			cls += ' atl--' + project.get('project_template_name').toLowerCase();
+
+			if (this.state.ui.isInfoBoxActive) {
+				cls += ' atl__info-box--active';
+			}
+
+			data = project.get('data');
+			if (data != null && data.infobox_variables.length < 2) {
+				cls += ' atl__info-box--narrow';
+			}
+
+			return cls;
+		}
+
+		// Pick and render template-specific project.
+	}, {
+		key: 'renderProject',
+		value: function renderProject() {
+			var LoadingComp = Comp.Loading,
+			    ExplainerComp = Comp.Projects.Show.Explainer,
+			    TilemapComp = Comp.Projects.Show.Tilemap;
+			if (this.state.project == null) {
+				return React.createElement(LoadingComp, null);
+			}
+			if (this._isModelStatic()) {
+				return React.createElement(ExplainerComp, { App: this.props.App, uiState: this.state.ui, setUiState: this.setUiState.bind(this), project: this.state.project, related: this.state.related });
+			}
+			if (this._isModelTilemap()) {
+				return React.createElement(TilemapComp, { App: this.props.App, uiState: this.state.ui, setUiState: this.setUiState.bind(this), project: this.state.project });
+			}
+			return React.createElement(LoadingComp, null);
+		}
+	}, {
+		key: '_isModelStatic',
+		value: function _isModelStatic() {
+			var project = this.state.project;
+			if (project == null) {
+				return false;
+			}
+			return ["Explainer", "Polling", "Policy Brief", "PolicyBrief"].indexOf(project.get('project_template_name')) > -1;
+		}
+	}, {
+		key: '_isModelTilemap',
+		value: function _isModelTilemap() {
+			var project = this.state.project;
+			if (project == null) {
+				return false;
+			}
+			return project.get('project_template_name') === 'Tilemap';
+		}
+
+		// Send separate network request fetching related projects.
+	}, {
+		key: 'fetchRelatedProjects',
+		value: function fetchRelatedProjects() {
+			var _this = this;
+
+			var App = this.props.App,
+			    project = this.state.project;
+			if (App == null || project == null) {
+				return;
+			}
+			var id = project.get('id');
+			var related = App.reqres.request('project:entities', { queryString: "related_to=#{id}", cache: false });
+			related.on('reset', function () {
+				_this.setState({ related: related });
+			});
+		}
+
+		// Send network request to get project data.
+	}, {
+		key: 'fetchProject',
+		value: function fetchProject() {
+			var _this2 = this;
+
+			var App = this.props.App;
+			if (App == null) {
+				return;
+			}
+			var project = App.reqres.request('project:entity', { atlas_url: App.currentAtlasUrl });
+			project.on('sync', function () {
+				// Only
+				if (project.exists()) {
+					project.prepOnClient();
+					_this2.setState({ project: project });
+					_this2.fetchRelatedProjects();
+				} else {
+					Backbone.history.navigate('welcome', { trigger: true });
+				}
+			});
+		}
+	}, {
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			// View is rendered before current project is synced.
+			var App = this.props.App;
+			if (App == null) {
+				return;
+			}
+			this.fetchProject();
+		}
+	}, {
+		key: 'componentWillUnmount',
+		value: function componentWillUnmount() {
+			var App = this.props.App;
+		}
+	}]);
+
+	return _class;
+})(React.Component);
+Comp.Projects.Show.Tilemap = React.createClass({
+  mixins: [Comp.Mixins.BackboneEvents],
+  displayName: 'Comp.Projects.Show.Tilemap',
+  render: function() {
+    return React.createElement("div", {
+      "className": 'atl__main fill-parent'
+    }, React.createElement(Comp.Projects.Show.Tilemap.Map, React.__spread({}, this.props)), React.createElement(Comp.Projects.Show.Tilemap.TopBar, React.__spread({}, this.props)), React.createElement(Comp.Projects.Show.Tilemap.SettingsBar, React.__spread({}, this.props)), React.createElement(Comp.Projects.Show.Tilemap.Popup, React.__spread({}, this.props)), React.createElement(Comp.Projects.Show.Tilemap.InfoBox, React.__spread({}, this.props, {
+      "activeItem": this.getActiveItem()
+    })), this.renderBaseLayer());
+  },
+  renderBaseLayer: function() {
+    return void 0;
+    return React.createElement("div", {
+      "className": "atl__base-layer"
+    });
+  },
+  getActiveItem: function() {
+    return this.props.project.get('data').items.active;
+  },
+  componentWillMount: function() {
+    var App;
+    this.setItemEventListeners();
+    App = this.props.App;
+    if (App == null) {
+      return;
+    }
+    return App.commands.setHandler('update:tilemap', (function(_this) {
+      return function() {
+        return _this.forceUpdate();
+      };
+    })(this));
+  },
+  setHeaderStripColor: function() {
+    var cls, filter, hoveredItem, indeces, items, project;
+    project = this.props.project;
+    items = project.get('data').items;
+    filter = project.get('data').filter;
+    hoveredItem = items.hovered;
+    if (hoveredItem != null) {
+      indeces = filter.getFriendlyIndeces(hoveredItem, 15);
+      cls = "bg-c-" + indeces[0];
+      return App.commands.execute('set:header:strip:color', {
+        className: cls
+      });
+    } else {
+      return App.commands.execute('set:header:strip:color', 'none');
+    }
+  },
+  setItemEventListeners: function() {
+    var App, items, project, self;
+    self = this;
+    App = this.props.App;
+    if (App == null) {
+      return;
+    }
+    project = this.props.project;
+    items = project.get('data').items;
+    this.listenTo(App.vent, 'item:activate', function(modelOrId) {
+      return items.setActive(modelOrId);
+    });
+    this.listenTo(App.vent, 'item:deactivate', function() {
+      return items.setActive(-1);
+    });
+    this.listenTo(App.vent, 'item:mouseover', (function(_this) {
+      return function(modelOrId) {
+        items.setHovered(modelOrId);
+        return self.setHeaderStripColor();
+      };
+    })(this));
+    return this.listenTo(App.vent, 'item:mouseout', (function(_this) {
+      return function() {
+        items.setHovered(-1);
+        return self.setHeaderStripColor();
+      };
+    })(this));
+  }
+});
+
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Projects.Show.Tilemap.DisplayToggle = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class() {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).apply(this, arguments);
+	}
+
+	_createClass(_class, [{
+		key: 'render',
+		value: function render() {
+			return React.createElement(
+				'div',
+				{ className: 'atl__display-toggle atl__binary-toggle' },
+				this.renderHalves()
+			);
+		}
+	}, {
+		key: 'renderHalves',
+		value: function renderHalves() {
+			var _this = this;
+
+			return [{ name: 'filter', iconName: 'Filter' }, { name: 'search', iconName: 'Search' }].map(function (half) {
+				var IconComp = Comp.Icons[half.iconName],
+				    modifierClass = _this.props.uiState.display === half.name ? ' atl__binary-toggle__link--active' : '';
+				return React.createElement(
+					'div',
+					{ className: 'atl__binary-toggle__half' },
+					React.createElement(
+						'a',
+						{ href: '#', onClick: _this.setUiDisplay.bind(_this, half.name), className: "atl__binary-toggle__link" + modifierClass },
+						React.createElement(IconComp, null)
+					)
+				);
+			});
+		}
+
+		//
+	}, {
+		key: 'setUiDisplay',
+		value: function setUiDisplay(name) {
+			var App;
+			if (this.props.uiState.display === name) {
+				return;
+			}
+			App = this.props.App;
+			if (App != null) {
+				App.vent.trigger('display:mode:change');
+			}
+			this.props.setUiState({ display: name });
+		}
+	}]);
+
+	return _class;
+})(React.Component);
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Projects.Show.Tilemap.Filter = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class(props) {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
+		this.maxHeight = 0;
+	}
+
+	_createClass(_class, [{
+		key: 'render',
+		value: function render() {
+			var HelpComp = Comp.Help;
+			return React.createElement(
+				'div',
+				{ className: 'atl__filter', ref: 'root' },
+				React.createElement(
+					'div',
+					{ className: 'atl__filter__keys' },
+					React.createElement(
+						'ul',
+						null,
+						this.renderKeys()
+					),
+					React.createElement(HelpComp, { position: 'right', text: 'Select the variable you want to filter by.', id: 'filter-keys' })
+				),
+				React.createElement(
+					'div',
+					{ className: 'atl__filter__values' },
+					React.createElement(
+						'ul',
+						null,
+						this.renderValues()
+					),
+					React.createElement(HelpComp, { position: 'right', text: 'Select the values you want to filter out. Corresponding map colors are indicated.', id: 'filter-values' })
+				)
+			);
+		}
+	}, {
+		key: 'getHeight',
+		value: function getHeight() {
+			var $el = $(React.findDOMNode(this.refs.root));
+			var height = $el.height();
+			if (height > this.maxHeight) {
+				this.maxHeight = height;
+			} else {
+				height = this.maxHeight;
+			}
+			return height;
+		}
+	}, {
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			var _this = this;
+
+			this.props.cacheHeight(this.getHeight());
+			var App = this.props.App;
+			if (App == null) {
+				return;
+			}
+			_.extend(this, Backbone.Events);
+			this.listenTo(App.vent, 'key:click value:click', function () {
+				_this.forceUpdate();
+			});
+		}
+	}, {
+		key: 'componentWillUnmount',
+		value: function componentWillUnmount() {
+			if (this.stopListening != null) {
+				this.stopListening();
+			}
+		}
+	}, {
+		key: 'componentDidUpdate',
+		value: function componentDidUpdate() {
+			this.props.cacheHeight(this.getHeight());
+		}
+	}, {
+		key: 'renderKeys',
+		value: function renderKeys() {
+			var _this2 = this;
+
+			var keys = this.props.filter.children,
+			    Cmp = Comp.Projects.Show.Tilemap.FilterKey;
+			return keys.map(function (key, i) {
+				return React.createElement(Cmp, { App: _this2.props.App, filterKey: key });
+			});
+		}
+	}, {
+		key: 'renderValues',
+		value: function renderValues() {
+			var _this3 = this;
+
+			var values = this.props.filter.getActiveChild().children,
+			    Cmp = Comp.Projects.Show.Tilemap.FilterValue;
+			return values.map(function (value, i) {
+				return React.createElement(Cmp, { App: _this3.props.App, filterValue: value });
+			});
+		}
+	}]);
+
+	return _class;
+})(React.Component);
+
+Comp.Projects.Show.Tilemap.FilterKey = (function (_React$Component2) {
+	_inherits(_class2, _React$Component2);
+
+	function _class2() {
+		_classCallCheck(this, _class2);
+
+		_get(Object.getPrototypeOf(_class2.prototype), 'constructor', this).apply(this, arguments);
+	}
+
+	_createClass(_class2, [{
+		key: 'render',
+		value: function render() {
+			return React.createElement(
+				'li',
+				{ className: 'button ' + this.getModifierClass(), onClick: this.toggle.bind(this) },
+				React.createElement(
+					'p',
+					null,
+					this.props.filterKey.get('display_title')
+				)
+			);
+		}
+	}, {
+		key: 'getModifierClass',
+		value: function getModifierClass() {
+			if (this.props.filterKey.isActive()) {
+				return 'button--active';
+			}
+			return '';
+		}
+	}, {
+		key: 'toggle',
+		value: function toggle() {
+			this.props.filterKey.clickToggle();
+			App = this.props.App;
+			if (App == null) {
+				return;
+			}
+			App.vent.trigger('key:click');
+		}
+	}]);
+
+	return _class2;
+})(React.Component);
+
+Comp.Projects.Show.Tilemap.FilterValue = (function (_React$Component3) {
+	_inherits(_class3, _React$Component3);
+
+	function _class3() {
+		_classCallCheck(this, _class3);
+
+		_get(Object.getPrototypeOf(_class3.prototype), 'constructor', this).apply(this, arguments);
+	}
+
+	_createClass(_class3, [{
+		key: 'render',
+		value: function render() {
+			var IconComp = Comp.Icons.Hex;
+			return React.createElement(
+				'li',
+				{ className: 'toggle-button ' + this.getModifierClass(), onClick: this.toggle.bind(this), onMouseEnter: this.setHovered.bind(this), onMouseLeave: this.clearHovered.bind(this) },
+				React.createElement(IconComp, { className: 'toggle-button__icon', colorClassName: this.getColorClass() }),
+				React.createElement(
+					'div',
+					{ className: 'toggle-button__text' },
+					React.createElement(
+						'p',
+						null,
+						this.props.filterValue.get('value')
+					)
+				)
+			);
+		}
+	}, {
+		key: 'getModifierClass',
+		value: function getModifierClass() {
+			var siblingsIncludingSelf = this.props.filterValue.parent.children;
+			if (!this.props.filterValue.isActive()) {
+				return 'toggle-button--inactive';
+			}
+			return '';
+		}
+	}, {
+		key: 'getColorClass',
+		value: function getColorClass() {
+			return 'bg-c-' + this.props.filterValue.getFriendlySiblingIndex(15);
+		}
+	}, {
+		key: 'setHovered',
+		value: function setHovered() {
+			var App, modelIndex, cls;
+			App = this.props.App;
+			modelIndex = this.getFilterValueIndex();
+			this.props.filterValue.parent.parent.state.valueHoverIndex = modelIndex;
+			App.vent.trigger('value:mouseover', modelIndex);
+			cls = this.getColorClass();
+			App.commands.execute('set:header:strip:color', { className: cls });
+		}
+	}, {
+		key: 'clearHovered',
+		value: function clearHovered() {
+			var App;
+			App = this.props.App;
+			this.props.filterValue.parent.parent.state.valueHoverIndex = -1;
+			App.vent.trigger('value:mouseover');
+			App.commands.execute('set:header:strip:color', 'none');
+		}
+	}, {
+		key: 'getFilterValueIndex',
+		value: function getFilterValueIndex() {
+			return this.props.filterValue.parent.children.indexOf(this.props.filterValue);
+		}
+	}, {
+		key: 'toggle',
+		value: function toggle() {
+			var App;
+			this.props.filterValue.toggle();
+			App = this.props.App;
+			if (App == null) {
+				return;
+			}
+			App.vent.trigger('value:click');
+		}
+	}]);
+
+	return _class3;
+})(React.Component);
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Projects.Show.Tilemap.Headline = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class(props) {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
+		this.maxHeight = 0;
+	}
+
+	_createClass(_class, [{
+		key: 'render',
+		value: function render() {
+			return React.createElement(
+				'div',
+				{ className: 'atl__headline', ref: 'root' },
+				React.createElement('p', { className: 'atl__headline__sections', dangerouslySetInnerHTML: { __html: this.getSectionText() } }),
+				React.createElement(
+					'h1',
+					{ className: 'atl__headline__title' },
+					this.getTitle()
+				),
+				React.createElement(
+					'h2',
+					{ className: 'atl__headline__description' },
+					this.getShortDescription(),
+					React.createElement(
+						'a',
+						{ href: '#', className: 'link', onClick: this.openInfoBox.bind(this) },
+						'More...'
+					)
+				)
+			);
+		}
+	}, {
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			this.props.cacheHeight(this.getHeight());
+		}
+	}, {
+		key: 'componentDidUpdate',
+		value: function componentDidUpdate() {
+			this.props.cacheHeight(this.getHeight());
+		}
+	}, {
+		key: 'getHeight',
+		value: function getHeight() {
+			var $el = $(React.findDOMNode(this.refs.root));
+			var height = $el.height();
+			if (height > this.maxHeight) {
+				this.maxHeight = height;
+			} else {
+				height = this.maxHeight;
+			}
+			return height;
+		}
+	}, {
+		key: 'openInfoBox',
+		value: function openInfoBox(e) {
+			var project = this.props.project;
+			if (project == null) {
+				return;
+			}
+			e.preventDefault();
+			this.props.project.get('data').items.active = undefined;
+			this.props.setUiState({ isInfoBoxActive: true });
+		}
+	}, {
+		key: 'getShortDescription',
+		value: function getShortDescription() {
+			var project = this.props.project;
+			if (project == null) {
+				return;
+			}
+			return project.get('short_description');
+		}
+	}, {
+		key: 'getSectionText',
+		value: function getSectionText() {
+			var project, projectSectionNames;
+			project = this.props.project;
+			if (project == null) {
+				return;
+			}
+			projectSectionNames = project.get('project_section_names');
+			if (projectSectionNames == null) {
+				return '';
+			}
+			return projectSectionNames.join(',<br>').toUpperCase();
+		}
+	}, {
+		key: 'getTitle',
+		value: function getTitle() {
+			var project = this.props.project;
+			if (project == null) {
+				return;
+			}
+			return project.get('title');
+		}
+	}]);
+
+	return _class;
+})(React.Component);
+Comp.Projects.Show.Tilemap.InfoBox = React.createClass({
+  mixins: [Comp.Mixins.BackboneEvents],
+  getInitialState: function() {
+    return {
+      transitionEventNamespace: 0
+    };
+  },
+  render: function() {
+    return React.createElement("div", {
+      "className": "atl__info-box",
+      "ref": 'main'
+    }, React.createElement("a", {
+      "href": "#",
+      "className": "bg-img-no--black atl__info-box__close",
+      "onClick": this.close
+    }), React.createElement("div", {
+      "className": "atl__title-bar atl__title-bar--image bg-c-off-white"
+    }, React.createElement("div", {
+      "className": "atl__title-bar__background"
+    }), React.createElement("div", {
+      "className": "atl__title-bar__content"
+    }, React.createElement("h1", {
+      "className": 'title'
+    }, this.getTitle()), React.createElement("ul", null, this.renderWebsite()))), React.createElement("div", {
+      "className": "atl__content-bar bg-c-off-white"
+    }, React.createElement("div", {
+      "className": "atl-grid"
+    }, React.createElement("div", {
+      "className": "atl-grid__1-3"
+    }, React.createElement("div", {
+      "className": "atl__page-nav"
+    }, React.createElement("div", {
+      "className": "atl__toc"
+    }, React.createElement("p", null, "Page Contents"), React.createElement("div", {
+      "id": "atl__toc__list"
+    })), React.createElement("div", {
+      "id": "atl__related"
+    }))), React.createElement("div", {
+      "className": "atl-grid__2-3"
+    }, React.createElement(Comp.Projects.Show.Tilemap.InfoBox.Content, React.__spread({}, this.props))), React.createElement("div", {
+      "className": "atl-grid__3-3"
+    }))));
+  },
+  componentWillMount: function() {
+    var App;
+    App = this.props.App;
+    if (App != null) {
+      return this.listenTo(App.vent, 'item:activate', (function(_this) {
+        return function() {
+          return _this.props.setUiState({
+            isInfoBoxActive: true
+          });
+        };
+      })(this));
+    }
+  },
+  componentDidUpdate: function() {
+    var App;
+    App = this.props.App;
+    if (App != null) {
+      return this.setImage();
+    }
+  },
+  getTitle: function() {
+    var activeItem, project;
+    project = this.props.project;
+    activeItem = project.get('data').items.active;
+    if (activeItem != null) {
+      return activeItem.get('name');
+    }
+    return project.get('title');
+  },
+  getBodyHtml: function() {
+    var activeItem, project;
+    project = this.props.project;
+    activeItem = project.get('data').items.active;
+    if (activeItem != null) {
+      return '<p>Active Data Html</p>';
+    }
+    return project.get('body_text');
+  },
+  close: function(e) {
+    var $el, App, transitionEventName;
+    e.preventDefault();
+    transitionEventName = this.getTransitionEventName();
+    $el = $(React.findDOMNode(this.refs.main));
+    $el.on(transitionEventName, (function(_this) {
+      return function(e) {
+        App.vent.trigger('item:deactivate');
+        return $(_this).off(transitionEventName);
+      };
+    })(this));
+    this.props.setUiState({
+      isInfoBoxActive: false
+    });
+    return App = this.props.App;
+  },
+  getTransitionEventName: function() {
+    var eventName, events;
+    events = ['webkitTransitionEnd', 'otransitionend', 'oTransitionEnd', 'msTransitionEnd', 'transitionend'];
+    this.setState({
+      transitionEventNamespace: this.state.transitionEventNamespace + 1
+    });
+    eventName = events.map((function(_this) {
+      return function(event) {
+        return "event." + _this.state.transitionEventNamespace;
+      };
+    })(this)).join(' ');
+    return eventName;
+  },
+  setImage: function() {
+    var $el, App, activeItem, imageName, img, project;
+    $el = $('.atl__title-bar__background');
+    $el.css('background-color', 'rgba(50, 50, 50, 0.1)');
+    $el.css('background-image', '');
+    project = this.props.project;
+    App = this.props.App;
+    activeItem = project.get('data').items.active;
+    if (activeItem == null) {
+      return;
+    }
+    imageName = activeItem.getImageName();
+    if (imageName != null) {
+      img = App.reqres.request('image:entity', {
+        name: imageName
+      });
+      return img.on('sync', (function(_this) {
+        return function() {
+          var backgroundImageCss;
+          backgroundImageCss = img.getBackgroundImageCss();
+          if (backgroundImageCss != null) {
+            $el.css('background-color', 'initial');
+            return $el.css('background-image', backgroundImageCss);
+          }
+        };
+      })(this));
+    }
+  },
+  renderWebsite: function() {
+    return React.createElement("li", null, React.createElement("a", {
+      "className": "icon-button",
+      "href": "<%= website %>",
+      "target": "_blank"
+    }, React.createElement("div", {
+      "className": "icon-button__icon bg-img-link--black"
+    }), React.createElement("div", {
+      "className": "icon-button__text"
+    }, "Website")));
+  }
+});
+
+Comp.Projects.Show.Tilemap.InfoBox.Content = React.createClass({
+  render: function() {
+    var activeItem, html, project;
+    project = this.props.project;
+    activeItem = this.props.activeItem;
+    html = activeItem != null ? this.getContentHtml() : project.get('body_text');
+    return React.createElement("div", {
+      "className": 'static-content',
+      "dangerouslySetInnerHTML": {
+        __html: html
+      }
+    });
+  },
+  getContentHtml: function() {
+    var App, activeItem, getSectionHtml, html, infoBoxSections, project, variables;
+    project = this.props.project;
+    App = this.props.App;
+    getSectionHtml = function(raw) {
+      var formatters, html;
+      if ((raw == null) || _.isArray(raw)) {
+        return raw;
+      }
+      if (_.isNumber(raw)) {
+        return raw.toString();
+      }
+      html = marked(raw);
+      formatters = App.Util.formatters;
+      return formatters.htmlToHtml(html);
+    };
+    activeItem = this.props.activeItem;
+    infoBoxSections = project.get('data').infobox_variables;
+    variables = project.get('data').variables;
+    html = "";
+    infoBoxSections.getItemSections(activeItem, variables).forEach((function(_this) {
+      return function(section) {
+        return html += "<h1>" + (section.variable.get('display_title')) + "</h1>" + (getSectionHtml(section.field));
+      };
+    })(this));
+    return html;
+  },
+  componentDidMount: function() {
+    return $('#atl__toc__list').toc({
+      selectors: 'h1,h2',
+      container: '.static-content',
+      templates: {
+        h2: _.template('<%= title %>'),
+        h3: _.template('<%= title %>')
+      }
+    });
+  }
+});
+
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Projects.Show.Tilemap.Map = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class(props) {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), "constructor", this).call(this, props);
+	}
+
+	_createClass(_class, [{
+		key: "render",
+		value: function render() {
+			return React.createElement("div", { className: "fill-parent", id: "atl__map" });
+		}
+	}, {
+		key: "componentDidMount",
+		value: function componentDidMount() {
+			var App = this.props.App;
+			if (App == null) {
+				return;
+			}
+			App.Map.props = {
+				project: this.props.project,
+				uiState: this.props.uiState
+			};
+			App.Map.start();
+		}
+	}, {
+		key: "componentWillUnmount",
+		value: function componentWillUnmount() {
+			var App = this.props.App;
+			if (App == null) {
+				return;
+			}
+			App.Map.props = { project: undefined };
+			App.Map.stop();
+		}
+	}, {
+		key: "displayName",
+		get: function get() {
+			return 'Comp.Projects.Show.Tilemap.Map';
+		}
+	}]);
+
+	return _class;
+})(React.Component);
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Projects.Show.Tilemap.Popup = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class() {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class, [{
+		key: "render",
+		value: function render() {
+			var style = this.getStyle();
+			return React.createElement(
+				"div",
+				{ className: 'atl__popup ' + this.getModifierClass(), style: style },
+				React.createElement(
+					"div",
+					{ className: "atl__popup__wrapper" },
+					React.createElement(
+						"div",
+						{ className: "atl__popup__content" },
+						React.createElement(
+							"div",
+							{ id: "atl__popup__content__logo", className: "atl__popup__content__logo" },
+							this.renderLogo()
+						),
+						React.createElement(
+							"div",
+							{ className: "atl__popup__content__text" },
+							React.createElement(
+								"p",
+								null,
+								this.getName()
+							)
+						)
+					)
+				)
+			);
+		}
+	}, {
+		key: "getHoveredItem",
+		value: function getHoveredItem() {
+			return this.props.project.get('data').items.hovered;
+		}
+	}, {
+		key: "getModifierClass",
+		value: function getModifierClass() {
+			var hoveredItem = this.getHoveredItem();
+			if (hoveredItem == null) {
+				return '';
+			}
+			if (this.getHoveredItem().get('_itemType') === 'state') {
+				return 'atl__popup--center';
+			}
+			return '';
+		}
+	}, {
+		key: "getName",
+		value: function getName() {
+			var hoveredItem = this.getHoveredItem();
+			if (hoveredItem == null) {
+				return '';
+			}
+			return hoveredItem.get('name');
+		}
+	}, {
+		key: "renderLogo",
+		value: function renderLogo() {
+			return React.createElement(
+				"svg",
+				{ className: "hex-button", viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					{ className: "hex-button__border" },
+					React.createElement("path", { d: "M86.9,77.3L56,94.4c-3.3,1.9-8.7,1.9-12.1,0L13.1,77.3c-3.3-1.9-6-6.4-6-10.2V32.9c0-3.8,2.7-8.3,6-10.2L44,5.6c3.3-1.9,8.7-1.9,12.1,0l30.9,17.2c3.3,1.9,6,6.4,6,10.2v34.1C93,70.8,90.3,75.4,86.9,77.3" })
+				),
+				React.createElement(
+					"g",
+					{ className: "hex-button__down" },
+					React.createElement("path", { d: "M61.6,47c1.7-1.7,4.5-1.7,6.2,0c1.7,1.7,1.7,4.5,0,6.2L53.5,67.6l0,0L53.1,68c-0.8,0.8-2,1.3-3.1,1.3c-1.2,0-2.3-0.5-3.1-1.3l-0.3-0.3l0,0L32.2,53.3c-1.7-1.7-1.7-4.5,0-6.2c1.7-1.7,4.5-1.7,6.2,0l7.2,7.2V35.1c0-1.2,0.5-2.3,1.3-3.1c0.8-0.8,1.9-1.3,3.1-1.3c1.2,0,2.3,0.5,3.1,1.3c0.8,0.8,1.3,1.9,1.3,3.1v19.1L61.6,47z" })
+				)
+			);
+		}
+	}, {
+		key: "getStyle",
+		value: function getStyle() {
+			var hoveredItem, App, position;
+			App = this.props.App;
+			if (App == null) {
+				return;
+			}
+			hoveredItem = this.getHoveredItem();
+			if (hoveredItem == null) {
+				return { display: 'none' };
+			}
+			position = App.reqres.request('item:map:position', hoveredItem);
+			return {
+				left: position.x,
+				top: position.y,
+				display: 'block',
+				type: hoveredItem.get('_itemType')
+			};
+		}
+	}]);
+
+	return _class;
+})(React.Component);
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Projects.Show.Tilemap.Search = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class(props) {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
+		this.state = {
+			searchTerm: ''
+		};
+	}
+
+	_createClass(_class, [{
+		key: 'render',
+		value: function render() {
+			return React.createElement(
+				'div',
+				{ className: 'atl__search' },
+				React.createElement('input', { type: 'text', placeholder: 'Search Project', onChange: this.setSearchTerm.bind(this) })
+			);
+		}
+	}, {
+		key: 'componentWillMount',
+		value: function componentWillMount() {
+			var _this = this;
+
+			var App = this.props.App;
+			if (App == null) {
+				return;
+			}
+			App.reqres.setHandler('search:term', function () {
+				return _this.state.searchTerm;
+			});
+		}
+	}, {
+		key: 'setSearchTerm',
+		value: function setSearchTerm(e) {
+			var _this2 = this;
+
+			this.setState({ searchTerm: e.target.value }, function () {
+				var App;
+				App = _this2.props.App;
+				if (App == null) {
+					return;
+				}
+				App.vent.trigger('search:term:change');
+			});
+		}
+	}]);
+
+	return _class;
+})(React.Component);
+'use strict';
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Projects.Show.Tilemap.SettingsBar = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class(props) {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
+		this.state = {
+			dummy: 'dummy'
+		};
+		this.heights = {
+			window: 0,
+			headline: 0,
+			filter: 0,
+			header: 80
+		};
+		this.shouldCheckCollapse = true;
+	}
+
+	_createClass(_class, [{
+		key: 'render',
+		value: function render() {
+			return React.createElement(
+				'div',
+				{ className: 'atl__settings-bar', ref: 'root' },
+				React.createElement(Comp.Projects.Show.Tilemap.Headline, _extends({}, this.props, { cacheHeight: this.cacheHeight.bind(this, 'headline') })),
+				React.createElement(Comp.Projects.Show.Tilemap.DisplayToggle, this.props),
+				React.createElement(Comp.Projects.Show.Tilemap.Search, this.props),
+				React.createElement(Comp.Projects.Show.Tilemap.Filter, _extends({}, this.props, { cacheHeight: this.cacheHeight.bind(this, 'filter'), filter: this.getFilter() }))
+			);
+		}
+	}, {
+		key: 'componentWillMount',
+		value: function componentWillMount() {
+			var _this = this;
+
+			this.checkOverflow();
+			$(window).on('resize', function () {
+				_this.checkOverflow();
+			});
+		}
+	}, {
+		key: 'componentWillUpdate',
+		value: function componentWillUpdate() {
+			this.checkOverflow();
+		}
+	}, {
+		key: 'checkOverflow',
+		value: function checkOverflow() {
+			var totalHeight,
+			    isCollapsed,
+			    App = this.props.App;
+			if (App == null) {
+				return;
+			}
+			this.heights.window = $(window).height();
+			totalHeight = this.heights.headline + this.heights.filter + this.heights.header;
+			isCollapsed = totalHeight > this.heights.window;
+			// if (App.uiState.isCollapsed !== isCollapsed) {
+			// 	App.uiState.isCollapsed = isCollapsed;
+			// }
+			if (this.props.uiState.isCollapsed !== isCollapsed) {
+				this.props.setUiState({ isCollapsed: isCollapsed });
+			}
+		}
+	}, {
+		key: 'cacheHeight',
+		value: function cacheHeight(elementName, height) {
+			this.heights[elementName] = height;
+		}
+	}, {
+		key: 'getFilter',
+		value: function getFilter() {
+			return this.props.project.get('data').filter;
+		}
+	}]);
+
+	return _class;
+})(React.Component);
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Projects.Show.Tilemap.TopBar = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class() {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"div",
+				{ className: "atl__top-bar" },
+				React.createElement(
+					"div",
+					{ className: "atl__top-bar__content" },
+					React.createElement("div", { className: "atl__top-bar__icons" }),
+					React.createElement("div", { className: "atl__top-bar__timeline" }),
+					React.createElement(
+						"div",
+						{ className: "atl__top-bar__summary" },
+						React.createElement(
+							"div",
+							null,
+							this.getName()
+						)
+					)
+				)
+			);
+		}
+	}, {
+		key: "getName",
+		value: function getName() {
+			var hoveredItem = this.getHoveredItem();
+			if (hoveredItem == null) {
+				return;
+			}
+			return hoveredItem.get('name');
+		}
+	}, {
+		key: "getHoveredItem",
+		value: function getHoveredItem() {
+			return this.props.project.get('data').items.hovered;
+		}
+	}, {
+		key: "getBackgroundColorClass",
+		value: function getBackgroundColorClass() {
+			var App, filter, hoveredItem, indeces, cls;
+			App = this.props.App;
+			filter = this.props.project.get('data').filter;
+			hoveredItem = this.getHoveredItem();
+			indeces = filter.getFriendlyIndeces(hoveredItem, 15);
+			cls = "bg-c-" + indeces[0];
+			return cls;
+		}
+	}]);
+
+	return _class;
+})(React.Component);
+Comp.Projects.Show.Explainer = React.createClass({
+  displayName: 'Projects.Show.Explainer',
+  render: function() {
+    return React.createElement("div", {
+      "className": "atl__main fill-parent"
+    }, React.createElement("div", {
+      "className": "atl__title-bar atl__title-bar--solid bg-c-off-white",
+      "ref": 'title-bar'
+    }, React.createElement("div", {
+      "className": "atl__title-bar__background",
+      "ref": 'title-bar__background'
+    }), React.createElement("div", {
+      "className": "atl__title-bar__content"
+    }, React.createElement("h1", {
+      "className": 'title'
+    }, this.getTitle()), React.createElement("ul", null, React.createElement("li", null, "Updated: ", this.getUpdateMoment())))), React.createElement("div", {
+      "className": "atl__content-bar bg-c-off-white"
+    }, React.createElement("div", {
+      "className": "atl-grid"
+    }, React.createElement("div", {
+      "className": "atl-grid__1-3"
+    }, React.createElement("div", {
+      "className": "atl__page-nav",
+      "ref": "page-nav"
+    }, this.renderToc())), React.createElement("div", {
+      "className": "atl-grid__2-3"
+    }, React.createElement("div", {
+      "className": "static-content",
+      "dangerouslySetInnerHTML": {
+        __html: this.getBodyText()
+      }
+    }), React.createElement(Comp.Projects.Show.Explainer.Related, {
+      "related": this.props.related
+    })), React.createElement("div", {
+      "className": "atl-grid__3-3"
+    }))));
+  },
+  renderToc: function() {
+    var renderedList, tocItems;
+    tocItems = this.props.project.get('body_text_toc');
+    if (!((tocItems != null) && (tocItems.map != null) && tocItems.length > 0)) {
+      return;
+    }
+    renderedList = tocItems.map((function(_this) {
+      return function(item, i) {
+        return React.createElement("li", {
+          "className": 'toc-' + item.tagName,
+          "key": 'toc-' + i
+        }, React.createElement("a", {
+          "href": "#toc-" + item.id,
+          "onClick": _this.triggerScrollAfterDelay.bind(_this)
+        }, item.content));
+      };
+    })(this));
+    return React.createElement("div", {
+      "className": "atl__toc"
+    }, React.createElement("p", null, "Page Contents"), React.createElement("div", {
+      "id": "atl__toc__list"
+    }, React.createElement("ul", null, renderedList)));
+  },
+  componentDidMount: function() {
+    this.buildAtlasCharts();
+    this.setStickyNavLayout();
+    this.onScroll();
+    return this.setThemeColor();
+  },
+  componentWillUnmount: function() {
+    this.destroyAtlasCharts();
+    return this.offScroll();
+  },
+  getTitle: function() {
+    var title;
+    title = this.props.project != null ? this.props.project.get('title') : '';
+    return title;
+  },
+  getBodyText: function() {
+    var bodyText;
+    bodyText = this.props.project != null ? this.props.project.get('body_text') : '';
+    return bodyText;
+  },
+  getUpdateMoment: function() {
+    if (typeof moment !== "undefined" && moment !== null) {
+      return moment(this.props.project.get('updated_at')).format("MMMM Do YYYY");
+    }
+  },
+  triggerScrollAfterDelay: function() {
+    var App, fn;
+    App = this.props.App;
+    if (App == null) {
+      return;
+    }
+    fn = function() {
+      return App.vent.trigger('scroll');
+    };
+    return setTimeout(fn, 75);
+  },
+  buildAtlasCharts: function() {
+    if ((typeof ChartistHtml !== "undefined" && ChartistHtml !== null) && (typeof $ !== "undefined" && $ !== null)) {
+      this.chartManager = new ChartistHtml.ChartCollectionManager($('.atlas-chart'));
+      return this.chartManager.render();
+    }
+  },
+  destroyAtlasCharts: function() {
+    if (this.chartManager != null) {
+      return this.chartManager.destroy();
+    }
+  },
+  setStickyNavLayout: function(subClasses) {
+    var $elem, className, scrollTop;
+    if (typeof $ !== "undefined" && $ !== null) {
+      scrollTop = $('.atl__main').scrollTop();
+      className = "atl__page-nav";
+      $elem = $(React.findDOMNode(this.refs['page-nav']));
+      if (scrollTop > this.getTitleBarHeight()) {
+        return $elem.addClass(className + "--fixed");
+      } else {
+        return $elem.removeClass(className + "--fixed");
+      }
+    }
+  },
+  getTitleBarHeight: function() {
+    var $el;
+    if (!((this._titleBarHeightCache != null) && (this._titleBarHeightCache > 0))) {
+      $el = $(React.findDOMNode(this.refs['title-bar']));
+      this._titleBarHeightCache = $el.height();
+    }
+    return this._titleBarHeightCache;
+  },
+  onScroll: function() {
+    var App;
+    App = this.props.App;
+    if (App != null) {
+      return App.vent.on('scroll', this.setStickyNavLayout);
+    }
+  },
+  offScroll: function() {
+    var App;
+    App = this.props.App;
+    if (App != null) {
+      return App.vent.off('scroll', this.setStickyNavLayout);
+    }
+  },
+  setThemeColor: function() {
+    var $bg, App, color;
+    App = this.props.App;
+    if ((typeof $ !== "undefined" && $ !== null) && (App != null)) {
+      $bg = $(React.findDOMNode(this.refs['title-bar__background']));
+      color = App.currentThemeColor;
+      if (color != null) {
+        return $bg.css('background-color', color);
+      }
+    }
+  }
+});
+
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Projects.Show.Explainer.Related = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class() {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"div",
+				{ className: "atl__related" },
+				React.createElement(
+					"p",
+					null,
+					"Related Pages"
+				),
+				React.createElement(
+					"ul",
+					null,
+					this.renderList()
+				)
+			);
+		}
+	}, {
+		key: "renderList",
+		value: function renderList() {
+			var relatedItems = this.props.related;
+			console.log(relatedItems);
+			if (relatedItems == null) {
+				return;
+			}
+			return relatedItems.map(function (item, i) {
+				var Cmp = Comp.Projects.Show.Explainer.RelatedItem;
+				return React.createElement(
+					"li",
+					{ key: 'related-' + i },
+					React.createElement(Cmp, { relatedItem: item })
+				);
+			});
+		}
+	}]);
+
+	return _class;
+})(React.Component);
+
+Comp.Projects.Show.Explainer.RelatedItem = (function (_React$Component2) {
+	_inherits(_class2, _React$Component2);
+
+	function _class2() {
+		_classCallCheck(this, _class2);
+
+		_get(Object.getPrototypeOf(_class2.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class2, [{
+		key: "render",
+		value: function render() {
+			var item = this.props.relatedItem;
+			return React.createElement(
+				"a",
+				{ className: "link", href: "/" + item.get('atlas_url'), onClick: this.navigate.bind(this) },
+				item.get('title')
+			);
+		}
+	}, {
+		key: "navigate",
+		value: function navigate(e) {
+			e.preventDefault();
+			var item = this.props.relatedItem;
+			Backbone.history.navigate("/" + item.get('atlas_url'), { trigger: true });
+		}
+	}]);
+
+	return _class2;
+})(React.Component);
+// Generated by CoffeeScript 1.6.2
+/** echo  * @license echo  * while read i do echo  *  done echo
+*/
+
+
+(function() {
+  var Color, K, PITHIRD, TWOPI, X, Y, Z, bezier, brewer, chroma, clip_rgb, colors, cos, css2rgb, hex2rgb, hsi2rgb, hsl2rgb, hsv2rgb, lab2lch, lab2rgb, lab_xyz, lch2lab, lch2rgb, limit, luminance, luminance_x, num2rgb, rgb2hex, rgb2hsi, rgb2hsl, rgb2hsv, rgb2lab, rgb2lch, rgb2num, rgb_xyz, root, type, unpack, xyz_lab, xyz_rgb, _ref;
+
+  chroma = function(x, y, z, m) {
+    return new Color(x, y, z, m);
+  };
+
+  if ((typeof module !== "undefined" && module !== null) && (module.exports != null)) {
+    module.exports = chroma;
+  }
+
+  if (typeof define === 'function' && define.amd) {
+    define([], function() {
+      return chroma;
+    });
+  } else {
+    root = typeof exports !== "undefined" && exports !== null ? exports : this;
+    root.chroma = chroma;
+  }
+
+  chroma.color = function(x, y, z, m) {
+    return new Color(x, y, z, m);
+  };
+
+  chroma.hsl = function(h, s, l, a) {
+    return new Color(h, s, l, a, 'hsl');
+  };
+
+  chroma.hsv = function(h, s, v, a) {
+    return new Color(h, s, v, a, 'hsv');
+  };
+
+  chroma.rgb = function(r, g, b, a) {
+    return new Color(r, g, b, a, 'rgb');
+  };
+
+  chroma.hex = function(x) {
+    return new Color(x);
+  };
+
+  chroma.css = function(x) {
+    return new Color(x);
+  };
+
+  chroma.lab = function(l, a, b) {
+    return new Color(l, a, b, 'lab');
+  };
+
+  chroma.lch = function(l, c, h) {
+    return new Color(l, c, h, 'lch');
+  };
+
+  chroma.hsi = function(h, s, i) {
+    return new Color(h, s, i, 'hsi');
+  };
+
+  chroma.gl = function(r, g, b, a) {
+    return new Color(r * 255, g * 255, b * 255, a, 'gl');
+  };
+
+  chroma.num = function(n) {
+    return new Color(n, 'num');
+  };
+
+  chroma.random = function() {
+    var code, digits, i, _i;
+
+    digits = '0123456789abcdef';
+    code = '#';
+    for (i = _i = 0; _i < 6; i = ++_i) {
+      code += digits.charAt(Math.floor(Math.random() * 16));
+    }
+    return new Color(code);
+  };
+
+  chroma.interpolate = function(a, b, f, m) {
+    var _ref, _ref1;
+
+    if ((a == null) || (b == null)) {
+      return '#000';
+    }
+    if ((_ref = type(a)) === 'string' || _ref === 'number') {
+      a = new Color(a);
+    }
+    if ((_ref1 = type(b)) === 'string' || _ref1 === 'number') {
+      b = new Color(b);
+    }
+    return a.interpolate(f, b, m);
+  };
+
+  chroma.mix = chroma.interpolate;
+
+  chroma.contrast = function(a, b) {
+    var l1, l2, _ref, _ref1;
+
+    if ((_ref = type(a)) === 'string' || _ref === 'number') {
+      a = new Color(a);
+    }
+    if ((_ref1 = type(b)) === 'string' || _ref1 === 'number') {
+      b = new Color(b);
+    }
+    l1 = a.luminance();
+    l2 = b.luminance();
+    if (l1 > l2) {
+      return (l1 + 0.05) / (l2 + 0.05);
+    } else {
+      return (l2 + 0.05) / (l1 + 0.05);
+    }
+  };
+
+  chroma.luminance = function(color) {
+    return chroma(color).luminance();
+  };
+
+  chroma._Color = Color;
+
+  /**
+      chroma.js
+  
+      Copyright (c) 2011-2013, Gregor Aisch
+      All rights reserved.
+  
+      Redistribution and use in source and binary forms, with or without
+      modification, are permitted provided that the following conditions are met:
+  
+      * Redistributions of source code must retain the above copyright notice, this
+        list of conditions and the following disclaimer.
+  
+      * Redistributions in binary form must reproduce the above copyright notice,
+        this list of conditions and the following disclaimer in the documentation
+        and/or other materials provided with the distribution.
+  
+      * The name Gregor Aisch may not be used to endorse or promote products
+        derived from this software without specific prior written permission.
+  
+      THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+      AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+      IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+      DISCLAIMED. IN NO EVENT SHALL GREGOR AISCH OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+      INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+      BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+      DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+      OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+      NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+      EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+      @source: https://github.com/gka/chroma.js
+  */
+
+
+  Color = (function() {
+    function Color() {
+      var a, arg, args, m, me, me_rgb, x, y, z, _i, _len, _ref, _ref1, _ref2, _ref3, _ref4;
+
+      me = this;
+      args = [];
+      for (_i = 0, _len = arguments.length; _i < _len; _i++) {
+        arg = arguments[_i];
+        if (arg != null) {
+          args.push(arg);
+        }
+      }
+      if (args.length === 0) {
+        _ref = [255, 0, 255, 1, 'rgb'], x = _ref[0], y = _ref[1], z = _ref[2], a = _ref[3], m = _ref[4];
+      } else if (type(args[0]) === "array") {
+        if (args[0].length === 3) {
+          _ref1 = args[0], x = _ref1[0], y = _ref1[1], z = _ref1[2];
+          a = 1;
+        } else if (args[0].length === 4) {
+          _ref2 = args[0], x = _ref2[0], y = _ref2[1], z = _ref2[2], a = _ref2[3];
+        } else {
+          throw 'unknown input argument';
+        }
+        m = (_ref3 = args[1]) != null ? _ref3 : 'rgb';
+      } else if (type(args[0]) === "string") {
+        x = args[0];
+        m = 'hex';
+      } else if (type(args[0]) === "object") {
+        _ref4 = args[0]._rgb, x = _ref4[0], y = _ref4[1], z = _ref4[2], a = _ref4[3];
+        m = 'rgb';
+      } else if (args.length <= 2 && type(args[0]) === "number") {
+        x = args[0];
+        m = 'num';
+      } else if (args.length >= 3) {
+        x = args[0];
+        y = args[1];
+        z = args[2];
+      }
+      if (args.length === 3) {
+        m = 'rgb';
+        a = 1;
+      } else if (args.length === 4) {
+        if (type(args[3]) === "string") {
+          m = args[3];
+          a = 1;
+        } else if (type(args[3]) === "number") {
+          m = 'rgb';
+          a = args[3];
+        }
+      } else if (args.length === 5) {
+        a = args[3];
+        m = args[4];
+      }
+      if (a == null) {
+        a = 1;
+      }
+      if (m === 'rgb') {
+        me._rgb = [x, y, z, a];
+      } else if (m === 'gl') {
+        me._rgb = [x * 255, y * 255, z * 255, a];
+      } else if (m === 'hsl') {
+        me._rgb = hsl2rgb(x, y, z);
+        me._rgb[3] = a;
+      } else if (m === 'hsv') {
+        me._rgb = hsv2rgb(x, y, z);
+        me._rgb[3] = a;
+      } else if (m === 'hex') {
+        me._rgb = hex2rgb(x);
+      } else if (m === 'lab') {
+        me._rgb = lab2rgb(x, y, z);
+        me._rgb[3] = a;
+      } else if (m === 'lch') {
+        me._rgb = lch2rgb(x, y, z);
+        me._rgb[3] = a;
+      } else if (m === 'hsi') {
+        me._rgb = hsi2rgb(x, y, z);
+        me._rgb[3] = a;
+      } else if (m === 'num') {
+        me._rgb = num2rgb(x);
+      }
+      me_rgb = clip_rgb(me._rgb);
+    }
+
+    Color.prototype.rgb = function() {
+      return this._rgb.slice(0, 3);
+    };
+
+    Color.prototype.rgba = function() {
+      return this._rgb;
+    };
+
+    Color.prototype.hex = function() {
+      return rgb2hex(this._rgb);
+    };
+
+    Color.prototype.toString = function() {
+      return this.name();
+    };
+
+    Color.prototype.hsl = function() {
+      return rgb2hsl(this._rgb);
+    };
+
+    Color.prototype.hsv = function() {
+      return rgb2hsv(this._rgb);
+    };
+
+    Color.prototype.lab = function() {
+      return rgb2lab(this._rgb);
+    };
+
+    Color.prototype.lch = function() {
+      return rgb2lch(this._rgb);
+    };
+
+    Color.prototype.hsi = function() {
+      return rgb2hsi(this._rgb);
+    };
+
+    Color.prototype.gl = function() {
+      return [this._rgb[0] / 255, this._rgb[1] / 255, this._rgb[2] / 255, this._rgb[3]];
+    };
+
+    Color.prototype.num = function() {
+      return rgb2num(this._rgb);
+    };
+
+    Color.prototype.luminance = function(lum, mode) {
+      var cur_lum, eps, max_iter, test;
+
+      if (mode == null) {
+        mode = 'rgb';
+      }
+      if (!arguments.length) {
+        return luminance(this._rgb);
+      }
+      if (lum === 0) {
+        this._rgb = [0, 0, 0, this._rgb[3]];
+      }
+      if (lum === 1) {
+        this._rgb = [255, 255, 255, this._rgb[3]];
+      }
+      cur_lum = luminance(this._rgb);
+      eps = 1e-7;
+      max_iter = 20;
+      test = function(l, h) {
+        var lm, m;
+
+        m = l.interpolate(0.5, h, mode);
+        lm = m.luminance();
+        if (Math.abs(lum - lm) < eps || !max_iter--) {
+          return m;
+        }
+        if (lm > lum) {
+          return test(l, m);
+        }
+        return test(m, h);
+      };
+      this._rgb = (cur_lum > lum ? test(new Color('black'), this) : test(this, new Color('white'))).rgba();
+      return this;
+    };
+
+    Color.prototype.name = function() {
+      var h, k;
+
+      h = this.hex();
+      for (k in chroma.colors) {
+        if (h === chroma.colors[k]) {
+          return k;
+        }
+      }
+      return h;
+    };
+
+    Color.prototype.alpha = function(alpha) {
+      if (arguments.length) {
+        this._rgb[3] = alpha;
+        return this;
+      }
+      return this._rgb[3];
+    };
+
+    Color.prototype.css = function(mode) {
+      var hsl, me, rgb, rnd;
+
+      if (mode == null) {
+        mode = 'rgb';
+      }
+      me = this;
+      rgb = me._rgb;
+      if (mode.length === 3 && rgb[3] < 1) {
+        mode += 'a';
+      }
+      if (mode === 'rgb') {
+        return mode + '(' + rgb.slice(0, 3).map(Math.round).join(',') + ')';
+      } else if (mode === 'rgba') {
+        return mode + '(' + rgb.slice(0, 3).map(Math.round).join(',') + ',' + rgb[3] + ')';
+      } else if (mode === 'hsl' || mode === 'hsla') {
+        hsl = me.hsl();
+        rnd = function(a) {
+          return Math.round(a * 100) / 100;
+        };
+        hsl[0] = rnd(hsl[0]);
+        hsl[1] = rnd(hsl[1] * 100) + '%';
+        hsl[2] = rnd(hsl[2] * 100) + '%';
+        if (mode.length === 4) {
+          hsl[3] = rgb[3];
+        }
+        return mode + '(' + hsl.join(',') + ')';
+      }
+    };
+
+    Color.prototype.interpolate = function(f, col, m) {
+      /*
+      interpolates between colors
+      f = 0 --> me
+      f = 1 --> col
+      */
+
+      var dh, hue, hue0, hue1, lbv, lbv0, lbv1, me, res, sat, sat0, sat1, xyz0, xyz1;
+
+      me = this;
+      if (m == null) {
+        m = 'rgb';
+      }
+      if (type(col) === "string") {
+        col = new Color(col);
+      }
+      if (m === 'hsl' || m === 'hsv' || m === 'lch' || m === 'hsi') {
+        if (m === 'hsl') {
+          xyz0 = me.hsl();
+          xyz1 = col.hsl();
+        } else if (m === 'hsv') {
+          xyz0 = me.hsv();
+          xyz1 = col.hsv();
+        } else if (m === 'hsi') {
+          xyz0 = me.hsi();
+          xyz1 = col.hsi();
+        } else if (m === 'lch') {
+          xyz0 = me.lch();
+          xyz1 = col.lch();
+        }
+        if (m.substr(0, 1) === 'h') {
+          hue0 = xyz0[0], sat0 = xyz0[1], lbv0 = xyz0[2];
+          hue1 = xyz1[0], sat1 = xyz1[1], lbv1 = xyz1[2];
+        } else {
+          lbv0 = xyz0[0], sat0 = xyz0[1], hue0 = xyz0[2];
+          lbv1 = xyz1[0], sat1 = xyz1[1], hue1 = xyz1[2];
+        }
+        if (!isNaN(hue0) && !isNaN(hue1)) {
+          if (hue1 > hue0 && hue1 - hue0 > 180) {
+            dh = hue1 - (hue0 + 360);
+          } else if (hue1 < hue0 && hue0 - hue1 > 180) {
+            dh = hue1 + 360 - hue0;
+          } else {
+            dh = hue1 - hue0;
+          }
+          hue = hue0 + f * dh;
+        } else if (!isNaN(hue0)) {
+          hue = hue0;
+          if ((lbv1 === 1 || lbv1 === 0) && m !== 'hsv') {
+            sat = sat0;
+          }
+        } else if (!isNaN(hue1)) {
+          hue = hue1;
+          if ((lbv0 === 1 || lbv0 === 0) && m !== 'hsv') {
+            sat = sat1;
+          }
+        } else {
+          hue = Number.NaN;
+        }
+        if (sat == null) {
+          sat = sat0 + f * (sat1 - sat0);
+        }
+        lbv = lbv0 + f * (lbv1 - lbv0);
+        if (m.substr(0, 1) === 'h') {
+          res = new Color(hue, sat, lbv, m);
+        } else {
+          res = new Color(lbv, sat, hue, m);
+        }
+      } else if (m === 'rgb') {
+        xyz0 = me._rgb;
+        xyz1 = col._rgb;
+        res = new Color(xyz0[0] + f * (xyz1[0] - xyz0[0]), xyz0[1] + f * (xyz1[1] - xyz0[1]), xyz0[2] + f * (xyz1[2] - xyz0[2]), m);
+      } else if (m === 'num') {
+        if (!(col instanceof Color)) {
+          col = new Color(col, m);
+        }
+        xyz0 = me._rgb;
+        xyz1 = col._rgb;
+        res = new Color(((xyz0[0] + f * (xyz1[0] - xyz0[0])) << 16) + ((xyz0[1] + f * (xyz1[1] - xyz0[1])) << 8) + ((xyz0[2] + f * (xyz1[2] - xyz0[2])) & 0xff), m);
+      } else if (m === 'lab') {
+        xyz0 = me.lab();
+        xyz1 = col.lab();
+        res = new Color(xyz0[0] + f * (xyz1[0] - xyz0[0]), xyz0[1] + f * (xyz1[1] - xyz0[1]), xyz0[2] + f * (xyz1[2] - xyz0[2]), m);
+      } else {
+        throw "color mode " + m + " is not supported";
+      }
+      res.alpha(me.alpha() + f * (col.alpha() - me.alpha()));
+      return res;
+    };
+
+    Color.prototype.premultiply = function() {
+      var a, rgb;
+
+      rgb = this.rgb();
+      a = this.alpha();
+      return chroma(rgb[0] * a, rgb[1] * a, rgb[2] * a, a);
+    };
+
+    Color.prototype.darken = function(amount) {
+      var lch, me;
+
+      if (amount == null) {
+        amount = 20;
+      }
+      me = this;
+      lch = me.lch();
+      lch[0] -= amount;
+      return chroma.lch(lch).alpha(me.alpha());
+    };
+
+    Color.prototype.darker = function(amount) {
+      return this.darken(amount);
+    };
+
+    Color.prototype.brighten = function(amount) {
+      if (amount == null) {
+        amount = 20;
+      }
+      return this.darken(-amount);
+    };
+
+    Color.prototype.brighter = function(amount) {
+      return this.brighten(amount);
+    };
+
+    Color.prototype.saturate = function(amount) {
+      var lch, me;
+
+      if (amount == null) {
+        amount = 20;
+      }
+      me = this;
+      lch = me.lch();
+      lch[1] += amount;
+      return chroma.lch(lch).alpha(me.alpha());
+    };
+
+    Color.prototype.desaturate = function(amount) {
+      if (amount == null) {
+        amount = 20;
+      }
+      return this.saturate(-amount);
+    };
+
+    return Color;
+
+  })();
+
+  clip_rgb = function(rgb) {
+    var i;
+
+    for (i in rgb) {
+      if (i < 3) {
+        if (rgb[i] < 0) {
+          rgb[i] = 0;
+        }
+        if (rgb[i] > 255) {
+          rgb[i] = 255;
+        }
+      } else if (i === 3) {
+        if (rgb[i] < 0) {
+          rgb[i] = 0;
+        }
+        if (rgb[i] > 1) {
+          rgb[i] = 1;
+        }
+      }
+    }
+    return rgb;
+  };
+
+  css2rgb = function(css) {
+    var hsl, i, m, rgb, _i, _j, _k, _l;
+
+    css = css.toLowerCase();
+    if ((chroma.colors != null) && chroma.colors[css]) {
+      return hex2rgb(chroma.colors[css]);
+    }
+    if (m = css.match(/rgb\(\s*(\-?\d+),\s*(\-?\d+)\s*,\s*(\-?\d+)\s*\)/)) {
+      rgb = m.slice(1, 4);
+      for (i = _i = 0; _i <= 2; i = ++_i) {
+        rgb[i] = +rgb[i];
+      }
+      rgb[3] = 1;
+    } else if (m = css.match(/rgba\(\s*(\-?\d+),\s*(\-?\d+)\s*,\s*(\-?\d+)\s*,\s*([01]|[01]?\.\d+)\)/)) {
+      rgb = m.slice(1, 5);
+      for (i = _j = 0; _j <= 3; i = ++_j) {
+        rgb[i] = +rgb[i];
+      }
+    } else if (m = css.match(/rgb\(\s*(\-?\d+(?:\.\d+)?)%,\s*(\-?\d+(?:\.\d+)?)%\s*,\s*(\-?\d+(?:\.\d+)?)%\s*\)/)) {
+      rgb = m.slice(1, 4);
+      for (i = _k = 0; _k <= 2; i = ++_k) {
+        rgb[i] = Math.round(rgb[i] * 2.55);
+      }
+      rgb[3] = 1;
+    } else if (m = css.match(/rgba\(\s*(\-?\d+(?:\.\d+)?)%,\s*(\-?\d+(?:\.\d+)?)%\s*,\s*(\-?\d+(?:\.\d+)?)%\s*,\s*([01]|[01]?\.\d+)\)/)) {
+      rgb = m.slice(1, 5);
+      for (i = _l = 0; _l <= 2; i = ++_l) {
+        rgb[i] = Math.round(rgb[i] * 2.55);
+      }
+      rgb[3] = +rgb[3];
+    } else if (m = css.match(/hsl\(\s*(\-?\d+(?:\.\d+)?),\s*(\-?\d+(?:\.\d+)?)%\s*,\s*(\-?\d+(?:\.\d+)?)%\s*\)/)) {
+      hsl = m.slice(1, 4);
+      hsl[1] *= 0.01;
+      hsl[2] *= 0.01;
+      rgb = hsl2rgb(hsl);
+      rgb[3] = 1;
+    } else if (m = css.match(/hsla\(\s*(\-?\d+(?:\.\d+)?),\s*(\-?\d+(?:\.\d+)?)%\s*,\s*(\-?\d+(?:\.\d+)?)%\s*,\s*([01]|[01]?\.\d+)\)/)) {
+      hsl = m.slice(1, 4);
+      hsl[1] *= 0.01;
+      hsl[2] *= 0.01;
+      rgb = hsl2rgb(hsl);
+      rgb[3] = +m[4];
+    }
+    return rgb;
+  };
+
+  hex2rgb = function(hex) {
+    var a, b, g, r, rgb, u;
+
+    if (hex.match(/^#?([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)) {
+      if (hex.length === 4 || hex.length === 7) {
+        hex = hex.substr(1);
+      }
+      if (hex.length === 3) {
+        hex = hex.split("");
+        hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+      }
+      u = parseInt(hex, 16);
+      r = u >> 16;
+      g = u >> 8 & 0xFF;
+      b = u & 0xFF;
+      return [r, g, b, 1];
+    }
+    if (hex.match(/^#?([A-Fa-f0-9]{8})$/)) {
+      if (hex.length === 9) {
+        hex = hex.substr(1);
+      }
+      u = parseInt(hex, 16);
+      r = u >> 24 & 0xFF;
+      g = u >> 16 & 0xFF;
+      b = u >> 8 & 0xFF;
+      a = u & 0xFF;
+      return [r, g, b, a];
+    }
+    if (rgb = css2rgb(hex)) {
+      return rgb;
+    }
+    throw "unknown color: " + hex;
+  };
+
+  hsi2rgb = function(h, s, i) {
+    /*
+    borrowed from here:
+    http://hummer.stanford.edu/museinfo/doc/examples/humdrum/keyscape2/hsi2rgb.cpp
+    */
+
+    var b, g, r, _ref;
+
+    _ref = unpack(arguments), h = _ref[0], s = _ref[1], i = _ref[2];
+    h /= 360;
+    if (h < 1 / 3) {
+      b = (1 - s) / 3;
+      r = (1 + s * cos(TWOPI * h) / cos(PITHIRD - TWOPI * h)) / 3;
+      g = 1 - (b + r);
+    } else if (h < 2 / 3) {
+      h -= 1 / 3;
+      r = (1 - s) / 3;
+      g = (1 + s * cos(TWOPI * h) / cos(PITHIRD - TWOPI * h)) / 3;
+      b = 1 - (r + g);
+    } else {
+      h -= 2 / 3;
+      g = (1 - s) / 3;
+      b = (1 + s * cos(TWOPI * h) / cos(PITHIRD - TWOPI * h)) / 3;
+      r = 1 - (g + b);
+    }
+    r = limit(i * r * 3);
+    g = limit(i * g * 3);
+    b = limit(i * b * 3);
+    return [r * 255, g * 255, b * 255];
+  };
+
+  hsl2rgb = function() {
+    var b, c, g, h, i, l, r, s, t1, t2, t3, _i, _ref, _ref1;
+
+    _ref = unpack(arguments), h = _ref[0], s = _ref[1], l = _ref[2];
+    if (s === 0) {
+      r = g = b = l * 255;
+    } else {
+      t3 = [0, 0, 0];
+      c = [0, 0, 0];
+      t2 = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      t1 = 2 * l - t2;
+      h /= 360;
+      t3[0] = h + 1 / 3;
+      t3[1] = h;
+      t3[2] = h - 1 / 3;
+      for (i = _i = 0; _i <= 2; i = ++_i) {
+        if (t3[i] < 0) {
+          t3[i] += 1;
+        }
+        if (t3[i] > 1) {
+          t3[i] -= 1;
+        }
+        if (6 * t3[i] < 1) {
+          c[i] = t1 + (t2 - t1) * 6 * t3[i];
+        } else if (2 * t3[i] < 1) {
+          c[i] = t2;
+        } else if (3 * t3[i] < 2) {
+          c[i] = t1 + (t2 - t1) * ((2 / 3) - t3[i]) * 6;
+        } else {
+          c[i] = t1;
+        }
+      }
+      _ref1 = [Math.round(c[0] * 255), Math.round(c[1] * 255), Math.round(c[2] * 255)], r = _ref1[0], g = _ref1[1], b = _ref1[2];
+    }
+    return [r, g, b];
+  };
+
+  hsv2rgb = function() {
+    var b, f, g, h, i, p, q, r, s, t, v, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
+
+    _ref = unpack(arguments), h = _ref[0], s = _ref[1], v = _ref[2];
+    v *= 255;
+    if (s === 0) {
+      r = g = b = v;
+    } else {
+      if (h === 360) {
+        h = 0;
+      }
+      if (h > 360) {
+        h -= 360;
+      }
+      if (h < 0) {
+        h += 360;
+      }
+      h /= 60;
+      i = Math.floor(h);
+      f = h - i;
+      p = v * (1 - s);
+      q = v * (1 - s * f);
+      t = v * (1 - s * (1 - f));
+      switch (i) {
+        case 0:
+          _ref1 = [v, t, p], r = _ref1[0], g = _ref1[1], b = _ref1[2];
+          break;
+        case 1:
+          _ref2 = [q, v, p], r = _ref2[0], g = _ref2[1], b = _ref2[2];
+          break;
+        case 2:
+          _ref3 = [p, v, t], r = _ref3[0], g = _ref3[1], b = _ref3[2];
+          break;
+        case 3:
+          _ref4 = [p, q, v], r = _ref4[0], g = _ref4[1], b = _ref4[2];
+          break;
+        case 4:
+          _ref5 = [t, p, v], r = _ref5[0], g = _ref5[1], b = _ref5[2];
+          break;
+        case 5:
+          _ref6 = [v, p, q], r = _ref6[0], g = _ref6[1], b = _ref6[2];
+      }
+    }
+    r = Math.round(r);
+    g = Math.round(g);
+    b = Math.round(b);
+    return [r, g, b];
+  };
+
+  K = 18;
+
+  X = 0.950470;
+
+  Y = 1;
+
+  Z = 1.088830;
+
+  lab2lch = function() {
+    var a, b, c, h, l, _ref;
+
+    _ref = unpack(arguments), l = _ref[0], a = _ref[1], b = _ref[2];
+    c = Math.sqrt(a * a + b * b);
+    h = (Math.atan2(b, a) / Math.PI * 180 + 360) % 360;
+    return [l, c, h];
+  };
+
+  lab2rgb = function(l, a, b) {
+    /*
+    adapted to match d3 implementation
+    */
+
+    var g, r, x, y, z, _ref, _ref1;
+
+    if (l !== void 0 && l.length === 3) {
+      _ref = l, l = _ref[0], a = _ref[1], b = _ref[2];
+    }
+    if (l !== void 0 && l.length === 3) {
+      _ref1 = l, l = _ref1[0], a = _ref1[1], b = _ref1[2];
+    }
+    y = (l + 16) / 116;
+    x = y + a / 500;
+    z = y - b / 200;
+    x = lab_xyz(x) * X;
+    y = lab_xyz(y) * Y;
+    z = lab_xyz(z) * Z;
+    r = xyz_rgb(3.2404542 * x - 1.5371385 * y - 0.4985314 * z);
+    g = xyz_rgb(-0.9692660 * x + 1.8760108 * y + 0.0415560 * z);
+    b = xyz_rgb(0.0556434 * x - 0.2040259 * y + 1.0572252 * z);
+    return [limit(r, 0, 255), limit(g, 0, 255), limit(b, 0, 255), 1];
+  };
+
+  lab_xyz = function(x) {
+    if (x > 0.206893034) {
+      return x * x * x;
+    } else {
+      return (x - 4 / 29) / 7.787037;
+    }
+  };
+
+  xyz_rgb = function(r) {
+    return Math.round(255 * (r <= 0.00304 ? 12.92 * r : 1.055 * Math.pow(r, 1 / 2.4) - 0.055));
+  };
+
+  lch2lab = function() {
+    /*
+    Convert from a qualitative parameter h and a quantitative parameter l to a 24-bit pixel. These formulas were invented by David Dalrymple to obtain maximum contrast without going out of gamut if the parameters are in the range 0-1.
+    A saturation multiplier was added by Gregor Aisch
+    */
+
+    var c, h, l, _ref;
+
+    _ref = unpack(arguments), l = _ref[0], c = _ref[1], h = _ref[2];
+    h = h * Math.PI / 180;
+    return [l, Math.cos(h) * c, Math.sin(h) * c];
+  };
+
+  lch2rgb = function(l, c, h) {
+    var L, a, b, g, r, _ref, _ref1;
+
+    _ref = lch2lab(l, c, h), L = _ref[0], a = _ref[1], b = _ref[2];
+    _ref1 = lab2rgb(L, a, b), r = _ref1[0], g = _ref1[1], b = _ref1[2];
+    return [limit(r, 0, 255), limit(g, 0, 255), limit(b, 0, 255)];
+  };
+
+  luminance = function(r, g, b) {
+    var _ref;
+
+    _ref = unpack(arguments), r = _ref[0], g = _ref[1], b = _ref[2];
+    r = luminance_x(r);
+    g = luminance_x(g);
+    b = luminance_x(b);
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+
+  luminance_x = function(x) {
+    x /= 255;
+    if (x <= 0.03928) {
+      return x / 12.92;
+    } else {
+      return Math.pow((x + 0.055) / 1.055, 2.4);
+    }
+  };
+
+  num2rgb = function(num) {
+    var b, g, r;
+
+    if (type(num) === "number" && num >= 0 && num <= 0xFFFFFF) {
+      r = num >> 16;
+      g = (num >> 8) & 0xFF;
+      b = num & 0xFF;
+      return [r, g, b, 1];
+    }
+    throw "unknown num color: " + num;
+  };
+
+  rgb2hex = function() {
+    var b, g, r, str, u, _ref;
+
+    _ref = unpack(arguments), r = _ref[0], g = _ref[1], b = _ref[2];
+    u = r << 16 | g << 8 | b;
+    str = "000000" + u.toString(16);
+    return "#" + str.substr(str.length - 6);
+  };
+
+  rgb2hsi = function() {
+    /*
+    borrowed from here:
+    http://hummer.stanford.edu/museinfo/doc/examples/humdrum/keyscape2/rgb2hsi.cpp
+    */
+
+    var TWOPI, b, g, h, i, min, r, s, _ref;
+
+    _ref = unpack(arguments), r = _ref[0], g = _ref[1], b = _ref[2];
+    TWOPI = Math.PI * 2;
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    min = Math.min(r, g, b);
+    i = (r + g + b) / 3;
+    s = 1 - min / i;
+    if (s === 0) {
+      h = 0;
+    } else {
+      h = ((r - g) + (r - b)) / 2;
+      h /= Math.sqrt((r - g) * (r - g) + (r - b) * (g - b));
+      h = Math.acos(h);
+      if (b > g) {
+        h = TWOPI - h;
+      }
+      h /= TWOPI;
+    }
+    return [h * 360, s, i];
+  };
+
+  rgb2hsl = function(r, g, b) {
+    var h, l, max, min, s, _ref;
+
+    if (r !== void 0 && r.length >= 3) {
+      _ref = r, r = _ref[0], g = _ref[1], b = _ref[2];
+    }
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    min = Math.min(r, g, b);
+    max = Math.max(r, g, b);
+    l = (max + min) / 2;
+    if (max === min) {
+      s = 0;
+      h = Number.NaN;
+    } else {
+      s = l < 0.5 ? (max - min) / (max + min) : (max - min) / (2 - max - min);
+    }
+    if (r === max) {
+      h = (g - b) / (max - min);
+    } else if (g === max) {
+      h = 2 + (b - r) / (max - min);
+    } else if (b === max) {
+      h = 4 + (r - g) / (max - min);
+    }
+    h *= 60;
+    if (h < 0) {
+      h += 360;
+    }
+    return [h, s, l];
+  };
+
+  rgb2hsv = function() {
+    var b, delta, g, h, max, min, r, s, v, _ref;
+
+    _ref = unpack(arguments), r = _ref[0], g = _ref[1], b = _ref[2];
+    min = Math.min(r, g, b);
+    max = Math.max(r, g, b);
+    delta = max - min;
+    v = max / 255.0;
+    if (max === 0) {
+      h = Number.NaN;
+      s = 0;
+    } else {
+      s = delta / max;
+      if (r === max) {
+        h = (g - b) / delta;
+      }
+      if (g === max) {
+        h = 2 + (b - r) / delta;
+      }
+      if (b === max) {
+        h = 4 + (r - g) / delta;
+      }
+      h *= 60;
+      if (h < 0) {
+        h += 360;
+      }
+    }
+    return [h, s, v];
+  };
+
+  rgb2lab = function() {
+    var b, g, r, x, y, z, _ref;
+
+    _ref = unpack(arguments), r = _ref[0], g = _ref[1], b = _ref[2];
+    r = rgb_xyz(r);
+    g = rgb_xyz(g);
+    b = rgb_xyz(b);
+    x = xyz_lab((0.4124564 * r + 0.3575761 * g + 0.1804375 * b) / X);
+    y = xyz_lab((0.2126729 * r + 0.7151522 * g + 0.0721750 * b) / Y);
+    z = xyz_lab((0.0193339 * r + 0.1191920 * g + 0.9503041 * b) / Z);
+    return [116 * y - 16, 500 * (x - y), 200 * (y - z)];
+  };
+
+  rgb_xyz = function(r) {
+    if ((r /= 255) <= 0.04045) {
+      return r / 12.92;
+    } else {
+      return Math.pow((r + 0.055) / 1.055, 2.4);
+    }
+  };
+
+  xyz_lab = function(x) {
+    if (x > 0.008856) {
+      return Math.pow(x, 1 / 3);
+    } else {
+      return 7.787037 * x + 4 / 29;
+    }
+  };
+
+  rgb2lch = function() {
+    var a, b, g, l, r, _ref, _ref1;
+
+    _ref = unpack(arguments), r = _ref[0], g = _ref[1], b = _ref[2];
+    _ref1 = rgb2lab(r, g, b), l = _ref1[0], a = _ref1[1], b = _ref1[2];
+    return lab2lch(l, a, b);
+  };
+
+  rgb2num = function() {
+    var b, g, r, _ref;
+
+    _ref = unpack(arguments), r = _ref[0], g = _ref[1], b = _ref[2];
+    return (r << 16) + (g << 8) + b;
+  };
+
+  /*
+      chroma.js
+  
+      Copyright (c) 2011-2013, Gregor Aisch
+      All rights reserved.
+  
+      Redistribution and use in source and binary forms, with or without
+      modification, are permitted provided that the following conditions are met:
+  
+      * Redistributions of source code must retain the above copyright notice, this
+        list of conditions and the following disclaimer.
+  
+      * Redistributions in binary form must reproduce the above copyright notice,
+        this list of conditions and the following disclaimer in the documentation
+        and/or other materials provided with the distribution.
+  
+      * The name Gregor Aisch may not be used to endorse or promote products
+        derived from this software without specific prior written permission.
+  
+      THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+      AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+      IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+      DISCLAIMED. IN NO EVENT SHALL GREGOR AISCH OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+      INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+      BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+      DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+      OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+      NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+      EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+      @source: https://github.com/gka/chroma.js
+  */
+
+
+  chroma.scale = function(colors, positions) {
+    var classifyValue, f, getClass, getColor, resetCache, setColors, setDomain, tmap, _colorCache, _colors, _correctLightness, _domain, _fixed, _max, _min, _mode, _nacol, _numClasses, _out, _pos, _spread;
+
+    _mode = 'rgb';
+    _nacol = chroma('#ccc');
+    _spread = 0;
+    _fixed = false;
+    _domain = [0, 1];
+    _colors = [];
+    _out = false;
+    _pos = [];
+    _min = 0;
+    _max = 1;
+    _correctLightness = false;
+    _numClasses = 0;
+    _colorCache = {};
+    setColors = function(colors, positions) {
+      var c, col, _i, _j, _ref, _ref1, _ref2;
+
+      if (colors == null) {
+        colors = ['#ddd', '#222'];
+      }
+      if ((colors != null) && type(colors) === 'string' && (((_ref = chroma.brewer) != null ? _ref[colors] : void 0) != null)) {
+        colors = chroma.brewer[colors];
+      }
+      if (type(colors) === 'array') {
+        colors = colors.slice(0);
+        for (c = _i = 0, _ref1 = colors.length - 1; 0 <= _ref1 ? _i <= _ref1 : _i >= _ref1; c = 0 <= _ref1 ? ++_i : --_i) {
+          col = colors[c];
+          if (type(col) === "string") {
+            colors[c] = chroma(col);
+          }
+        }
+        if (positions != null) {
+          _pos = positions;
+        } else {
+          _pos = [];
+          for (c = _j = 0, _ref2 = colors.length - 1; 0 <= _ref2 ? _j <= _ref2 : _j >= _ref2; c = 0 <= _ref2 ? ++_j : --_j) {
+            _pos.push(c / (colors.length - 1));
+          }
+        }
+      }
+      resetCache();
+      return _colors = colors;
+    };
+    setDomain = function(domain) {
+      if (domain == null) {
+        domain = [];
+      }
+      /*
+      # use this if you want to display a limited number of data classes
+      # possible methods are "equalinterval", "quantiles", "custom"
+      */
+
+      _domain = domain;
+      _min = domain[0];
+      _max = domain[domain.length - 1];
+      resetCache();
+      if (domain.length === 2) {
+        return _numClasses = 0;
+      } else {
+        return _numClasses = domain.length - 1;
+      }
+    };
+    getClass = function(value) {
+      var i, n;
+
+      if (_domain != null) {
+        n = _domain.length - 1;
+        i = 0;
+        while (i < n && value >= _domain[i]) {
+          i++;
+        }
+        return i - 1;
+      }
+      return 0;
+    };
+    tmap = function(t) {
+      return t;
+    };
+    classifyValue = function(value) {
+      var i, maxc, minc, n, val;
+
+      val = value;
+      if (_domain.length > 2) {
+        n = _domain.length - 1;
+        i = getClass(value);
+        minc = _domain[0] + (_domain[1] - _domain[0]) * (0 + _spread * 0.5);
+        maxc = _domain[n - 1] + (_domain[n] - _domain[n - 1]) * (1 - _spread * 0.5);
+        val = _min + ((_domain[i] + (_domain[i + 1] - _domain[i]) * 0.5 - minc) / (maxc - minc)) * (_max - _min);
+      }
+      return val;
+    };
+    getColor = function(val, bypassMap) {
+      var c, col, f0, i, k, p, t, _i, _ref;
+
+      if (bypassMap == null) {
+        bypassMap = false;
+      }
+      if (isNaN(val)) {
+        return _nacol;
+      }
+      if (!bypassMap) {
+        if (_domain.length > 2) {
+          c = getClass(val);
+          t = c / (_numClasses - 1);
+        } else {
+          t = f0 = _min !== _max ? (val - _min) / (_max - _min) : 0;
+          t = f0 = (val - _min) / (_max - _min);
+          t = Math.min(1, Math.max(0, t));
+        }
+      } else {
+        t = val;
+      }
+      if (!bypassMap) {
+        t = tmap(t);
+      }
+      k = Math.floor(t * 10000);
+      if (_colorCache[k]) {
+        col = _colorCache[k];
+      } else {
+        if (type(_colors) === 'array') {
+          for (i = _i = 0, _ref = _pos.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+            p = _pos[i];
+            if (t <= p) {
+              col = _colors[i];
+              break;
+            }
+            if (t >= p && i === _pos.length - 1) {
+              col = _colors[i];
+              break;
+            }
+            if (t > p && t < _pos[i + 1]) {
+              t = (t - p) / (_pos[i + 1] - p);
+              col = chroma.interpolate(_colors[i], _colors[i + 1], t, _mode);
+              break;
+            }
+          }
+        } else if (type(_colors) === 'function') {
+          col = _colors(t);
+        }
+        _colorCache[k] = col;
+      }
+      return col;
+    };
+    resetCache = function() {
+      return _colorCache = {};
+    };
+    setColors(colors, positions);
+    f = function(v) {
+      var c;
+
+      c = getColor(v);
+      if (_out && c[_out]) {
+        return c[_out]();
+      } else {
+        return c;
+      }
+    };
+    f.domain = function(domain, classes, mode, key) {
+      var d;
+
+      if (mode == null) {
+        mode = 'e';
+      }
+      if (!arguments.length) {
+        return _domain;
+      }
+      if (classes != null) {
+        d = chroma.analyze(domain, key);
+        if (classes === 0) {
+          domain = [d.min, d.max];
+        } else {
+          domain = chroma.limits(d, mode, classes);
+        }
+      }
+      setDomain(domain);
+      return f;
+    };
+    f.mode = function(_m) {
+      if (!arguments.length) {
+        return _mode;
+      }
+      _mode = _m;
+      resetCache();
+      return f;
+    };
+    f.range = function(colors, _pos) {
+      setColors(colors, _pos);
+      return f;
+    };
+    f.out = function(_o) {
+      _out = _o;
+      return f;
+    };
+    f.spread = function(val) {
+      if (!arguments.length) {
+        return _spread;
+      }
+      _spread = val;
+      return f;
+    };
+    f.correctLightness = function(v) {
+      if (!arguments.length) {
+        return _correctLightness;
+      }
+      _correctLightness = v;
+      resetCache();
+      if (_correctLightness) {
+        tmap = function(t) {
+          var L0, L1, L_actual, L_diff, L_ideal, max_iter, pol, t0, t1;
+
+          L0 = getColor(0, true).lab()[0];
+          L1 = getColor(1, true).lab()[0];
+          pol = L0 > L1;
+          L_actual = getColor(t, true).lab()[0];
+          L_ideal = L0 + (L1 - L0) * t;
+          L_diff = L_actual - L_ideal;
+          t0 = 0;
+          t1 = 1;
+          max_iter = 20;
+          while (Math.abs(L_diff) > 1e-2 && max_iter-- > 0) {
+            (function() {
+              if (pol) {
+                L_diff *= -1;
+              }
+              if (L_diff < 0) {
+                t0 = t;
+                t += (t1 - t) * 0.5;
+              } else {
+                t1 = t;
+                t += (t0 - t) * 0.5;
+              }
+              L_actual = getColor(t, true).lab()[0];
+              return L_diff = L_actual - L_ideal;
+            })();
+          }
+          return t;
+        };
+      } else {
+        tmap = function(t) {
+          return t;
+        };
+      }
+      return f;
+    };
+    f.colors = function(out) {
+      var i, samples, _i, _j, _len, _ref;
+
+      if (out == null) {
+        out = 'hex';
+      }
+      colors = [];
+      samples = [];
+      if (_domain.length > 2) {
+        for (i = _i = 1, _ref = _domain.length; 1 <= _ref ? _i < _ref : _i > _ref; i = 1 <= _ref ? ++_i : --_i) {
+          samples.push((_domain[i - 1] + _domain[i]) * 0.5);
+        }
+      } else {
+        samples = _domain;
+      }
+      for (_j = 0, _len = samples.length; _j < _len; _j++) {
+        i = samples[_j];
+        colors.push(f(i)[out]());
+      }
+      return colors;
+    };
+    return f;
+  };
+
+  if ((_ref = chroma.scales) == null) {
+    chroma.scales = {};
+  }
+
+  chroma.scales.cool = function() {
+    return chroma.scale([chroma.hsl(180, 1, .9), chroma.hsl(250, .7, .4)]);
+  };
+
+  chroma.scales.hot = function() {
+    return chroma.scale(['#000', '#f00', '#ff0', '#fff'], [0, .25, .75, 1]).mode('rgb');
+  };
+
+  /*
+      chroma.js
+  
+      Copyright (c) 2011-2013, Gregor Aisch
+      All rights reserved.
+  
+      Redistribution and use in source and binary forms, with or without
+      modification, are permitted provided that the following conditions are met:
+  
+      * Redistributions of source code must retain the above copyright notice, this
+        list of conditions and the following disclaimer.
+  
+      * Redistributions in binary form must reproduce the above copyright notice,
+        this list of conditions and the following disclaimer in the documentation
+        and/or other materials provided with the distribution.
+  
+      * The name Gregor Aisch may not be used to endorse or promote products
+        derived from this software without specific prior written permission.
+  
+      THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+      AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+      IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+      DISCLAIMED. IN NO EVENT SHALL GREGOR AISCH OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+      INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+      BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+      DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+      OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+      NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+      EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+      @source: https://github.com/gka/chroma.js
+  */
+
+
+  chroma.analyze = function(data, key, filter) {
+    var add, k, r, val, visit, _i, _len;
+
+    r = {
+      min: Number.MAX_VALUE,
+      max: Number.MAX_VALUE * -1,
+      sum: 0,
+      values: [],
+      count: 0
+    };
+    if (filter == null) {
+      filter = function() {
+        return true;
+      };
+    }
+    add = function(val) {
+      if ((val != null) && !isNaN(val)) {
+        r.values.push(val);
+        r.sum += val;
+        if (val < r.min) {
+          r.min = val;
+        }
+        if (val > r.max) {
+          r.max = val;
+        }
+        r.count += 1;
+      }
+    };
+    visit = function(val, k) {
+      if (filter(val, k)) {
+        if ((key != null) && type(key) === 'function') {
+          return add(key(val));
+        } else if ((key != null) && type(key) === 'string' || type(key) === 'number') {
+          return add(val[key]);
+        } else {
+          return add(val);
+        }
+      }
+    };
+    if (type(data) === 'array') {
+      for (_i = 0, _len = data.length; _i < _len; _i++) {
+        val = data[_i];
+        visit(val);
+      }
+    } else {
+      for (k in data) {
+        val = data[k];
+        visit(val, k);
+      }
+    }
+    r.domain = [r.min, r.max];
+    r.limits = function(mode, num) {
+      return chroma.limits(r, mode, num);
+    };
+    return r;
+  };
+
+  chroma.limits = function(data, mode, num) {
+    var assignments, best, centroids, cluster, clusterSizes, dist, i, j, kClusters, limits, max, max_log, min, min_log, mindist, n, nb_iters, newCentroids, p, pb, pr, repeat, sum, tmpKMeansBreaks, value, values, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9, _s, _t, _u, _v, _w;
+
+    if (mode == null) {
+      mode = 'equal';
+    }
+    if (num == null) {
+      num = 7;
+    }
+    if (type(data) === 'array') {
+      data = chroma.analyze(data);
+    }
+    min = data.min;
+    max = data.max;
+    sum = data.sum;
+    values = data.values.sort(function(a, b) {
+      return a - b;
+    });
+    limits = [];
+    if (mode.substr(0, 1) === 'c') {
+      limits.push(min);
+      limits.push(max);
+    }
+    if (mode.substr(0, 1) === 'e') {
+      limits.push(min);
+      for (i = _i = 1, _ref1 = num - 1; 1 <= _ref1 ? _i <= _ref1 : _i >= _ref1; i = 1 <= _ref1 ? ++_i : --_i) {
+        limits.push(min + (i / num) * (max - min));
+      }
+      limits.push(max);
+    } else if (mode.substr(0, 1) === 'l') {
+      if (min <= 0) {
+        throw 'Logarithmic scales are only possible for values > 0';
+      }
+      min_log = Math.LOG10E * Math.log(min);
+      max_log = Math.LOG10E * Math.log(max);
+      limits.push(min);
+      for (i = _j = 1, _ref2 = num - 1; 1 <= _ref2 ? _j <= _ref2 : _j >= _ref2; i = 1 <= _ref2 ? ++_j : --_j) {
+        limits.push(Math.pow(10, min_log + (i / num) * (max_log - min_log)));
+      }
+      limits.push(max);
+    } else if (mode.substr(0, 1) === 'q') {
+      limits.push(min);
+      for (i = _k = 1, _ref3 = num - 1; 1 <= _ref3 ? _k <= _ref3 : _k >= _ref3; i = 1 <= _ref3 ? ++_k : --_k) {
+        p = values.length * i / num;
+        pb = Math.floor(p);
+        if (pb === p) {
+          limits.push(values[pb]);
+        } else {
+          pr = p - pb;
+          limits.push(values[pb] * pr + values[pb + 1] * (1 - pr));
+        }
+      }
+      limits.push(max);
+    } else if (mode.substr(0, 1) === 'k') {
+      /*
+      implementation based on
+      http://code.google.com/p/figue/source/browse/trunk/figue.js#336
+      simplified for 1-d input values
+      */
+
+      n = values.length;
+      assignments = new Array(n);
+      clusterSizes = new Array(num);
+      repeat = true;
+      nb_iters = 0;
+      centroids = null;
+      centroids = [];
+      centroids.push(min);
+      for (i = _l = 1, _ref4 = num - 1; 1 <= _ref4 ? _l <= _ref4 : _l >= _ref4; i = 1 <= _ref4 ? ++_l : --_l) {
+        centroids.push(min + (i / num) * (max - min));
+      }
+      centroids.push(max);
+      while (repeat) {
+        for (j = _m = 0, _ref5 = num - 1; 0 <= _ref5 ? _m <= _ref5 : _m >= _ref5; j = 0 <= _ref5 ? ++_m : --_m) {
+          clusterSizes[j] = 0;
+        }
+        for (i = _n = 0, _ref6 = n - 1; 0 <= _ref6 ? _n <= _ref6 : _n >= _ref6; i = 0 <= _ref6 ? ++_n : --_n) {
+          value = values[i];
+          mindist = Number.MAX_VALUE;
+          for (j = _o = 0, _ref7 = num - 1; 0 <= _ref7 ? _o <= _ref7 : _o >= _ref7; j = 0 <= _ref7 ? ++_o : --_o) {
+            dist = Math.abs(centroids[j] - value);
+            if (dist < mindist) {
+              mindist = dist;
+              best = j;
+            }
+          }
+          clusterSizes[best]++;
+          assignments[i] = best;
+        }
+        newCentroids = new Array(num);
+        for (j = _p = 0, _ref8 = num - 1; 0 <= _ref8 ? _p <= _ref8 : _p >= _ref8; j = 0 <= _ref8 ? ++_p : --_p) {
+          newCentroids[j] = null;
+        }
+        for (i = _q = 0, _ref9 = n - 1; 0 <= _ref9 ? _q <= _ref9 : _q >= _ref9; i = 0 <= _ref9 ? ++_q : --_q) {
+          cluster = assignments[i];
+          if (newCentroids[cluster] === null) {
+            newCentroids[cluster] = values[i];
+          } else {
+            newCentroids[cluster] += values[i];
+          }
+        }
+        for (j = _r = 0, _ref10 = num - 1; 0 <= _ref10 ? _r <= _ref10 : _r >= _ref10; j = 0 <= _ref10 ? ++_r : --_r) {
+          newCentroids[j] *= 1 / clusterSizes[j];
+        }
+        repeat = false;
+        for (j = _s = 0, _ref11 = num - 1; 0 <= _ref11 ? _s <= _ref11 : _s >= _ref11; j = 0 <= _ref11 ? ++_s : --_s) {
+          if (newCentroids[j] !== centroids[i]) {
+            repeat = true;
+            break;
+          }
+        }
+        centroids = newCentroids;
+        nb_iters++;
+        if (nb_iters > 200) {
+          repeat = false;
+        }
+      }
+      kClusters = {};
+      for (j = _t = 0, _ref12 = num - 1; 0 <= _ref12 ? _t <= _ref12 : _t >= _ref12; j = 0 <= _ref12 ? ++_t : --_t) {
+        kClusters[j] = [];
+      }
+      for (i = _u = 0, _ref13 = n - 1; 0 <= _ref13 ? _u <= _ref13 : _u >= _ref13; i = 0 <= _ref13 ? ++_u : --_u) {
+        cluster = assignments[i];
+        kClusters[cluster].push(values[i]);
+      }
+      tmpKMeansBreaks = [];
+      for (j = _v = 0, _ref14 = num - 1; 0 <= _ref14 ? _v <= _ref14 : _v >= _ref14; j = 0 <= _ref14 ? ++_v : --_v) {
+        tmpKMeansBreaks.push(kClusters[j][0]);
+        tmpKMeansBreaks.push(kClusters[j][kClusters[j].length - 1]);
+      }
+      tmpKMeansBreaks = tmpKMeansBreaks.sort(function(a, b) {
+        return a - b;
+      });
+      limits.push(tmpKMeansBreaks[0]);
+      for (i = _w = 1, _ref15 = tmpKMeansBreaks.length - 1; _w <= _ref15; i = _w += 2) {
+        if (!isNaN(tmpKMeansBreaks[i])) {
+          limits.push(tmpKMeansBreaks[i]);
+        }
+      }
+    }
+    return limits;
+  };
+
+  /**
+  	ColorBrewer colors for chroma.js
+  
+  	Copyright (c) 2002 Cynthia Brewer, Mark Harrower, and The 
+  	Pennsylvania State University.
+  
+  	Licensed under the Apache License, Version 2.0 (the "License"); 
+  	you may not use this file except in compliance with the License.
+  	You may obtain a copy of the License at	
+  	http://www.apache.org/licenses/LICENSE-2.0
+  
+  	Unless required by applicable law or agreed to in writing, software distributed
+  	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+  	CONDITIONS OF ANY KIND, either express or implied. See the License for the
+  	specific language governing permissions and limitations under the License.
+  
+      @preserve
+  */
+
+
+  chroma.brewer = brewer = {
+    OrRd: ['#fff7ec', '#fee8c8', '#fdd49e', '#fdbb84', '#fc8d59', '#ef6548', '#d7301f', '#b30000', '#7f0000'],
+    PuBu: ['#fff7fb', '#ece7f2', '#d0d1e6', '#a6bddb', '#74a9cf', '#3690c0', '#0570b0', '#045a8d', '#023858'],
+    BuPu: ['#f7fcfd', '#e0ecf4', '#bfd3e6', '#9ebcda', '#8c96c6', '#8c6bb1', '#88419d', '#810f7c', '#4d004b'],
+    Oranges: ['#fff5eb', '#fee6ce', '#fdd0a2', '#fdae6b', '#fd8d3c', '#f16913', '#d94801', '#a63603', '#7f2704'],
+    BuGn: ['#f7fcfd', '#e5f5f9', '#ccece6', '#99d8c9', '#66c2a4', '#41ae76', '#238b45', '#006d2c', '#00441b'],
+    YlOrBr: ['#ffffe5', '#fff7bc', '#fee391', '#fec44f', '#fe9929', '#ec7014', '#cc4c02', '#993404', '#662506'],
+    YlGn: ['#ffffe5', '#f7fcb9', '#d9f0a3', '#addd8e', '#78c679', '#41ab5d', '#238443', '#006837', '#004529'],
+    Reds: ['#fff5f0', '#fee0d2', '#fcbba1', '#fc9272', '#fb6a4a', '#ef3b2c', '#cb181d', '#a50f15', '#67000d'],
+    RdPu: ['#fff7f3', '#fde0dd', '#fcc5c0', '#fa9fb5', '#f768a1', '#dd3497', '#ae017e', '#7a0177', '#49006a'],
+    Greens: ['#f7fcf5', '#e5f5e0', '#c7e9c0', '#a1d99b', '#74c476', '#41ab5d', '#238b45', '#006d2c', '#00441b'],
+    YlGnBu: ['#ffffd9', '#edf8b1', '#c7e9b4', '#7fcdbb', '#41b6c4', '#1d91c0', '#225ea8', '#253494', '#081d58'],
+    Purples: ['#fcfbfd', '#efedf5', '#dadaeb', '#bcbddc', '#9e9ac8', '#807dba', '#6a51a3', '#54278f', '#3f007d'],
+    GnBu: ['#f7fcf0', '#e0f3db', '#ccebc5', '#a8ddb5', '#7bccc4', '#4eb3d3', '#2b8cbe', '#0868ac', '#084081'],
+    Greys: ['#ffffff', '#f0f0f0', '#d9d9d9', '#bdbdbd', '#969696', '#737373', '#525252', '#252525', '#000000'],
+    YlOrRd: ['#ffffcc', '#ffeda0', '#fed976', '#feb24c', '#fd8d3c', '#fc4e2a', '#e31a1c', '#bd0026', '#800026'],
+    PuRd: ['#f7f4f9', '#e7e1ef', '#d4b9da', '#c994c7', '#df65b0', '#e7298a', '#ce1256', '#980043', '#67001f'],
+    Blues: ['#f7fbff', '#deebf7', '#c6dbef', '#9ecae1', '#6baed6', '#4292c6', '#2171b5', '#08519c', '#08306b'],
+    PuBuGn: ['#fff7fb', '#ece2f0', '#d0d1e6', '#a6bddb', '#67a9cf', '#3690c0', '#02818a', '#016c59', '#014636'],
+    Spectral: ['#9e0142', '#d53e4f', '#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#e6f598', '#abdda4', '#66c2a5', '#3288bd', '#5e4fa2'],
+    RdYlGn: ['#a50026', '#d73027', '#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#d9ef8b', '#a6d96a', '#66bd63', '#1a9850', '#006837'],
+    RdBu: ['#67001f', '#b2182b', '#d6604d', '#f4a582', '#fddbc7', '#f7f7f7', '#d1e5f0', '#92c5de', '#4393c3', '#2166ac', '#053061'],
+    PiYG: ['#8e0152', '#c51b7d', '#de77ae', '#f1b6da', '#fde0ef', '#f7f7f7', '#e6f5d0', '#b8e186', '#7fbc41', '#4d9221', '#276419'],
+    PRGn: ['#40004b', '#762a83', '#9970ab', '#c2a5cf', '#e7d4e8', '#f7f7f7', '#d9f0d3', '#a6dba0', '#5aae61', '#1b7837', '#00441b'],
+    RdYlBu: ['#a50026', '#d73027', '#f46d43', '#fdae61', '#fee090', '#ffffbf', '#e0f3f8', '#abd9e9', '#74add1', '#4575b4', '#313695'],
+    BrBG: ['#543005', '#8c510a', '#bf812d', '#dfc27d', '#f6e8c3', '#f5f5f5', '#c7eae5', '#80cdc1', '#35978f', '#01665e', '#003c30'],
+    RdGy: ['#67001f', '#b2182b', '#d6604d', '#f4a582', '#fddbc7', '#ffffff', '#e0e0e0', '#bababa', '#878787', '#4d4d4d', '#1a1a1a'],
+    PuOr: ['#7f3b08', '#b35806', '#e08214', '#fdb863', '#fee0b6', '#f7f7f7', '#d8daeb', '#b2abd2', '#8073ac', '#542788', '#2d004b'],
+    Set2: ['#66c2a5', '#fc8d62', '#8da0cb', '#e78ac3', '#a6d854', '#ffd92f', '#e5c494', '#b3b3b3'],
+    Accent: ['#7fc97f', '#beaed4', '#fdc086', '#ffff99', '#386cb0', '#f0027f', '#bf5b17', '#666666'],
+    Set1: ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf', '#999999'],
+    Set3: ['#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', '#b3de69', '#fccde5', '#d9d9d9', '#bc80bd', '#ccebc5', '#ffed6f'],
+    Dark2: ['#1b9e77', '#d95f02', '#7570b3', '#e7298a', '#66a61e', '#e6ab02', '#a6761d', '#666666'],
+    Paired: ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a', '#ffff99', '#b15928'],
+    Pastel2: ['#b3e2cd', '#fdcdac', '#cbd5e8', '#f4cae4', '#e6f5c9', '#fff2ae', '#f1e2cc', '#cccccc'],
+    Pastel1: ['#fbb4ae', '#b3cde3', '#ccebc5', '#decbe4', '#fed9a6', '#ffffcc', '#e5d8bd', '#fddaec', '#f2f2f2']
+  };
+
+  /**
+  	X11 color names
+  
+  	http://www.w3.org/TR/css3-color/#svg-color
+  */
+
+
+  chroma.colors = colors = {
+    indigo: "#4b0082",
+    gold: "#ffd700",
+    hotpink: "#ff69b4",
+    firebrick: "#b22222",
+    indianred: "#cd5c5c",
+    yellow: "#ffff00",
+    mistyrose: "#ffe4e1",
+    darkolivegreen: "#556b2f",
+    olive: "#808000",
+    darkseagreen: "#8fbc8f",
+    pink: "#ffc0cb",
+    tomato: "#ff6347",
+    lightcoral: "#f08080",
+    orangered: "#ff4500",
+    navajowhite: "#ffdead",
+    lime: "#00ff00",
+    palegreen: "#98fb98",
+    darkslategrey: "#2f4f4f",
+    greenyellow: "#adff2f",
+    burlywood: "#deb887",
+    seashell: "#fff5ee",
+    mediumspringgreen: "#00fa9a",
+    fuchsia: "#ff00ff",
+    papayawhip: "#ffefd5",
+    blanchedalmond: "#ffebcd",
+    chartreuse: "#7fff00",
+    dimgray: "#696969",
+    black: "#000000",
+    peachpuff: "#ffdab9",
+    springgreen: "#00ff7f",
+    aquamarine: "#7fffd4",
+    white: "#ffffff",
+    orange: "#ffa500",
+    lightsalmon: "#ffa07a",
+    darkslategray: "#2f4f4f",
+    brown: "#a52a2a",
+    ivory: "#fffff0",
+    dodgerblue: "#1e90ff",
+    peru: "#cd853f",
+    lawngreen: "#7cfc00",
+    chocolate: "#d2691e",
+    crimson: "#dc143c",
+    forestgreen: "#228b22",
+    darkgrey: "#a9a9a9",
+    lightseagreen: "#20b2aa",
+    cyan: "#00ffff",
+    mintcream: "#f5fffa",
+    silver: "#c0c0c0",
+    antiquewhite: "#faebd7",
+    mediumorchid: "#ba55d3",
+    skyblue: "#87ceeb",
+    gray: "#808080",
+    darkturquoise: "#00ced1",
+    goldenrod: "#daa520",
+    darkgreen: "#006400",
+    floralwhite: "#fffaf0",
+    darkviolet: "#9400d3",
+    darkgray: "#a9a9a9",
+    moccasin: "#ffe4b5",
+    saddlebrown: "#8b4513",
+    grey: "#808080",
+    darkslateblue: "#483d8b",
+    lightskyblue: "#87cefa",
+    lightpink: "#ffb6c1",
+    mediumvioletred: "#c71585",
+    slategrey: "#708090",
+    red: "#ff0000",
+    deeppink: "#ff1493",
+    limegreen: "#32cd32",
+    darkmagenta: "#8b008b",
+    palegoldenrod: "#eee8aa",
+    plum: "#dda0dd",
+    turquoise: "#40e0d0",
+    lightgrey: "#d3d3d3",
+    lightgoldenrodyellow: "#fafad2",
+    darkgoldenrod: "#b8860b",
+    lavender: "#e6e6fa",
+    maroon: "#800000",
+    yellowgreen: "#9acd32",
+    sandybrown: "#f4a460",
+    thistle: "#d8bfd8",
+    violet: "#ee82ee",
+    navy: "#000080",
+    magenta: "#ff00ff",
+    dimgrey: "#696969",
+    tan: "#d2b48c",
+    rosybrown: "#bc8f8f",
+    olivedrab: "#6b8e23",
+    blue: "#0000ff",
+    lightblue: "#add8e6",
+    ghostwhite: "#f8f8ff",
+    honeydew: "#f0fff0",
+    cornflowerblue: "#6495ed",
+    slateblue: "#6a5acd",
+    linen: "#faf0e6",
+    darkblue: "#00008b",
+    powderblue: "#b0e0e6",
+    seagreen: "#2e8b57",
+    darkkhaki: "#bdb76b",
+    snow: "#fffafa",
+    sienna: "#a0522d",
+    mediumblue: "#0000cd",
+    royalblue: "#4169e1",
+    lightcyan: "#e0ffff",
+    green: "#008000",
+    mediumpurple: "#9370db",
+    midnightblue: "#191970",
+    cornsilk: "#fff8dc",
+    paleturquoise: "#afeeee",
+    bisque: "#ffe4c4",
+    slategray: "#708090",
+    darkcyan: "#008b8b",
+    khaki: "#f0e68c",
+    wheat: "#f5deb3",
+    teal: "#008080",
+    darkorchid: "#9932cc",
+    deepskyblue: "#00bfff",
+    salmon: "#fa8072",
+    darkred: "#8b0000",
+    steelblue: "#4682b4",
+    palevioletred: "#db7093",
+    lightslategray: "#778899",
+    aliceblue: "#f0f8ff",
+    lightslategrey: "#778899",
+    lightgreen: "#90ee90",
+    orchid: "#da70d6",
+    gainsboro: "#dcdcdc",
+    mediumseagreen: "#3cb371",
+    lightgray: "#d3d3d3",
+    mediumturquoise: "#48d1cc",
+    lemonchiffon: "#fffacd",
+    cadetblue: "#5f9ea0",
+    lightyellow: "#ffffe0",
+    lavenderblush: "#fff0f5",
+    coral: "#ff7f50",
+    purple: "#800080",
+    aqua: "#00ffff",
+    whitesmoke: "#f5f5f5",
+    mediumslateblue: "#7b68ee",
+    darkorange: "#ff8c00",
+    mediumaquamarine: "#66cdaa",
+    darksalmon: "#e9967a",
+    beige: "#f5f5dc",
+    blueviolet: "#8a2be2",
+    azure: "#f0ffff",
+    lightsteelblue: "#b0c4de",
+    oldlace: "#fdf5e6"
+  };
+
+  /*
+      chroma.js
+  
+      Copyright (c) 2011-2013, Gregor Aisch
+      All rights reserved.
+  
+      Redistribution and use in source and binary forms, with or without
+      modification, are permitted provided that the following conditions are met:
+  
+      * Redistributions of source code must retain the above copyright notice, this
+        list of conditions and the following disclaimer.
+  
+      * Redistributions in binary form must reproduce the above copyright notice,
+        this list of conditions and the following disclaimer in the documentation
+        and/or other materials provided with the distribution.
+  
+      * The name Gregor Aisch may not be used to endorse or promote products
+        derived from this software without specific prior written permission.
+  
+      THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+      AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+      IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+      DISCLAIMED. IN NO EVENT SHALL GREGOR AISCH OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+      INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+      BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+      DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+      OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+      NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+      EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+      @source: https://github.com/gka/chroma.js
+  */
+
+
+  type = (function() {
+    /*
+    for browser-safe type checking+
+    ported from jQuery's $.type
+    */
+
+    var classToType, name, _i, _len, _ref1;
+
+    classToType = {};
+    _ref1 = "Boolean Number String Function Array Date RegExp Undefined Null".split(" ");
+    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+      name = _ref1[_i];
+      classToType["[object " + name + "]"] = name.toLowerCase();
+    }
+    return function(obj) {
+      var strType;
+
+      strType = Object.prototype.toString.call(obj);
+      return classToType[strType] || "object";
+    };
+  })();
+
+  limit = function(x, min, max) {
+    if (min == null) {
+      min = 0;
+    }
+    if (max == null) {
+      max = 1;
+    }
+    if (x < min) {
+      x = min;
+    }
+    if (x > max) {
+      x = max;
+    }
+    return x;
+  };
+
+  unpack = function(args) {
+    if (args.length >= 3) {
+      return args;
+    } else {
+      return args[0];
+    }
+  };
+
+  TWOPI = Math.PI * 2;
+
+  PITHIRD = Math.PI / 3;
+
+  cos = Math.cos;
+
+  /*
+  interpolates between a set of colors uzing a bezier spline
+  */
+
+
+  bezier = function(colors) {
+    var I, I0, I1, c, lab0, lab1, lab2, lab3, _ref1, _ref2, _ref3;
+
+    colors = (function() {
+      var _i, _len, _results;
+
+      _results = [];
+      for (_i = 0, _len = colors.length; _i < _len; _i++) {
+        c = colors[_i];
+        _results.push(chroma(c));
+      }
+      return _results;
+    })();
+    if (colors.length === 2) {
+      _ref1 = (function() {
+        var _i, _len, _results;
+
+        _results = [];
+        for (_i = 0, _len = colors.length; _i < _len; _i++) {
+          c = colors[_i];
+          _results.push(c.lab());
+        }
+        return _results;
+      })(), lab0 = _ref1[0], lab1 = _ref1[1];
+      I = function(t) {
+        var i, lab;
+
+        lab = (function() {
+          var _i, _results;
+
+          _results = [];
+          for (i = _i = 0; _i <= 2; i = ++_i) {
+            _results.push(lab0[i] + t * (lab1[i] - lab0[i]));
+          }
+          return _results;
+        })();
+        return chroma.lab.apply(chroma, lab);
+      };
+    } else if (colors.length === 3) {
+      _ref2 = (function() {
+        var _i, _len, _results;
+
+        _results = [];
+        for (_i = 0, _len = colors.length; _i < _len; _i++) {
+          c = colors[_i];
+          _results.push(c.lab());
+        }
+        return _results;
+      })(), lab0 = _ref2[0], lab1 = _ref2[1], lab2 = _ref2[2];
+      I = function(t) {
+        var i, lab;
+
+        lab = (function() {
+          var _i, _results;
+
+          _results = [];
+          for (i = _i = 0; _i <= 2; i = ++_i) {
+            _results.push((1 - t) * (1 - t) * lab0[i] + 2 * (1 - t) * t * lab1[i] + t * t * lab2[i]);
+          }
+          return _results;
+        })();
+        return chroma.lab.apply(chroma, lab);
+      };
+    } else if (colors.length === 4) {
+      _ref3 = (function() {
+        var _i, _len, _results;
+
+        _results = [];
+        for (_i = 0, _len = colors.length; _i < _len; _i++) {
+          c = colors[_i];
+          _results.push(c.lab());
+        }
+        return _results;
+      })(), lab0 = _ref3[0], lab1 = _ref3[1], lab2 = _ref3[2], lab3 = _ref3[3];
+      I = function(t) {
+        var i, lab;
+
+        lab = (function() {
+          var _i, _results;
+
+          _results = [];
+          for (i = _i = 0; _i <= 2; i = ++_i) {
+            _results.push((1 - t) * (1 - t) * (1 - t) * lab0[i] + 3 * (1 - t) * (1 - t) * t * lab1[i] + 3 * (1 - t) * t * t * lab2[i] + t * t * t * lab3[i]);
+          }
+          return _results;
+        })();
+        return chroma.lab.apply(chroma, lab);
+      };
+    } else if (colors.length === 5) {
+      I0 = bezier(colors.slice(0, 3));
+      I1 = bezier(colors.slice(2, 5));
+      I = function(t) {
+        if (t < 0.5) {
+          return I0(t * 2);
+        } else {
+          return I1((t - 0.5) * 2);
+        }
+      };
+    }
+    return I;
+  };
+
+  chroma.interpolate.bezier = bezier;
+
+}).call(this);
+
+/*! jQuery UI - v1.11.4 - 2015-07-21
+* http://jqueryui.com
+* Includes: core.js, widget.js, mouse.js, position.js, draggable.js, droppable.js, resizable.js, selectable.js, sortable.js, slider.js
+* Copyright 2015 jQuery Foundation and other contributors; Licensed MIT */
+
+(function( factory ) {
+	if ( typeof define === "function" && define.amd ) {
+
+		// AMD. Register as an anonymous module.
+		define([ "jquery" ], factory );
+	} else {
+
+		// Browser globals
+		factory( jQuery );
+	}
+}(function( $ ) {
+/*!
+ * jQuery UI Core 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/category/ui-core/
+ */
+
+
+// $.ui might exist from components with no dependencies, e.g., $.ui.position
+$.ui = $.ui || {};
+
+$.extend( $.ui, {
+	version: "1.11.4",
+
+	keyCode: {
+		BACKSPACE: 8,
+		COMMA: 188,
+		DELETE: 46,
+		DOWN: 40,
+		END: 35,
+		ENTER: 13,
+		ESCAPE: 27,
+		HOME: 36,
+		LEFT: 37,
+		PAGE_DOWN: 34,
+		PAGE_UP: 33,
+		PERIOD: 190,
+		RIGHT: 39,
+		SPACE: 32,
+		TAB: 9,
+		UP: 38
+	}
+});
+
+// plugins
+$.fn.extend({
+	scrollParent: function( includeHidden ) {
+		var position = this.css( "position" ),
+			excludeStaticParent = position === "absolute",
+			overflowRegex = includeHidden ? /(auto|scroll|hidden)/ : /(auto|scroll)/,
+			scrollParent = this.parents().filter( function() {
+				var parent = $( this );
+				if ( excludeStaticParent && parent.css( "position" ) === "static" ) {
+					return false;
+				}
+				return overflowRegex.test( parent.css( "overflow" ) + parent.css( "overflow-y" ) + parent.css( "overflow-x" ) );
+			}).eq( 0 );
+
+		return position === "fixed" || !scrollParent.length ? $( this[ 0 ].ownerDocument || document ) : scrollParent;
+	},
+
+	uniqueId: (function() {
+		var uuid = 0;
+
+		return function() {
+			return this.each(function() {
+				if ( !this.id ) {
+					this.id = "ui-id-" + ( ++uuid );
+				}
+			});
+		};
+	})(),
+
+	removeUniqueId: function() {
+		return this.each(function() {
+			if ( /^ui-id-\d+$/.test( this.id ) ) {
+				$( this ).removeAttr( "id" );
+			}
+		});
+	}
+});
+
+// selectors
+function focusable( element, isTabIndexNotNaN ) {
+	var map, mapName, img,
+		nodeName = element.nodeName.toLowerCase();
+	if ( "area" === nodeName ) {
+		map = element.parentNode;
+		mapName = map.name;
+		if ( !element.href || !mapName || map.nodeName.toLowerCase() !== "map" ) {
+			return false;
+		}
+		img = $( "img[usemap='#" + mapName + "']" )[ 0 ];
+		return !!img && visible( img );
+	}
+	return ( /^(input|select|textarea|button|object)$/.test( nodeName ) ?
+		!element.disabled :
+		"a" === nodeName ?
+			element.href || isTabIndexNotNaN :
+			isTabIndexNotNaN) &&
+		// the element and all of its ancestors must be visible
+		visible( element );
+}
+
+function visible( element ) {
+	return $.expr.filters.visible( element ) &&
+		!$( element ).parents().addBack().filter(function() {
+			return $.css( this, "visibility" ) === "hidden";
+		}).length;
+}
+
+$.extend( $.expr[ ":" ], {
+	data: $.expr.createPseudo ?
+		$.expr.createPseudo(function( dataName ) {
+			return function( elem ) {
+				return !!$.data( elem, dataName );
+			};
+		}) :
+		// support: jQuery <1.8
+		function( elem, i, match ) {
+			return !!$.data( elem, match[ 3 ] );
+		},
+
+	focusable: function( element ) {
+		return focusable( element, !isNaN( $.attr( element, "tabindex" ) ) );
+	},
+
+	tabbable: function( element ) {
+		var tabIndex = $.attr( element, "tabindex" ),
+			isTabIndexNaN = isNaN( tabIndex );
+		return ( isTabIndexNaN || tabIndex >= 0 ) && focusable( element, !isTabIndexNaN );
+	}
+});
+
+// support: jQuery <1.8
+if ( !$( "<a>" ).outerWidth( 1 ).jquery ) {
+	$.each( [ "Width", "Height" ], function( i, name ) {
+		var side = name === "Width" ? [ "Left", "Right" ] : [ "Top", "Bottom" ],
+			type = name.toLowerCase(),
+			orig = {
+				innerWidth: $.fn.innerWidth,
+				innerHeight: $.fn.innerHeight,
+				outerWidth: $.fn.outerWidth,
+				outerHeight: $.fn.outerHeight
+			};
+
+		function reduce( elem, size, border, margin ) {
+			$.each( side, function() {
+				size -= parseFloat( $.css( elem, "padding" + this ) ) || 0;
+				if ( border ) {
+					size -= parseFloat( $.css( elem, "border" + this + "Width" ) ) || 0;
+				}
+				if ( margin ) {
+					size -= parseFloat( $.css( elem, "margin" + this ) ) || 0;
+				}
+			});
+			return size;
+		}
+
+		$.fn[ "inner" + name ] = function( size ) {
+			if ( size === undefined ) {
+				return orig[ "inner" + name ].call( this );
+			}
+
+			return this.each(function() {
+				$( this ).css( type, reduce( this, size ) + "px" );
+			});
+		};
+
+		$.fn[ "outer" + name] = function( size, margin ) {
+			if ( typeof size !== "number" ) {
+				return orig[ "outer" + name ].call( this, size );
+			}
+
+			return this.each(function() {
+				$( this).css( type, reduce( this, size, true, margin ) + "px" );
+			});
+		};
+	});
+}
+
+// support: jQuery <1.8
+if ( !$.fn.addBack ) {
+	$.fn.addBack = function( selector ) {
+		return this.add( selector == null ?
+			this.prevObject : this.prevObject.filter( selector )
+		);
+	};
+}
+
+// support: jQuery 1.6.1, 1.6.2 (http://bugs.jquery.com/ticket/9413)
+if ( $( "<a>" ).data( "a-b", "a" ).removeData( "a-b" ).data( "a-b" ) ) {
+	$.fn.removeData = (function( removeData ) {
+		return function( key ) {
+			if ( arguments.length ) {
+				return removeData.call( this, $.camelCase( key ) );
+			} else {
+				return removeData.call( this );
+			}
+		};
+	})( $.fn.removeData );
+}
+
+// deprecated
+$.ui.ie = !!/msie [\w.]+/.exec( navigator.userAgent.toLowerCase() );
+
+$.fn.extend({
+	focus: (function( orig ) {
+		return function( delay, fn ) {
+			return typeof delay === "number" ?
+				this.each(function() {
+					var elem = this;
+					setTimeout(function() {
+						$( elem ).focus();
+						if ( fn ) {
+							fn.call( elem );
+						}
+					}, delay );
+				}) :
+				orig.apply( this, arguments );
+		};
+	})( $.fn.focus ),
+
+	disableSelection: (function() {
+		var eventType = "onselectstart" in document.createElement( "div" ) ?
+			"selectstart" :
+			"mousedown";
+
+		return function() {
+			return this.bind( eventType + ".ui-disableSelection", function( event ) {
+				event.preventDefault();
+			});
+		};
+	})(),
+
+	enableSelection: function() {
+		return this.unbind( ".ui-disableSelection" );
+	},
+
+	zIndex: function( zIndex ) {
+		if ( zIndex !== undefined ) {
+			return this.css( "zIndex", zIndex );
+		}
+
+		if ( this.length ) {
+			var elem = $( this[ 0 ] ), position, value;
+			while ( elem.length && elem[ 0 ] !== document ) {
+				// Ignore z-index if position is set to a value where z-index is ignored by the browser
+				// This makes behavior of this function consistent across browsers
+				// WebKit always returns auto if the element is positioned
+				position = elem.css( "position" );
+				if ( position === "absolute" || position === "relative" || position === "fixed" ) {
+					// IE returns 0 when zIndex is not specified
+					// other browsers return a string
+					// we ignore the case of nested elements with an explicit value of 0
+					// <div style="z-index: -10;"><div style="z-index: 0;"></div></div>
+					value = parseInt( elem.css( "zIndex" ), 10 );
+					if ( !isNaN( value ) && value !== 0 ) {
+						return value;
+					}
+				}
+				elem = elem.parent();
+			}
+		}
+
+		return 0;
+	}
+});
+
+// $.ui.plugin is deprecated. Use $.widget() extensions instead.
+$.ui.plugin = {
+	add: function( module, option, set ) {
+		var i,
+			proto = $.ui[ module ].prototype;
+		for ( i in set ) {
+			proto.plugins[ i ] = proto.plugins[ i ] || [];
+			proto.plugins[ i ].push( [ option, set[ i ] ] );
+		}
+	},
+	call: function( instance, name, args, allowDisconnected ) {
+		var i,
+			set = instance.plugins[ name ];
+
+		if ( !set ) {
+			return;
+		}
+
+		if ( !allowDisconnected && ( !instance.element[ 0 ].parentNode || instance.element[ 0 ].parentNode.nodeType === 11 ) ) {
+			return;
+		}
+
+		for ( i = 0; i < set.length; i++ ) {
+			if ( instance.options[ set[ i ][ 0 ] ] ) {
+				set[ i ][ 1 ].apply( instance.element, args );
+			}
+		}
+	}
+};
+
+
+/*!
+ * jQuery UI Widget 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/jQuery.widget/
+ */
+
+
+var widget_uuid = 0,
+	widget_slice = Array.prototype.slice;
+
+$.cleanData = (function( orig ) {
+	return function( elems ) {
+		var events, elem, i;
+		for ( i = 0; (elem = elems[i]) != null; i++ ) {
+			try {
+
+				// Only trigger remove when necessary to save time
+				events = $._data( elem, "events" );
+				if ( events && events.remove ) {
+					$( elem ).triggerHandler( "remove" );
+				}
+
+			// http://bugs.jquery.com/ticket/8235
+			} catch ( e ) {}
+		}
+		orig( elems );
+	};
+})( $.cleanData );
+
+$.widget = function( name, base, prototype ) {
+	var fullName, existingConstructor, constructor, basePrototype,
+		// proxiedPrototype allows the provided prototype to remain unmodified
+		// so that it can be used as a mixin for multiple widgets (#8876)
+		proxiedPrototype = {},
+		namespace = name.split( "." )[ 0 ];
+
+	name = name.split( "." )[ 1 ];
+	fullName = namespace + "-" + name;
+
+	if ( !prototype ) {
+		prototype = base;
+		base = $.Widget;
+	}
+
+	// create selector for plugin
+	$.expr[ ":" ][ fullName.toLowerCase() ] = function( elem ) {
+		return !!$.data( elem, fullName );
+	};
+
+	$[ namespace ] = $[ namespace ] || {};
+	existingConstructor = $[ namespace ][ name ];
+	constructor = $[ namespace ][ name ] = function( options, element ) {
+		// allow instantiation without "new" keyword
+		if ( !this._createWidget ) {
+			return new constructor( options, element );
+		}
+
+		// allow instantiation without initializing for simple inheritance
+		// must use "new" keyword (the code above always passes args)
+		if ( arguments.length ) {
+			this._createWidget( options, element );
+		}
+	};
+	// extend with the existing constructor to carry over any static properties
+	$.extend( constructor, existingConstructor, {
+		version: prototype.version,
+		// copy the object used to create the prototype in case we need to
+		// redefine the widget later
+		_proto: $.extend( {}, prototype ),
+		// track widgets that inherit from this widget in case this widget is
+		// redefined after a widget inherits from it
+		_childConstructors: []
+	});
+
+	basePrototype = new base();
+	// we need to make the options hash a property directly on the new instance
+	// otherwise we'll modify the options hash on the prototype that we're
+	// inheriting from
+	basePrototype.options = $.widget.extend( {}, basePrototype.options );
+	$.each( prototype, function( prop, value ) {
+		if ( !$.isFunction( value ) ) {
+			proxiedPrototype[ prop ] = value;
+			return;
+		}
+		proxiedPrototype[ prop ] = (function() {
+			var _super = function() {
+					return base.prototype[ prop ].apply( this, arguments );
+				},
+				_superApply = function( args ) {
+					return base.prototype[ prop ].apply( this, args );
+				};
+			return function() {
+				var __super = this._super,
+					__superApply = this._superApply,
+					returnValue;
+
+				this._super = _super;
+				this._superApply = _superApply;
+
+				returnValue = value.apply( this, arguments );
+
+				this._super = __super;
+				this._superApply = __superApply;
+
+				return returnValue;
+			};
+		})();
+	});
+	constructor.prototype = $.widget.extend( basePrototype, {
+		// TODO: remove support for widgetEventPrefix
+		// always use the name + a colon as the prefix, e.g., draggable:start
+		// don't prefix for widgets that aren't DOM-based
+		widgetEventPrefix: existingConstructor ? (basePrototype.widgetEventPrefix || name) : name
+	}, proxiedPrototype, {
+		constructor: constructor,
+		namespace: namespace,
+		widgetName: name,
+		widgetFullName: fullName
+	});
+
+	// If this widget is being redefined then we need to find all widgets that
+	// are inheriting from it and redefine all of them so that they inherit from
+	// the new version of this widget. We're essentially trying to replace one
+	// level in the prototype chain.
+	if ( existingConstructor ) {
+		$.each( existingConstructor._childConstructors, function( i, child ) {
+			var childPrototype = child.prototype;
+
+			// redefine the child widget using the same prototype that was
+			// originally used, but inherit from the new version of the base
+			$.widget( childPrototype.namespace + "." + childPrototype.widgetName, constructor, child._proto );
+		});
+		// remove the list of existing child constructors from the old constructor
+		// so the old child constructors can be garbage collected
+		delete existingConstructor._childConstructors;
+	} else {
+		base._childConstructors.push( constructor );
+	}
+
+	$.widget.bridge( name, constructor );
+
+	return constructor;
+};
+
+$.widget.extend = function( target ) {
+	var input = widget_slice.call( arguments, 1 ),
+		inputIndex = 0,
+		inputLength = input.length,
+		key,
+		value;
+	for ( ; inputIndex < inputLength; inputIndex++ ) {
+		for ( key in input[ inputIndex ] ) {
+			value = input[ inputIndex ][ key ];
+			if ( input[ inputIndex ].hasOwnProperty( key ) && value !== undefined ) {
+				// Clone objects
+				if ( $.isPlainObject( value ) ) {
+					target[ key ] = $.isPlainObject( target[ key ] ) ?
+						$.widget.extend( {}, target[ key ], value ) :
+						// Don't extend strings, arrays, etc. with objects
+						$.widget.extend( {}, value );
+				// Copy everything else by reference
+				} else {
+					target[ key ] = value;
+				}
+			}
+		}
+	}
+	return target;
+};
+
+$.widget.bridge = function( name, object ) {
+	var fullName = object.prototype.widgetFullName || name;
+	$.fn[ name ] = function( options ) {
+		var isMethodCall = typeof options === "string",
+			args = widget_slice.call( arguments, 1 ),
+			returnValue = this;
+
+		if ( isMethodCall ) {
+			this.each(function() {
+				var methodValue,
+					instance = $.data( this, fullName );
+				if ( options === "instance" ) {
+					returnValue = instance;
+					return false;
+				}
+				if ( !instance ) {
+					return $.error( "cannot call methods on " + name + " prior to initialization; " +
+						"attempted to call method '" + options + "'" );
+				}
+				if ( !$.isFunction( instance[options] ) || options.charAt( 0 ) === "_" ) {
+					return $.error( "no such method '" + options + "' for " + name + " widget instance" );
+				}
+				methodValue = instance[ options ].apply( instance, args );
+				if ( methodValue !== instance && methodValue !== undefined ) {
+					returnValue = methodValue && methodValue.jquery ?
+						returnValue.pushStack( methodValue.get() ) :
+						methodValue;
+					return false;
+				}
+			});
+		} else {
+
+			// Allow multiple hashes to be passed on init
+			if ( args.length ) {
+				options = $.widget.extend.apply( null, [ options ].concat(args) );
+			}
+
+			this.each(function() {
+				var instance = $.data( this, fullName );
+				if ( instance ) {
+					instance.option( options || {} );
+					if ( instance._init ) {
+						instance._init();
+					}
+				} else {
+					$.data( this, fullName, new object( options, this ) );
+				}
+			});
+		}
+
+		return returnValue;
+	};
+};
+
+$.Widget = function( /* options, element */ ) {};
+$.Widget._childConstructors = [];
+
+$.Widget.prototype = {
+	widgetName: "widget",
+	widgetEventPrefix: "",
+	defaultElement: "<div>",
+	options: {
+		disabled: false,
+
+		// callbacks
+		create: null
+	},
+	_createWidget: function( options, element ) {
+		element = $( element || this.defaultElement || this )[ 0 ];
+		this.element = $( element );
+		this.uuid = widget_uuid++;
+		this.eventNamespace = "." + this.widgetName + this.uuid;
+
+		this.bindings = $();
+		this.hoverable = $();
+		this.focusable = $();
+
+		if ( element !== this ) {
+			$.data( element, this.widgetFullName, this );
+			this._on( true, this.element, {
+				remove: function( event ) {
+					if ( event.target === element ) {
+						this.destroy();
+					}
+				}
+			});
+			this.document = $( element.style ?
+				// element within the document
+				element.ownerDocument :
+				// element is window or document
+				element.document || element );
+			this.window = $( this.document[0].defaultView || this.document[0].parentWindow );
+		}
+
+		this.options = $.widget.extend( {},
+			this.options,
+			this._getCreateOptions(),
+			options );
+
+		this._create();
+		this._trigger( "create", null, this._getCreateEventData() );
+		this._init();
+	},
+	_getCreateOptions: $.noop,
+	_getCreateEventData: $.noop,
+	_create: $.noop,
+	_init: $.noop,
+
+	destroy: function() {
+		this._destroy();
+		// we can probably remove the unbind calls in 2.0
+		// all event bindings should go through this._on()
+		this.element
+			.unbind( this.eventNamespace )
+			.removeData( this.widgetFullName )
+			// support: jquery <1.6.3
+			// http://bugs.jquery.com/ticket/9413
+			.removeData( $.camelCase( this.widgetFullName ) );
+		this.widget()
+			.unbind( this.eventNamespace )
+			.removeAttr( "aria-disabled" )
+			.removeClass(
+				this.widgetFullName + "-disabled " +
+				"ui-state-disabled" );
+
+		// clean up events and states
+		this.bindings.unbind( this.eventNamespace );
+		this.hoverable.removeClass( "ui-state-hover" );
+		this.focusable.removeClass( "ui-state-focus" );
+	},
+	_destroy: $.noop,
+
+	widget: function() {
+		return this.element;
+	},
+
+	option: function( key, value ) {
+		var options = key,
+			parts,
+			curOption,
+			i;
+
+		if ( arguments.length === 0 ) {
+			// don't return a reference to the internal hash
+			return $.widget.extend( {}, this.options );
+		}
+
+		if ( typeof key === "string" ) {
+			// handle nested keys, e.g., "foo.bar" => { foo: { bar: ___ } }
+			options = {};
+			parts = key.split( "." );
+			key = parts.shift();
+			if ( parts.length ) {
+				curOption = options[ key ] = $.widget.extend( {}, this.options[ key ] );
+				for ( i = 0; i < parts.length - 1; i++ ) {
+					curOption[ parts[ i ] ] = curOption[ parts[ i ] ] || {};
+					curOption = curOption[ parts[ i ] ];
+				}
+				key = parts.pop();
+				if ( arguments.length === 1 ) {
+					return curOption[ key ] === undefined ? null : curOption[ key ];
+				}
+				curOption[ key ] = value;
+			} else {
+				if ( arguments.length === 1 ) {
+					return this.options[ key ] === undefined ? null : this.options[ key ];
+				}
+				options[ key ] = value;
+			}
+		}
+
+		this._setOptions( options );
+
+		return this;
+	},
+	_setOptions: function( options ) {
+		var key;
+
+		for ( key in options ) {
+			this._setOption( key, options[ key ] );
+		}
+
+		return this;
+	},
+	_setOption: function( key, value ) {
+		this.options[ key ] = value;
+
+		if ( key === "disabled" ) {
+			this.widget()
+				.toggleClass( this.widgetFullName + "-disabled", !!value );
+
+			// If the widget is becoming disabled, then nothing is interactive
+			if ( value ) {
+				this.hoverable.removeClass( "ui-state-hover" );
+				this.focusable.removeClass( "ui-state-focus" );
+			}
+		}
+
+		return this;
+	},
+
+	enable: function() {
+		return this._setOptions({ disabled: false });
+	},
+	disable: function() {
+		return this._setOptions({ disabled: true });
+	},
+
+	_on: function( suppressDisabledCheck, element, handlers ) {
+		var delegateElement,
+			instance = this;
+
+		// no suppressDisabledCheck flag, shuffle arguments
+		if ( typeof suppressDisabledCheck !== "boolean" ) {
+			handlers = element;
+			element = suppressDisabledCheck;
+			suppressDisabledCheck = false;
+		}
+
+		// no element argument, shuffle and use this.element
+		if ( !handlers ) {
+			handlers = element;
+			element = this.element;
+			delegateElement = this.widget();
+		} else {
+			element = delegateElement = $( element );
+			this.bindings = this.bindings.add( element );
+		}
+
+		$.each( handlers, function( event, handler ) {
+			function handlerProxy() {
+				// allow widgets to customize the disabled handling
+				// - disabled as an array instead of boolean
+				// - disabled class as method for disabling individual parts
+				if ( !suppressDisabledCheck &&
+						( instance.options.disabled === true ||
+							$( this ).hasClass( "ui-state-disabled" ) ) ) {
+					return;
+				}
+				return ( typeof handler === "string" ? instance[ handler ] : handler )
+					.apply( instance, arguments );
+			}
+
+			// copy the guid so direct unbinding works
+			if ( typeof handler !== "string" ) {
+				handlerProxy.guid = handler.guid =
+					handler.guid || handlerProxy.guid || $.guid++;
+			}
+
+			var match = event.match( /^([\w:-]*)\s*(.*)$/ ),
+				eventName = match[1] + instance.eventNamespace,
+				selector = match[2];
+			if ( selector ) {
+				delegateElement.delegate( selector, eventName, handlerProxy );
+			} else {
+				element.bind( eventName, handlerProxy );
+			}
+		});
+	},
+
+	_off: function( element, eventName ) {
+		eventName = (eventName || "").split( " " ).join( this.eventNamespace + " " ) +
+			this.eventNamespace;
+		element.unbind( eventName ).undelegate( eventName );
+
+		// Clear the stack to avoid memory leaks (#10056)
+		this.bindings = $( this.bindings.not( element ).get() );
+		this.focusable = $( this.focusable.not( element ).get() );
+		this.hoverable = $( this.hoverable.not( element ).get() );
+	},
+
+	_delay: function( handler, delay ) {
+		function handlerProxy() {
+			return ( typeof handler === "string" ? instance[ handler ] : handler )
+				.apply( instance, arguments );
+		}
+		var instance = this;
+		return setTimeout( handlerProxy, delay || 0 );
+	},
+
+	_hoverable: function( element ) {
+		this.hoverable = this.hoverable.add( element );
+		this._on( element, {
+			mouseenter: function( event ) {
+				$( event.currentTarget ).addClass( "ui-state-hover" );
+			},
+			mouseleave: function( event ) {
+				$( event.currentTarget ).removeClass( "ui-state-hover" );
+			}
+		});
+	},
+
+	_focusable: function( element ) {
+		this.focusable = this.focusable.add( element );
+		this._on( element, {
+			focusin: function( event ) {
+				$( event.currentTarget ).addClass( "ui-state-focus" );
+			},
+			focusout: function( event ) {
+				$( event.currentTarget ).removeClass( "ui-state-focus" );
+			}
+		});
+	},
+
+	_trigger: function( type, event, data ) {
+		var prop, orig,
+			callback = this.options[ type ];
+
+		data = data || {};
+		event = $.Event( event );
+		event.type = ( type === this.widgetEventPrefix ?
+			type :
+			this.widgetEventPrefix + type ).toLowerCase();
+		// the original event may come from any element
+		// so we need to reset the target on the new event
+		event.target = this.element[ 0 ];
+
+		// copy original event properties over to the new event
+		orig = event.originalEvent;
+		if ( orig ) {
+			for ( prop in orig ) {
+				if ( !( prop in event ) ) {
+					event[ prop ] = orig[ prop ];
+				}
+			}
+		}
+
+		this.element.trigger( event, data );
+		return !( $.isFunction( callback ) &&
+			callback.apply( this.element[0], [ event ].concat( data ) ) === false ||
+			event.isDefaultPrevented() );
+	}
+};
+
+$.each( { show: "fadeIn", hide: "fadeOut" }, function( method, defaultEffect ) {
+	$.Widget.prototype[ "_" + method ] = function( element, options, callback ) {
+		if ( typeof options === "string" ) {
+			options = { effect: options };
+		}
+		var hasOptions,
+			effectName = !options ?
+				method :
+				options === true || typeof options === "number" ?
+					defaultEffect :
+					options.effect || defaultEffect;
+		options = options || {};
+		if ( typeof options === "number" ) {
+			options = { duration: options };
+		}
+		hasOptions = !$.isEmptyObject( options );
+		options.complete = callback;
+		if ( options.delay ) {
+			element.delay( options.delay );
+		}
+		if ( hasOptions && $.effects && $.effects.effect[ effectName ] ) {
+			element[ method ]( options );
+		} else if ( effectName !== method && element[ effectName ] ) {
+			element[ effectName ]( options.duration, options.easing, callback );
+		} else {
+			element.queue(function( next ) {
+				$( this )[ method ]();
+				if ( callback ) {
+					callback.call( element[ 0 ] );
+				}
+				next();
+			});
+		}
+	};
+});
+
+var widget = $.widget;
+
+
+/*!
+ * jQuery UI Mouse 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/mouse/
+ */
+
+
+var mouseHandled = false;
+$( document ).mouseup( function() {
+	mouseHandled = false;
+});
+
+var mouse = $.widget("ui.mouse", {
+	version: "1.11.4",
+	options: {
+		cancel: "input,textarea,button,select,option",
+		distance: 1,
+		delay: 0
+	},
+	_mouseInit: function() {
+		var that = this;
+
+		this.element
+			.bind("mousedown." + this.widgetName, function(event) {
+				return that._mouseDown(event);
+			})
+			.bind("click." + this.widgetName, function(event) {
+				if (true === $.data(event.target, that.widgetName + ".preventClickEvent")) {
+					$.removeData(event.target, that.widgetName + ".preventClickEvent");
+					event.stopImmediatePropagation();
+					return false;
+				}
+			});
+
+		this.started = false;
+	},
+
+	// TODO: make sure destroying one instance of mouse doesn't mess with
+	// other instances of mouse
+	_mouseDestroy: function() {
+		this.element.unbind("." + this.widgetName);
+		if ( this._mouseMoveDelegate ) {
+			this.document
+				.unbind("mousemove." + this.widgetName, this._mouseMoveDelegate)
+				.unbind("mouseup." + this.widgetName, this._mouseUpDelegate);
+		}
+	},
+
+	_mouseDown: function(event) {
+		// don't let more than one widget handle mouseStart
+		if ( mouseHandled ) {
+			return;
+		}
+
+		this._mouseMoved = false;
+
+		// we may have missed mouseup (out of window)
+		(this._mouseStarted && this._mouseUp(event));
+
+		this._mouseDownEvent = event;
+
+		var that = this,
+			btnIsLeft = (event.which === 1),
+			// event.target.nodeName works around a bug in IE 8 with
+			// disabled inputs (#7620)
+			elIsCancel = (typeof this.options.cancel === "string" && event.target.nodeName ? $(event.target).closest(this.options.cancel).length : false);
+		if (!btnIsLeft || elIsCancel || !this._mouseCapture(event)) {
+			return true;
+		}
+
+		this.mouseDelayMet = !this.options.delay;
+		if (!this.mouseDelayMet) {
+			this._mouseDelayTimer = setTimeout(function() {
+				that.mouseDelayMet = true;
+			}, this.options.delay);
+		}
+
+		if (this._mouseDistanceMet(event) && this._mouseDelayMet(event)) {
+			this._mouseStarted = (this._mouseStart(event) !== false);
+			if (!this._mouseStarted) {
+				event.preventDefault();
+				return true;
+			}
+		}
+
+		// Click event may never have fired (Gecko & Opera)
+		if (true === $.data(event.target, this.widgetName + ".preventClickEvent")) {
+			$.removeData(event.target, this.widgetName + ".preventClickEvent");
+		}
+
+		// these delegates are required to keep context
+		this._mouseMoveDelegate = function(event) {
+			return that._mouseMove(event);
+		};
+		this._mouseUpDelegate = function(event) {
+			return that._mouseUp(event);
+		};
+
+		this.document
+			.bind( "mousemove." + this.widgetName, this._mouseMoveDelegate )
+			.bind( "mouseup." + this.widgetName, this._mouseUpDelegate );
+
+		event.preventDefault();
+
+		mouseHandled = true;
+		return true;
+	},
+
+	_mouseMove: function(event) {
+		// Only check for mouseups outside the document if you've moved inside the document
+		// at least once. This prevents the firing of mouseup in the case of IE<9, which will
+		// fire a mousemove event if content is placed under the cursor. See #7778
+		// Support: IE <9
+		if ( this._mouseMoved ) {
+			// IE mouseup check - mouseup happened when mouse was out of window
+			if ($.ui.ie && ( !document.documentMode || document.documentMode < 9 ) && !event.button) {
+				return this._mouseUp(event);
+
+			// Iframe mouseup check - mouseup occurred in another document
+			} else if ( !event.which ) {
+				return this._mouseUp( event );
+			}
+		}
+
+		if ( event.which || event.button ) {
+			this._mouseMoved = true;
+		}
+
+		if (this._mouseStarted) {
+			this._mouseDrag(event);
+			return event.preventDefault();
+		}
+
+		if (this._mouseDistanceMet(event) && this._mouseDelayMet(event)) {
+			this._mouseStarted =
+				(this._mouseStart(this._mouseDownEvent, event) !== false);
+			(this._mouseStarted ? this._mouseDrag(event) : this._mouseUp(event));
+		}
+
+		return !this._mouseStarted;
+	},
+
+	_mouseUp: function(event) {
+		this.document
+			.unbind( "mousemove." + this.widgetName, this._mouseMoveDelegate )
+			.unbind( "mouseup." + this.widgetName, this._mouseUpDelegate );
+
+		if (this._mouseStarted) {
+			this._mouseStarted = false;
+
+			if (event.target === this._mouseDownEvent.target) {
+				$.data(event.target, this.widgetName + ".preventClickEvent", true);
+			}
+
+			this._mouseStop(event);
+		}
+
+		mouseHandled = false;
+		return false;
+	},
+
+	_mouseDistanceMet: function(event) {
+		return (Math.max(
+				Math.abs(this._mouseDownEvent.pageX - event.pageX),
+				Math.abs(this._mouseDownEvent.pageY - event.pageY)
+			) >= this.options.distance
+		);
+	},
+
+	_mouseDelayMet: function(/* event */) {
+		return this.mouseDelayMet;
+	},
+
+	// These are placeholder methods, to be overriden by extending plugin
+	_mouseStart: function(/* event */) {},
+	_mouseDrag: function(/* event */) {},
+	_mouseStop: function(/* event */) {},
+	_mouseCapture: function(/* event */) { return true; }
+});
+
+
+/*!
+ * jQuery UI Position 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/position/
+ */
+
+(function() {
+
+$.ui = $.ui || {};
+
+var cachedScrollbarWidth, supportsOffsetFractions,
+	max = Math.max,
+	abs = Math.abs,
+	round = Math.round,
+	rhorizontal = /left|center|right/,
+	rvertical = /top|center|bottom/,
+	roffset = /[\+\-]\d+(\.[\d]+)?%?/,
+	rposition = /^\w+/,
+	rpercent = /%$/,
+	_position = $.fn.position;
+
+function getOffsets( offsets, width, height ) {
+	return [
+		parseFloat( offsets[ 0 ] ) * ( rpercent.test( offsets[ 0 ] ) ? width / 100 : 1 ),
+		parseFloat( offsets[ 1 ] ) * ( rpercent.test( offsets[ 1 ] ) ? height / 100 : 1 )
+	];
+}
+
+function parseCss( element, property ) {
+	return parseInt( $.css( element, property ), 10 ) || 0;
+}
+
+function getDimensions( elem ) {
+	var raw = elem[0];
+	if ( raw.nodeType === 9 ) {
+		return {
+			width: elem.width(),
+			height: elem.height(),
+			offset: { top: 0, left: 0 }
+		};
+	}
+	if ( $.isWindow( raw ) ) {
+		return {
+			width: elem.width(),
+			height: elem.height(),
+			offset: { top: elem.scrollTop(), left: elem.scrollLeft() }
+		};
+	}
+	if ( raw.preventDefault ) {
+		return {
+			width: 0,
+			height: 0,
+			offset: { top: raw.pageY, left: raw.pageX }
+		};
+	}
+	return {
+		width: elem.outerWidth(),
+		height: elem.outerHeight(),
+		offset: elem.offset()
+	};
+}
+
+$.position = {
+	scrollbarWidth: function() {
+		if ( cachedScrollbarWidth !== undefined ) {
+			return cachedScrollbarWidth;
+		}
+		var w1, w2,
+			div = $( "<div style='display:block;position:absolute;width:50px;height:50px;overflow:hidden;'><div style='height:100px;width:auto;'></div></div>" ),
+			innerDiv = div.children()[0];
+
+		$( "body" ).append( div );
+		w1 = innerDiv.offsetWidth;
+		div.css( "overflow", "scroll" );
+
+		w2 = innerDiv.offsetWidth;
+
+		if ( w1 === w2 ) {
+			w2 = div[0].clientWidth;
+		}
+
+		div.remove();
+
+		return (cachedScrollbarWidth = w1 - w2);
+	},
+	getScrollInfo: function( within ) {
+		var overflowX = within.isWindow || within.isDocument ? "" :
+				within.element.css( "overflow-x" ),
+			overflowY = within.isWindow || within.isDocument ? "" :
+				within.element.css( "overflow-y" ),
+			hasOverflowX = overflowX === "scroll" ||
+				( overflowX === "auto" && within.width < within.element[0].scrollWidth ),
+			hasOverflowY = overflowY === "scroll" ||
+				( overflowY === "auto" && within.height < within.element[0].scrollHeight );
+		return {
+			width: hasOverflowY ? $.position.scrollbarWidth() : 0,
+			height: hasOverflowX ? $.position.scrollbarWidth() : 0
+		};
+	},
+	getWithinInfo: function( element ) {
+		var withinElement = $( element || window ),
+			isWindow = $.isWindow( withinElement[0] ),
+			isDocument = !!withinElement[ 0 ] && withinElement[ 0 ].nodeType === 9;
+		return {
+			element: withinElement,
+			isWindow: isWindow,
+			isDocument: isDocument,
+			offset: withinElement.offset() || { left: 0, top: 0 },
+			scrollLeft: withinElement.scrollLeft(),
+			scrollTop: withinElement.scrollTop(),
+
+			// support: jQuery 1.6.x
+			// jQuery 1.6 doesn't support .outerWidth/Height() on documents or windows
+			width: isWindow || isDocument ? withinElement.width() : withinElement.outerWidth(),
+			height: isWindow || isDocument ? withinElement.height() : withinElement.outerHeight()
+		};
+	}
+};
+
+$.fn.position = function( options ) {
+	if ( !options || !options.of ) {
+		return _position.apply( this, arguments );
+	}
+
+	// make a copy, we don't want to modify arguments
+	options = $.extend( {}, options );
+
+	var atOffset, targetWidth, targetHeight, targetOffset, basePosition, dimensions,
+		target = $( options.of ),
+		within = $.position.getWithinInfo( options.within ),
+		scrollInfo = $.position.getScrollInfo( within ),
+		collision = ( options.collision || "flip" ).split( " " ),
+		offsets = {};
+
+	dimensions = getDimensions( target );
+	if ( target[0].preventDefault ) {
+		// force left top to allow flipping
+		options.at = "left top";
+	}
+	targetWidth = dimensions.width;
+	targetHeight = dimensions.height;
+	targetOffset = dimensions.offset;
+	// clone to reuse original targetOffset later
+	basePosition = $.extend( {}, targetOffset );
+
+	// force my and at to have valid horizontal and vertical positions
+	// if a value is missing or invalid, it will be converted to center
+	$.each( [ "my", "at" ], function() {
+		var pos = ( options[ this ] || "" ).split( " " ),
+			horizontalOffset,
+			verticalOffset;
+
+		if ( pos.length === 1) {
+			pos = rhorizontal.test( pos[ 0 ] ) ?
+				pos.concat( [ "center" ] ) :
+				rvertical.test( pos[ 0 ] ) ?
+					[ "center" ].concat( pos ) :
+					[ "center", "center" ];
+		}
+		pos[ 0 ] = rhorizontal.test( pos[ 0 ] ) ? pos[ 0 ] : "center";
+		pos[ 1 ] = rvertical.test( pos[ 1 ] ) ? pos[ 1 ] : "center";
+
+		// calculate offsets
+		horizontalOffset = roffset.exec( pos[ 0 ] );
+		verticalOffset = roffset.exec( pos[ 1 ] );
+		offsets[ this ] = [
+			horizontalOffset ? horizontalOffset[ 0 ] : 0,
+			verticalOffset ? verticalOffset[ 0 ] : 0
+		];
+
+		// reduce to just the positions without the offsets
+		options[ this ] = [
+			rposition.exec( pos[ 0 ] )[ 0 ],
+			rposition.exec( pos[ 1 ] )[ 0 ]
+		];
+	});
+
+	// normalize collision option
+	if ( collision.length === 1 ) {
+		collision[ 1 ] = collision[ 0 ];
+	}
+
+	if ( options.at[ 0 ] === "right" ) {
+		basePosition.left += targetWidth;
+	} else if ( options.at[ 0 ] === "center" ) {
+		basePosition.left += targetWidth / 2;
+	}
+
+	if ( options.at[ 1 ] === "bottom" ) {
+		basePosition.top += targetHeight;
+	} else if ( options.at[ 1 ] === "center" ) {
+		basePosition.top += targetHeight / 2;
+	}
+
+	atOffset = getOffsets( offsets.at, targetWidth, targetHeight );
+	basePosition.left += atOffset[ 0 ];
+	basePosition.top += atOffset[ 1 ];
+
+	return this.each(function() {
+		var collisionPosition, using,
+			elem = $( this ),
+			elemWidth = elem.outerWidth(),
+			elemHeight = elem.outerHeight(),
+			marginLeft = parseCss( this, "marginLeft" ),
+			marginTop = parseCss( this, "marginTop" ),
+			collisionWidth = elemWidth + marginLeft + parseCss( this, "marginRight" ) + scrollInfo.width,
+			collisionHeight = elemHeight + marginTop + parseCss( this, "marginBottom" ) + scrollInfo.height,
+			position = $.extend( {}, basePosition ),
+			myOffset = getOffsets( offsets.my, elem.outerWidth(), elem.outerHeight() );
+
+		if ( options.my[ 0 ] === "right" ) {
+			position.left -= elemWidth;
+		} else if ( options.my[ 0 ] === "center" ) {
+			position.left -= elemWidth / 2;
+		}
+
+		if ( options.my[ 1 ] === "bottom" ) {
+			position.top -= elemHeight;
+		} else if ( options.my[ 1 ] === "center" ) {
+			position.top -= elemHeight / 2;
+		}
+
+		position.left += myOffset[ 0 ];
+		position.top += myOffset[ 1 ];
+
+		// if the browser doesn't support fractions, then round for consistent results
+		if ( !supportsOffsetFractions ) {
+			position.left = round( position.left );
+			position.top = round( position.top );
+		}
+
+		collisionPosition = {
+			marginLeft: marginLeft,
+			marginTop: marginTop
+		};
+
+		$.each( [ "left", "top" ], function( i, dir ) {
+			if ( $.ui.position[ collision[ i ] ] ) {
+				$.ui.position[ collision[ i ] ][ dir ]( position, {
+					targetWidth: targetWidth,
+					targetHeight: targetHeight,
+					elemWidth: elemWidth,
+					elemHeight: elemHeight,
+					collisionPosition: collisionPosition,
+					collisionWidth: collisionWidth,
+					collisionHeight: collisionHeight,
+					offset: [ atOffset[ 0 ] + myOffset[ 0 ], atOffset [ 1 ] + myOffset[ 1 ] ],
+					my: options.my,
+					at: options.at,
+					within: within,
+					elem: elem
+				});
+			}
+		});
+
+		if ( options.using ) {
+			// adds feedback as second argument to using callback, if present
+			using = function( props ) {
+				var left = targetOffset.left - position.left,
+					right = left + targetWidth - elemWidth,
+					top = targetOffset.top - position.top,
+					bottom = top + targetHeight - elemHeight,
+					feedback = {
+						target: {
+							element: target,
+							left: targetOffset.left,
+							top: targetOffset.top,
+							width: targetWidth,
+							height: targetHeight
+						},
+						element: {
+							element: elem,
+							left: position.left,
+							top: position.top,
+							width: elemWidth,
+							height: elemHeight
+						},
+						horizontal: right < 0 ? "left" : left > 0 ? "right" : "center",
+						vertical: bottom < 0 ? "top" : top > 0 ? "bottom" : "middle"
+					};
+				if ( targetWidth < elemWidth && abs( left + right ) < targetWidth ) {
+					feedback.horizontal = "center";
+				}
+				if ( targetHeight < elemHeight && abs( top + bottom ) < targetHeight ) {
+					feedback.vertical = "middle";
+				}
+				if ( max( abs( left ), abs( right ) ) > max( abs( top ), abs( bottom ) ) ) {
+					feedback.important = "horizontal";
+				} else {
+					feedback.important = "vertical";
+				}
+				options.using.call( this, props, feedback );
+			};
+		}
+
+		elem.offset( $.extend( position, { using: using } ) );
+	});
+};
+
+$.ui.position = {
+	fit: {
+		left: function( position, data ) {
+			var within = data.within,
+				withinOffset = within.isWindow ? within.scrollLeft : within.offset.left,
+				outerWidth = within.width,
+				collisionPosLeft = position.left - data.collisionPosition.marginLeft,
+				overLeft = withinOffset - collisionPosLeft,
+				overRight = collisionPosLeft + data.collisionWidth - outerWidth - withinOffset,
+				newOverRight;
+
+			// element is wider than within
+			if ( data.collisionWidth > outerWidth ) {
+				// element is initially over the left side of within
+				if ( overLeft > 0 && overRight <= 0 ) {
+					newOverRight = position.left + overLeft + data.collisionWidth - outerWidth - withinOffset;
+					position.left += overLeft - newOverRight;
+				// element is initially over right side of within
+				} else if ( overRight > 0 && overLeft <= 0 ) {
+					position.left = withinOffset;
+				// element is initially over both left and right sides of within
+				} else {
+					if ( overLeft > overRight ) {
+						position.left = withinOffset + outerWidth - data.collisionWidth;
+					} else {
+						position.left = withinOffset;
+					}
+				}
+			// too far left -> align with left edge
+			} else if ( overLeft > 0 ) {
+				position.left += overLeft;
+			// too far right -> align with right edge
+			} else if ( overRight > 0 ) {
+				position.left -= overRight;
+			// adjust based on position and margin
+			} else {
+				position.left = max( position.left - collisionPosLeft, position.left );
+			}
+		},
+		top: function( position, data ) {
+			var within = data.within,
+				withinOffset = within.isWindow ? within.scrollTop : within.offset.top,
+				outerHeight = data.within.height,
+				collisionPosTop = position.top - data.collisionPosition.marginTop,
+				overTop = withinOffset - collisionPosTop,
+				overBottom = collisionPosTop + data.collisionHeight - outerHeight - withinOffset,
+				newOverBottom;
+
+			// element is taller than within
+			if ( data.collisionHeight > outerHeight ) {
+				// element is initially over the top of within
+				if ( overTop > 0 && overBottom <= 0 ) {
+					newOverBottom = position.top + overTop + data.collisionHeight - outerHeight - withinOffset;
+					position.top += overTop - newOverBottom;
+				// element is initially over bottom of within
+				} else if ( overBottom > 0 && overTop <= 0 ) {
+					position.top = withinOffset;
+				// element is initially over both top and bottom of within
+				} else {
+					if ( overTop > overBottom ) {
+						position.top = withinOffset + outerHeight - data.collisionHeight;
+					} else {
+						position.top = withinOffset;
+					}
+				}
+			// too far up -> align with top
+			} else if ( overTop > 0 ) {
+				position.top += overTop;
+			// too far down -> align with bottom edge
+			} else if ( overBottom > 0 ) {
+				position.top -= overBottom;
+			// adjust based on position and margin
+			} else {
+				position.top = max( position.top - collisionPosTop, position.top );
+			}
+		}
+	},
+	flip: {
+		left: function( position, data ) {
+			var within = data.within,
+				withinOffset = within.offset.left + within.scrollLeft,
+				outerWidth = within.width,
+				offsetLeft = within.isWindow ? within.scrollLeft : within.offset.left,
+				collisionPosLeft = position.left - data.collisionPosition.marginLeft,
+				overLeft = collisionPosLeft - offsetLeft,
+				overRight = collisionPosLeft + data.collisionWidth - outerWidth - offsetLeft,
+				myOffset = data.my[ 0 ] === "left" ?
+					-data.elemWidth :
+					data.my[ 0 ] === "right" ?
+						data.elemWidth :
+						0,
+				atOffset = data.at[ 0 ] === "left" ?
+					data.targetWidth :
+					data.at[ 0 ] === "right" ?
+						-data.targetWidth :
+						0,
+				offset = -2 * data.offset[ 0 ],
+				newOverRight,
+				newOverLeft;
+
+			if ( overLeft < 0 ) {
+				newOverRight = position.left + myOffset + atOffset + offset + data.collisionWidth - outerWidth - withinOffset;
+				if ( newOverRight < 0 || newOverRight < abs( overLeft ) ) {
+					position.left += myOffset + atOffset + offset;
+				}
+			} else if ( overRight > 0 ) {
+				newOverLeft = position.left - data.collisionPosition.marginLeft + myOffset + atOffset + offset - offsetLeft;
+				if ( newOverLeft > 0 || abs( newOverLeft ) < overRight ) {
+					position.left += myOffset + atOffset + offset;
+				}
+			}
+		},
+		top: function( position, data ) {
+			var within = data.within,
+				withinOffset = within.offset.top + within.scrollTop,
+				outerHeight = within.height,
+				offsetTop = within.isWindow ? within.scrollTop : within.offset.top,
+				collisionPosTop = position.top - data.collisionPosition.marginTop,
+				overTop = collisionPosTop - offsetTop,
+				overBottom = collisionPosTop + data.collisionHeight - outerHeight - offsetTop,
+				top = data.my[ 1 ] === "top",
+				myOffset = top ?
+					-data.elemHeight :
+					data.my[ 1 ] === "bottom" ?
+						data.elemHeight :
+						0,
+				atOffset = data.at[ 1 ] === "top" ?
+					data.targetHeight :
+					data.at[ 1 ] === "bottom" ?
+						-data.targetHeight :
+						0,
+				offset = -2 * data.offset[ 1 ],
+				newOverTop,
+				newOverBottom;
+			if ( overTop < 0 ) {
+				newOverBottom = position.top + myOffset + atOffset + offset + data.collisionHeight - outerHeight - withinOffset;
+				if ( newOverBottom < 0 || newOverBottom < abs( overTop ) ) {
+					position.top += myOffset + atOffset + offset;
+				}
+			} else if ( overBottom > 0 ) {
+				newOverTop = position.top - data.collisionPosition.marginTop + myOffset + atOffset + offset - offsetTop;
+				if ( newOverTop > 0 || abs( newOverTop ) < overBottom ) {
+					position.top += myOffset + atOffset + offset;
+				}
+			}
+		}
+	},
+	flipfit: {
+		left: function() {
+			$.ui.position.flip.left.apply( this, arguments );
+			$.ui.position.fit.left.apply( this, arguments );
+		},
+		top: function() {
+			$.ui.position.flip.top.apply( this, arguments );
+			$.ui.position.fit.top.apply( this, arguments );
+		}
+	}
+};
+
+// fraction support test
+(function() {
+	var testElement, testElementParent, testElementStyle, offsetLeft, i,
+		body = document.getElementsByTagName( "body" )[ 0 ],
+		div = document.createElement( "div" );
+
+	//Create a "fake body" for testing based on method used in jQuery.support
+	testElement = document.createElement( body ? "div" : "body" );
+	testElementStyle = {
+		visibility: "hidden",
+		width: 0,
+		height: 0,
+		border: 0,
+		margin: 0,
+		background: "none"
+	};
+	if ( body ) {
+		$.extend( testElementStyle, {
+			position: "absolute",
+			left: "-1000px",
+			top: "-1000px"
+		});
+	}
+	for ( i in testElementStyle ) {
+		testElement.style[ i ] = testElementStyle[ i ];
+	}
+	testElement.appendChild( div );
+	testElementParent = body || document.documentElement;
+	testElementParent.insertBefore( testElement, testElementParent.firstChild );
+
+	div.style.cssText = "position: absolute; left: 10.7432222px;";
+
+	offsetLeft = $( div ).offset().left;
+	supportsOffsetFractions = offsetLeft > 10 && offsetLeft < 11;
+
+	testElement.innerHTML = "";
+	testElementParent.removeChild( testElement );
+})();
+
+})();
+
+var position = $.ui.position;
+
+
+/*!
+ * jQuery UI Draggable 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/draggable/
+ */
+
+
+$.widget("ui.draggable", $.ui.mouse, {
+	version: "1.11.4",
+	widgetEventPrefix: "drag",
+	options: {
+		addClasses: true,
+		appendTo: "parent",
+		axis: false,
+		connectToSortable: false,
+		containment: false,
+		cursor: "auto",
+		cursorAt: false,
+		grid: false,
+		handle: false,
+		helper: "original",
+		iframeFix: false,
+		opacity: false,
+		refreshPositions: false,
+		revert: false,
+		revertDuration: 500,
+		scope: "default",
+		scroll: true,
+		scrollSensitivity: 20,
+		scrollSpeed: 20,
+		snap: false,
+		snapMode: "both",
+		snapTolerance: 20,
+		stack: false,
+		zIndex: false,
+
+		// callbacks
+		drag: null,
+		start: null,
+		stop: null
+	},
+	_create: function() {
+
+		if ( this.options.helper === "original" ) {
+			this._setPositionRelative();
+		}
+		if (this.options.addClasses){
+			this.element.addClass("ui-draggable");
+		}
+		if (this.options.disabled){
+			this.element.addClass("ui-draggable-disabled");
+		}
+		this._setHandleClassName();
+
+		this._mouseInit();
+	},
+
+	_setOption: function( key, value ) {
+		this._super( key, value );
+		if ( key === "handle" ) {
+			this._removeHandleClassName();
+			this._setHandleClassName();
+		}
+	},
+
+	_destroy: function() {
+		if ( ( this.helper || this.element ).is( ".ui-draggable-dragging" ) ) {
+			this.destroyOnClear = true;
+			return;
+		}
+		this.element.removeClass( "ui-draggable ui-draggable-dragging ui-draggable-disabled" );
+		this._removeHandleClassName();
+		this._mouseDestroy();
+	},
+
+	_mouseCapture: function(event) {
+		var o = this.options;
+
+		this._blurActiveElement( event );
+
+		// among others, prevent a drag on a resizable-handle
+		if (this.helper || o.disabled || $(event.target).closest(".ui-resizable-handle").length > 0) {
+			return false;
+		}
+
+		//Quit if we're not on a valid handle
+		this.handle = this._getHandle(event);
+		if (!this.handle) {
+			return false;
+		}
+
+		this._blockFrames( o.iframeFix === true ? "iframe" : o.iframeFix );
+
+		return true;
+
+	},
+
+	_blockFrames: function( selector ) {
+		this.iframeBlocks = this.document.find( selector ).map(function() {
+			var iframe = $( this );
+
+			return $( "<div>" )
+				.css( "position", "absolute" )
+				.appendTo( iframe.parent() )
+				.outerWidth( iframe.outerWidth() )
+				.outerHeight( iframe.outerHeight() )
+				.offset( iframe.offset() )[ 0 ];
+		});
+	},
+
+	_unblockFrames: function() {
+		if ( this.iframeBlocks ) {
+			this.iframeBlocks.remove();
+			delete this.iframeBlocks;
+		}
+	},
+
+	_blurActiveElement: function( event ) {
+		var document = this.document[ 0 ];
+
+		// Only need to blur if the event occurred on the draggable itself, see #10527
+		if ( !this.handleElement.is( event.target ) ) {
+			return;
+		}
+
+		// support: IE9
+		// IE9 throws an "Unspecified error" accessing document.activeElement from an <iframe>
+		try {
+
+			// Support: IE9, IE10
+			// If the <body> is blurred, IE will switch windows, see #9520
+			if ( document.activeElement && document.activeElement.nodeName.toLowerCase() !== "body" ) {
+
+				// Blur any element that currently has focus, see #4261
+				$( document.activeElement ).blur();
+			}
+		} catch ( error ) {}
+	},
+
+	_mouseStart: function(event) {
+
+		var o = this.options;
+
+		//Create and append the visible helper
+		this.helper = this._createHelper(event);
+
+		this.helper.addClass("ui-draggable-dragging");
+
+		//Cache the helper size
+		this._cacheHelperProportions();
+
+		//If ddmanager is used for droppables, set the global draggable
+		if ($.ui.ddmanager) {
+			$.ui.ddmanager.current = this;
+		}
+
+		/*
+		 * - Position generation -
+		 * This block generates everything position related - it's the core of draggables.
+		 */
+
+		//Cache the margins of the original element
+		this._cacheMargins();
+
+		//Store the helper's css position
+		this.cssPosition = this.helper.css( "position" );
+		this.scrollParent = this.helper.scrollParent( true );
+		this.offsetParent = this.helper.offsetParent();
+		this.hasFixedAncestor = this.helper.parents().filter(function() {
+				return $( this ).css( "position" ) === "fixed";
+			}).length > 0;
+
+		//The element's absolute position on the page minus margins
+		this.positionAbs = this.element.offset();
+		this._refreshOffsets( event );
+
+		//Generate the original position
+		this.originalPosition = this.position = this._generatePosition( event, false );
+		this.originalPageX = event.pageX;
+		this.originalPageY = event.pageY;
+
+		//Adjust the mouse offset relative to the helper if "cursorAt" is supplied
+		(o.cursorAt && this._adjustOffsetFromHelper(o.cursorAt));
+
+		//Set a containment if given in the options
+		this._setContainment();
+
+		//Trigger event + callbacks
+		if (this._trigger("start", event) === false) {
+			this._clear();
+			return false;
+		}
+
+		//Recache the helper size
+		this._cacheHelperProportions();
+
+		//Prepare the droppable offsets
+		if ($.ui.ddmanager && !o.dropBehaviour) {
+			$.ui.ddmanager.prepareOffsets(this, event);
+		}
+
+		// Reset helper's right/bottom css if they're set and set explicit width/height instead
+		// as this prevents resizing of elements with right/bottom set (see #7772)
+		this._normalizeRightBottom();
+
+		this._mouseDrag(event, true); //Execute the drag once - this causes the helper not to be visible before getting its correct position
+
+		//If the ddmanager is used for droppables, inform the manager that dragging has started (see #5003)
+		if ( $.ui.ddmanager ) {
+			$.ui.ddmanager.dragStart(this, event);
+		}
+
+		return true;
+	},
+
+	_refreshOffsets: function( event ) {
+		this.offset = {
+			top: this.positionAbs.top - this.margins.top,
+			left: this.positionAbs.left - this.margins.left,
+			scroll: false,
+			parent: this._getParentOffset(),
+			relative: this._getRelativeOffset()
+		};
+
+		this.offset.click = {
+			left: event.pageX - this.offset.left,
+			top: event.pageY - this.offset.top
+		};
+	},
+
+	_mouseDrag: function(event, noPropagation) {
+		// reset any necessary cached properties (see #5009)
+		if ( this.hasFixedAncestor ) {
+			this.offset.parent = this._getParentOffset();
+		}
+
+		//Compute the helpers position
+		this.position = this._generatePosition( event, true );
+		this.positionAbs = this._convertPositionTo("absolute");
+
+		//Call plugins and callbacks and use the resulting position if something is returned
+		if (!noPropagation) {
+			var ui = this._uiHash();
+			if (this._trigger("drag", event, ui) === false) {
+				this._mouseUp({});
+				return false;
+			}
+			this.position = ui.position;
+		}
+
+		this.helper[ 0 ].style.left = this.position.left + "px";
+		this.helper[ 0 ].style.top = this.position.top + "px";
+
+		if ($.ui.ddmanager) {
+			$.ui.ddmanager.drag(this, event);
+		}
+
+		return false;
+	},
+
+	_mouseStop: function(event) {
+
+		//If we are using droppables, inform the manager about the drop
+		var that = this,
+			dropped = false;
+		if ($.ui.ddmanager && !this.options.dropBehaviour) {
+			dropped = $.ui.ddmanager.drop(this, event);
+		}
+
+		//if a drop comes from outside (a sortable)
+		if (this.dropped) {
+			dropped = this.dropped;
+			this.dropped = false;
+		}
+
+		if ((this.options.revert === "invalid" && !dropped) || (this.options.revert === "valid" && dropped) || this.options.revert === true || ($.isFunction(this.options.revert) && this.options.revert.call(this.element, dropped))) {
+			$(this.helper).animate(this.originalPosition, parseInt(this.options.revertDuration, 10), function() {
+				if (that._trigger("stop", event) !== false) {
+					that._clear();
+				}
+			});
+		} else {
+			if (this._trigger("stop", event) !== false) {
+				this._clear();
+			}
+		}
+
+		return false;
+	},
+
+	_mouseUp: function( event ) {
+		this._unblockFrames();
+
+		//If the ddmanager is used for droppables, inform the manager that dragging has stopped (see #5003)
+		if ( $.ui.ddmanager ) {
+			$.ui.ddmanager.dragStop(this, event);
+		}
+
+		// Only need to focus if the event occurred on the draggable itself, see #10527
+		if ( this.handleElement.is( event.target ) ) {
+			// The interaction is over; whether or not the click resulted in a drag, focus the element
+			this.element.focus();
+		}
+
+		return $.ui.mouse.prototype._mouseUp.call(this, event);
+	},
+
+	cancel: function() {
+
+		if (this.helper.is(".ui-draggable-dragging")) {
+			this._mouseUp({});
+		} else {
+			this._clear();
+		}
+
+		return this;
+
+	},
+
+	_getHandle: function(event) {
+		return this.options.handle ?
+			!!$( event.target ).closest( this.element.find( this.options.handle ) ).length :
+			true;
+	},
+
+	_setHandleClassName: function() {
+		this.handleElement = this.options.handle ?
+			this.element.find( this.options.handle ) : this.element;
+		this.handleElement.addClass( "ui-draggable-handle" );
+	},
+
+	_removeHandleClassName: function() {
+		this.handleElement.removeClass( "ui-draggable-handle" );
+	},
+
+	_createHelper: function(event) {
+
+		var o = this.options,
+			helperIsFunction = $.isFunction( o.helper ),
+			helper = helperIsFunction ?
+				$( o.helper.apply( this.element[ 0 ], [ event ] ) ) :
+				( o.helper === "clone" ?
+					this.element.clone().removeAttr( "id" ) :
+					this.element );
+
+		if (!helper.parents("body").length) {
+			helper.appendTo((o.appendTo === "parent" ? this.element[0].parentNode : o.appendTo));
+		}
+
+		// http://bugs.jqueryui.com/ticket/9446
+		// a helper function can return the original element
+		// which wouldn't have been set to relative in _create
+		if ( helperIsFunction && helper[ 0 ] === this.element[ 0 ] ) {
+			this._setPositionRelative();
+		}
+
+		if (helper[0] !== this.element[0] && !(/(fixed|absolute)/).test(helper.css("position"))) {
+			helper.css("position", "absolute");
+		}
+
+		return helper;
+
+	},
+
+	_setPositionRelative: function() {
+		if ( !( /^(?:r|a|f)/ ).test( this.element.css( "position" ) ) ) {
+			this.element[ 0 ].style.position = "relative";
+		}
+	},
+
+	_adjustOffsetFromHelper: function(obj) {
+		if (typeof obj === "string") {
+			obj = obj.split(" ");
+		}
+		if ($.isArray(obj)) {
+			obj = { left: +obj[0], top: +obj[1] || 0 };
+		}
+		if ("left" in obj) {
+			this.offset.click.left = obj.left + this.margins.left;
+		}
+		if ("right" in obj) {
+			this.offset.click.left = this.helperProportions.width - obj.right + this.margins.left;
+		}
+		if ("top" in obj) {
+			this.offset.click.top = obj.top + this.margins.top;
+		}
+		if ("bottom" in obj) {
+			this.offset.click.top = this.helperProportions.height - obj.bottom + this.margins.top;
+		}
+	},
+
+	_isRootNode: function( element ) {
+		return ( /(html|body)/i ).test( element.tagName ) || element === this.document[ 0 ];
+	},
+
+	_getParentOffset: function() {
+
+		//Get the offsetParent and cache its position
+		var po = this.offsetParent.offset(),
+			document = this.document[ 0 ];
+
+		// This is a special case where we need to modify a offset calculated on start, since the following happened:
+		// 1. The position of the helper is absolute, so it's position is calculated based on the next positioned parent
+		// 2. The actual offset parent is a child of the scroll parent, and the scroll parent isn't the document, which means that
+		//    the scroll is included in the initial calculation of the offset of the parent, and never recalculated upon drag
+		if (this.cssPosition === "absolute" && this.scrollParent[0] !== document && $.contains(this.scrollParent[0], this.offsetParent[0])) {
+			po.left += this.scrollParent.scrollLeft();
+			po.top += this.scrollParent.scrollTop();
+		}
+
+		if ( this._isRootNode( this.offsetParent[ 0 ] ) ) {
+			po = { top: 0, left: 0 };
+		}
+
+		return {
+			top: po.top + (parseInt(this.offsetParent.css("borderTopWidth"), 10) || 0),
+			left: po.left + (parseInt(this.offsetParent.css("borderLeftWidth"), 10) || 0)
+		};
+
+	},
+
+	_getRelativeOffset: function() {
+		if ( this.cssPosition !== "relative" ) {
+			return { top: 0, left: 0 };
+		}
+
+		var p = this.element.position(),
+			scrollIsRootNode = this._isRootNode( this.scrollParent[ 0 ] );
+
+		return {
+			top: p.top - ( parseInt(this.helper.css( "top" ), 10) || 0 ) + ( !scrollIsRootNode ? this.scrollParent.scrollTop() : 0 ),
+			left: p.left - ( parseInt(this.helper.css( "left" ), 10) || 0 ) + ( !scrollIsRootNode ? this.scrollParent.scrollLeft() : 0 )
+		};
+
+	},
+
+	_cacheMargins: function() {
+		this.margins = {
+			left: (parseInt(this.element.css("marginLeft"), 10) || 0),
+			top: (parseInt(this.element.css("marginTop"), 10) || 0),
+			right: (parseInt(this.element.css("marginRight"), 10) || 0),
+			bottom: (parseInt(this.element.css("marginBottom"), 10) || 0)
+		};
+	},
+
+	_cacheHelperProportions: function() {
+		this.helperProportions = {
+			width: this.helper.outerWidth(),
+			height: this.helper.outerHeight()
+		};
+	},
+
+	_setContainment: function() {
+
+		var isUserScrollable, c, ce,
+			o = this.options,
+			document = this.document[ 0 ];
+
+		this.relativeContainer = null;
+
+		if ( !o.containment ) {
+			this.containment = null;
+			return;
+		}
+
+		if ( o.containment === "window" ) {
+			this.containment = [
+				$( window ).scrollLeft() - this.offset.relative.left - this.offset.parent.left,
+				$( window ).scrollTop() - this.offset.relative.top - this.offset.parent.top,
+				$( window ).scrollLeft() + $( window ).width() - this.helperProportions.width - this.margins.left,
+				$( window ).scrollTop() + ( $( window ).height() || document.body.parentNode.scrollHeight ) - this.helperProportions.height - this.margins.top
+			];
+			return;
+		}
+
+		if ( o.containment === "document") {
+			this.containment = [
+				0,
+				0,
+				$( document ).width() - this.helperProportions.width - this.margins.left,
+				( $( document ).height() || document.body.parentNode.scrollHeight ) - this.helperProportions.height - this.margins.top
+			];
+			return;
+		}
+
+		if ( o.containment.constructor === Array ) {
+			this.containment = o.containment;
+			return;
+		}
+
+		if ( o.containment === "parent" ) {
+			o.containment = this.helper[ 0 ].parentNode;
+		}
+
+		c = $( o.containment );
+		ce = c[ 0 ];
+
+		if ( !ce ) {
+			return;
+		}
+
+		isUserScrollable = /(scroll|auto)/.test( c.css( "overflow" ) );
+
+		this.containment = [
+			( parseInt( c.css( "borderLeftWidth" ), 10 ) || 0 ) + ( parseInt( c.css( "paddingLeft" ), 10 ) || 0 ),
+			( parseInt( c.css( "borderTopWidth" ), 10 ) || 0 ) + ( parseInt( c.css( "paddingTop" ), 10 ) || 0 ),
+			( isUserScrollable ? Math.max( ce.scrollWidth, ce.offsetWidth ) : ce.offsetWidth ) -
+				( parseInt( c.css( "borderRightWidth" ), 10 ) || 0 ) -
+				( parseInt( c.css( "paddingRight" ), 10 ) || 0 ) -
+				this.helperProportions.width -
+				this.margins.left -
+				this.margins.right,
+			( isUserScrollable ? Math.max( ce.scrollHeight, ce.offsetHeight ) : ce.offsetHeight ) -
+				( parseInt( c.css( "borderBottomWidth" ), 10 ) || 0 ) -
+				( parseInt( c.css( "paddingBottom" ), 10 ) || 0 ) -
+				this.helperProportions.height -
+				this.margins.top -
+				this.margins.bottom
+		];
+		this.relativeContainer = c;
+	},
+
+	_convertPositionTo: function(d, pos) {
+
+		if (!pos) {
+			pos = this.position;
+		}
+
+		var mod = d === "absolute" ? 1 : -1,
+			scrollIsRootNode = this._isRootNode( this.scrollParent[ 0 ] );
+
+		return {
+			top: (
+				pos.top	+																// The absolute mouse position
+				this.offset.relative.top * mod +										// Only for relative positioned nodes: Relative offset from element to offset parent
+				this.offset.parent.top * mod -										// The offsetParent's offset without borders (offset + border)
+				( ( this.cssPosition === "fixed" ? -this.offset.scroll.top : ( scrollIsRootNode ? 0 : this.offset.scroll.top ) ) * mod)
+			),
+			left: (
+				pos.left +																// The absolute mouse position
+				this.offset.relative.left * mod +										// Only for relative positioned nodes: Relative offset from element to offset parent
+				this.offset.parent.left * mod	-										// The offsetParent's offset without borders (offset + border)
+				( ( this.cssPosition === "fixed" ? -this.offset.scroll.left : ( scrollIsRootNode ? 0 : this.offset.scroll.left ) ) * mod)
+			)
+		};
+
+	},
+
+	_generatePosition: function( event, constrainPosition ) {
+
+		var containment, co, top, left,
+			o = this.options,
+			scrollIsRootNode = this._isRootNode( this.scrollParent[ 0 ] ),
+			pageX = event.pageX,
+			pageY = event.pageY;
+
+		// Cache the scroll
+		if ( !scrollIsRootNode || !this.offset.scroll ) {
+			this.offset.scroll = {
+				top: this.scrollParent.scrollTop(),
+				left: this.scrollParent.scrollLeft()
+			};
+		}
+
+		/*
+		 * - Position constraining -
+		 * Constrain the position to a mix of grid, containment.
+		 */
+
+		// If we are not dragging yet, we won't check for options
+		if ( constrainPosition ) {
+			if ( this.containment ) {
+				if ( this.relativeContainer ){
+					co = this.relativeContainer.offset();
+					containment = [
+						this.containment[ 0 ] + co.left,
+						this.containment[ 1 ] + co.top,
+						this.containment[ 2 ] + co.left,
+						this.containment[ 3 ] + co.top
+					];
+				} else {
+					containment = this.containment;
+				}
+
+				if (event.pageX - this.offset.click.left < containment[0]) {
+					pageX = containment[0] + this.offset.click.left;
+				}
+				if (event.pageY - this.offset.click.top < containment[1]) {
+					pageY = containment[1] + this.offset.click.top;
+				}
+				if (event.pageX - this.offset.click.left > containment[2]) {
+					pageX = containment[2] + this.offset.click.left;
+				}
+				if (event.pageY - this.offset.click.top > containment[3]) {
+					pageY = containment[3] + this.offset.click.top;
+				}
+			}
+
+			if (o.grid) {
+				//Check for grid elements set to 0 to prevent divide by 0 error causing invalid argument errors in IE (see ticket #6950)
+				top = o.grid[1] ? this.originalPageY + Math.round((pageY - this.originalPageY) / o.grid[1]) * o.grid[1] : this.originalPageY;
+				pageY = containment ? ((top - this.offset.click.top >= containment[1] || top - this.offset.click.top > containment[3]) ? top : ((top - this.offset.click.top >= containment[1]) ? top - o.grid[1] : top + o.grid[1])) : top;
+
+				left = o.grid[0] ? this.originalPageX + Math.round((pageX - this.originalPageX) / o.grid[0]) * o.grid[0] : this.originalPageX;
+				pageX = containment ? ((left - this.offset.click.left >= containment[0] || left - this.offset.click.left > containment[2]) ? left : ((left - this.offset.click.left >= containment[0]) ? left - o.grid[0] : left + o.grid[0])) : left;
+			}
+
+			if ( o.axis === "y" ) {
+				pageX = this.originalPageX;
+			}
+
+			if ( o.axis === "x" ) {
+				pageY = this.originalPageY;
+			}
+		}
+
+		return {
+			top: (
+				pageY -																	// The absolute mouse position
+				this.offset.click.top	-												// Click offset (relative to the element)
+				this.offset.relative.top -												// Only for relative positioned nodes: Relative offset from element to offset parent
+				this.offset.parent.top +												// The offsetParent's offset without borders (offset + border)
+				( this.cssPosition === "fixed" ? -this.offset.scroll.top : ( scrollIsRootNode ? 0 : this.offset.scroll.top ) )
+			),
+			left: (
+				pageX -																	// The absolute mouse position
+				this.offset.click.left -												// Click offset (relative to the element)
+				this.offset.relative.left -												// Only for relative positioned nodes: Relative offset from element to offset parent
+				this.offset.parent.left +												// The offsetParent's offset without borders (offset + border)
+				( this.cssPosition === "fixed" ? -this.offset.scroll.left : ( scrollIsRootNode ? 0 : this.offset.scroll.left ) )
+			)
+		};
+
+	},
+
+	_clear: function() {
+		this.helper.removeClass("ui-draggable-dragging");
+		if (this.helper[0] !== this.element[0] && !this.cancelHelperRemoval) {
+			this.helper.remove();
+		}
+		this.helper = null;
+		this.cancelHelperRemoval = false;
+		if ( this.destroyOnClear ) {
+			this.destroy();
+		}
+	},
+
+	_normalizeRightBottom: function() {
+		if ( this.options.axis !== "y" && this.helper.css( "right" ) !== "auto" ) {
+			this.helper.width( this.helper.width() );
+			this.helper.css( "right", "auto" );
+		}
+		if ( this.options.axis !== "x" && this.helper.css( "bottom" ) !== "auto" ) {
+			this.helper.height( this.helper.height() );
+			this.helper.css( "bottom", "auto" );
+		}
+	},
+
+	// From now on bulk stuff - mainly helpers
+
+	_trigger: function( type, event, ui ) {
+		ui = ui || this._uiHash();
+		$.ui.plugin.call( this, type, [ event, ui, this ], true );
+
+		// Absolute position and offset (see #6884 ) have to be recalculated after plugins
+		if ( /^(drag|start|stop)/.test( type ) ) {
+			this.positionAbs = this._convertPositionTo( "absolute" );
+			ui.offset = this.positionAbs;
+		}
+		return $.Widget.prototype._trigger.call( this, type, event, ui );
+	},
+
+	plugins: {},
+
+	_uiHash: function() {
+		return {
+			helper: this.helper,
+			position: this.position,
+			originalPosition: this.originalPosition,
+			offset: this.positionAbs
+		};
+	}
+
+});
+
+$.ui.plugin.add( "draggable", "connectToSortable", {
+	start: function( event, ui, draggable ) {
+		var uiSortable = $.extend( {}, ui, {
+			item: draggable.element
+		});
+
+		draggable.sortables = [];
+		$( draggable.options.connectToSortable ).each(function() {
+			var sortable = $( this ).sortable( "instance" );
+
+			if ( sortable && !sortable.options.disabled ) {
+				draggable.sortables.push( sortable );
+
+				// refreshPositions is called at drag start to refresh the containerCache
+				// which is used in drag. This ensures it's initialized and synchronized
+				// with any changes that might have happened on the page since initialization.
+				sortable.refreshPositions();
+				sortable._trigger("activate", event, uiSortable);
+			}
+		});
+	},
+	stop: function( event, ui, draggable ) {
+		var uiSortable = $.extend( {}, ui, {
+			item: draggable.element
+		});
+
+		draggable.cancelHelperRemoval = false;
+
+		$.each( draggable.sortables, function() {
+			var sortable = this;
+
+			if ( sortable.isOver ) {
+				sortable.isOver = 0;
+
+				// Allow this sortable to handle removing the helper
+				draggable.cancelHelperRemoval = true;
+				sortable.cancelHelperRemoval = false;
+
+				// Use _storedCSS To restore properties in the sortable,
+				// as this also handles revert (#9675) since the draggable
+				// may have modified them in unexpected ways (#8809)
+				sortable._storedCSS = {
+					position: sortable.placeholder.css( "position" ),
+					top: sortable.placeholder.css( "top" ),
+					left: sortable.placeholder.css( "left" )
+				};
+
+				sortable._mouseStop(event);
+
+				// Once drag has ended, the sortable should return to using
+				// its original helper, not the shared helper from draggable
+				sortable.options.helper = sortable.options._helper;
+			} else {
+				// Prevent this Sortable from removing the helper.
+				// However, don't set the draggable to remove the helper
+				// either as another connected Sortable may yet handle the removal.
+				sortable.cancelHelperRemoval = true;
+
+				sortable._trigger( "deactivate", event, uiSortable );
+			}
+		});
+	},
+	drag: function( event, ui, draggable ) {
+		$.each( draggable.sortables, function() {
+			var innermostIntersecting = false,
+				sortable = this;
+
+			// Copy over variables that sortable's _intersectsWith uses
+			sortable.positionAbs = draggable.positionAbs;
+			sortable.helperProportions = draggable.helperProportions;
+			sortable.offset.click = draggable.offset.click;
+
+			if ( sortable._intersectsWith( sortable.containerCache ) ) {
+				innermostIntersecting = true;
+
+				$.each( draggable.sortables, function() {
+					// Copy over variables that sortable's _intersectsWith uses
+					this.positionAbs = draggable.positionAbs;
+					this.helperProportions = draggable.helperProportions;
+					this.offset.click = draggable.offset.click;
+
+					if ( this !== sortable &&
+							this._intersectsWith( this.containerCache ) &&
+							$.contains( sortable.element[ 0 ], this.element[ 0 ] ) ) {
+						innermostIntersecting = false;
+					}
+
+					return innermostIntersecting;
+				});
+			}
+
+			if ( innermostIntersecting ) {
+				// If it intersects, we use a little isOver variable and set it once,
+				// so that the move-in stuff gets fired only once.
+				if ( !sortable.isOver ) {
+					sortable.isOver = 1;
+
+					// Store draggable's parent in case we need to reappend to it later.
+					draggable._parent = ui.helper.parent();
+
+					sortable.currentItem = ui.helper
+						.appendTo( sortable.element )
+						.data( "ui-sortable-item", true );
+
+					// Store helper option to later restore it
+					sortable.options._helper = sortable.options.helper;
+
+					sortable.options.helper = function() {
+						return ui.helper[ 0 ];
+					};
+
+					// Fire the start events of the sortable with our passed browser event,
+					// and our own helper (so it doesn't create a new one)
+					event.target = sortable.currentItem[ 0 ];
+					sortable._mouseCapture( event, true );
+					sortable._mouseStart( event, true, true );
+
+					// Because the browser event is way off the new appended portlet,
+					// modify necessary variables to reflect the changes
+					sortable.offset.click.top = draggable.offset.click.top;
+					sortable.offset.click.left = draggable.offset.click.left;
+					sortable.offset.parent.left -= draggable.offset.parent.left -
+						sortable.offset.parent.left;
+					sortable.offset.parent.top -= draggable.offset.parent.top -
+						sortable.offset.parent.top;
+
+					draggable._trigger( "toSortable", event );
+
+					// Inform draggable that the helper is in a valid drop zone,
+					// used solely in the revert option to handle "valid/invalid".
+					draggable.dropped = sortable.element;
+
+					// Need to refreshPositions of all sortables in the case that
+					// adding to one sortable changes the location of the other sortables (#9675)
+					$.each( draggable.sortables, function() {
+						this.refreshPositions();
+					});
+
+					// hack so receive/update callbacks work (mostly)
+					draggable.currentItem = draggable.element;
+					sortable.fromOutside = draggable;
+				}
+
+				if ( sortable.currentItem ) {
+					sortable._mouseDrag( event );
+					// Copy the sortable's position because the draggable's can potentially reflect
+					// a relative position, while sortable is always absolute, which the dragged
+					// element has now become. (#8809)
+					ui.position = sortable.position;
+				}
+			} else {
+				// If it doesn't intersect with the sortable, and it intersected before,
+				// we fake the drag stop of the sortable, but make sure it doesn't remove
+				// the helper by using cancelHelperRemoval.
+				if ( sortable.isOver ) {
+
+					sortable.isOver = 0;
+					sortable.cancelHelperRemoval = true;
+
+					// Calling sortable's mouseStop would trigger a revert,
+					// so revert must be temporarily false until after mouseStop is called.
+					sortable.options._revert = sortable.options.revert;
+					sortable.options.revert = false;
+
+					sortable._trigger( "out", event, sortable._uiHash( sortable ) );
+					sortable._mouseStop( event, true );
+
+					// restore sortable behaviors that were modfied
+					// when the draggable entered the sortable area (#9481)
+					sortable.options.revert = sortable.options._revert;
+					sortable.options.helper = sortable.options._helper;
+
+					if ( sortable.placeholder ) {
+						sortable.placeholder.remove();
+					}
+
+					// Restore and recalculate the draggable's offset considering the sortable
+					// may have modified them in unexpected ways. (#8809, #10669)
+					ui.helper.appendTo( draggable._parent );
+					draggable._refreshOffsets( event );
+					ui.position = draggable._generatePosition( event, true );
+
+					draggable._trigger( "fromSortable", event );
+
+					// Inform draggable that the helper is no longer in a valid drop zone
+					draggable.dropped = false;
+
+					// Need to refreshPositions of all sortables just in case removing
+					// from one sortable changes the location of other sortables (#9675)
+					$.each( draggable.sortables, function() {
+						this.refreshPositions();
+					});
+				}
+			}
+		});
+	}
+});
+
+$.ui.plugin.add("draggable", "cursor", {
+	start: function( event, ui, instance ) {
+		var t = $( "body" ),
+			o = instance.options;
+
+		if (t.css("cursor")) {
+			o._cursor = t.css("cursor");
+		}
+		t.css("cursor", o.cursor);
+	},
+	stop: function( event, ui, instance ) {
+		var o = instance.options;
+		if (o._cursor) {
+			$("body").css("cursor", o._cursor);
+		}
+	}
+});
+
+$.ui.plugin.add("draggable", "opacity", {
+	start: function( event, ui, instance ) {
+		var t = $( ui.helper ),
+			o = instance.options;
+		if (t.css("opacity")) {
+			o._opacity = t.css("opacity");
+		}
+		t.css("opacity", o.opacity);
+	},
+	stop: function( event, ui, instance ) {
+		var o = instance.options;
+		if (o._opacity) {
+			$(ui.helper).css("opacity", o._opacity);
+		}
+	}
+});
+
+$.ui.plugin.add("draggable", "scroll", {
+	start: function( event, ui, i ) {
+		if ( !i.scrollParentNotHidden ) {
+			i.scrollParentNotHidden = i.helper.scrollParent( false );
+		}
+
+		if ( i.scrollParentNotHidden[ 0 ] !== i.document[ 0 ] && i.scrollParentNotHidden[ 0 ].tagName !== "HTML" ) {
+			i.overflowOffset = i.scrollParentNotHidden.offset();
+		}
+	},
+	drag: function( event, ui, i  ) {
+
+		var o = i.options,
+			scrolled = false,
+			scrollParent = i.scrollParentNotHidden[ 0 ],
+			document = i.document[ 0 ];
+
+		if ( scrollParent !== document && scrollParent.tagName !== "HTML" ) {
+			if ( !o.axis || o.axis !== "x" ) {
+				if ( ( i.overflowOffset.top + scrollParent.offsetHeight ) - event.pageY < o.scrollSensitivity ) {
+					scrollParent.scrollTop = scrolled = scrollParent.scrollTop + o.scrollSpeed;
+				} else if ( event.pageY - i.overflowOffset.top < o.scrollSensitivity ) {
+					scrollParent.scrollTop = scrolled = scrollParent.scrollTop - o.scrollSpeed;
+				}
+			}
+
+			if ( !o.axis || o.axis !== "y" ) {
+				if ( ( i.overflowOffset.left + scrollParent.offsetWidth ) - event.pageX < o.scrollSensitivity ) {
+					scrollParent.scrollLeft = scrolled = scrollParent.scrollLeft + o.scrollSpeed;
+				} else if ( event.pageX - i.overflowOffset.left < o.scrollSensitivity ) {
+					scrollParent.scrollLeft = scrolled = scrollParent.scrollLeft - o.scrollSpeed;
+				}
+			}
+
+		} else {
+
+			if (!o.axis || o.axis !== "x") {
+				if (event.pageY - $(document).scrollTop() < o.scrollSensitivity) {
+					scrolled = $(document).scrollTop($(document).scrollTop() - o.scrollSpeed);
+				} else if ($(window).height() - (event.pageY - $(document).scrollTop()) < o.scrollSensitivity) {
+					scrolled = $(document).scrollTop($(document).scrollTop() + o.scrollSpeed);
+				}
+			}
+
+			if (!o.axis || o.axis !== "y") {
+				if (event.pageX - $(document).scrollLeft() < o.scrollSensitivity) {
+					scrolled = $(document).scrollLeft($(document).scrollLeft() - o.scrollSpeed);
+				} else if ($(window).width() - (event.pageX - $(document).scrollLeft()) < o.scrollSensitivity) {
+					scrolled = $(document).scrollLeft($(document).scrollLeft() + o.scrollSpeed);
+				}
+			}
+
+		}
+
+		if (scrolled !== false && $.ui.ddmanager && !o.dropBehaviour) {
+			$.ui.ddmanager.prepareOffsets(i, event);
+		}
+
+	}
+});
+
+$.ui.plugin.add("draggable", "snap", {
+	start: function( event, ui, i ) {
+
+		var o = i.options;
+
+		i.snapElements = [];
+
+		$(o.snap.constructor !== String ? ( o.snap.items || ":data(ui-draggable)" ) : o.snap).each(function() {
+			var $t = $(this),
+				$o = $t.offset();
+			if (this !== i.element[0]) {
+				i.snapElements.push({
+					item: this,
+					width: $t.outerWidth(), height: $t.outerHeight(),
+					top: $o.top, left: $o.left
+				});
+			}
+		});
+
+	},
+	drag: function( event, ui, inst ) {
+
+		var ts, bs, ls, rs, l, r, t, b, i, first,
+			o = inst.options,
+			d = o.snapTolerance,
+			x1 = ui.offset.left, x2 = x1 + inst.helperProportions.width,
+			y1 = ui.offset.top, y2 = y1 + inst.helperProportions.height;
+
+		for (i = inst.snapElements.length - 1; i >= 0; i--){
+
+			l = inst.snapElements[i].left - inst.margins.left;
+			r = l + inst.snapElements[i].width;
+			t = inst.snapElements[i].top - inst.margins.top;
+			b = t + inst.snapElements[i].height;
+
+			if ( x2 < l - d || x1 > r + d || y2 < t - d || y1 > b + d || !$.contains( inst.snapElements[ i ].item.ownerDocument, inst.snapElements[ i ].item ) ) {
+				if (inst.snapElements[i].snapping) {
+					(inst.options.snap.release && inst.options.snap.release.call(inst.element, event, $.extend(inst._uiHash(), { snapItem: inst.snapElements[i].item })));
+				}
+				inst.snapElements[i].snapping = false;
+				continue;
+			}
+
+			if (o.snapMode !== "inner") {
+				ts = Math.abs(t - y2) <= d;
+				bs = Math.abs(b - y1) <= d;
+				ls = Math.abs(l - x2) <= d;
+				rs = Math.abs(r - x1) <= d;
+				if (ts) {
+					ui.position.top = inst._convertPositionTo("relative", { top: t - inst.helperProportions.height, left: 0 }).top;
+				}
+				if (bs) {
+					ui.position.top = inst._convertPositionTo("relative", { top: b, left: 0 }).top;
+				}
+				if (ls) {
+					ui.position.left = inst._convertPositionTo("relative", { top: 0, left: l - inst.helperProportions.width }).left;
+				}
+				if (rs) {
+					ui.position.left = inst._convertPositionTo("relative", { top: 0, left: r }).left;
+				}
+			}
+
+			first = (ts || bs || ls || rs);
+
+			if (o.snapMode !== "outer") {
+				ts = Math.abs(t - y1) <= d;
+				bs = Math.abs(b - y2) <= d;
+				ls = Math.abs(l - x1) <= d;
+				rs = Math.abs(r - x2) <= d;
+				if (ts) {
+					ui.position.top = inst._convertPositionTo("relative", { top: t, left: 0 }).top;
+				}
+				if (bs) {
+					ui.position.top = inst._convertPositionTo("relative", { top: b - inst.helperProportions.height, left: 0 }).top;
+				}
+				if (ls) {
+					ui.position.left = inst._convertPositionTo("relative", { top: 0, left: l }).left;
+				}
+				if (rs) {
+					ui.position.left = inst._convertPositionTo("relative", { top: 0, left: r - inst.helperProportions.width }).left;
+				}
+			}
+
+			if (!inst.snapElements[i].snapping && (ts || bs || ls || rs || first)) {
+				(inst.options.snap.snap && inst.options.snap.snap.call(inst.element, event, $.extend(inst._uiHash(), { snapItem: inst.snapElements[i].item })));
+			}
+			inst.snapElements[i].snapping = (ts || bs || ls || rs || first);
+
+		}
+
+	}
+});
+
+$.ui.plugin.add("draggable", "stack", {
+	start: function( event, ui, instance ) {
+		var min,
+			o = instance.options,
+			group = $.makeArray($(o.stack)).sort(function(a, b) {
+				return (parseInt($(a).css("zIndex"), 10) || 0) - (parseInt($(b).css("zIndex"), 10) || 0);
+			});
+
+		if (!group.length) { return; }
+
+		min = parseInt($(group[0]).css("zIndex"), 10) || 0;
+		$(group).each(function(i) {
+			$(this).css("zIndex", min + i);
+		});
+		this.css("zIndex", (min + group.length));
+	}
+});
+
+$.ui.plugin.add("draggable", "zIndex", {
+	start: function( event, ui, instance ) {
+		var t = $( ui.helper ),
+			o = instance.options;
+
+		if (t.css("zIndex")) {
+			o._zIndex = t.css("zIndex");
+		}
+		t.css("zIndex", o.zIndex);
+	},
+	stop: function( event, ui, instance ) {
+		var o = instance.options;
+
+		if (o._zIndex) {
+			$(ui.helper).css("zIndex", o._zIndex);
+		}
+	}
+});
+
+var draggable = $.ui.draggable;
+
+
+/*!
+ * jQuery UI Droppable 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/droppable/
+ */
+
+
+$.widget( "ui.droppable", {
+	version: "1.11.4",
+	widgetEventPrefix: "drop",
+	options: {
+		accept: "*",
+		activeClass: false,
+		addClasses: true,
+		greedy: false,
+		hoverClass: false,
+		scope: "default",
+		tolerance: "intersect",
+
+		// callbacks
+		activate: null,
+		deactivate: null,
+		drop: null,
+		out: null,
+		over: null
+	},
+	_create: function() {
+
+		var proportions,
+			o = this.options,
+			accept = o.accept;
+
+		this.isover = false;
+		this.isout = true;
+
+		this.accept = $.isFunction( accept ) ? accept : function( d ) {
+			return d.is( accept );
+		};
+
+		this.proportions = function( /* valueToWrite */ ) {
+			if ( arguments.length ) {
+				// Store the droppable's proportions
+				proportions = arguments[ 0 ];
+			} else {
+				// Retrieve or derive the droppable's proportions
+				return proportions ?
+					proportions :
+					proportions = {
+						width: this.element[ 0 ].offsetWidth,
+						height: this.element[ 0 ].offsetHeight
+					};
+			}
+		};
+
+		this._addToManager( o.scope );
+
+		o.addClasses && this.element.addClass( "ui-droppable" );
+
+	},
+
+	_addToManager: function( scope ) {
+		// Add the reference and positions to the manager
+		$.ui.ddmanager.droppables[ scope ] = $.ui.ddmanager.droppables[ scope ] || [];
+		$.ui.ddmanager.droppables[ scope ].push( this );
+	},
+
+	_splice: function( drop ) {
+		var i = 0;
+		for ( ; i < drop.length; i++ ) {
+			if ( drop[ i ] === this ) {
+				drop.splice( i, 1 );
+			}
+		}
+	},
+
+	_destroy: function() {
+		var drop = $.ui.ddmanager.droppables[ this.options.scope ];
+
+		this._splice( drop );
+
+		this.element.removeClass( "ui-droppable ui-droppable-disabled" );
+	},
+
+	_setOption: function( key, value ) {
+
+		if ( key === "accept" ) {
+			this.accept = $.isFunction( value ) ? value : function( d ) {
+				return d.is( value );
+			};
+		} else if ( key === "scope" ) {
+			var drop = $.ui.ddmanager.droppables[ this.options.scope ];
+
+			this._splice( drop );
+			this._addToManager( value );
+		}
+
+		this._super( key, value );
+	},
+
+	_activate: function( event ) {
+		var draggable = $.ui.ddmanager.current;
+		if ( this.options.activeClass ) {
+			this.element.addClass( this.options.activeClass );
+		}
+		if ( draggable ){
+			this._trigger( "activate", event, this.ui( draggable ) );
+		}
+	},
+
+	_deactivate: function( event ) {
+		var draggable = $.ui.ddmanager.current;
+		if ( this.options.activeClass ) {
+			this.element.removeClass( this.options.activeClass );
+		}
+		if ( draggable ){
+			this._trigger( "deactivate", event, this.ui( draggable ) );
+		}
+	},
+
+	_over: function( event ) {
+
+		var draggable = $.ui.ddmanager.current;
+
+		// Bail if draggable and droppable are same element
+		if ( !draggable || ( draggable.currentItem || draggable.element )[ 0 ] === this.element[ 0 ] ) {
+			return;
+		}
+
+		if ( this.accept.call( this.element[ 0 ], ( draggable.currentItem || draggable.element ) ) ) {
+			if ( this.options.hoverClass ) {
+				this.element.addClass( this.options.hoverClass );
+			}
+			this._trigger( "over", event, this.ui( draggable ) );
+		}
+
+	},
+
+	_out: function( event ) {
+
+		var draggable = $.ui.ddmanager.current;
+
+		// Bail if draggable and droppable are same element
+		if ( !draggable || ( draggable.currentItem || draggable.element )[ 0 ] === this.element[ 0 ] ) {
+			return;
+		}
+
+		if ( this.accept.call( this.element[ 0 ], ( draggable.currentItem || draggable.element ) ) ) {
+			if ( this.options.hoverClass ) {
+				this.element.removeClass( this.options.hoverClass );
+			}
+			this._trigger( "out", event, this.ui( draggable ) );
+		}
+
+	},
+
+	_drop: function( event, custom ) {
+
+		var draggable = custom || $.ui.ddmanager.current,
+			childrenIntersection = false;
+
+		// Bail if draggable and droppable are same element
+		if ( !draggable || ( draggable.currentItem || draggable.element )[ 0 ] === this.element[ 0 ] ) {
+			return false;
+		}
+
+		this.element.find( ":data(ui-droppable)" ).not( ".ui-draggable-dragging" ).each(function() {
+			var inst = $( this ).droppable( "instance" );
+			if (
+				inst.options.greedy &&
+				!inst.options.disabled &&
+				inst.options.scope === draggable.options.scope &&
+				inst.accept.call( inst.element[ 0 ], ( draggable.currentItem || draggable.element ) ) &&
+				$.ui.intersect( draggable, $.extend( inst, { offset: inst.element.offset() } ), inst.options.tolerance, event )
+			) { childrenIntersection = true; return false; }
+		});
+		if ( childrenIntersection ) {
+			return false;
+		}
+
+		if ( this.accept.call( this.element[ 0 ], ( draggable.currentItem || draggable.element ) ) ) {
+			if ( this.options.activeClass ) {
+				this.element.removeClass( this.options.activeClass );
+			}
+			if ( this.options.hoverClass ) {
+				this.element.removeClass( this.options.hoverClass );
+			}
+			this._trigger( "drop", event, this.ui( draggable ) );
+			return this.element;
+		}
+
+		return false;
+
+	},
+
+	ui: function( c ) {
+		return {
+			draggable: ( c.currentItem || c.element ),
+			helper: c.helper,
+			position: c.position,
+			offset: c.positionAbs
+		};
+	}
+
+});
+
+$.ui.intersect = (function() {
+	function isOverAxis( x, reference, size ) {
+		return ( x >= reference ) && ( x < ( reference + size ) );
+	}
+
+	return function( draggable, droppable, toleranceMode, event ) {
+
+		if ( !droppable.offset ) {
+			return false;
+		}
+
+		var x1 = ( draggable.positionAbs || draggable.position.absolute ).left + draggable.margins.left,
+			y1 = ( draggable.positionAbs || draggable.position.absolute ).top + draggable.margins.top,
+			x2 = x1 + draggable.helperProportions.width,
+			y2 = y1 + draggable.helperProportions.height,
+			l = droppable.offset.left,
+			t = droppable.offset.top,
+			r = l + droppable.proportions().width,
+			b = t + droppable.proportions().height;
+
+		switch ( toleranceMode ) {
+		case "fit":
+			return ( l <= x1 && x2 <= r && t <= y1 && y2 <= b );
+		case "intersect":
+			return ( l < x1 + ( draggable.helperProportions.width / 2 ) && // Right Half
+				x2 - ( draggable.helperProportions.width / 2 ) < r && // Left Half
+				t < y1 + ( draggable.helperProportions.height / 2 ) && // Bottom Half
+				y2 - ( draggable.helperProportions.height / 2 ) < b ); // Top Half
+		case "pointer":
+			return isOverAxis( event.pageY, t, droppable.proportions().height ) && isOverAxis( event.pageX, l, droppable.proportions().width );
+		case "touch":
+			return (
+				( y1 >= t && y1 <= b ) || // Top edge touching
+				( y2 >= t && y2 <= b ) || // Bottom edge touching
+				( y1 < t && y2 > b ) // Surrounded vertically
+			) && (
+				( x1 >= l && x1 <= r ) || // Left edge touching
+				( x2 >= l && x2 <= r ) || // Right edge touching
+				( x1 < l && x2 > r ) // Surrounded horizontally
+			);
+		default:
+			return false;
+		}
+	};
+})();
+
+/*
+	This manager tracks offsets of draggables and droppables
+*/
+$.ui.ddmanager = {
+	current: null,
+	droppables: { "default": [] },
+	prepareOffsets: function( t, event ) {
+
+		var i, j,
+			m = $.ui.ddmanager.droppables[ t.options.scope ] || [],
+			type = event ? event.type : null, // workaround for #2317
+			list = ( t.currentItem || t.element ).find( ":data(ui-droppable)" ).addBack();
+
+		droppablesLoop: for ( i = 0; i < m.length; i++ ) {
+
+			// No disabled and non-accepted
+			if ( m[ i ].options.disabled || ( t && !m[ i ].accept.call( m[ i ].element[ 0 ], ( t.currentItem || t.element ) ) ) ) {
+				continue;
+			}
+
+			// Filter out elements in the current dragged item
+			for ( j = 0; j < list.length; j++ ) {
+				if ( list[ j ] === m[ i ].element[ 0 ] ) {
+					m[ i ].proportions().height = 0;
+					continue droppablesLoop;
+				}
+			}
+
+			m[ i ].visible = m[ i ].element.css( "display" ) !== "none";
+			if ( !m[ i ].visible ) {
+				continue;
+			}
+
+			// Activate the droppable if used directly from draggables
+			if ( type === "mousedown" ) {
+				m[ i ]._activate.call( m[ i ], event );
+			}
+
+			m[ i ].offset = m[ i ].element.offset();
+			m[ i ].proportions({ width: m[ i ].element[ 0 ].offsetWidth, height: m[ i ].element[ 0 ].offsetHeight });
+
+		}
+
+	},
+	drop: function( draggable, event ) {
+
+		var dropped = false;
+		// Create a copy of the droppables in case the list changes during the drop (#9116)
+		$.each( ( $.ui.ddmanager.droppables[ draggable.options.scope ] || [] ).slice(), function() {
+
+			if ( !this.options ) {
+				return;
+			}
+			if ( !this.options.disabled && this.visible && $.ui.intersect( draggable, this, this.options.tolerance, event ) ) {
+				dropped = this._drop.call( this, event ) || dropped;
+			}
+
+			if ( !this.options.disabled && this.visible && this.accept.call( this.element[ 0 ], ( draggable.currentItem || draggable.element ) ) ) {
+				this.isout = true;
+				this.isover = false;
+				this._deactivate.call( this, event );
+			}
+
+		});
+		return dropped;
+
+	},
+	dragStart: function( draggable, event ) {
+		// Listen for scrolling so that if the dragging causes scrolling the position of the droppables can be recalculated (see #5003)
+		draggable.element.parentsUntil( "body" ).bind( "scroll.droppable", function() {
+			if ( !draggable.options.refreshPositions ) {
+				$.ui.ddmanager.prepareOffsets( draggable, event );
+			}
+		});
+	},
+	drag: function( draggable, event ) {
+
+		// If you have a highly dynamic page, you might try this option. It renders positions every time you move the mouse.
+		if ( draggable.options.refreshPositions ) {
+			$.ui.ddmanager.prepareOffsets( draggable, event );
+		}
+
+		// Run through all droppables and check their positions based on specific tolerance options
+		$.each( $.ui.ddmanager.droppables[ draggable.options.scope ] || [], function() {
+
+			if ( this.options.disabled || this.greedyChild || !this.visible ) {
+				return;
+			}
+
+			var parentInstance, scope, parent,
+				intersects = $.ui.intersect( draggable, this, this.options.tolerance, event ),
+				c = !intersects && this.isover ? "isout" : ( intersects && !this.isover ? "isover" : null );
+			if ( !c ) {
+				return;
+			}
+
+			if ( this.options.greedy ) {
+				// find droppable parents with same scope
+				scope = this.options.scope;
+				parent = this.element.parents( ":data(ui-droppable)" ).filter(function() {
+					return $( this ).droppable( "instance" ).options.scope === scope;
+				});
+
+				if ( parent.length ) {
+					parentInstance = $( parent[ 0 ] ).droppable( "instance" );
+					parentInstance.greedyChild = ( c === "isover" );
+				}
+			}
+
+			// we just moved into a greedy child
+			if ( parentInstance && c === "isover" ) {
+				parentInstance.isover = false;
+				parentInstance.isout = true;
+				parentInstance._out.call( parentInstance, event );
+			}
+
+			this[ c ] = true;
+			this[c === "isout" ? "isover" : "isout"] = false;
+			this[c === "isover" ? "_over" : "_out"].call( this, event );
+
+			// we just moved out of a greedy child
+			if ( parentInstance && c === "isout" ) {
+				parentInstance.isout = false;
+				parentInstance.isover = true;
+				parentInstance._over.call( parentInstance, event );
+			}
+		});
+
+	},
+	dragStop: function( draggable, event ) {
+		draggable.element.parentsUntil( "body" ).unbind( "scroll.droppable" );
+		// Call prepareOffsets one final time since IE does not fire return scroll events when overflow was caused by drag (see #5003)
+		if ( !draggable.options.refreshPositions ) {
+			$.ui.ddmanager.prepareOffsets( draggable, event );
+		}
+	}
+};
+
+var droppable = $.ui.droppable;
+
+
+/*!
+ * jQuery UI Resizable 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/resizable/
+ */
+
+
+$.widget("ui.resizable", $.ui.mouse, {
+	version: "1.11.4",
+	widgetEventPrefix: "resize",
+	options: {
+		alsoResize: false,
+		animate: false,
+		animateDuration: "slow",
+		animateEasing: "swing",
+		aspectRatio: false,
+		autoHide: false,
+		containment: false,
+		ghost: false,
+		grid: false,
+		handles: "e,s,se",
+		helper: false,
+		maxHeight: null,
+		maxWidth: null,
+		minHeight: 10,
+		minWidth: 10,
+		// See #7960
+		zIndex: 90,
+
+		// callbacks
+		resize: null,
+		start: null,
+		stop: null
+	},
+
+	_num: function( value ) {
+		return parseInt( value, 10 ) || 0;
+	},
+
+	_isNumber: function( value ) {
+		return !isNaN( parseInt( value, 10 ) );
+	},
+
+	_hasScroll: function( el, a ) {
+
+		if ( $( el ).css( "overflow" ) === "hidden") {
+			return false;
+		}
+
+		var scroll = ( a && a === "left" ) ? "scrollLeft" : "scrollTop",
+			has = false;
+
+		if ( el[ scroll ] > 0 ) {
+			return true;
+		}
+
+		// TODO: determine which cases actually cause this to happen
+		// if the element doesn't have the scroll set, see if it's possible to
+		// set the scroll
+		el[ scroll ] = 1;
+		has = ( el[ scroll ] > 0 );
+		el[ scroll ] = 0;
+		return has;
+	},
+
+	_create: function() {
+
+		var n, i, handle, axis, hname,
+			that = this,
+			o = this.options;
+		this.element.addClass("ui-resizable");
+
+		$.extend(this, {
+			_aspectRatio: !!(o.aspectRatio),
+			aspectRatio: o.aspectRatio,
+			originalElement: this.element,
+			_proportionallyResizeElements: [],
+			_helper: o.helper || o.ghost || o.animate ? o.helper || "ui-resizable-helper" : null
+		});
+
+		// Wrap the element if it cannot hold child nodes
+		if (this.element[0].nodeName.match(/^(canvas|textarea|input|select|button|img)$/i)) {
+
+			this.element.wrap(
+				$("<div class='ui-wrapper' style='overflow: hidden;'></div>").css({
+					position: this.element.css("position"),
+					width: this.element.outerWidth(),
+					height: this.element.outerHeight(),
+					top: this.element.css("top"),
+					left: this.element.css("left")
+				})
+			);
+
+			this.element = this.element.parent().data(
+				"ui-resizable", this.element.resizable( "instance" )
+			);
+
+			this.elementIsWrapper = true;
+
+			this.element.css({
+				marginLeft: this.originalElement.css("marginLeft"),
+				marginTop: this.originalElement.css("marginTop"),
+				marginRight: this.originalElement.css("marginRight"),
+				marginBottom: this.originalElement.css("marginBottom")
+			});
+			this.originalElement.css({
+				marginLeft: 0,
+				marginTop: 0,
+				marginRight: 0,
+				marginBottom: 0
+			});
+			// support: Safari
+			// Prevent Safari textarea resize
+			this.originalResizeStyle = this.originalElement.css("resize");
+			this.originalElement.css("resize", "none");
+
+			this._proportionallyResizeElements.push( this.originalElement.css({
+				position: "static",
+				zoom: 1,
+				display: "block"
+			}) );
+
+			// support: IE9
+			// avoid IE jump (hard set the margin)
+			this.originalElement.css({ margin: this.originalElement.css("margin") });
+
+			this._proportionallyResize();
+		}
+
+		this.handles = o.handles ||
+			( !$(".ui-resizable-handle", this.element).length ?
+				"e,s,se" : {
+					n: ".ui-resizable-n",
+					e: ".ui-resizable-e",
+					s: ".ui-resizable-s",
+					w: ".ui-resizable-w",
+					se: ".ui-resizable-se",
+					sw: ".ui-resizable-sw",
+					ne: ".ui-resizable-ne",
+					nw: ".ui-resizable-nw"
+				} );
+
+		this._handles = $();
+		if ( this.handles.constructor === String ) {
+
+			if ( this.handles === "all") {
+				this.handles = "n,e,s,w,se,sw,ne,nw";
+			}
+
+			n = this.handles.split(",");
+			this.handles = {};
+
+			for (i = 0; i < n.length; i++) {
+
+				handle = $.trim(n[i]);
+				hname = "ui-resizable-" + handle;
+				axis = $("<div class='ui-resizable-handle " + hname + "'></div>");
+
+				axis.css({ zIndex: o.zIndex });
+
+				// TODO : What's going on here?
+				if ("se" === handle) {
+					axis.addClass("ui-icon ui-icon-gripsmall-diagonal-se");
+				}
+
+				this.handles[handle] = ".ui-resizable-" + handle;
+				this.element.append(axis);
+			}
+
+		}
+
+		this._renderAxis = function(target) {
+
+			var i, axis, padPos, padWrapper;
+
+			target = target || this.element;
+
+			for (i in this.handles) {
+
+				if (this.handles[i].constructor === String) {
+					this.handles[i] = this.element.children( this.handles[ i ] ).first().show();
+				} else if ( this.handles[ i ].jquery || this.handles[ i ].nodeType ) {
+					this.handles[ i ] = $( this.handles[ i ] );
+					this._on( this.handles[ i ], { "mousedown": that._mouseDown });
+				}
+
+				if (this.elementIsWrapper && this.originalElement[0].nodeName.match(/^(textarea|input|select|button)$/i)) {
+
+					axis = $(this.handles[i], this.element);
+
+					padWrapper = /sw|ne|nw|se|n|s/.test(i) ? axis.outerHeight() : axis.outerWidth();
+
+					padPos = [ "padding",
+						/ne|nw|n/.test(i) ? "Top" :
+						/se|sw|s/.test(i) ? "Bottom" :
+						/^e$/.test(i) ? "Right" : "Left" ].join("");
+
+					target.css(padPos, padWrapper);
+
+					this._proportionallyResize();
+				}
+
+				this._handles = this._handles.add( this.handles[ i ] );
+			}
+		};
+
+		// TODO: make renderAxis a prototype function
+		this._renderAxis(this.element);
+
+		this._handles = this._handles.add( this.element.find( ".ui-resizable-handle" ) );
+		this._handles.disableSelection();
+
+		this._handles.mouseover(function() {
+			if (!that.resizing) {
+				if (this.className) {
+					axis = this.className.match(/ui-resizable-(se|sw|ne|nw|n|e|s|w)/i);
+				}
+				that.axis = axis && axis[1] ? axis[1] : "se";
+			}
+		});
+
+		if (o.autoHide) {
+			this._handles.hide();
+			$(this.element)
+				.addClass("ui-resizable-autohide")
+				.mouseenter(function() {
+					if (o.disabled) {
+						return;
+					}
+					$(this).removeClass("ui-resizable-autohide");
+					that._handles.show();
+				})
+				.mouseleave(function() {
+					if (o.disabled) {
+						return;
+					}
+					if (!that.resizing) {
+						$(this).addClass("ui-resizable-autohide");
+						that._handles.hide();
+					}
+				});
+		}
+
+		this._mouseInit();
+	},
+
+	_destroy: function() {
+
+		this._mouseDestroy();
+
+		var wrapper,
+			_destroy = function(exp) {
+				$(exp)
+					.removeClass("ui-resizable ui-resizable-disabled ui-resizable-resizing")
+					.removeData("resizable")
+					.removeData("ui-resizable")
+					.unbind(".resizable")
+					.find(".ui-resizable-handle")
+						.remove();
+			};
+
+		// TODO: Unwrap at same DOM position
+		if (this.elementIsWrapper) {
+			_destroy(this.element);
+			wrapper = this.element;
+			this.originalElement.css({
+				position: wrapper.css("position"),
+				width: wrapper.outerWidth(),
+				height: wrapper.outerHeight(),
+				top: wrapper.css("top"),
+				left: wrapper.css("left")
+			}).insertAfter( wrapper );
+			wrapper.remove();
+		}
+
+		this.originalElement.css("resize", this.originalResizeStyle);
+		_destroy(this.originalElement);
+
+		return this;
+	},
+
+	_mouseCapture: function(event) {
+		var i, handle,
+			capture = false;
+
+		for (i in this.handles) {
+			handle = $(this.handles[i])[0];
+			if (handle === event.target || $.contains(handle, event.target)) {
+				capture = true;
+			}
+		}
+
+		return !this.options.disabled && capture;
+	},
+
+	_mouseStart: function(event) {
+
+		var curleft, curtop, cursor,
+			o = this.options,
+			el = this.element;
+
+		this.resizing = true;
+
+		this._renderProxy();
+
+		curleft = this._num(this.helper.css("left"));
+		curtop = this._num(this.helper.css("top"));
+
+		if (o.containment) {
+			curleft += $(o.containment).scrollLeft() || 0;
+			curtop += $(o.containment).scrollTop() || 0;
+		}
+
+		this.offset = this.helper.offset();
+		this.position = { left: curleft, top: curtop };
+
+		this.size = this._helper ? {
+				width: this.helper.width(),
+				height: this.helper.height()
+			} : {
+				width: el.width(),
+				height: el.height()
+			};
+
+		this.originalSize = this._helper ? {
+				width: el.outerWidth(),
+				height: el.outerHeight()
+			} : {
+				width: el.width(),
+				height: el.height()
+			};
+
+		this.sizeDiff = {
+			width: el.outerWidth() - el.width(),
+			height: el.outerHeight() - el.height()
+		};
+
+		this.originalPosition = { left: curleft, top: curtop };
+		this.originalMousePosition = { left: event.pageX, top: event.pageY };
+
+		this.aspectRatio = (typeof o.aspectRatio === "number") ?
+			o.aspectRatio :
+			((this.originalSize.width / this.originalSize.height) || 1);
+
+		cursor = $(".ui-resizable-" + this.axis).css("cursor");
+		$("body").css("cursor", cursor === "auto" ? this.axis + "-resize" : cursor);
+
+		el.addClass("ui-resizable-resizing");
+		this._propagate("start", event);
+		return true;
+	},
+
+	_mouseDrag: function(event) {
+
+		var data, props,
+			smp = this.originalMousePosition,
+			a = this.axis,
+			dx = (event.pageX - smp.left) || 0,
+			dy = (event.pageY - smp.top) || 0,
+			trigger = this._change[a];
+
+		this._updatePrevProperties();
+
+		if (!trigger) {
+			return false;
+		}
+
+		data = trigger.apply(this, [ event, dx, dy ]);
+
+		this._updateVirtualBoundaries(event.shiftKey);
+		if (this._aspectRatio || event.shiftKey) {
+			data = this._updateRatio(data, event);
+		}
+
+		data = this._respectSize(data, event);
+
+		this._updateCache(data);
+
+		this._propagate("resize", event);
+
+		props = this._applyChanges();
+
+		if ( !this._helper && this._proportionallyResizeElements.length ) {
+			this._proportionallyResize();
+		}
+
+		if ( !$.isEmptyObject( props ) ) {
+			this._updatePrevProperties();
+			this._trigger( "resize", event, this.ui() );
+			this._applyChanges();
+		}
+
+		return false;
+	},
+
+	_mouseStop: function(event) {
+
+		this.resizing = false;
+		var pr, ista, soffseth, soffsetw, s, left, top,
+			o = this.options, that = this;
+
+		if (this._helper) {
+
+			pr = this._proportionallyResizeElements;
+			ista = pr.length && (/textarea/i).test(pr[0].nodeName);
+			soffseth = ista && this._hasScroll(pr[0], "left") ? 0 : that.sizeDiff.height;
+			soffsetw = ista ? 0 : that.sizeDiff.width;
+
+			s = {
+				width: (that.helper.width()  - soffsetw),
+				height: (that.helper.height() - soffseth)
+			};
+			left = (parseInt(that.element.css("left"), 10) +
+				(that.position.left - that.originalPosition.left)) || null;
+			top = (parseInt(that.element.css("top"), 10) +
+				(that.position.top - that.originalPosition.top)) || null;
+
+			if (!o.animate) {
+				this.element.css($.extend(s, { top: top, left: left }));
+			}
+
+			that.helper.height(that.size.height);
+			that.helper.width(that.size.width);
+
+			if (this._helper && !o.animate) {
+				this._proportionallyResize();
+			}
+		}
+
+		$("body").css("cursor", "auto");
+
+		this.element.removeClass("ui-resizable-resizing");
+
+		this._propagate("stop", event);
+
+		if (this._helper) {
+			this.helper.remove();
+		}
+
+		return false;
+
+	},
+
+	_updatePrevProperties: function() {
+		this.prevPosition = {
+			top: this.position.top,
+			left: this.position.left
+		};
+		this.prevSize = {
+			width: this.size.width,
+			height: this.size.height
+		};
+	},
+
+	_applyChanges: function() {
+		var props = {};
+
+		if ( this.position.top !== this.prevPosition.top ) {
+			props.top = this.position.top + "px";
+		}
+		if ( this.position.left !== this.prevPosition.left ) {
+			props.left = this.position.left + "px";
+		}
+		if ( this.size.width !== this.prevSize.width ) {
+			props.width = this.size.width + "px";
+		}
+		if ( this.size.height !== this.prevSize.height ) {
+			props.height = this.size.height + "px";
+		}
+
+		this.helper.css( props );
+
+		return props;
+	},
+
+	_updateVirtualBoundaries: function(forceAspectRatio) {
+		var pMinWidth, pMaxWidth, pMinHeight, pMaxHeight, b,
+			o = this.options;
+
+		b = {
+			minWidth: this._isNumber(o.minWidth) ? o.minWidth : 0,
+			maxWidth: this._isNumber(o.maxWidth) ? o.maxWidth : Infinity,
+			minHeight: this._isNumber(o.minHeight) ? o.minHeight : 0,
+			maxHeight: this._isNumber(o.maxHeight) ? o.maxHeight : Infinity
+		};
+
+		if (this._aspectRatio || forceAspectRatio) {
+			pMinWidth = b.minHeight * this.aspectRatio;
+			pMinHeight = b.minWidth / this.aspectRatio;
+			pMaxWidth = b.maxHeight * this.aspectRatio;
+			pMaxHeight = b.maxWidth / this.aspectRatio;
+
+			if (pMinWidth > b.minWidth) {
+				b.minWidth = pMinWidth;
+			}
+			if (pMinHeight > b.minHeight) {
+				b.minHeight = pMinHeight;
+			}
+			if (pMaxWidth < b.maxWidth) {
+				b.maxWidth = pMaxWidth;
+			}
+			if (pMaxHeight < b.maxHeight) {
+				b.maxHeight = pMaxHeight;
+			}
+		}
+		this._vBoundaries = b;
+	},
+
+	_updateCache: function(data) {
+		this.offset = this.helper.offset();
+		if (this._isNumber(data.left)) {
+			this.position.left = data.left;
+		}
+		if (this._isNumber(data.top)) {
+			this.position.top = data.top;
+		}
+		if (this._isNumber(data.height)) {
+			this.size.height = data.height;
+		}
+		if (this._isNumber(data.width)) {
+			this.size.width = data.width;
+		}
+	},
+
+	_updateRatio: function( data ) {
+
+		var cpos = this.position,
+			csize = this.size,
+			a = this.axis;
+
+		if (this._isNumber(data.height)) {
+			data.width = (data.height * this.aspectRatio);
+		} else if (this._isNumber(data.width)) {
+			data.height = (data.width / this.aspectRatio);
+		}
+
+		if (a === "sw") {
+			data.left = cpos.left + (csize.width - data.width);
+			data.top = null;
+		}
+		if (a === "nw") {
+			data.top = cpos.top + (csize.height - data.height);
+			data.left = cpos.left + (csize.width - data.width);
+		}
+
+		return data;
+	},
+
+	_respectSize: function( data ) {
+
+		var o = this._vBoundaries,
+			a = this.axis,
+			ismaxw = this._isNumber(data.width) && o.maxWidth && (o.maxWidth < data.width),
+			ismaxh = this._isNumber(data.height) && o.maxHeight && (o.maxHeight < data.height),
+			isminw = this._isNumber(data.width) && o.minWidth && (o.minWidth > data.width),
+			isminh = this._isNumber(data.height) && o.minHeight && (o.minHeight > data.height),
+			dw = this.originalPosition.left + this.originalSize.width,
+			dh = this.position.top + this.size.height,
+			cw = /sw|nw|w/.test(a), ch = /nw|ne|n/.test(a);
+		if (isminw) {
+			data.width = o.minWidth;
+		}
+		if (isminh) {
+			data.height = o.minHeight;
+		}
+		if (ismaxw) {
+			data.width = o.maxWidth;
+		}
+		if (ismaxh) {
+			data.height = o.maxHeight;
+		}
+
+		if (isminw && cw) {
+			data.left = dw - o.minWidth;
+		}
+		if (ismaxw && cw) {
+			data.left = dw - o.maxWidth;
+		}
+		if (isminh && ch) {
+			data.top = dh - o.minHeight;
+		}
+		if (ismaxh && ch) {
+			data.top = dh - o.maxHeight;
+		}
+
+		// Fixing jump error on top/left - bug #2330
+		if (!data.width && !data.height && !data.left && data.top) {
+			data.top = null;
+		} else if (!data.width && !data.height && !data.top && data.left) {
+			data.left = null;
+		}
+
+		return data;
+	},
+
+	_getPaddingPlusBorderDimensions: function( element ) {
+		var i = 0,
+			widths = [],
+			borders = [
+				element.css( "borderTopWidth" ),
+				element.css( "borderRightWidth" ),
+				element.css( "borderBottomWidth" ),
+				element.css( "borderLeftWidth" )
+			],
+			paddings = [
+				element.css( "paddingTop" ),
+				element.css( "paddingRight" ),
+				element.css( "paddingBottom" ),
+				element.css( "paddingLeft" )
+			];
+
+		for ( ; i < 4; i++ ) {
+			widths[ i ] = ( parseInt( borders[ i ], 10 ) || 0 );
+			widths[ i ] += ( parseInt( paddings[ i ], 10 ) || 0 );
+		}
+
+		return {
+			height: widths[ 0 ] + widths[ 2 ],
+			width: widths[ 1 ] + widths[ 3 ]
+		};
+	},
+
+	_proportionallyResize: function() {
+
+		if (!this._proportionallyResizeElements.length) {
+			return;
+		}
+
+		var prel,
+			i = 0,
+			element = this.helper || this.element;
+
+		for ( ; i < this._proportionallyResizeElements.length; i++) {
+
+			prel = this._proportionallyResizeElements[i];
+
+			// TODO: Seems like a bug to cache this.outerDimensions
+			// considering that we are in a loop.
+			if (!this.outerDimensions) {
+				this.outerDimensions = this._getPaddingPlusBorderDimensions( prel );
+			}
+
+			prel.css({
+				height: (element.height() - this.outerDimensions.height) || 0,
+				width: (element.width() - this.outerDimensions.width) || 0
+			});
+
+		}
+
+	},
+
+	_renderProxy: function() {
+
+		var el = this.element, o = this.options;
+		this.elementOffset = el.offset();
+
+		if (this._helper) {
+
+			this.helper = this.helper || $("<div style='overflow:hidden;'></div>");
+
+			this.helper.addClass(this._helper).css({
+				width: this.element.outerWidth() - 1,
+				height: this.element.outerHeight() - 1,
+				position: "absolute",
+				left: this.elementOffset.left + "px",
+				top: this.elementOffset.top + "px",
+				zIndex: ++o.zIndex //TODO: Don't modify option
+			});
+
+			this.helper
+				.appendTo("body")
+				.disableSelection();
+
+		} else {
+			this.helper = this.element;
+		}
+
+	},
+
+	_change: {
+		e: function(event, dx) {
+			return { width: this.originalSize.width + dx };
+		},
+		w: function(event, dx) {
+			var cs = this.originalSize, sp = this.originalPosition;
+			return { left: sp.left + dx, width: cs.width - dx };
+		},
+		n: function(event, dx, dy) {
+			var cs = this.originalSize, sp = this.originalPosition;
+			return { top: sp.top + dy, height: cs.height - dy };
+		},
+		s: function(event, dx, dy) {
+			return { height: this.originalSize.height + dy };
+		},
+		se: function(event, dx, dy) {
+			return $.extend(this._change.s.apply(this, arguments),
+				this._change.e.apply(this, [ event, dx, dy ]));
+		},
+		sw: function(event, dx, dy) {
+			return $.extend(this._change.s.apply(this, arguments),
+				this._change.w.apply(this, [ event, dx, dy ]));
+		},
+		ne: function(event, dx, dy) {
+			return $.extend(this._change.n.apply(this, arguments),
+				this._change.e.apply(this, [ event, dx, dy ]));
+		},
+		nw: function(event, dx, dy) {
+			return $.extend(this._change.n.apply(this, arguments),
+				this._change.w.apply(this, [ event, dx, dy ]));
+		}
+	},
+
+	_propagate: function(n, event) {
+		$.ui.plugin.call(this, n, [ event, this.ui() ]);
+		(n !== "resize" && this._trigger(n, event, this.ui()));
+	},
+
+	plugins: {},
+
+	ui: function() {
+		return {
+			originalElement: this.originalElement,
+			element: this.element,
+			helper: this.helper,
+			position: this.position,
+			size: this.size,
+			originalSize: this.originalSize,
+			originalPosition: this.originalPosition
+		};
+	}
+
+});
+
+/*
+ * Resizable Extensions
+ */
+
+$.ui.plugin.add("resizable", "animate", {
+
+	stop: function( event ) {
+		var that = $(this).resizable( "instance" ),
+			o = that.options,
+			pr = that._proportionallyResizeElements,
+			ista = pr.length && (/textarea/i).test(pr[0].nodeName),
+			soffseth = ista && that._hasScroll(pr[0], "left") ? 0 : that.sizeDiff.height,
+			soffsetw = ista ? 0 : that.sizeDiff.width,
+			style = { width: (that.size.width - soffsetw), height: (that.size.height - soffseth) },
+			left = (parseInt(that.element.css("left"), 10) +
+				(that.position.left - that.originalPosition.left)) || null,
+			top = (parseInt(that.element.css("top"), 10) +
+				(that.position.top - that.originalPosition.top)) || null;
+
+		that.element.animate(
+			$.extend(style, top && left ? { top: top, left: left } : {}), {
+				duration: o.animateDuration,
+				easing: o.animateEasing,
+				step: function() {
+
+					var data = {
+						width: parseInt(that.element.css("width"), 10),
+						height: parseInt(that.element.css("height"), 10),
+						top: parseInt(that.element.css("top"), 10),
+						left: parseInt(that.element.css("left"), 10)
+					};
+
+					if (pr && pr.length) {
+						$(pr[0]).css({ width: data.width, height: data.height });
+					}
+
+					// propagating resize, and updating values for each animation step
+					that._updateCache(data);
+					that._propagate("resize", event);
+
+				}
+			}
+		);
+	}
+
+});
+
+$.ui.plugin.add( "resizable", "containment", {
+
+	start: function() {
+		var element, p, co, ch, cw, width, height,
+			that = $( this ).resizable( "instance" ),
+			o = that.options,
+			el = that.element,
+			oc = o.containment,
+			ce = ( oc instanceof $ ) ? oc.get( 0 ) : ( /parent/.test( oc ) ) ? el.parent().get( 0 ) : oc;
+
+		if ( !ce ) {
+			return;
+		}
+
+		that.containerElement = $( ce );
+
+		if ( /document/.test( oc ) || oc === document ) {
+			that.containerOffset = {
+				left: 0,
+				top: 0
+			};
+			that.containerPosition = {
+				left: 0,
+				top: 0
+			};
+
+			that.parentData = {
+				element: $( document ),
+				left: 0,
+				top: 0,
+				width: $( document ).width(),
+				height: $( document ).height() || document.body.parentNode.scrollHeight
+			};
+		} else {
+			element = $( ce );
+			p = [];
+			$([ "Top", "Right", "Left", "Bottom" ]).each(function( i, name ) {
+				p[ i ] = that._num( element.css( "padding" + name ) );
+			});
+
+			that.containerOffset = element.offset();
+			that.containerPosition = element.position();
+			that.containerSize = {
+				height: ( element.innerHeight() - p[ 3 ] ),
+				width: ( element.innerWidth() - p[ 1 ] )
+			};
+
+			co = that.containerOffset;
+			ch = that.containerSize.height;
+			cw = that.containerSize.width;
+			width = ( that._hasScroll ( ce, "left" ) ? ce.scrollWidth : cw );
+			height = ( that._hasScroll ( ce ) ? ce.scrollHeight : ch ) ;
+
+			that.parentData = {
+				element: ce,
+				left: co.left,
+				top: co.top,
+				width: width,
+				height: height
+			};
+		}
+	},
+
+	resize: function( event ) {
+		var woset, hoset, isParent, isOffsetRelative,
+			that = $( this ).resizable( "instance" ),
+			o = that.options,
+			co = that.containerOffset,
+			cp = that.position,
+			pRatio = that._aspectRatio || event.shiftKey,
+			cop = {
+				top: 0,
+				left: 0
+			},
+			ce = that.containerElement,
+			continueResize = true;
+
+		if ( ce[ 0 ] !== document && ( /static/ ).test( ce.css( "position" ) ) ) {
+			cop = co;
+		}
+
+		if ( cp.left < ( that._helper ? co.left : 0 ) ) {
+			that.size.width = that.size.width +
+				( that._helper ?
+					( that.position.left - co.left ) :
+					( that.position.left - cop.left ) );
+
+			if ( pRatio ) {
+				that.size.height = that.size.width / that.aspectRatio;
+				continueResize = false;
+			}
+			that.position.left = o.helper ? co.left : 0;
+		}
+
+		if ( cp.top < ( that._helper ? co.top : 0 ) ) {
+			that.size.height = that.size.height +
+				( that._helper ?
+					( that.position.top - co.top ) :
+					that.position.top );
+
+			if ( pRatio ) {
+				that.size.width = that.size.height * that.aspectRatio;
+				continueResize = false;
+			}
+			that.position.top = that._helper ? co.top : 0;
+		}
+
+		isParent = that.containerElement.get( 0 ) === that.element.parent().get( 0 );
+		isOffsetRelative = /relative|absolute/.test( that.containerElement.css( "position" ) );
+
+		if ( isParent && isOffsetRelative ) {
+			that.offset.left = that.parentData.left + that.position.left;
+			that.offset.top = that.parentData.top + that.position.top;
+		} else {
+			that.offset.left = that.element.offset().left;
+			that.offset.top = that.element.offset().top;
+		}
+
+		woset = Math.abs( that.sizeDiff.width +
+			(that._helper ?
+				that.offset.left - cop.left :
+				(that.offset.left - co.left)) );
+
+		hoset = Math.abs( that.sizeDiff.height +
+			(that._helper ?
+				that.offset.top - cop.top :
+				(that.offset.top - co.top)) );
+
+		if ( woset + that.size.width >= that.parentData.width ) {
+			that.size.width = that.parentData.width - woset;
+			if ( pRatio ) {
+				that.size.height = that.size.width / that.aspectRatio;
+				continueResize = false;
+			}
+		}
+
+		if ( hoset + that.size.height >= that.parentData.height ) {
+			that.size.height = that.parentData.height - hoset;
+			if ( pRatio ) {
+				that.size.width = that.size.height * that.aspectRatio;
+				continueResize = false;
+			}
+		}
+
+		if ( !continueResize ) {
+			that.position.left = that.prevPosition.left;
+			that.position.top = that.prevPosition.top;
+			that.size.width = that.prevSize.width;
+			that.size.height = that.prevSize.height;
+		}
+	},
+
+	stop: function() {
+		var that = $( this ).resizable( "instance" ),
+			o = that.options,
+			co = that.containerOffset,
+			cop = that.containerPosition,
+			ce = that.containerElement,
+			helper = $( that.helper ),
+			ho = helper.offset(),
+			w = helper.outerWidth() - that.sizeDiff.width,
+			h = helper.outerHeight() - that.sizeDiff.height;
+
+		if ( that._helper && !o.animate && ( /relative/ ).test( ce.css( "position" ) ) ) {
+			$( this ).css({
+				left: ho.left - cop.left - co.left,
+				width: w,
+				height: h
+			});
+		}
+
+		if ( that._helper && !o.animate && ( /static/ ).test( ce.css( "position" ) ) ) {
+			$( this ).css({
+				left: ho.left - cop.left - co.left,
+				width: w,
+				height: h
+			});
+		}
+	}
+});
+
+$.ui.plugin.add("resizable", "alsoResize", {
+
+	start: function() {
+		var that = $(this).resizable( "instance" ),
+			o = that.options;
+
+		$(o.alsoResize).each(function() {
+			var el = $(this);
+			el.data("ui-resizable-alsoresize", {
+				width: parseInt(el.width(), 10), height: parseInt(el.height(), 10),
+				left: parseInt(el.css("left"), 10), top: parseInt(el.css("top"), 10)
+			});
+		});
+	},
+
+	resize: function(event, ui) {
+		var that = $(this).resizable( "instance" ),
+			o = that.options,
+			os = that.originalSize,
+			op = that.originalPosition,
+			delta = {
+				height: (that.size.height - os.height) || 0,
+				width: (that.size.width - os.width) || 0,
+				top: (that.position.top - op.top) || 0,
+				left: (that.position.left - op.left) || 0
+			};
+
+			$(o.alsoResize).each(function() {
+				var el = $(this), start = $(this).data("ui-resizable-alsoresize"), style = {},
+					css = el.parents(ui.originalElement[0]).length ?
+							[ "width", "height" ] :
+							[ "width", "height", "top", "left" ];
+
+				$.each(css, function(i, prop) {
+					var sum = (start[prop] || 0) + (delta[prop] || 0);
+					if (sum && sum >= 0) {
+						style[prop] = sum || null;
+					}
+				});
+
+				el.css(style);
+			});
+	},
+
+	stop: function() {
+		$(this).removeData("resizable-alsoresize");
+	}
+});
+
+$.ui.plugin.add("resizable", "ghost", {
+
+	start: function() {
+
+		var that = $(this).resizable( "instance" ), o = that.options, cs = that.size;
+
+		that.ghost = that.originalElement.clone();
+		that.ghost
+			.css({
+				opacity: 0.25,
+				display: "block",
+				position: "relative",
+				height: cs.height,
+				width: cs.width,
+				margin: 0,
+				left: 0,
+				top: 0
+			})
+			.addClass("ui-resizable-ghost")
+			.addClass(typeof o.ghost === "string" ? o.ghost : "");
+
+		that.ghost.appendTo(that.helper);
+
+	},
+
+	resize: function() {
+		var that = $(this).resizable( "instance" );
+		if (that.ghost) {
+			that.ghost.css({
+				position: "relative",
+				height: that.size.height,
+				width: that.size.width
+			});
+		}
+	},
+
+	stop: function() {
+		var that = $(this).resizable( "instance" );
+		if (that.ghost && that.helper) {
+			that.helper.get(0).removeChild(that.ghost.get(0));
+		}
+	}
+
+});
+
+$.ui.plugin.add("resizable", "grid", {
+
+	resize: function() {
+		var outerDimensions,
+			that = $(this).resizable( "instance" ),
+			o = that.options,
+			cs = that.size,
+			os = that.originalSize,
+			op = that.originalPosition,
+			a = that.axis,
+			grid = typeof o.grid === "number" ? [ o.grid, o.grid ] : o.grid,
+			gridX = (grid[0] || 1),
+			gridY = (grid[1] || 1),
+			ox = Math.round((cs.width - os.width) / gridX) * gridX,
+			oy = Math.round((cs.height - os.height) / gridY) * gridY,
+			newWidth = os.width + ox,
+			newHeight = os.height + oy,
+			isMaxWidth = o.maxWidth && (o.maxWidth < newWidth),
+			isMaxHeight = o.maxHeight && (o.maxHeight < newHeight),
+			isMinWidth = o.minWidth && (o.minWidth > newWidth),
+			isMinHeight = o.minHeight && (o.minHeight > newHeight);
+
+		o.grid = grid;
+
+		if (isMinWidth) {
+			newWidth += gridX;
+		}
+		if (isMinHeight) {
+			newHeight += gridY;
+		}
+		if (isMaxWidth) {
+			newWidth -= gridX;
+		}
+		if (isMaxHeight) {
+			newHeight -= gridY;
+		}
+
+		if (/^(se|s|e)$/.test(a)) {
+			that.size.width = newWidth;
+			that.size.height = newHeight;
+		} else if (/^(ne)$/.test(a)) {
+			that.size.width = newWidth;
+			that.size.height = newHeight;
+			that.position.top = op.top - oy;
+		} else if (/^(sw)$/.test(a)) {
+			that.size.width = newWidth;
+			that.size.height = newHeight;
+			that.position.left = op.left - ox;
+		} else {
+			if ( newHeight - gridY <= 0 || newWidth - gridX <= 0) {
+				outerDimensions = that._getPaddingPlusBorderDimensions( this );
+			}
+
+			if ( newHeight - gridY > 0 ) {
+				that.size.height = newHeight;
+				that.position.top = op.top - oy;
+			} else {
+				newHeight = gridY - outerDimensions.height;
+				that.size.height = newHeight;
+				that.position.top = op.top + os.height - newHeight;
+			}
+			if ( newWidth - gridX > 0 ) {
+				that.size.width = newWidth;
+				that.position.left = op.left - ox;
+			} else {
+				newWidth = gridX - outerDimensions.width;
+				that.size.width = newWidth;
+				that.position.left = op.left + os.width - newWidth;
+			}
+		}
+	}
+
+});
+
+var resizable = $.ui.resizable;
+
+
+/*!
+ * jQuery UI Selectable 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/selectable/
+ */
+
+
+var selectable = $.widget("ui.selectable", $.ui.mouse, {
+	version: "1.11.4",
+	options: {
+		appendTo: "body",
+		autoRefresh: true,
+		distance: 0,
+		filter: "*",
+		tolerance: "touch",
+
+		// callbacks
+		selected: null,
+		selecting: null,
+		start: null,
+		stop: null,
+		unselected: null,
+		unselecting: null
+	},
+	_create: function() {
+		var selectees,
+			that = this;
+
+		this.element.addClass("ui-selectable");
+
+		this.dragged = false;
+
+		// cache selectee children based on filter
+		this.refresh = function() {
+			selectees = $(that.options.filter, that.element[0]);
+			selectees.addClass("ui-selectee");
+			selectees.each(function() {
+				var $this = $(this),
+					pos = $this.offset();
+				$.data(this, "selectable-item", {
+					element: this,
+					$element: $this,
+					left: pos.left,
+					top: pos.top,
+					right: pos.left + $this.outerWidth(),
+					bottom: pos.top + $this.outerHeight(),
+					startselected: false,
+					selected: $this.hasClass("ui-selected"),
+					selecting: $this.hasClass("ui-selecting"),
+					unselecting: $this.hasClass("ui-unselecting")
+				});
+			});
+		};
+		this.refresh();
+
+		this.selectees = selectees.addClass("ui-selectee");
+
+		this._mouseInit();
+
+		this.helper = $("<div class='ui-selectable-helper'></div>");
+	},
+
+	_destroy: function() {
+		this.selectees
+			.removeClass("ui-selectee")
+			.removeData("selectable-item");
+		this.element
+			.removeClass("ui-selectable ui-selectable-disabled");
+		this._mouseDestroy();
+	},
+
+	_mouseStart: function(event) {
+		var that = this,
+			options = this.options;
+
+		this.opos = [ event.pageX, event.pageY ];
+
+		if (this.options.disabled) {
+			return;
+		}
+
+		this.selectees = $(options.filter, this.element[0]);
+
+		this._trigger("start", event);
+
+		$(options.appendTo).append(this.helper);
+		// position helper (lasso)
+		this.helper.css({
+			"left": event.pageX,
+			"top": event.pageY,
+			"width": 0,
+			"height": 0
+		});
+
+		if (options.autoRefresh) {
+			this.refresh();
+		}
+
+		this.selectees.filter(".ui-selected").each(function() {
+			var selectee = $.data(this, "selectable-item");
+			selectee.startselected = true;
+			if (!event.metaKey && !event.ctrlKey) {
+				selectee.$element.removeClass("ui-selected");
+				selectee.selected = false;
+				selectee.$element.addClass("ui-unselecting");
+				selectee.unselecting = true;
+				// selectable UNSELECTING callback
+				that._trigger("unselecting", event, {
+					unselecting: selectee.element
+				});
+			}
+		});
+
+		$(event.target).parents().addBack().each(function() {
+			var doSelect,
+				selectee = $.data(this, "selectable-item");
+			if (selectee) {
+				doSelect = (!event.metaKey && !event.ctrlKey) || !selectee.$element.hasClass("ui-selected");
+				selectee.$element
+					.removeClass(doSelect ? "ui-unselecting" : "ui-selected")
+					.addClass(doSelect ? "ui-selecting" : "ui-unselecting");
+				selectee.unselecting = !doSelect;
+				selectee.selecting = doSelect;
+				selectee.selected = doSelect;
+				// selectable (UN)SELECTING callback
+				if (doSelect) {
+					that._trigger("selecting", event, {
+						selecting: selectee.element
+					});
+				} else {
+					that._trigger("unselecting", event, {
+						unselecting: selectee.element
+					});
+				}
+				return false;
+			}
+		});
+
+	},
+
+	_mouseDrag: function(event) {
+
+		this.dragged = true;
+
+		if (this.options.disabled) {
+			return;
+		}
+
+		var tmp,
+			that = this,
+			options = this.options,
+			x1 = this.opos[0],
+			y1 = this.opos[1],
+			x2 = event.pageX,
+			y2 = event.pageY;
+
+		if (x1 > x2) { tmp = x2; x2 = x1; x1 = tmp; }
+		if (y1 > y2) { tmp = y2; y2 = y1; y1 = tmp; }
+		this.helper.css({ left: x1, top: y1, width: x2 - x1, height: y2 - y1 });
+
+		this.selectees.each(function() {
+			var selectee = $.data(this, "selectable-item"),
+				hit = false;
+
+			//prevent helper from being selected if appendTo: selectable
+			if (!selectee || selectee.element === that.element[0]) {
+				return;
+			}
+
+			if (options.tolerance === "touch") {
+				hit = ( !(selectee.left > x2 || selectee.right < x1 || selectee.top > y2 || selectee.bottom < y1) );
+			} else if (options.tolerance === "fit") {
+				hit = (selectee.left > x1 && selectee.right < x2 && selectee.top > y1 && selectee.bottom < y2);
+			}
+
+			if (hit) {
+				// SELECT
+				if (selectee.selected) {
+					selectee.$element.removeClass("ui-selected");
+					selectee.selected = false;
+				}
+				if (selectee.unselecting) {
+					selectee.$element.removeClass("ui-unselecting");
+					selectee.unselecting = false;
+				}
+				if (!selectee.selecting) {
+					selectee.$element.addClass("ui-selecting");
+					selectee.selecting = true;
+					// selectable SELECTING callback
+					that._trigger("selecting", event, {
+						selecting: selectee.element
+					});
+				}
+			} else {
+				// UNSELECT
+				if (selectee.selecting) {
+					if ((event.metaKey || event.ctrlKey) && selectee.startselected) {
+						selectee.$element.removeClass("ui-selecting");
+						selectee.selecting = false;
+						selectee.$element.addClass("ui-selected");
+						selectee.selected = true;
+					} else {
+						selectee.$element.removeClass("ui-selecting");
+						selectee.selecting = false;
+						if (selectee.startselected) {
+							selectee.$element.addClass("ui-unselecting");
+							selectee.unselecting = true;
+						}
+						// selectable UNSELECTING callback
+						that._trigger("unselecting", event, {
+							unselecting: selectee.element
+						});
+					}
+				}
+				if (selectee.selected) {
+					if (!event.metaKey && !event.ctrlKey && !selectee.startselected) {
+						selectee.$element.removeClass("ui-selected");
+						selectee.selected = false;
+
+						selectee.$element.addClass("ui-unselecting");
+						selectee.unselecting = true;
+						// selectable UNSELECTING callback
+						that._trigger("unselecting", event, {
+							unselecting: selectee.element
+						});
+					}
+				}
+			}
+		});
+
+		return false;
+	},
+
+	_mouseStop: function(event) {
+		var that = this;
+
+		this.dragged = false;
+
+		$(".ui-unselecting", this.element[0]).each(function() {
+			var selectee = $.data(this, "selectable-item");
+			selectee.$element.removeClass("ui-unselecting");
+			selectee.unselecting = false;
+			selectee.startselected = false;
+			that._trigger("unselected", event, {
+				unselected: selectee.element
+			});
+		});
+		$(".ui-selecting", this.element[0]).each(function() {
+			var selectee = $.data(this, "selectable-item");
+			selectee.$element.removeClass("ui-selecting").addClass("ui-selected");
+			selectee.selecting = false;
+			selectee.selected = true;
+			selectee.startselected = true;
+			that._trigger("selected", event, {
+				selected: selectee.element
+			});
+		});
+		this._trigger("stop", event);
+
+		this.helper.remove();
+
+		return false;
+	}
+
+});
+
+
+/*!
+ * jQuery UI Sortable 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/sortable/
+ */
+
+
+var sortable = $.widget("ui.sortable", $.ui.mouse, {
+	version: "1.11.4",
+	widgetEventPrefix: "sort",
+	ready: false,
+	options: {
+		appendTo: "parent",
+		axis: false,
+		connectWith: false,
+		containment: false,
+		cursor: "auto",
+		cursorAt: false,
+		dropOnEmpty: true,
+		forcePlaceholderSize: false,
+		forceHelperSize: false,
+		grid: false,
+		handle: false,
+		helper: "original",
+		items: "> *",
+		opacity: false,
+		placeholder: false,
+		revert: false,
+		scroll: true,
+		scrollSensitivity: 20,
+		scrollSpeed: 20,
+		scope: "default",
+		tolerance: "intersect",
+		zIndex: 1000,
+
+		// callbacks
+		activate: null,
+		beforeStop: null,
+		change: null,
+		deactivate: null,
+		out: null,
+		over: null,
+		receive: null,
+		remove: null,
+		sort: null,
+		start: null,
+		stop: null,
+		update: null
+	},
+
+	_isOverAxis: function( x, reference, size ) {
+		return ( x >= reference ) && ( x < ( reference + size ) );
+	},
+
+	_isFloating: function( item ) {
+		return (/left|right/).test(item.css("float")) || (/inline|table-cell/).test(item.css("display"));
+	},
+
+	_create: function() {
+		this.containerCache = {};
+		this.element.addClass("ui-sortable");
+
+		//Get the items
+		this.refresh();
+
+		//Let's determine the parent's offset
+		this.offset = this.element.offset();
+
+		//Initialize mouse events for interaction
+		this._mouseInit();
+
+		this._setHandleClassName();
+
+		//We're ready to go
+		this.ready = true;
+
+	},
+
+	_setOption: function( key, value ) {
+		this._super( key, value );
+
+		if ( key === "handle" ) {
+			this._setHandleClassName();
+		}
+	},
+
+	_setHandleClassName: function() {
+		this.element.find( ".ui-sortable-handle" ).removeClass( "ui-sortable-handle" );
+		$.each( this.items, function() {
+			( this.instance.options.handle ?
+				this.item.find( this.instance.options.handle ) : this.item )
+				.addClass( "ui-sortable-handle" );
+		});
+	},
+
+	_destroy: function() {
+		this.element
+			.removeClass( "ui-sortable ui-sortable-disabled" )
+			.find( ".ui-sortable-handle" )
+				.removeClass( "ui-sortable-handle" );
+		this._mouseDestroy();
+
+		for ( var i = this.items.length - 1; i >= 0; i-- ) {
+			this.items[i].item.removeData(this.widgetName + "-item");
+		}
+
+		return this;
+	},
+
+	_mouseCapture: function(event, overrideHandle) {
+		var currentItem = null,
+			validHandle = false,
+			that = this;
+
+		if (this.reverting) {
+			return false;
+		}
+
+		if(this.options.disabled || this.options.type === "static") {
+			return false;
+		}
+
+		//We have to refresh the items data once first
+		this._refreshItems(event);
+
+		//Find out if the clicked node (or one of its parents) is a actual item in this.items
+		$(event.target).parents().each(function() {
+			if($.data(this, that.widgetName + "-item") === that) {
+				currentItem = $(this);
+				return false;
+			}
+		});
+		if($.data(event.target, that.widgetName + "-item") === that) {
+			currentItem = $(event.target);
+		}
+
+		if(!currentItem) {
+			return false;
+		}
+		if(this.options.handle && !overrideHandle) {
+			$(this.options.handle, currentItem).find("*").addBack().each(function() {
+				if(this === event.target) {
+					validHandle = true;
+				}
+			});
+			if(!validHandle) {
+				return false;
+			}
+		}
+
+		this.currentItem = currentItem;
+		this._removeCurrentsFromItems();
+		return true;
+
+	},
+
+	_mouseStart: function(event, overrideHandle, noActivation) {
+
+		var i, body,
+			o = this.options;
+
+		this.currentContainer = this;
+
+		//We only need to call refreshPositions, because the refreshItems call has been moved to mouseCapture
+		this.refreshPositions();
+
+		//Create and append the visible helper
+		this.helper = this._createHelper(event);
+
+		//Cache the helper size
+		this._cacheHelperProportions();
+
+		/*
+		 * - Position generation -
+		 * This block generates everything position related - it's the core of draggables.
+		 */
+
+		//Cache the margins of the original element
+		this._cacheMargins();
+
+		//Get the next scrolling parent
+		this.scrollParent = this.helper.scrollParent();
+
+		//The element's absolute position on the page minus margins
+		this.offset = this.currentItem.offset();
+		this.offset = {
+			top: this.offset.top - this.margins.top,
+			left: this.offset.left - this.margins.left
+		};
+
+		$.extend(this.offset, {
+			click: { //Where the click happened, relative to the element
+				left: event.pageX - this.offset.left,
+				top: event.pageY - this.offset.top
+			},
+			parent: this._getParentOffset(),
+			relative: this._getRelativeOffset() //This is a relative to absolute position minus the actual position calculation - only used for relative positioned helper
+		});
+
+		// Only after we got the offset, we can change the helper's position to absolute
+		// TODO: Still need to figure out a way to make relative sorting possible
+		this.helper.css("position", "absolute");
+		this.cssPosition = this.helper.css("position");
+
+		//Generate the original position
+		this.originalPosition = this._generatePosition(event);
+		this.originalPageX = event.pageX;
+		this.originalPageY = event.pageY;
+
+		//Adjust the mouse offset relative to the helper if "cursorAt" is supplied
+		(o.cursorAt && this._adjustOffsetFromHelper(o.cursorAt));
+
+		//Cache the former DOM position
+		this.domPosition = { prev: this.currentItem.prev()[0], parent: this.currentItem.parent()[0] };
+
+		//If the helper is not the original, hide the original so it's not playing any role during the drag, won't cause anything bad this way
+		if(this.helper[0] !== this.currentItem[0]) {
+			this.currentItem.hide();
+		}
+
+		//Create the placeholder
+		this._createPlaceholder();
+
+		//Set a containment if given in the options
+		if(o.containment) {
+			this._setContainment();
+		}
+
+		if( o.cursor && o.cursor !== "auto" ) { // cursor option
+			body = this.document.find( "body" );
+
+			// support: IE
+			this.storedCursor = body.css( "cursor" );
+			body.css( "cursor", o.cursor );
+
+			this.storedStylesheet = $( "<style>*{ cursor: "+o.cursor+" !important; }</style>" ).appendTo( body );
+		}
+
+		if(o.opacity) { // opacity option
+			if (this.helper.css("opacity")) {
+				this._storedOpacity = this.helper.css("opacity");
+			}
+			this.helper.css("opacity", o.opacity);
+		}
+
+		if(o.zIndex) { // zIndex option
+			if (this.helper.css("zIndex")) {
+				this._storedZIndex = this.helper.css("zIndex");
+			}
+			this.helper.css("zIndex", o.zIndex);
+		}
+
+		//Prepare scrolling
+		if(this.scrollParent[0] !== this.document[0] && this.scrollParent[0].tagName !== "HTML") {
+			this.overflowOffset = this.scrollParent.offset();
+		}
+
+		//Call callbacks
+		this._trigger("start", event, this._uiHash());
+
+		//Recache the helper size
+		if(!this._preserveHelperProportions) {
+			this._cacheHelperProportions();
+		}
+
+
+		//Post "activate" events to possible containers
+		if( !noActivation ) {
+			for ( i = this.containers.length - 1; i >= 0; i-- ) {
+				this.containers[ i ]._trigger( "activate", event, this._uiHash( this ) );
+			}
+		}
+
+		//Prepare possible droppables
+		if($.ui.ddmanager) {
+			$.ui.ddmanager.current = this;
+		}
+
+		if ($.ui.ddmanager && !o.dropBehaviour) {
+			$.ui.ddmanager.prepareOffsets(this, event);
+		}
+
+		this.dragging = true;
+
+		this.helper.addClass("ui-sortable-helper");
+		this._mouseDrag(event); //Execute the drag once - this causes the helper not to be visible before getting its correct position
+		return true;
+
+	},
+
+	_mouseDrag: function(event) {
+		var i, item, itemElement, intersection,
+			o = this.options,
+			scrolled = false;
+
+		//Compute the helpers position
+		this.position = this._generatePosition(event);
+		this.positionAbs = this._convertPositionTo("absolute");
+
+		if (!this.lastPositionAbs) {
+			this.lastPositionAbs = this.positionAbs;
+		}
+
+		//Do scrolling
+		if(this.options.scroll) {
+			if(this.scrollParent[0] !== this.document[0] && this.scrollParent[0].tagName !== "HTML") {
+
+				if((this.overflowOffset.top + this.scrollParent[0].offsetHeight) - event.pageY < o.scrollSensitivity) {
+					this.scrollParent[0].scrollTop = scrolled = this.scrollParent[0].scrollTop + o.scrollSpeed;
+				} else if(event.pageY - this.overflowOffset.top < o.scrollSensitivity) {
+					this.scrollParent[0].scrollTop = scrolled = this.scrollParent[0].scrollTop - o.scrollSpeed;
+				}
+
+				if((this.overflowOffset.left + this.scrollParent[0].offsetWidth) - event.pageX < o.scrollSensitivity) {
+					this.scrollParent[0].scrollLeft = scrolled = this.scrollParent[0].scrollLeft + o.scrollSpeed;
+				} else if(event.pageX - this.overflowOffset.left < o.scrollSensitivity) {
+					this.scrollParent[0].scrollLeft = scrolled = this.scrollParent[0].scrollLeft - o.scrollSpeed;
+				}
+
+			} else {
+
+				if(event.pageY - this.document.scrollTop() < o.scrollSensitivity) {
+					scrolled = this.document.scrollTop(this.document.scrollTop() - o.scrollSpeed);
+				} else if(this.window.height() - (event.pageY - this.document.scrollTop()) < o.scrollSensitivity) {
+					scrolled = this.document.scrollTop(this.document.scrollTop() + o.scrollSpeed);
+				}
+
+				if(event.pageX - this.document.scrollLeft() < o.scrollSensitivity) {
+					scrolled = this.document.scrollLeft(this.document.scrollLeft() - o.scrollSpeed);
+				} else if(this.window.width() - (event.pageX - this.document.scrollLeft()) < o.scrollSensitivity) {
+					scrolled = this.document.scrollLeft(this.document.scrollLeft() + o.scrollSpeed);
+				}
+
+			}
+
+			if(scrolled !== false && $.ui.ddmanager && !o.dropBehaviour) {
+				$.ui.ddmanager.prepareOffsets(this, event);
+			}
+		}
+
+		//Regenerate the absolute position used for position checks
+		this.positionAbs = this._convertPositionTo("absolute");
+
+		//Set the helper position
+		if(!this.options.axis || this.options.axis !== "y") {
+			this.helper[0].style.left = this.position.left+"px";
+		}
+		if(!this.options.axis || this.options.axis !== "x") {
+			this.helper[0].style.top = this.position.top+"px";
+		}
+
+		//Rearrange
+		for (i = this.items.length - 1; i >= 0; i--) {
+
+			//Cache variables and intersection, continue if no intersection
+			item = this.items[i];
+			itemElement = item.item[0];
+			intersection = this._intersectsWithPointer(item);
+			if (!intersection) {
+				continue;
+			}
+
+			// Only put the placeholder inside the current Container, skip all
+			// items from other containers. This works because when moving
+			// an item from one container to another the
+			// currentContainer is switched before the placeholder is moved.
+			//
+			// Without this, moving items in "sub-sortables" can cause
+			// the placeholder to jitter between the outer and inner container.
+			if (item.instance !== this.currentContainer) {
+				continue;
+			}
+
+			// cannot intersect with itself
+			// no useless actions that have been done before
+			// no action if the item moved is the parent of the item checked
+			if (itemElement !== this.currentItem[0] &&
+				this.placeholder[intersection === 1 ? "next" : "prev"]()[0] !== itemElement &&
+				!$.contains(this.placeholder[0], itemElement) &&
+				(this.options.type === "semi-dynamic" ? !$.contains(this.element[0], itemElement) : true)
+			) {
+
+				this.direction = intersection === 1 ? "down" : "up";
+
+				if (this.options.tolerance === "pointer" || this._intersectsWithSides(item)) {
+					this._rearrange(event, item);
+				} else {
+					break;
+				}
+
+				this._trigger("change", event, this._uiHash());
+				break;
+			}
+		}
+
+		//Post events to containers
+		this._contactContainers(event);
+
+		//Interconnect with droppables
+		if($.ui.ddmanager) {
+			$.ui.ddmanager.drag(this, event);
+		}
+
+		//Call callbacks
+		this._trigger("sort", event, this._uiHash());
+
+		this.lastPositionAbs = this.positionAbs;
+		return false;
+
+	},
+
+	_mouseStop: function(event, noPropagation) {
+
+		if(!event) {
+			return;
+		}
+
+		//If we are using droppables, inform the manager about the drop
+		if ($.ui.ddmanager && !this.options.dropBehaviour) {
+			$.ui.ddmanager.drop(this, event);
+		}
+
+		if(this.options.revert) {
+			var that = this,
+				cur = this.placeholder.offset(),
+				axis = this.options.axis,
+				animation = {};
+
+			if ( !axis || axis === "x" ) {
+				animation.left = cur.left - this.offset.parent.left - this.margins.left + (this.offsetParent[0] === this.document[0].body ? 0 : this.offsetParent[0].scrollLeft);
+			}
+			if ( !axis || axis === "y" ) {
+				animation.top = cur.top - this.offset.parent.top - this.margins.top + (this.offsetParent[0] === this.document[0].body ? 0 : this.offsetParent[0].scrollTop);
+			}
+			this.reverting = true;
+			$(this.helper).animate( animation, parseInt(this.options.revert, 10) || 500, function() {
+				that._clear(event);
+			});
+		} else {
+			this._clear(event, noPropagation);
+		}
+
+		return false;
+
+	},
+
+	cancel: function() {
+
+		if(this.dragging) {
+
+			this._mouseUp({ target: null });
+
+			if(this.options.helper === "original") {
+				this.currentItem.css(this._storedCSS).removeClass("ui-sortable-helper");
+			} else {
+				this.currentItem.show();
+			}
+
+			//Post deactivating events to containers
+			for (var i = this.containers.length - 1; i >= 0; i--){
+				this.containers[i]._trigger("deactivate", null, this._uiHash(this));
+				if(this.containers[i].containerCache.over) {
+					this.containers[i]._trigger("out", null, this._uiHash(this));
+					this.containers[i].containerCache.over = 0;
+				}
+			}
+
+		}
+
+		if (this.placeholder) {
+			//$(this.placeholder[0]).remove(); would have been the jQuery way - unfortunately, it unbinds ALL events from the original node!
+			if(this.placeholder[0].parentNode) {
+				this.placeholder[0].parentNode.removeChild(this.placeholder[0]);
+			}
+			if(this.options.helper !== "original" && this.helper && this.helper[0].parentNode) {
+				this.helper.remove();
+			}
+
+			$.extend(this, {
+				helper: null,
+				dragging: false,
+				reverting: false,
+				_noFinalSort: null
+			});
+
+			if(this.domPosition.prev) {
+				$(this.domPosition.prev).after(this.currentItem);
+			} else {
+				$(this.domPosition.parent).prepend(this.currentItem);
+			}
+		}
+
+		return this;
+
+	},
+
+	serialize: function(o) {
+
+		var items = this._getItemsAsjQuery(o && o.connected),
+			str = [];
+		o = o || {};
+
+		$(items).each(function() {
+			var res = ($(o.item || this).attr(o.attribute || "id") || "").match(o.expression || (/(.+)[\-=_](.+)/));
+			if (res) {
+				str.push((o.key || res[1]+"[]")+"="+(o.key && o.expression ? res[1] : res[2]));
+			}
+		});
+
+		if(!str.length && o.key) {
+			str.push(o.key + "=");
+		}
+
+		return str.join("&");
+
+	},
+
+	toArray: function(o) {
+
+		var items = this._getItemsAsjQuery(o && o.connected),
+			ret = [];
+
+		o = o || {};
+
+		items.each(function() { ret.push($(o.item || this).attr(o.attribute || "id") || ""); });
+		return ret;
+
+	},
+
+	/* Be careful with the following core functions */
+	_intersectsWith: function(item) {
+
+		var x1 = this.positionAbs.left,
+			x2 = x1 + this.helperProportions.width,
+			y1 = this.positionAbs.top,
+			y2 = y1 + this.helperProportions.height,
+			l = item.left,
+			r = l + item.width,
+			t = item.top,
+			b = t + item.height,
+			dyClick = this.offset.click.top,
+			dxClick = this.offset.click.left,
+			isOverElementHeight = ( this.options.axis === "x" ) || ( ( y1 + dyClick ) > t && ( y1 + dyClick ) < b ),
+			isOverElementWidth = ( this.options.axis === "y" ) || ( ( x1 + dxClick ) > l && ( x1 + dxClick ) < r ),
+			isOverElement = isOverElementHeight && isOverElementWidth;
+
+		if ( this.options.tolerance === "pointer" ||
+			this.options.forcePointerForContainers ||
+			(this.options.tolerance !== "pointer" && this.helperProportions[this.floating ? "width" : "height"] > item[this.floating ? "width" : "height"])
+		) {
+			return isOverElement;
+		} else {
+
+			return (l < x1 + (this.helperProportions.width / 2) && // Right Half
+				x2 - (this.helperProportions.width / 2) < r && // Left Half
+				t < y1 + (this.helperProportions.height / 2) && // Bottom Half
+				y2 - (this.helperProportions.height / 2) < b ); // Top Half
+
+		}
+	},
+
+	_intersectsWithPointer: function(item) {
+
+		var isOverElementHeight = (this.options.axis === "x") || this._isOverAxis(this.positionAbs.top + this.offset.click.top, item.top, item.height),
+			isOverElementWidth = (this.options.axis === "y") || this._isOverAxis(this.positionAbs.left + this.offset.click.left, item.left, item.width),
+			isOverElement = isOverElementHeight && isOverElementWidth,
+			verticalDirection = this._getDragVerticalDirection(),
+			horizontalDirection = this._getDragHorizontalDirection();
+
+		if (!isOverElement) {
+			return false;
+		}
+
+		return this.floating ?
+			( ((horizontalDirection && horizontalDirection === "right") || verticalDirection === "down") ? 2 : 1 )
+			: ( verticalDirection && (verticalDirection === "down" ? 2 : 1) );
+
+	},
+
+	_intersectsWithSides: function(item) {
+
+		var isOverBottomHalf = this._isOverAxis(this.positionAbs.top + this.offset.click.top, item.top + (item.height/2), item.height),
+			isOverRightHalf = this._isOverAxis(this.positionAbs.left + this.offset.click.left, item.left + (item.width/2), item.width),
+			verticalDirection = this._getDragVerticalDirection(),
+			horizontalDirection = this._getDragHorizontalDirection();
+
+		if (this.floating && horizontalDirection) {
+			return ((horizontalDirection === "right" && isOverRightHalf) || (horizontalDirection === "left" && !isOverRightHalf));
+		} else {
+			return verticalDirection && ((verticalDirection === "down" && isOverBottomHalf) || (verticalDirection === "up" && !isOverBottomHalf));
+		}
+
+	},
+
+	_getDragVerticalDirection: function() {
+		var delta = this.positionAbs.top - this.lastPositionAbs.top;
+		return delta !== 0 && (delta > 0 ? "down" : "up");
+	},
+
+	_getDragHorizontalDirection: function() {
+		var delta = this.positionAbs.left - this.lastPositionAbs.left;
+		return delta !== 0 && (delta > 0 ? "right" : "left");
+	},
+
+	refresh: function(event) {
+		this._refreshItems(event);
+		this._setHandleClassName();
+		this.refreshPositions();
+		return this;
+	},
+
+	_connectWith: function() {
+		var options = this.options;
+		return options.connectWith.constructor === String ? [options.connectWith] : options.connectWith;
+	},
+
+	_getItemsAsjQuery: function(connected) {
+
+		var i, j, cur, inst,
+			items = [],
+			queries = [],
+			connectWith = this._connectWith();
+
+		if(connectWith && connected) {
+			for (i = connectWith.length - 1; i >= 0; i--){
+				cur = $(connectWith[i], this.document[0]);
+				for ( j = cur.length - 1; j >= 0; j--){
+					inst = $.data(cur[j], this.widgetFullName);
+					if(inst && inst !== this && !inst.options.disabled) {
+						queries.push([$.isFunction(inst.options.items) ? inst.options.items.call(inst.element) : $(inst.options.items, inst.element).not(".ui-sortable-helper").not(".ui-sortable-placeholder"), inst]);
+					}
+				}
+			}
+		}
+
+		queries.push([$.isFunction(this.options.items) ? this.options.items.call(this.element, null, { options: this.options, item: this.currentItem }) : $(this.options.items, this.element).not(".ui-sortable-helper").not(".ui-sortable-placeholder"), this]);
+
+		function addItems() {
+			items.push( this );
+		}
+		for (i = queries.length - 1; i >= 0; i--){
+			queries[i][0].each( addItems );
+		}
+
+		return $(items);
+
+	},
+
+	_removeCurrentsFromItems: function() {
+
+		var list = this.currentItem.find(":data(" + this.widgetName + "-item)");
+
+		this.items = $.grep(this.items, function (item) {
+			for (var j=0; j < list.length; j++) {
+				if(list[j] === item.item[0]) {
+					return false;
+				}
+			}
+			return true;
+		});
+
+	},
+
+	_refreshItems: function(event) {
+
+		this.items = [];
+		this.containers = [this];
+
+		var i, j, cur, inst, targetData, _queries, item, queriesLength,
+			items = this.items,
+			queries = [[$.isFunction(this.options.items) ? this.options.items.call(this.element[0], event, { item: this.currentItem }) : $(this.options.items, this.element), this]],
+			connectWith = this._connectWith();
+
+		if(connectWith && this.ready) { //Shouldn't be run the first time through due to massive slow-down
+			for (i = connectWith.length - 1; i >= 0; i--){
+				cur = $(connectWith[i], this.document[0]);
+				for (j = cur.length - 1; j >= 0; j--){
+					inst = $.data(cur[j], this.widgetFullName);
+					if(inst && inst !== this && !inst.options.disabled) {
+						queries.push([$.isFunction(inst.options.items) ? inst.options.items.call(inst.element[0], event, { item: this.currentItem }) : $(inst.options.items, inst.element), inst]);
+						this.containers.push(inst);
+					}
+				}
+			}
+		}
+
+		for (i = queries.length - 1; i >= 0; i--) {
+			targetData = queries[i][1];
+			_queries = queries[i][0];
+
+			for (j=0, queriesLength = _queries.length; j < queriesLength; j++) {
+				item = $(_queries[j]);
+
+				item.data(this.widgetName + "-item", targetData); // Data for target checking (mouse manager)
+
+				items.push({
+					item: item,
+					instance: targetData,
+					width: 0, height: 0,
+					left: 0, top: 0
+				});
+			}
+		}
+
+	},
+
+	refreshPositions: function(fast) {
+
+		// Determine whether items are being displayed horizontally
+		this.floating = this.items.length ?
+			this.options.axis === "x" || this._isFloating( this.items[ 0 ].item ) :
+			false;
+
+		//This has to be redone because due to the item being moved out/into the offsetParent, the offsetParent's position will change
+		if(this.offsetParent && this.helper) {
+			this.offset.parent = this._getParentOffset();
+		}
+
+		var i, item, t, p;
+
+		for (i = this.items.length - 1; i >= 0; i--){
+			item = this.items[i];
+
+			//We ignore calculating positions of all connected containers when we're not over them
+			if(item.instance !== this.currentContainer && this.currentContainer && item.item[0] !== this.currentItem[0]) {
+				continue;
+			}
+
+			t = this.options.toleranceElement ? $(this.options.toleranceElement, item.item) : item.item;
+
+			if (!fast) {
+				item.width = t.outerWidth();
+				item.height = t.outerHeight();
+			}
+
+			p = t.offset();
+			item.left = p.left;
+			item.top = p.top;
+		}
+
+		if(this.options.custom && this.options.custom.refreshContainers) {
+			this.options.custom.refreshContainers.call(this);
+		} else {
+			for (i = this.containers.length - 1; i >= 0; i--){
+				p = this.containers[i].element.offset();
+				this.containers[i].containerCache.left = p.left;
+				this.containers[i].containerCache.top = p.top;
+				this.containers[i].containerCache.width = this.containers[i].element.outerWidth();
+				this.containers[i].containerCache.height = this.containers[i].element.outerHeight();
+			}
+		}
+
+		return this;
+	},
+
+	_createPlaceholder: function(that) {
+		that = that || this;
+		var className,
+			o = that.options;
+
+		if(!o.placeholder || o.placeholder.constructor === String) {
+			className = o.placeholder;
+			o.placeholder = {
+				element: function() {
+
+					var nodeName = that.currentItem[0].nodeName.toLowerCase(),
+						element = $( "<" + nodeName + ">", that.document[0] )
+							.addClass(className || that.currentItem[0].className+" ui-sortable-placeholder")
+							.removeClass("ui-sortable-helper");
+
+					if ( nodeName === "tbody" ) {
+						that._createTrPlaceholder(
+							that.currentItem.find( "tr" ).eq( 0 ),
+							$( "<tr>", that.document[ 0 ] ).appendTo( element )
+						);
+					} else if ( nodeName === "tr" ) {
+						that._createTrPlaceholder( that.currentItem, element );
+					} else if ( nodeName === "img" ) {
+						element.attr( "src", that.currentItem.attr( "src" ) );
+					}
+
+					if ( !className ) {
+						element.css( "visibility", "hidden" );
+					}
+
+					return element;
+				},
+				update: function(container, p) {
+
+					// 1. If a className is set as 'placeholder option, we don't force sizes - the class is responsible for that
+					// 2. The option 'forcePlaceholderSize can be enabled to force it even if a class name is specified
+					if(className && !o.forcePlaceholderSize) {
+						return;
+					}
+
+					//If the element doesn't have a actual height by itself (without styles coming from a stylesheet), it receives the inline height from the dragged item
+					if(!p.height()) { p.height(that.currentItem.innerHeight() - parseInt(that.currentItem.css("paddingTop")||0, 10) - parseInt(that.currentItem.css("paddingBottom")||0, 10)); }
+					if(!p.width()) { p.width(that.currentItem.innerWidth() - parseInt(that.currentItem.css("paddingLeft")||0, 10) - parseInt(that.currentItem.css("paddingRight")||0, 10)); }
+				}
+			};
+		}
+
+		//Create the placeholder
+		that.placeholder = $(o.placeholder.element.call(that.element, that.currentItem));
+
+		//Append it after the actual current item
+		that.currentItem.after(that.placeholder);
+
+		//Update the size of the placeholder (TODO: Logic to fuzzy, see line 316/317)
+		o.placeholder.update(that, that.placeholder);
+
+	},
+
+	_createTrPlaceholder: function( sourceTr, targetTr ) {
+		var that = this;
+
+		sourceTr.children().each(function() {
+			$( "<td>&#160;</td>", that.document[ 0 ] )
+				.attr( "colspan", $( this ).attr( "colspan" ) || 1 )
+				.appendTo( targetTr );
+		});
+	},
+
+	_contactContainers: function(event) {
+		var i, j, dist, itemWithLeastDistance, posProperty, sizeProperty, cur, nearBottom, floating, axis,
+			innermostContainer = null,
+			innermostIndex = null;
+
+		// get innermost container that intersects with item
+		for (i = this.containers.length - 1; i >= 0; i--) {
+
+			// never consider a container that's located within the item itself
+			if($.contains(this.currentItem[0], this.containers[i].element[0])) {
+				continue;
+			}
+
+			if(this._intersectsWith(this.containers[i].containerCache)) {
+
+				// if we've already found a container and it's more "inner" than this, then continue
+				if(innermostContainer && $.contains(this.containers[i].element[0], innermostContainer.element[0])) {
+					continue;
+				}
+
+				innermostContainer = this.containers[i];
+				innermostIndex = i;
+
+			} else {
+				// container doesn't intersect. trigger "out" event if necessary
+				if(this.containers[i].containerCache.over) {
+					this.containers[i]._trigger("out", event, this._uiHash(this));
+					this.containers[i].containerCache.over = 0;
+				}
+			}
+
+		}
+
+		// if no intersecting containers found, return
+		if(!innermostContainer) {
+			return;
+		}
+
+		// move the item into the container if it's not there already
+		if(this.containers.length === 1) {
+			if (!this.containers[innermostIndex].containerCache.over) {
+				this.containers[innermostIndex]._trigger("over", event, this._uiHash(this));
+				this.containers[innermostIndex].containerCache.over = 1;
+			}
+		} else {
+
+			//When entering a new container, we will find the item with the least distance and append our item near it
+			dist = 10000;
+			itemWithLeastDistance = null;
+			floating = innermostContainer.floating || this._isFloating(this.currentItem);
+			posProperty = floating ? "left" : "top";
+			sizeProperty = floating ? "width" : "height";
+			axis = floating ? "clientX" : "clientY";
+
+			for (j = this.items.length - 1; j >= 0; j--) {
+				if(!$.contains(this.containers[innermostIndex].element[0], this.items[j].item[0])) {
+					continue;
+				}
+				if(this.items[j].item[0] === this.currentItem[0]) {
+					continue;
+				}
+
+				cur = this.items[j].item.offset()[posProperty];
+				nearBottom = false;
+				if ( event[ axis ] - cur > this.items[ j ][ sizeProperty ] / 2 ) {
+					nearBottom = true;
+				}
+
+				if ( Math.abs( event[ axis ] - cur ) < dist ) {
+					dist = Math.abs( event[ axis ] - cur );
+					itemWithLeastDistance = this.items[ j ];
+					this.direction = nearBottom ? "up": "down";
+				}
+			}
+
+			//Check if dropOnEmpty is enabled
+			if(!itemWithLeastDistance && !this.options.dropOnEmpty) {
+				return;
+			}
+
+			if(this.currentContainer === this.containers[innermostIndex]) {
+				if ( !this.currentContainer.containerCache.over ) {
+					this.containers[ innermostIndex ]._trigger( "over", event, this._uiHash() );
+					this.currentContainer.containerCache.over = 1;
+				}
+				return;
+			}
+
+			itemWithLeastDistance ? this._rearrange(event, itemWithLeastDistance, null, true) : this._rearrange(event, null, this.containers[innermostIndex].element, true);
+			this._trigger("change", event, this._uiHash());
+			this.containers[innermostIndex]._trigger("change", event, this._uiHash(this));
+			this.currentContainer = this.containers[innermostIndex];
+
+			//Update the placeholder
+			this.options.placeholder.update(this.currentContainer, this.placeholder);
+
+			this.containers[innermostIndex]._trigger("over", event, this._uiHash(this));
+			this.containers[innermostIndex].containerCache.over = 1;
+		}
+
+
+	},
+
+	_createHelper: function(event) {
+
+		var o = this.options,
+			helper = $.isFunction(o.helper) ? $(o.helper.apply(this.element[0], [event, this.currentItem])) : (o.helper === "clone" ? this.currentItem.clone() : this.currentItem);
+
+		//Add the helper to the DOM if that didn't happen already
+		if(!helper.parents("body").length) {
+			$(o.appendTo !== "parent" ? o.appendTo : this.currentItem[0].parentNode)[0].appendChild(helper[0]);
+		}
+
+		if(helper[0] === this.currentItem[0]) {
+			this._storedCSS = { width: this.currentItem[0].style.width, height: this.currentItem[0].style.height, position: this.currentItem.css("position"), top: this.currentItem.css("top"), left: this.currentItem.css("left") };
+		}
+
+		if(!helper[0].style.width || o.forceHelperSize) {
+			helper.width(this.currentItem.width());
+		}
+		if(!helper[0].style.height || o.forceHelperSize) {
+			helper.height(this.currentItem.height());
+		}
+
+		return helper;
+
+	},
+
+	_adjustOffsetFromHelper: function(obj) {
+		if (typeof obj === "string") {
+			obj = obj.split(" ");
+		}
+		if ($.isArray(obj)) {
+			obj = {left: +obj[0], top: +obj[1] || 0};
+		}
+		if ("left" in obj) {
+			this.offset.click.left = obj.left + this.margins.left;
+		}
+		if ("right" in obj) {
+			this.offset.click.left = this.helperProportions.width - obj.right + this.margins.left;
+		}
+		if ("top" in obj) {
+			this.offset.click.top = obj.top + this.margins.top;
+		}
+		if ("bottom" in obj) {
+			this.offset.click.top = this.helperProportions.height - obj.bottom + this.margins.top;
+		}
+	},
+
+	_getParentOffset: function() {
+
+
+		//Get the offsetParent and cache its position
+		this.offsetParent = this.helper.offsetParent();
+		var po = this.offsetParent.offset();
+
+		// This is a special case where we need to modify a offset calculated on start, since the following happened:
+		// 1. The position of the helper is absolute, so it's position is calculated based on the next positioned parent
+		// 2. The actual offset parent is a child of the scroll parent, and the scroll parent isn't the document, which means that
+		//    the scroll is included in the initial calculation of the offset of the parent, and never recalculated upon drag
+		if(this.cssPosition === "absolute" && this.scrollParent[0] !== this.document[0] && $.contains(this.scrollParent[0], this.offsetParent[0])) {
+			po.left += this.scrollParent.scrollLeft();
+			po.top += this.scrollParent.scrollTop();
+		}
+
+		// This needs to be actually done for all browsers, since pageX/pageY includes this information
+		// with an ugly IE fix
+		if( this.offsetParent[0] === this.document[0].body || (this.offsetParent[0].tagName && this.offsetParent[0].tagName.toLowerCase() === "html" && $.ui.ie)) {
+			po = { top: 0, left: 0 };
+		}
+
+		return {
+			top: po.top + (parseInt(this.offsetParent.css("borderTopWidth"),10) || 0),
+			left: po.left + (parseInt(this.offsetParent.css("borderLeftWidth"),10) || 0)
+		};
+
+	},
+
+	_getRelativeOffset: function() {
+
+		if(this.cssPosition === "relative") {
+			var p = this.currentItem.position();
+			return {
+				top: p.top - (parseInt(this.helper.css("top"),10) || 0) + this.scrollParent.scrollTop(),
+				left: p.left - (parseInt(this.helper.css("left"),10) || 0) + this.scrollParent.scrollLeft()
+			};
+		} else {
+			return { top: 0, left: 0 };
+		}
+
+	},
+
+	_cacheMargins: function() {
+		this.margins = {
+			left: (parseInt(this.currentItem.css("marginLeft"),10) || 0),
+			top: (parseInt(this.currentItem.css("marginTop"),10) || 0)
+		};
+	},
+
+	_cacheHelperProportions: function() {
+		this.helperProportions = {
+			width: this.helper.outerWidth(),
+			height: this.helper.outerHeight()
+		};
+	},
+
+	_setContainment: function() {
+
+		var ce, co, over,
+			o = this.options;
+		if(o.containment === "parent") {
+			o.containment = this.helper[0].parentNode;
+		}
+		if(o.containment === "document" || o.containment === "window") {
+			this.containment = [
+				0 - this.offset.relative.left - this.offset.parent.left,
+				0 - this.offset.relative.top - this.offset.parent.top,
+				o.containment === "document" ? this.document.width() : this.window.width() - this.helperProportions.width - this.margins.left,
+				(o.containment === "document" ? this.document.width() : this.window.height() || this.document[0].body.parentNode.scrollHeight) - this.helperProportions.height - this.margins.top
+			];
+		}
+
+		if(!(/^(document|window|parent)$/).test(o.containment)) {
+			ce = $(o.containment)[0];
+			co = $(o.containment).offset();
+			over = ($(ce).css("overflow") !== "hidden");
+
+			this.containment = [
+				co.left + (parseInt($(ce).css("borderLeftWidth"),10) || 0) + (parseInt($(ce).css("paddingLeft"),10) || 0) - this.margins.left,
+				co.top + (parseInt($(ce).css("borderTopWidth"),10) || 0) + (parseInt($(ce).css("paddingTop"),10) || 0) - this.margins.top,
+				co.left+(over ? Math.max(ce.scrollWidth,ce.offsetWidth) : ce.offsetWidth) - (parseInt($(ce).css("borderLeftWidth"),10) || 0) - (parseInt($(ce).css("paddingRight"),10) || 0) - this.helperProportions.width - this.margins.left,
+				co.top+(over ? Math.max(ce.scrollHeight,ce.offsetHeight) : ce.offsetHeight) - (parseInt($(ce).css("borderTopWidth"),10) || 0) - (parseInt($(ce).css("paddingBottom"),10) || 0) - this.helperProportions.height - this.margins.top
+			];
+		}
+
+	},
+
+	_convertPositionTo: function(d, pos) {
+
+		if(!pos) {
+			pos = this.position;
+		}
+		var mod = d === "absolute" ? 1 : -1,
+			scroll = this.cssPosition === "absolute" && !(this.scrollParent[0] !== this.document[0] && $.contains(this.scrollParent[0], this.offsetParent[0])) ? this.offsetParent : this.scrollParent,
+			scrollIsRootNode = (/(html|body)/i).test(scroll[0].tagName);
+
+		return {
+			top: (
+				pos.top	+																// The absolute mouse position
+				this.offset.relative.top * mod +										// Only for relative positioned nodes: Relative offset from element to offset parent
+				this.offset.parent.top * mod -											// The offsetParent's offset without borders (offset + border)
+				( ( this.cssPosition === "fixed" ? -this.scrollParent.scrollTop() : ( scrollIsRootNode ? 0 : scroll.scrollTop() ) ) * mod)
+			),
+			left: (
+				pos.left +																// The absolute mouse position
+				this.offset.relative.left * mod +										// Only for relative positioned nodes: Relative offset from element to offset parent
+				this.offset.parent.left * mod	-										// The offsetParent's offset without borders (offset + border)
+				( ( this.cssPosition === "fixed" ? -this.scrollParent.scrollLeft() : scrollIsRootNode ? 0 : scroll.scrollLeft() ) * mod)
+			)
+		};
+
+	},
+
+	_generatePosition: function(event) {
+
+		var top, left,
+			o = this.options,
+			pageX = event.pageX,
+			pageY = event.pageY,
+			scroll = this.cssPosition === "absolute" && !(this.scrollParent[0] !== this.document[0] && $.contains(this.scrollParent[0], this.offsetParent[0])) ? this.offsetParent : this.scrollParent, scrollIsRootNode = (/(html|body)/i).test(scroll[0].tagName);
+
+		// This is another very weird special case that only happens for relative elements:
+		// 1. If the css position is relative
+		// 2. and the scroll parent is the document or similar to the offset parent
+		// we have to refresh the relative offset during the scroll so there are no jumps
+		if(this.cssPosition === "relative" && !(this.scrollParent[0] !== this.document[0] && this.scrollParent[0] !== this.offsetParent[0])) {
+			this.offset.relative = this._getRelativeOffset();
+		}
+
+		/*
+		 * - Position constraining -
+		 * Constrain the position to a mix of grid, containment.
+		 */
+
+		if(this.originalPosition) { //If we are not dragging yet, we won't check for options
+
+			if(this.containment) {
+				if(event.pageX - this.offset.click.left < this.containment[0]) {
+					pageX = this.containment[0] + this.offset.click.left;
+				}
+				if(event.pageY - this.offset.click.top < this.containment[1]) {
+					pageY = this.containment[1] + this.offset.click.top;
+				}
+				if(event.pageX - this.offset.click.left > this.containment[2]) {
+					pageX = this.containment[2] + this.offset.click.left;
+				}
+				if(event.pageY - this.offset.click.top > this.containment[3]) {
+					pageY = this.containment[3] + this.offset.click.top;
+				}
+			}
+
+			if(o.grid) {
+				top = this.originalPageY + Math.round((pageY - this.originalPageY) / o.grid[1]) * o.grid[1];
+				pageY = this.containment ? ( (top - this.offset.click.top >= this.containment[1] && top - this.offset.click.top <= this.containment[3]) ? top : ((top - this.offset.click.top >= this.containment[1]) ? top - o.grid[1] : top + o.grid[1])) : top;
+
+				left = this.originalPageX + Math.round((pageX - this.originalPageX) / o.grid[0]) * o.grid[0];
+				pageX = this.containment ? ( (left - this.offset.click.left >= this.containment[0] && left - this.offset.click.left <= this.containment[2]) ? left : ((left - this.offset.click.left >= this.containment[0]) ? left - o.grid[0] : left + o.grid[0])) : left;
+			}
+
+		}
+
+		return {
+			top: (
+				pageY -																// The absolute mouse position
+				this.offset.click.top -													// Click offset (relative to the element)
+				this.offset.relative.top	-											// Only for relative positioned nodes: Relative offset from element to offset parent
+				this.offset.parent.top +												// The offsetParent's offset without borders (offset + border)
+				( ( this.cssPosition === "fixed" ? -this.scrollParent.scrollTop() : ( scrollIsRootNode ? 0 : scroll.scrollTop() ) ))
+			),
+			left: (
+				pageX -																// The absolute mouse position
+				this.offset.click.left -												// Click offset (relative to the element)
+				this.offset.relative.left	-											// Only for relative positioned nodes: Relative offset from element to offset parent
+				this.offset.parent.left +												// The offsetParent's offset without borders (offset + border)
+				( ( this.cssPosition === "fixed" ? -this.scrollParent.scrollLeft() : scrollIsRootNode ? 0 : scroll.scrollLeft() ))
+			)
+		};
+
+	},
+
+	_rearrange: function(event, i, a, hardRefresh) {
+
+		a ? a[0].appendChild(this.placeholder[0]) : i.item[0].parentNode.insertBefore(this.placeholder[0], (this.direction === "down" ? i.item[0] : i.item[0].nextSibling));
+
+		//Various things done here to improve the performance:
+		// 1. we create a setTimeout, that calls refreshPositions
+		// 2. on the instance, we have a counter variable, that get's higher after every append
+		// 3. on the local scope, we copy the counter variable, and check in the timeout, if it's still the same
+		// 4. this lets only the last addition to the timeout stack through
+		this.counter = this.counter ? ++this.counter : 1;
+		var counter = this.counter;
+
+		this._delay(function() {
+			if(counter === this.counter) {
+				this.refreshPositions(!hardRefresh); //Precompute after each DOM insertion, NOT on mousemove
+			}
+		});
+
+	},
+
+	_clear: function(event, noPropagation) {
+
+		this.reverting = false;
+		// We delay all events that have to be triggered to after the point where the placeholder has been removed and
+		// everything else normalized again
+		var i,
+			delayedTriggers = [];
+
+		// We first have to update the dom position of the actual currentItem
+		// Note: don't do it if the current item is already removed (by a user), or it gets reappended (see #4088)
+		if(!this._noFinalSort && this.currentItem.parent().length) {
+			this.placeholder.before(this.currentItem);
+		}
+		this._noFinalSort = null;
+
+		if(this.helper[0] === this.currentItem[0]) {
+			for(i in this._storedCSS) {
+				if(this._storedCSS[i] === "auto" || this._storedCSS[i] === "static") {
+					this._storedCSS[i] = "";
+				}
+			}
+			this.currentItem.css(this._storedCSS).removeClass("ui-sortable-helper");
+		} else {
+			this.currentItem.show();
+		}
+
+		if(this.fromOutside && !noPropagation) {
+			delayedTriggers.push(function(event) { this._trigger("receive", event, this._uiHash(this.fromOutside)); });
+		}
+		if((this.fromOutside || this.domPosition.prev !== this.currentItem.prev().not(".ui-sortable-helper")[0] || this.domPosition.parent !== this.currentItem.parent()[0]) && !noPropagation) {
+			delayedTriggers.push(function(event) { this._trigger("update", event, this._uiHash()); }); //Trigger update callback if the DOM position has changed
+		}
+
+		// Check if the items Container has Changed and trigger appropriate
+		// events.
+		if (this !== this.currentContainer) {
+			if(!noPropagation) {
+				delayedTriggers.push(function(event) { this._trigger("remove", event, this._uiHash()); });
+				delayedTriggers.push((function(c) { return function(event) { c._trigger("receive", event, this._uiHash(this)); };  }).call(this, this.currentContainer));
+				delayedTriggers.push((function(c) { return function(event) { c._trigger("update", event, this._uiHash(this));  }; }).call(this, this.currentContainer));
+			}
+		}
+
+
+		//Post events to containers
+		function delayEvent( type, instance, container ) {
+			return function( event ) {
+				container._trigger( type, event, instance._uiHash( instance ) );
+			};
+		}
+		for (i = this.containers.length - 1; i >= 0; i--){
+			if (!noPropagation) {
+				delayedTriggers.push( delayEvent( "deactivate", this, this.containers[ i ] ) );
+			}
+			if(this.containers[i].containerCache.over) {
+				delayedTriggers.push( delayEvent( "out", this, this.containers[ i ] ) );
+				this.containers[i].containerCache.over = 0;
+			}
+		}
+
+		//Do what was originally in plugins
+		if ( this.storedCursor ) {
+			this.document.find( "body" ).css( "cursor", this.storedCursor );
+			this.storedStylesheet.remove();
+		}
+		if(this._storedOpacity) {
+			this.helper.css("opacity", this._storedOpacity);
+		}
+		if(this._storedZIndex) {
+			this.helper.css("zIndex", this._storedZIndex === "auto" ? "" : this._storedZIndex);
+		}
+
+		this.dragging = false;
+
+		if(!noPropagation) {
+			this._trigger("beforeStop", event, this._uiHash());
+		}
+
+		//$(this.placeholder[0]).remove(); would have been the jQuery way - unfortunately, it unbinds ALL events from the original node!
+		this.placeholder[0].parentNode.removeChild(this.placeholder[0]);
+
+		if ( !this.cancelHelperRemoval ) {
+			if ( this.helper[ 0 ] !== this.currentItem[ 0 ] ) {
+				this.helper.remove();
+			}
+			this.helper = null;
+		}
+
+		if(!noPropagation) {
+			for (i=0; i < delayedTriggers.length; i++) {
+				delayedTriggers[i].call(this, event);
+			} //Trigger all delayed events
+			this._trigger("stop", event, this._uiHash());
+		}
+
+		this.fromOutside = false;
+		return !this.cancelHelperRemoval;
+
+	},
+
+	_trigger: function() {
+		if ($.Widget.prototype._trigger.apply(this, arguments) === false) {
+			this.cancel();
+		}
+	},
+
+	_uiHash: function(_inst) {
+		var inst = _inst || this;
+		return {
+			helper: inst.helper,
+			placeholder: inst.placeholder || $([]),
+			position: inst.position,
+			originalPosition: inst.originalPosition,
+			offset: inst.positionAbs,
+			item: inst.currentItem,
+			sender: _inst ? _inst.element : null
+		};
+	}
+
+});
+
+
+/*!
+ * jQuery UI Slider 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/slider/
+ */
+
+
+var slider = $.widget( "ui.slider", $.ui.mouse, {
+	version: "1.11.4",
+	widgetEventPrefix: "slide",
+
+	options: {
+		animate: false,
+		distance: 0,
+		max: 100,
+		min: 0,
+		orientation: "horizontal",
+		range: false,
+		step: 1,
+		value: 0,
+		values: null,
+
+		// callbacks
+		change: null,
+		slide: null,
+		start: null,
+		stop: null
+	},
+
+	// number of pages in a slider
+	// (how many times can you page up/down to go through the whole range)
+	numPages: 5,
+
+	_create: function() {
+		this._keySliding = false;
+		this._mouseSliding = false;
+		this._animateOff = true;
+		this._handleIndex = null;
+		this._detectOrientation();
+		this._mouseInit();
+		this._calculateNewMax();
+
+		this.element
+			.addClass( "ui-slider" +
+				" ui-slider-" + this.orientation +
+				" ui-widget" +
+				" ui-widget-content" +
+				" ui-corner-all");
+
+		this._refresh();
+		this._setOption( "disabled", this.options.disabled );
+
+		this._animateOff = false;
+	},
+
+	_refresh: function() {
+		this._createRange();
+		this._createHandles();
+		this._setupEvents();
+		this._refreshValue();
+	},
+
+	_createHandles: function() {
+		var i, handleCount,
+			options = this.options,
+			existingHandles = this.element.find( ".ui-slider-handle" ).addClass( "ui-state-default ui-corner-all" ),
+			handle = "<span class='ui-slider-handle ui-state-default ui-corner-all' tabindex='0'></span>",
+			handles = [];
+
+		handleCount = ( options.values && options.values.length ) || 1;
+
+		if ( existingHandles.length > handleCount ) {
+			existingHandles.slice( handleCount ).remove();
+			existingHandles = existingHandles.slice( 0, handleCount );
+		}
+
+		for ( i = existingHandles.length; i < handleCount; i++ ) {
+			handles.push( handle );
+		}
+
+		this.handles = existingHandles.add( $( handles.join( "" ) ).appendTo( this.element ) );
+
+		this.handle = this.handles.eq( 0 );
+
+		this.handles.each(function( i ) {
+			$( this ).data( "ui-slider-handle-index", i );
+		});
+	},
+
+	_createRange: function() {
+		var options = this.options,
+			classes = "";
+
+		if ( options.range ) {
+			if ( options.range === true ) {
+				if ( !options.values ) {
+					options.values = [ this._valueMin(), this._valueMin() ];
+				} else if ( options.values.length && options.values.length !== 2 ) {
+					options.values = [ options.values[0], options.values[0] ];
+				} else if ( $.isArray( options.values ) ) {
+					options.values = options.values.slice(0);
+				}
+			}
+
+			if ( !this.range || !this.range.length ) {
+				this.range = $( "<div></div>" )
+					.appendTo( this.element );
+
+				classes = "ui-slider-range" +
+				// note: this isn't the most fittingly semantic framework class for this element,
+				// but worked best visually with a variety of themes
+				" ui-widget-header ui-corner-all";
+			} else {
+				this.range.removeClass( "ui-slider-range-min ui-slider-range-max" )
+					// Handle range switching from true to min/max
+					.css({
+						"left": "",
+						"bottom": ""
+					});
+			}
+
+			this.range.addClass( classes +
+				( ( options.range === "min" || options.range === "max" ) ? " ui-slider-range-" + options.range : "" ) );
+		} else {
+			if ( this.range ) {
+				this.range.remove();
+			}
+			this.range = null;
+		}
+	},
+
+	_setupEvents: function() {
+		this._off( this.handles );
+		this._on( this.handles, this._handleEvents );
+		this._hoverable( this.handles );
+		this._focusable( this.handles );
+	},
+
+	_destroy: function() {
+		this.handles.remove();
+		if ( this.range ) {
+			this.range.remove();
+		}
+
+		this.element
+			.removeClass( "ui-slider" +
+				" ui-slider-horizontal" +
+				" ui-slider-vertical" +
+				" ui-widget" +
+				" ui-widget-content" +
+				" ui-corner-all" );
+
+		this._mouseDestroy();
+	},
+
+	_mouseCapture: function( event ) {
+		var position, normValue, distance, closestHandle, index, allowed, offset, mouseOverHandle,
+			that = this,
+			o = this.options;
+
+		if ( o.disabled ) {
+			return false;
+		}
+
+		this.elementSize = {
+			width: this.element.outerWidth(),
+			height: this.element.outerHeight()
+		};
+		this.elementOffset = this.element.offset();
+
+		position = { x: event.pageX, y: event.pageY };
+		normValue = this._normValueFromMouse( position );
+		distance = this._valueMax() - this._valueMin() + 1;
+		this.handles.each(function( i ) {
+			var thisDistance = Math.abs( normValue - that.values(i) );
+			if (( distance > thisDistance ) ||
+				( distance === thisDistance &&
+					(i === that._lastChangedValue || that.values(i) === o.min ))) {
+				distance = thisDistance;
+				closestHandle = $( this );
+				index = i;
+			}
+		});
+
+		allowed = this._start( event, index );
+		if ( allowed === false ) {
+			return false;
+		}
+		this._mouseSliding = true;
+
+		this._handleIndex = index;
+
+		closestHandle
+			.addClass( "ui-state-active" )
+			.focus();
+
+		offset = closestHandle.offset();
+		mouseOverHandle = !$( event.target ).parents().addBack().is( ".ui-slider-handle" );
+		this._clickOffset = mouseOverHandle ? { left: 0, top: 0 } : {
+			left: event.pageX - offset.left - ( closestHandle.width() / 2 ),
+			top: event.pageY - offset.top -
+				( closestHandle.height() / 2 ) -
+				( parseInt( closestHandle.css("borderTopWidth"), 10 ) || 0 ) -
+				( parseInt( closestHandle.css("borderBottomWidth"), 10 ) || 0) +
+				( parseInt( closestHandle.css("marginTop"), 10 ) || 0)
+		};
+
+		if ( !this.handles.hasClass( "ui-state-hover" ) ) {
+			this._slide( event, index, normValue );
+		}
+		this._animateOff = true;
+		return true;
+	},
+
+	_mouseStart: function() {
+		return true;
+	},
+
+	_mouseDrag: function( event ) {
+		var position = { x: event.pageX, y: event.pageY },
+			normValue = this._normValueFromMouse( position );
+
+		this._slide( event, this._handleIndex, normValue );
+
+		return false;
+	},
+
+	_mouseStop: function( event ) {
+		this.handles.removeClass( "ui-state-active" );
+		this._mouseSliding = false;
+
+		this._stop( event, this._handleIndex );
+		this._change( event, this._handleIndex );
+
+		this._handleIndex = null;
+		this._clickOffset = null;
+		this._animateOff = false;
+
+		return false;
+	},
+
+	_detectOrientation: function() {
+		this.orientation = ( this.options.orientation === "vertical" ) ? "vertical" : "horizontal";
+	},
+
+	_normValueFromMouse: function( position ) {
+		var pixelTotal,
+			pixelMouse,
+			percentMouse,
+			valueTotal,
+			valueMouse;
+
+		if ( this.orientation === "horizontal" ) {
+			pixelTotal = this.elementSize.width;
+			pixelMouse = position.x - this.elementOffset.left - ( this._clickOffset ? this._clickOffset.left : 0 );
+		} else {
+			pixelTotal = this.elementSize.height;
+			pixelMouse = position.y - this.elementOffset.top - ( this._clickOffset ? this._clickOffset.top : 0 );
+		}
+
+		percentMouse = ( pixelMouse / pixelTotal );
+		if ( percentMouse > 1 ) {
+			percentMouse = 1;
+		}
+		if ( percentMouse < 0 ) {
+			percentMouse = 0;
+		}
+		if ( this.orientation === "vertical" ) {
+			percentMouse = 1 - percentMouse;
+		}
+
+		valueTotal = this._valueMax() - this._valueMin();
+		valueMouse = this._valueMin() + percentMouse * valueTotal;
+
+		return this._trimAlignValue( valueMouse );
+	},
+
+	_start: function( event, index ) {
+		var uiHash = {
+			handle: this.handles[ index ],
+			value: this.value()
+		};
+		if ( this.options.values && this.options.values.length ) {
+			uiHash.value = this.values( index );
+			uiHash.values = this.values();
+		}
+		return this._trigger( "start", event, uiHash );
+	},
+
+	_slide: function( event, index, newVal ) {
+		var otherVal,
+			newValues,
+			allowed;
+
+		if ( this.options.values && this.options.values.length ) {
+			otherVal = this.values( index ? 0 : 1 );
+
+			if ( ( this.options.values.length === 2 && this.options.range === true ) &&
+					( ( index === 0 && newVal > otherVal) || ( index === 1 && newVal < otherVal ) )
+				) {
+				newVal = otherVal;
+			}
+
+			if ( newVal !== this.values( index ) ) {
+				newValues = this.values();
+				newValues[ index ] = newVal;
+				// A slide can be canceled by returning false from the slide callback
+				allowed = this._trigger( "slide", event, {
+					handle: this.handles[ index ],
+					value: newVal,
+					values: newValues
+				} );
+				otherVal = this.values( index ? 0 : 1 );
+				if ( allowed !== false ) {
+					this.values( index, newVal );
+				}
+			}
+		} else {
+			if ( newVal !== this.value() ) {
+				// A slide can be canceled by returning false from the slide callback
+				allowed = this._trigger( "slide", event, {
+					handle: this.handles[ index ],
+					value: newVal
+				} );
+				if ( allowed !== false ) {
+					this.value( newVal );
+				}
+			}
+		}
+	},
+
+	_stop: function( event, index ) {
+		var uiHash = {
+			handle: this.handles[ index ],
+			value: this.value()
+		};
+		if ( this.options.values && this.options.values.length ) {
+			uiHash.value = this.values( index );
+			uiHash.values = this.values();
+		}
+
+		this._trigger( "stop", event, uiHash );
+	},
+
+	_change: function( event, index ) {
+		if ( !this._keySliding && !this._mouseSliding ) {
+			var uiHash = {
+				handle: this.handles[ index ],
+				value: this.value()
+			};
+			if ( this.options.values && this.options.values.length ) {
+				uiHash.value = this.values( index );
+				uiHash.values = this.values();
+			}
+
+			//store the last changed value index for reference when handles overlap
+			this._lastChangedValue = index;
+
+			this._trigger( "change", event, uiHash );
+		}
+	},
+
+	value: function( newValue ) {
+		if ( arguments.length ) {
+			this.options.value = this._trimAlignValue( newValue );
+			this._refreshValue();
+			this._change( null, 0 );
+			return;
+		}
+
+		return this._value();
+	},
+
+	values: function( index, newValue ) {
+		var vals,
+			newValues,
+			i;
+
+		if ( arguments.length > 1 ) {
+			this.options.values[ index ] = this._trimAlignValue( newValue );
+			this._refreshValue();
+			this._change( null, index );
+			return;
+		}
+
+		if ( arguments.length ) {
+			if ( $.isArray( arguments[ 0 ] ) ) {
+				vals = this.options.values;
+				newValues = arguments[ 0 ];
+				for ( i = 0; i < vals.length; i += 1 ) {
+					vals[ i ] = this._trimAlignValue( newValues[ i ] );
+					this._change( null, i );
+				}
+				this._refreshValue();
+			} else {
+				if ( this.options.values && this.options.values.length ) {
+					return this._values( index );
+				} else {
+					return this.value();
+				}
+			}
+		} else {
+			return this._values();
+		}
+	},
+
+	_setOption: function( key, value ) {
+		var i,
+			valsLength = 0;
+
+		if ( key === "range" && this.options.range === true ) {
+			if ( value === "min" ) {
+				this.options.value = this._values( 0 );
+				this.options.values = null;
+			} else if ( value === "max" ) {
+				this.options.value = this._values( this.options.values.length - 1 );
+				this.options.values = null;
+			}
+		}
+
+		if ( $.isArray( this.options.values ) ) {
+			valsLength = this.options.values.length;
+		}
+
+		if ( key === "disabled" ) {
+			this.element.toggleClass( "ui-state-disabled", !!value );
+		}
+
+		this._super( key, value );
+
+		switch ( key ) {
+			case "orientation":
+				this._detectOrientation();
+				this.element
+					.removeClass( "ui-slider-horizontal ui-slider-vertical" )
+					.addClass( "ui-slider-" + this.orientation );
+				this._refreshValue();
+
+				// Reset positioning from previous orientation
+				this.handles.css( value === "horizontal" ? "bottom" : "left", "" );
+				break;
+			case "value":
+				this._animateOff = true;
+				this._refreshValue();
+				this._change( null, 0 );
+				this._animateOff = false;
+				break;
+			case "values":
+				this._animateOff = true;
+				this._refreshValue();
+				for ( i = 0; i < valsLength; i += 1 ) {
+					this._change( null, i );
+				}
+				this._animateOff = false;
+				break;
+			case "step":
+			case "min":
+			case "max":
+				this._animateOff = true;
+				this._calculateNewMax();
+				this._refreshValue();
+				this._animateOff = false;
+				break;
+			case "range":
+				this._animateOff = true;
+				this._refresh();
+				this._animateOff = false;
+				break;
+		}
+	},
+
+	//internal value getter
+	// _value() returns value trimmed by min and max, aligned by step
+	_value: function() {
+		var val = this.options.value;
+		val = this._trimAlignValue( val );
+
+		return val;
+	},
+
+	//internal values getter
+	// _values() returns array of values trimmed by min and max, aligned by step
+	// _values( index ) returns single value trimmed by min and max, aligned by step
+	_values: function( index ) {
+		var val,
+			vals,
+			i;
+
+		if ( arguments.length ) {
+			val = this.options.values[ index ];
+			val = this._trimAlignValue( val );
+
+			return val;
+		} else if ( this.options.values && this.options.values.length ) {
+			// .slice() creates a copy of the array
+			// this copy gets trimmed by min and max and then returned
+			vals = this.options.values.slice();
+			for ( i = 0; i < vals.length; i += 1) {
+				vals[ i ] = this._trimAlignValue( vals[ i ] );
+			}
+
+			return vals;
+		} else {
+			return [];
+		}
+	},
+
+	// returns the step-aligned value that val is closest to, between (inclusive) min and max
+	_trimAlignValue: function( val ) {
+		if ( val <= this._valueMin() ) {
+			return this._valueMin();
+		}
+		if ( val >= this._valueMax() ) {
+			return this._valueMax();
+		}
+		var step = ( this.options.step > 0 ) ? this.options.step : 1,
+			valModStep = (val - this._valueMin()) % step,
+			alignValue = val - valModStep;
+
+		if ( Math.abs(valModStep) * 2 >= step ) {
+			alignValue += ( valModStep > 0 ) ? step : ( -step );
+		}
+
+		// Since JavaScript has problems with large floats, round
+		// the final value to 5 digits after the decimal point (see #4124)
+		return parseFloat( alignValue.toFixed(5) );
+	},
+
+	_calculateNewMax: function() {
+		var max = this.options.max,
+			min = this._valueMin(),
+			step = this.options.step,
+			aboveMin = Math.floor( ( +( max - min ).toFixed( this._precision() ) ) / step ) * step;
+		max = aboveMin + min;
+		this.max = parseFloat( max.toFixed( this._precision() ) );
+	},
+
+	_precision: function() {
+		var precision = this._precisionOf( this.options.step );
+		if ( this.options.min !== null ) {
+			precision = Math.max( precision, this._precisionOf( this.options.min ) );
+		}
+		return precision;
+	},
+
+	_precisionOf: function( num ) {
+		var str = num.toString(),
+			decimal = str.indexOf( "." );
+		return decimal === -1 ? 0 : str.length - decimal - 1;
+	},
+
+	_valueMin: function() {
+		return this.options.min;
+	},
+
+	_valueMax: function() {
+		return this.max;
+	},
+
+	_refreshValue: function() {
+		var lastValPercent, valPercent, value, valueMin, valueMax,
+			oRange = this.options.range,
+			o = this.options,
+			that = this,
+			animate = ( !this._animateOff ) ? o.animate : false,
+			_set = {};
+
+		if ( this.options.values && this.options.values.length ) {
+			this.handles.each(function( i ) {
+				valPercent = ( that.values(i) - that._valueMin() ) / ( that._valueMax() - that._valueMin() ) * 100;
+				_set[ that.orientation === "horizontal" ? "left" : "bottom" ] = valPercent + "%";
+				$( this ).stop( 1, 1 )[ animate ? "animate" : "css" ]( _set, o.animate );
+				if ( that.options.range === true ) {
+					if ( that.orientation === "horizontal" ) {
+						if ( i === 0 ) {
+							that.range.stop( 1, 1 )[ animate ? "animate" : "css" ]( { left: valPercent + "%" }, o.animate );
+						}
+						if ( i === 1 ) {
+							that.range[ animate ? "animate" : "css" ]( { width: ( valPercent - lastValPercent ) + "%" }, { queue: false, duration: o.animate } );
+						}
+					} else {
+						if ( i === 0 ) {
+							that.range.stop( 1, 1 )[ animate ? "animate" : "css" ]( { bottom: ( valPercent ) + "%" }, o.animate );
+						}
+						if ( i === 1 ) {
+							that.range[ animate ? "animate" : "css" ]( { height: ( valPercent - lastValPercent ) + "%" }, { queue: false, duration: o.animate } );
+						}
+					}
+				}
+				lastValPercent = valPercent;
+			});
+		} else {
+			value = this.value();
+			valueMin = this._valueMin();
+			valueMax = this._valueMax();
+			valPercent = ( valueMax !== valueMin ) ?
+					( value - valueMin ) / ( valueMax - valueMin ) * 100 :
+					0;
+			_set[ this.orientation === "horizontal" ? "left" : "bottom" ] = valPercent + "%";
+			this.handle.stop( 1, 1 )[ animate ? "animate" : "css" ]( _set, o.animate );
+
+			if ( oRange === "min" && this.orientation === "horizontal" ) {
+				this.range.stop( 1, 1 )[ animate ? "animate" : "css" ]( { width: valPercent + "%" }, o.animate );
+			}
+			if ( oRange === "max" && this.orientation === "horizontal" ) {
+				this.range[ animate ? "animate" : "css" ]( { width: ( 100 - valPercent ) + "%" }, { queue: false, duration: o.animate } );
+			}
+			if ( oRange === "min" && this.orientation === "vertical" ) {
+				this.range.stop( 1, 1 )[ animate ? "animate" : "css" ]( { height: valPercent + "%" }, o.animate );
+			}
+			if ( oRange === "max" && this.orientation === "vertical" ) {
+				this.range[ animate ? "animate" : "css" ]( { height: ( 100 - valPercent ) + "%" }, { queue: false, duration: o.animate } );
+			}
+		}
+	},
+
+	_handleEvents: {
+		keydown: function( event ) {
+			var allowed, curVal, newVal, step,
+				index = $( event.target ).data( "ui-slider-handle-index" );
+
+			switch ( event.keyCode ) {
+				case $.ui.keyCode.HOME:
+				case $.ui.keyCode.END:
+				case $.ui.keyCode.PAGE_UP:
+				case $.ui.keyCode.PAGE_DOWN:
+				case $.ui.keyCode.UP:
+				case $.ui.keyCode.RIGHT:
+				case $.ui.keyCode.DOWN:
+				case $.ui.keyCode.LEFT:
+					event.preventDefault();
+					if ( !this._keySliding ) {
+						this._keySliding = true;
+						$( event.target ).addClass( "ui-state-active" );
+						allowed = this._start( event, index );
+						if ( allowed === false ) {
+							return;
+						}
+					}
+					break;
+			}
+
+			step = this.options.step;
+			if ( this.options.values && this.options.values.length ) {
+				curVal = newVal = this.values( index );
+			} else {
+				curVal = newVal = this.value();
+			}
+
+			switch ( event.keyCode ) {
+				case $.ui.keyCode.HOME:
+					newVal = this._valueMin();
+					break;
+				case $.ui.keyCode.END:
+					newVal = this._valueMax();
+					break;
+				case $.ui.keyCode.PAGE_UP:
+					newVal = this._trimAlignValue(
+						curVal + ( ( this._valueMax() - this._valueMin() ) / this.numPages )
+					);
+					break;
+				case $.ui.keyCode.PAGE_DOWN:
+					newVal = this._trimAlignValue(
+						curVal - ( (this._valueMax() - this._valueMin()) / this.numPages ) );
+					break;
+				case $.ui.keyCode.UP:
+				case $.ui.keyCode.RIGHT:
+					if ( curVal === this._valueMax() ) {
+						return;
+					}
+					newVal = this._trimAlignValue( curVal + step );
+					break;
+				case $.ui.keyCode.DOWN:
+				case $.ui.keyCode.LEFT:
+					if ( curVal === this._valueMin() ) {
+						return;
+					}
+					newVal = this._trimAlignValue( curVal - step );
+					break;
+			}
+
+			this._slide( event, index, newVal );
+		},
+		keyup: function( event ) {
+			var index = $( event.target ).data( "ui-slider-handle-index" );
+
+			if ( this._keySliding ) {
+				this._keySliding = false;
+				this._stop( event, index );
+				this._change( event, index );
+				$( event.target ).removeClass( "ui-state-active" );
+			}
+		}
+	}
+});
+
+
+
+}));
+/*!
+ * toc - jQuery Table of Contents Plugin v0.3.2
+ * Removed event bindings.
+*/
+
+(function($) {
+var verboseIdCache = {};
+$.fn.toc = function(options) {
+  var self = this;
+  var opts = $.extend({}, jQuery.fn.toc.defaults, options);
+
+  var container = $(opts.container);
+  var headings = $(opts.selectors, container);
+  var headingOffsets = [];
+
+  return this.each(function() {
+    //build TOC
+    var el = $(this);
+    var ul = $(opts.listType);
+
+    headings.each(function(i, heading) {
+      var $h = $(heading);
+      headingOffsets.push($h.offset().top - opts.highlightOffset);
+
+      var anchorName = opts.anchorName(i, heading, opts.prefix);
+
+      var tagName = $h.prop('tagName').toLowerCase();
+
+      var text = opts.headerText(i, heading, $h);
+
+      var templateFunction;
+
+      if (opts.templates) {
+        templateFunction = opts.templates[tagName]; 
+        if (templateFunction) {
+          text = templateFunction({ title: text });
+        }
+      }
+
+      //add anchor
+      if(heading.id !== anchorName) {
+        var anchor = $('<span/>').attr('id', anchorName).insertBefore($h);
+      }
+
+      //build TOC item
+      var a = $('<a/>')
+        .html(text)
+        .attr('href', '#' + anchorName);
+
+      var li = $('<li/>')
+        .addClass(opts.itemClass(i, heading, $h, opts.prefix))
+        .append(a);
+
+      ul.append(li);
+
+    });
+
+    el.html(ul);
+
+  });
+
+};
+
+
+jQuery.fn.toc.defaults = {
+  container: 'body',
+  listType: '<ul/>',
+  selectors: 'h1,h2,h3',
+  prefix: 'toc',
+  anchorName: function(i, heading, prefix) {
+    if(heading.id.length) {
+      return heading.id;
+    }
+
+    var candidateId = $(heading).text().replace(/[^a-z0-9]/ig, ' ').replace(/\s+/g, '-').toLowerCase();
+    if (verboseIdCache[candidateId]) {
+      var j = 2;
+      
+      while(verboseIdCache[candidateId + j]) {
+        j++;
+      }
+      candidateId = candidateId + '-' + j;
+      
+    }
+    verboseIdCache[candidateId] = true;
+
+    return prefix + '-' + candidateId;
+  },
+  headerText: function(i, heading, $heading) {
+    return $heading.data('toc-title') || $heading.text();
+  },
+  itemClass: function(i, heading, $heading, prefix) {
+    return prefix + '-' + $heading[0].tagName.toLowerCase();
+  }
+
+};
+
+})(jQuery);
+(function() {
+  if (typeof ChartistHtml !== "undefined" && ChartistHtml !== null) {
+    ChartistHtml.config.baseClass = "atlas-chart";
+    ChartistHtml.config.colorSpectrum = ['#85026A', '#019fde'];
+    ChartistHtml.config.tooltipTemplate = function(data) {
+      return "<div><h1>" + data.label + "</h1><p>" + data.value + "</p></div>";
+    };
+    ChartistHtml.config.chartOptions.bar.options.base.seriesBarDistance = 28;
+    ChartistHtml.config.labelOffsetCoefficient = 5;
+  }
+
+}).call(this);
+
+(function() {
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+    }
+  });
+
+}).call(this);
+
+(function() {
+  $.fn.ensureScript = function(globalName, path, next) {
+    if (window[globalName] != null) {
+      return next();
+    }
+    return $.ajax({
+      url: path,
+      dataType: 'script',
+      success: next
+    });
+  };
+
+}).call(this);
+
+(function() {
+  $.fn.extend({
+    toggleModifierClass: function(baseClass, modifiers, modifierSign) {
+      var $el, className, i, j, len, modifier, newClass, newModifier;
+      if (modifierSign == null) {
+        modifierSign = '--';
+      }
+      $el = $(this);
+      if (!(modifiers instanceof Array)) {
+        modifiers = modifiers[0];
+      }
+      for (i = j = 0, len = modifiers.length; j < len; i = ++j) {
+        modifier = modifiers[i];
+        className = baseClass + modifierSign + modifier;
+        if ($el.hasClass(className)) {
+          $el.removeClass(className);
+          newModifier = (modifiers[i + 1] != null ? modifiers[i + 1] : modifiers[0]);
+          if ((newModifier !== modifier) && (newModifier !== '')) {
+            newClass = baseClass + modifierSign + newModifier;
+            return $el.addClass(newClass);
+          }
+        }
+      }
+      return $el.addClass(baseClass + modifierSign + modifiers[0]);
+    }
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas = (function(Backbone, Marionette) {
+    var App;
+    App = new Marionette.Application();
+    App.uiState = {
+      isCollapsed: false
+    };
+    App.on('start', function() {
+      var router;
+      console.log('Hi, Mom!');
+      router = new App.Router.Router();
+      App.router = router;
+      $(document).on('mousewheel', function(e) {
+        return App.vent.trigger('scroll');
+      });
+      App.dataCache = {};
+      if (Backbone.history) {
+        return Backbone.history.start({
+          pushState: true
+        });
+      }
+    });
+    return App;
+  })(Backbone, Marionette);
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Router', function(Router, App, Backbone, Marionette, $, _) {
+    Router.actions = ['welcome_index', 'projects_index', 'projects_show', 'about_index', 'dashboard_index'];
+    Router.actionHistory = [];
+    return Router.History = (function() {
+      function History() {
+        this._history = [];
+      }
+
+      History.prototype._actions = ['welcome_index', 'projects_index', 'projects_show', 'about_index'];
+
+      History.prototype.add = function(action, options) {
+        var obj;
+        obj = {
+          actionIndex: this._actions.indexOf(action)
+        };
+        _.extend(obj, options);
+        this._history.push(obj);
+        return this;
+      };
+
+      History.prototype.getCurrentActionIndex = function() {
+        var len;
+        len = this._history.length;
+        return this._history[len - 1].actionIndex;
+      };
+
+      History.prototype.getPreviousActionIndex = function() {
+        var len;
+        len = this._history.length;
+        if (len >= 2) {
+          return this._history[len - 2].actionIndex;
+        }
+      };
+
+      History.prototype.getLastActionByIndex = function(actionIndex) {
+        var hist, i, j, len, ref;
+        len = this._history.length;
+        for (i = j = ref = len - 1; j >= 0; i = j += -1) {
+          hist = this._history[i];
+          if (hist.actionIndex === actionIndex) {
+            return hist;
+          }
+        }
+      };
+
+      History.prototype.setSwipeDirection = function() {
+        var cai, pai;
+        cai = this.getCurrentActionIndex();
+        pai = this.getPreviousActionIndex();
+        if (cai < pai) {
+          return App.swipeDirection = 'left';
+        } else if (cai > pai) {
+          return App.swipeDirection = 'right';
+        } else {
+          return App.swipeDirection = 'top';
+        }
+      };
+
+      return History;
+
+    })();
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Router', function(Router, App, Backbone, Marionette, $, _) {
+    return Router.Router = Marionette.AppRouter.extend({
+      initialize: function() {
+        return this.history = new Router.History();
+      },
+      routes: {
+        'welcome': 'welcome_index',
+        'about': 'about_index',
+        'menu': 'projects_index',
+        'show': 'projects_show',
+        ':atlas_url': 'projects_show',
+        '*notFound': 'welcome_index'
+      },
+      renderReactLayout: function(opt) {
+        var c, el;
+        if (opt == null) {
+          opt = {};
+        }
+        el = $('#site')[0];
+        opt.App = App;
+        c = React.createElement(Comp.Layout, opt);
+        return React.render(c, el);
+      },
+      renderReactCustomLayout: function(opt) {
+        var c, el;
+        if (opt == null) {
+          opt = {};
+        }
+        el = $('#site')[0];
+        opt.App = App;
+        c = React.createElement(Comp.Dashboard, opt);
+        return React.render(c, el);
+      },
+      navigate: function(url, options) {
+        if (options == null) {
+          options = {
+            trigger: true
+          };
+        }
+        if (options.trigger == null) {
+          options.trigger = true;
+        }
+        return Backbone.history.navigate(url, options);
+      },
+      welcome_index: function(param) {
+        Backbone.history.navigate('/welcome', {
+          trigger: false
+        });
+        this._initiateNavigation('welcome_index', param);
+        return this.renderReactLayout({
+          route: 'welcome_index',
+          theme: 'none',
+          headerTitle: 'New America',
+          routableComponentName: 'Welcome'
+        });
+      },
+      about_index: function(param) {
+        this._initiateNavigation('about_index');
+        return this.renderReactLayout({
+          route: 'about_index',
+          headerTitle: 'Atlas',
+          routableComponentName: 'About'
+        });
+      },
+      projects_index: function(param) {
+        this._initiateNavigation('projects_index', param);
+        return this.renderReactLayout({
+          route: 'projects_index',
+          theme: 'atlas',
+          headerTitle: 'Atlas',
+          routableComponentName: 'Projects.Index'
+        });
+      },
+      projects_show: function(atlas_url, param) {
+        if (param == null) {
+          param = {};
+        }
+        atlas_url = this._getAtlasUrl(atlas_url);
+        param.atlas_url = atlas_url;
+        App.currentAtlasUrl = atlas_url;
+        this._initiateNavigation('projects_show', param);
+        return this.renderReactLayout({
+          route: 'projects_show',
+          theme: 'atlas',
+          headerTitle: 'Atlas',
+          routableComponentName: 'Projects.Show'
+        });
+      },
+      dashboard_index: function() {
+        this._initiateNavigation('dashboard_index');
+        return this.renderReactCustomLayout({
+          route: 'dashboard_index',
+          theme: 'naf',
+          isInternal: true,
+          headerTitle: 'My New America'
+        });
+      },
+      _getAtlasUrl: function(atlas_url) {
+        var lastShowAction, previous_atlas_url;
+        lastShowAction = this.history.getLastActionByIndex(2);
+        if (lastShowAction != null) {
+          previous_atlas_url = lastShowAction.atlas_url;
+        }
+        if (atlas_url == null) {
+          atlas_url = previous_atlas_url;
+        }
+        if (atlas_url == null) {
+          atlas_url = 'mapping-college-readiness';
+        }
+        return atlas_url;
+      },
+      _initiateNavigation: function(action, params) {
+        this.history.add(action, params);
+        App.vent.trigger('router:current:action:change', this.history.getCurrentActionIndex());
+        $('body').attr('class', 'atl-route--' + action);
+        return App.commands.execute('set:header:strip:color');
+      }
+    });
+  });
+
+}).call(this);
+
+(function() {
+  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  this.Atlas.module('Base', function(Base, App, Backbone, Marionette, $, _) {
+    return Base.EntityManager = (function(superClass) {
+      extend(EntityManager, superClass);
+
+      function EntityManager(options) {
+        if (options != null) {
+          this.entitiesConstructor = options.entitiesConstructor;
+          this.entityConstructor = options.entityConstructor;
+        }
+        this.entityCache = [];
+      }
+
+      EntityManager.prototype.getEntities = function(options) {
+        var Constr, cache, caching, coll;
+        caching = (options != null) && options.cache;
+        if (caching) {
+          cache = this.entitiesCache;
+          if (cache != null) {
+            return cache;
+          }
+        }
+        Constr = this.entitiesConstructor;
+        coll = new Constr();
+        if ((options != null) && (options.queryString != null)) {
+          coll.queryString = options.queryString;
+        }
+        coll.fetch({
+          reset: true
+        });
+        if (caching) {
+          this.entitiesCache = coll;
+        }
+        return coll;
+      };
+
+      EntityManager.prototype.getEntity = function(query, options) {
+        var Constr, cachedEntity, caching, model;
+        caching = (options != null) && options.cache;
+        if (caching) {
+          cachedEntity = this._getCachedEntity(query);
+          if (cachedEntity != null) {
+            return cachedEntity;
+          }
+        }
+        Constr = this.entityConstructor;
+        model = new Constr(query);
+        model.fetch({
+          reset: true
+        });
+        if (caching) {
+          this.entityCache.push({
+            query: query,
+            entity: model
+          });
+        }
+        return model;
+      };
+
+      EntityManager.prototype._getCachedEntity = function(query) {
+        var cachedItem, i, len, ref;
+        ref = this.entityCache;
+        for (i = 0, len = ref.length; i < len; i++) {
+          cachedItem = ref[i];
+          if (_.isEqual(cachedItem.query, query)) {
+            return cachedItem.entity;
+          }
+        }
+      };
+
+      return EntityManager;
+
+    })(Marionette.Object);
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Assets', function(Assets, App, Backbone, Marionette, $, _) {
+    return Assets.svg = {
+      shapes: {
+        pindrop_illustrator: {
+          dim: {
+            width: 612,
+            height: 792
+          },
+          paths: {
+            outer: "M306,14.8c145.2,0,262.2,117.9,262.2,262.2S449.4,569.2,306,788.3C160.8,570.1,43.8,421.4,43.8,277C43.8,131.8,160.8,14.8,306,14.8z",
+            inner: "M306,175.8c-60.7,0-111.8,51.1-111.8,112.7S244.4,401.1,306,401.1S417.8,350,417.8,288.4S367.6,175.8,306,175.8z",
+            slice_1_of_2: "M306,788.3C160.8,568.3,43.8,420.5,43.8,276.1C43.8,130.9,161.7,14.8,306,14.8v161c-60.7,0-111.8,50.2-111.8,111.8S244.4,401.1,306,401.1V788.3z",
+            slice_2_of_2: "M306,401.1c60.7,0,111.8-50.2,111.8-111.8S367.6,175.8,306,175.8v-161c145.2,0,262.2,117.9,262.2,262.2S449.4,569.2,306,788.3V401.1z",
+            slice_1_of_3: "M194.2,288.5c0-21.4,6.2-41.5,16.8-58.5V32.4C113,70.4,43.8,165.3,43.8,277c0,111,69.2,224.6,167.2,370.4V347.3C200.4,330.2,194.2,310.1,194.2,288.5z",
+            slice_2_of_3_a: "M306,176.7c40,0,75.2,21.2,95,52.9v-197c-29.4-11.5-61.5-17.8-95-17.8s-65.6,6.3-95,17.6V230C230.9,198.1,266.4,176.7,306,176.7z",
+            slice_2_of_3_b: "M306,400.2c-40,0-75.2-21.2-95-52.9v300.1c29.4,43.8,61.5,90.5,95,140.9c33.4-51,65.5-98.2,95-142.4V347.2C381.2,379,346,400.2,306,400.2z",
+            slice_3_of_3: "M401,32.6v197c10.6,17.1,16.8,37.2,16.8,58.8s-6.2,41.7-16.8,58.8v298.7C498.3,500.5,568.2,387.7,568.2,277C568.2,166,499,70.7,401,32.6z"
+          }
+        },
+        pindrop_new: {
+          dim: {
+            width: 30,
+            height: 38.8235294117647
+          },
+          paths: {
+            inner: "M15,8.618c-2.975,0-5.48,2.505-5.48,5.525S11.98,19.662,15,19.662S20.48,17.157,20.48,14.137S18.02,8.618,15,8.618z",
+            outer: "M15,0.725c7.118,0,12.853,5.779,12.853,12.853S22.029,27.902,15,38.642C7.882,27.946,2.147,20.657,2.147,13.578C2.147,6.461,7.882,0.725,15,0.725z",
+            slice_1_of_2: "M15,38.642C7.882,27.858,2.147,20.613,2.147,13.534C2.147,6.417,7.926,0.725,15,0.725v7.892c-2.975,0-5.48,2.461-5.48,5.48S11.98,19.662,15,19.662V38.642z",
+            slice_1_of_3: "M9.52,14.142c0-1.049,0.304-2.034,0.824-2.868V1.588C5.539,3.451,2.147,8.103,2.147,13.578c0,5.441,3.392,11.01,8.196,18.157V17.025C9.824,16.186,9.52,15.201,9.52,14.142z",
+            slice_2_of_2: "M15,19.662c2.975,0,5.48-2.461,5.48-5.48S18.02,8.618,15,8.618v-7.892c7.118,0,12.853,5.779,12.853,12.853S22.029,27.902,15,38.642V19.662z",
+            slice_2_of_3_a: "M15,8.662c1.961,0,3.686,1.039,4.657,2.593v-9.657c-1.441-0.564-3.015-0.873-4.657-0.873s-3.216,0.309-4.657,0.863V11.275C11.319,9.711,13.059,8.662,15,8.662z",
+            slice_2_of_3_b: "M15,19.618c-1.961,0-3.686-1.039-4.657-2.593v14.711c1.441,2.147,3.015,4.436,4.657,6.907c1.637-2.5,3.211-4.814,4.657-6.98V17.02C18.686,18.578,16.961,19.618,15,19.618z",
+            slice_3_of_3: "M19.657,1.598v9.657c0.52,0.838,0.824,1.824,0.824,2.882s-0.304,2.044-0.824,2.882v14.642C24.426,24.534,27.853,19.005,27.853,13.578C27.853,8.137,24.461,3.466,19.657,1.598z"
+          }
+        },
+        pindrop: {
+          dim: {
+            width: 30,
+            height: 38.8
+          },
+          paths: {
+            outer: 'M14.951,0.725c7.118,0,12.853,5.779,12.853,12.853S21.98,27.902,14.951,38.642C7.833,27.946,2.098,20.657,2.098,13.578C2.098,6.461,7.833,0.725,14.951,0.725z',
+            inner: 'M14.951,8.662c-2.975,0-5.48,2.461-5.48,5.48S11.931,19.618,14.951,19.618S20.431,17.157,20.431,14.137S17.971,8.662,14.951,8.662z',
+            left: 'M14.951,38.686C7.833,27.902,2.098,20.657,2.098,13.578C2.098,6.461,7.877,0.77,14.951,0.77v7.892c-2.975,0-5.48,2.461-5.48,5.48S11.931,19.618,14.951,19.618V38.686z',
+            right: 'M14.951,19.662c2.975,0,5.48-2.461,5.48-5.48S17.971,8.662,14.951,8.662V0.725c7.118,0,12.853,5.779,12.853,12.853S21.98,27.902,14.951,38.642V19.662z'
+          }
+        },
+        hex: {
+          border: "M86.9,77.3L56,94.4c-3.3,1.9-8.7,1.9-12.1,0L13.1,77.3c-3.3-1.9-6-6.4-6-10.2V32.9c0-3.8,2.7-8.3,6-10.2L44,5.6c3.3-1.9,8.7-1.9,12.1,0l30.9,17.2c3.3,1.9,6,6.4,6,10.2v34.1C93,70.8,90.3,75.4,86.9,77.3",
+          yes: "70.3,31.9 44.3,57.8 30.1,43.6 22.5,51.2 36.7,65.4 36.7,65.4 44.3,73 77.9,39.5",
+          no: "72,35.8 64.4,28.2 50.2,42.4 35.9,28.2 28.3,35.8 42.6,50 28.3,64.2 35.9,71.8 50.2,57.6 64.4,71.8 72,64.2,57.8,50",
+          down: "M61.6,47c1.7-1.7,4.5-1.7,6.2,0c1.7,1.7,1.7,4.5,0,6.2L53.5,67.6l0,0L53.1,68c-0.8,0.8-2,1.3-3.1,1.3c-1.2,0-2.3-0.5-3.1-1.3l-0.3-0.3l0,0L32.2,53.3c-1.7-1.7-1.7-4.5,0-6.2c1.7-1.7,4.5-1.7,6.2,0l7.2,7.2V35.1c0-1.2,0.5-2.3,1.3-3.1c0.8-0.8,1.9-1.3,3.1-1.3c1.2,0,2.3,0.5,3.1,1.3c0.8,0.8,1.3,1.9,1.3,3.1v19.1L61.6,47z",
+          up: "M38.4,53c-1.7,1.7-4.5,1.7-6.2,0c-1.7-1.7-1.7-4.5,0-6.2l14.4-14.4l0,0l0.3-0.3c0.8-0.8,2-1.3,3.1-1.3c1.2,0,2.3,0.5,3.1,1.3l0.3,0.3l0,0l14.4,14.4c1.7,1.7,1.7,4.5,0,6.2c-1.7,1.7-4.5,1.7-6.2,0l-7.2-7.2v19.1c0,1.2-0.5,2.3-1.3,3.1c-0.8,0.8-1.9,1.3-3.1,1.3c-1.2,0-2.3-0.5-3.1-1.3c-0.8-0.8-1.3-1.9-1.3-3.1V45.8L38.4,53z",
+          left: "M53,61.6c1.7,1.7,1.7,4.5,0,6.2c-1.7,1.7-4.5,1.7-6.2,0L32.4,53.5l0,0L32,53.1c-0.8-0.8-1.3-2-1.3-3.1c0-1.2,0.5-2.3,1.3-3.1l0.3-0.3l0,0l14.4-14.4c1.7-1.7,4.5-1.7,6.2,0c1.7,1.7,1.7,4.5,0,6.2l-7.2,7.2h19.1c1.2,0,2.3,0.5,3.1,1.3c0.8,0.8,1.3,1.9,1.3,3.1c0,1.2-0.5,2.3-1.3,3.1c-0.8,0.8-1.9,1.3-3.1,1.3H45.8L53,61.6z",
+          right: "M47,38.4c-1.7-1.7-1.7-4.5,0-6.2c1.7-1.7,4.5-1.7,6.2,0l14.4,14.4l0,0l0.3,0.3c0.8,0.8,1.3,2,1.3,3.1c0,1.2-0.5,2.3-1.3,3.1l-0.3,0.3l0,0L53.3,67.8c-1.7,1.7-4.5,1.7-6.2,0c-1.7-1.7-1.7-4.5,0-6.2l7.2-7.2H35.1c-1.2,0-2.3-0.5-3.1-1.3c-0.8-0.8-1.3-1.9-1.3-3.1c0-1.2,0.5-2.3,1.3-3.1c0.8-0.8,1.9-1.3,3.1-1.3h19.1L47,38.4z"
+        }
+      },
+      _matchers: {
+        absolutePath: /[MCSV]/g,
+        relativePath: /[csv\-\,]/g,
+        path: /[McCsSvVz]/g,
+        number: /[\-\,]/g,
+        all: /[McCsSvVz\-\,]/g
+      },
+      _getPathNumbers: function(svgPath) {
+        return svgPath.split(this._matchers.all);
+      },
+      _getPathDelimiters: function(svgPath) {
+        var delimiters;
+        return delimiters = svgPath.match(this._matchers.all);
+      },
+      _moveMinusSigns: function(delimiters, numbers) {
+        var delim, i, j, len, results;
+        results = [];
+        for (i = j = 0, len = delimiters.length; j < len; i = ++j) {
+          delim = delimiters[i];
+          if (delim === "-") {
+            delimiters[i] = "";
+            results.push(numbers[i + 1] = "-" + numbers[i + 1]);
+          } else {
+            results.push(void 0);
+          }
+        }
+        return results;
+      },
+      _formatNumbers: function(numbers) {
+        var i, j, len, number, results;
+        results = [];
+        for (i = j = 0, len = numbers.length; j < len; i = ++j) {
+          number = numbers[i];
+          if (!isNaN(number)) {
+            results.push(numbers[i] = Math.round(parseFloat(number) * 1000) / 1000);
+          } else {
+            results.push(void 0);
+          }
+        }
+        return results;
+      },
+      _parseNumbers: function(numbers) {
+        var i, j, len, number, results;
+        results = [];
+        for (i = j = 0, len = numbers.length; j < len; i = ++j) {
+          number = numbers[i];
+          if (!isNaN(number)) {
+            results.push(numbers[i] = parseFloat(number));
+          } else {
+            results.push(void 0);
+          }
+        }
+        return results;
+      },
+      _scaleNumbers: function(numbers, scale) {
+        var i, j, len, number, results;
+        results = [];
+        for (i = j = 0, len = numbers.length; j < len; i = ++j) {
+          number = numbers[i];
+          if (!isNaN(number)) {
+            results.push(numbers[i] = number * scale);
+          } else {
+            results.push(void 0);
+          }
+        }
+        return results;
+      },
+      _translateNumbers: function(numbers, delimiters, dx, dy) {
+        var i, j, len, number, results;
+        results = [];
+        for (i = j = 0, len = numbers.length; j < len; i = ++j) {
+          number = numbers[i];
+          if (!isNaN(number)) {
+            if (this._getCoordinateType(numbers, i, delimiters) === "x") {
+              results.push(numbers[i] += dx);
+            } else if (this._getCoordinateType(numbers, i, delimiters) === "y") {
+              results.push(numbers[i] += dy);
+            } else {
+              results.push(void 0);
+            }
+          } else {
+            results.push(void 0);
+          }
+        }
+        return results;
+      },
+      _rebuild: function(delimiters, numbers) {
+        var delim, i, j, len, res;
+        res = "";
+        for (i = j = 0, len = delimiters.length; j < len; i = ++j) {
+          delim = delimiters[i];
+          res += delim;
+          if ((numbers[i + 1] != null) && (!isNaN(numbers[i + 1]))) {
+            res += numbers[i + 1];
+          }
+        }
+        return res;
+      },
+      scalePath: function(svgPath, transform) {
+        var delimiters, dx, dy, numbers, scale;
+        scale = (transform != null) && (transform.scale != null) ? transform.scale : 1;
+        dx = (transform != null) && (transform.translate != null) && (transform.translate.x != null) ? transform.translate.x : 0;
+        dy = (transform != null) && (transform.translate != null) && (transform.translate.y != null) ? transform.translate.y : 0;
+        delimiters = this._getPathDelimiters(svgPath);
+        numbers = this._getPathNumbers(svgPath);
+        this._moveMinusSigns(delimiters, numbers);
+        this._parseNumbers(numbers);
+        this._scaleNumbers(numbers, scale);
+        this._formatNumbers(numbers);
+        return this._rebuild(delimiters, numbers);
+      },
+      scaleShape: function(shape, scale) {
+        var key, ref, shp, value;
+        shp = {
+          dim: {},
+          paths: {}
+        };
+        shp.dim.width = shape.dim.width * scale;
+        shp.dim.height = shape.dim.height * scale;
+        ref = shape.paths;
+        for (key in ref) {
+          value = ref[key];
+          shp.paths[key] = this.scalePath(value, {
+            scale: scale
+          });
+        }
+        return shp;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Data', function(Data, App, Backbone, Marionette, $, _) {
+    Data.states = [
+      {
+        "id": 1,
+        "name": "Alabama",
+        "code": "AL"
+      }, {
+        "id": 2,
+        "name": "Alaska",
+        "code": "AK"
+      }, {
+        "id": 60,
+        "name": "American Samoa",
+        "code": "AS"
+      }, {
+        "id": 4,
+        "name": "Arizona",
+        "code": "AZ"
+      }, {
+        "id": 5,
+        "name": "Arkansas",
+        "code": "AR"
+      }, {
+        "id": 6,
+        "name": "California",
+        "code": "CA"
+      }, {
+        "id": 8,
+        "name": "Colorado",
+        "code": "CO"
+      }, {
+        "id": 9,
+        "name": "Connecticut",
+        "code": "CT"
+      }, {
+        "id": 10,
+        "name": "Delaware",
+        "code": "DE"
+      }, {
+        "id": 11,
+        "name": "District of Columbia",
+        "code": "DC"
+      }, {
+        "id": 12,
+        "name": "Florida",
+        "code": "FL"
+      }, {
+        "id": 13,
+        "name": "Georgia",
+        "code": "GA"
+      }, {
+        "id": 66,
+        "name": "Guam",
+        "code": "GU"
+      }, {
+        "id": 15,
+        "name": "Hawaii",
+        "code": "HI"
+      }, {
+        "id": 16,
+        "name": "Idaho",
+        "code": "ID"
+      }, {
+        "id": 17,
+        "name": "Illinois",
+        "code": "IL"
+      }, {
+        "id": 18,
+        "name": "Indiana",
+        "code": "IN"
+      }, {
+        "id": 19,
+        "name": "Iowa",
+        "code": "IA"
+      }, {
+        "id": 20,
+        "name": "Kansas",
+        "code": "KS"
+      }, {
+        "id": 21,
+        "name": "Kentucky",
+        "code": "KY"
+      }, {
+        "id": 22,
+        "name": "Louisiana",
+        "code": "LA"
+      }, {
+        "id": 23,
+        "name": "Maine",
+        "code": "ME"
+      }, {
+        "id": 24,
+        "name": "Maryland",
+        "code": "MD"
+      }, {
+        "id": 25,
+        "name": "Massachusetts",
+        "code": "MA"
+      }, {
+        "id": 26,
+        "name": "Michigan",
+        "code": "MI"
+      }, {
+        "id": 27,
+        "name": "Minnesota",
+        "code": "MN"
+      }, {
+        "id": 28,
+        "name": "Mississippi",
+        "code": "MS"
+      }, {
+        "id": 29,
+        "name": "Missouri",
+        "code": "MO"
+      }, {
+        "id": 30,
+        "name": "Montana",
+        "code": "MT"
+      }, {
+        "id": 31,
+        "name": "Nebraska",
+        "code": "NE"
+      }, {
+        "id": 32,
+        "name": "Nevada",
+        "code": "NV"
+      }, {
+        "id": 33,
+        "name": "New Hampshire",
+        "code": "NH"
+      }, {
+        "id": 34,
+        "name": "New Jersey",
+        "code": "NJ"
+      }, {
+        "id": 35,
+        "name": "New Mexico",
+        "code": "NM"
+      }, {
+        "id": 36,
+        "name": "New York",
+        "code": "NY"
+      }, {
+        "id": 37,
+        "name": "North Carolina",
+        "code": "NC"
+      }, {
+        "id": 38,
+        "name": "North Dakota",
+        "code": "ND"
+      }, {
+        "id": 39,
+        "name": "Ohio",
+        "code": "OH"
+      }, {
+        "id": 40,
+        "name": "Oklahoma",
+        "code": "OK"
+      }, {
+        "id": 41,
+        "name": "Oregon",
+        "code": "OR"
+      }, {
+        "id": 42,
+        "name": "Pennsylvania",
+        "code": "PA"
+      }, {
+        "id": 72,
+        "name": "Puerto Rico",
+        "code": "PR"
+      }, {
+        "id": 44,
+        "name": "Rhode Island",
+        "code": "RI"
+      }, {
+        "id": 45,
+        "name": "South Carolina",
+        "code": "SC"
+      }, {
+        "id": 46,
+        "name": "South Dakota",
+        "code": "SD"
+      }, {
+        "id": 47,
+        "name": "Tennessee",
+        "code": "TN"
+      }, {
+        "id": 48,
+        "name": "Texas",
+        "code": "TX"
+      }, {
+        "id": 49,
+        "name": "Utah",
+        "code": "UT"
+      }, {
+        "id": 50,
+        "name": "Vermont",
+        "code": "VT"
+      }, {
+        "id": 51,
+        "name": "Virginia",
+        "code": "VA"
+      }, {
+        "id": 78,
+        "name": "Virgin Islands of the U.S.",
+        "code": "VI"
+      }, {
+        "id": 53,
+        "name": "Washington",
+        "code": "WA"
+      }, {
+        "id": 54,
+        "name": "West Virginia",
+        "code": "WV"
+      }, {
+        "id": 55,
+        "name": "Wisconsin",
+        "code": "WI"
+      }, {
+        "id": 56,
+        "name": "Wyoming",
+        "code": "WY"
+      }
+    ];
+    return this;
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('CSS', function(CSS, App, Backbone, Marionette, $, _) {
+    CSS.Colors = {
+      _list: [[133, 2, 106], [138, 1, 135], [140, 2, 165], [129, 10, 166], [118, 18, 167], [106, 23, 167], [93, 43, 171], [79, 56, 173], [77, 72, 177], [73, 87, 182], [67, 102, 186], [58, 116, 191], [44, 130, 195], [11, 144, 199], [50, 161, 217]],
+      _hash: {},
+      get: function(index) {
+        return this._list[index];
+      },
+      interpolate: function(f) {
+        var first, interpolated, last;
+        first = this._list[0];
+        last = this._list[this._list.length - 1];
+        interpolated = [];
+        interpolated.push(Math.round(first[0] * f + last[0] * (1 - f)));
+        interpolated.push(Math.round(first[1] * f + last[1] * (1 - f)));
+        interpolated.push(Math.round(first[2] * f + last[2] * (1 - f)));
+        return "rgba(" + (interpolated.join(',')) + "," + 1. + ")";
+      },
+      interpolateRgb: function(f) {
+        var first, interpolated, last;
+        first = this._list[0];
+        last = this._list[this._list.length - 1];
+        interpolated = [];
+        interpolated.push(Math.round(first[0] * f + last[0] * (1 - f)));
+        interpolated.push(Math.round(first[1] * f + last[1] * (1 - f)));
+        interpolated.push(Math.round(first[2] * f + last[2] * (1 - f)));
+        return "rgb(" + (interpolated.join(',')) + ")";
+      },
+      toRgba: function(index, opacity) {
+        if (opacity == null) {
+          opacity = 1;
+        }
+        return "rgba(" + (this.get(index).join(',')) + "," + opacity + ")";
+      },
+      toRgb: function(index) {
+        var color;
+        if ((index != null) && (this.get(index) != null)) {
+          color = "rgb(" + (this.get(index).join(',')) + ")";
+        }
+        return color;
+      }
+    };
+    return CSS.ClassBuilder = {
+      interpolate: function(i_k, k, n) {
+        var i_n;
+        if (n == null) {
+          n = CSS.Colors._list.length;
+        }
+        return i_n = Math.round(1 + (n - 1) * (i_k - 1) / (k - 1));
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('CSS', function(CSS, App, Backbone, Marionette, $, _) {
+    var templateList;
+    CSS._getBackgroundSvg = function(options) {
+      var html, pattern;
+      if (options == null) {
+        options = {};
+      }
+      if (options.color1 == null) {
+        options.color1 = 'red';
+      }
+      if (options.color2 == null) {
+        options.color2 = 'blue';
+      }
+      pattern = options.pattern || 'stripe';
+      if (options.scale == null) {
+        options.scale = 1;
+      }
+      return html = Marionette.Renderer.render("templates/svg/" + pattern, options);
+    };
+    CSS.getEncodedSvg = function(svg) {
+      var url;
+      url = "data:image/svg+xml;base64," + (window.btoa(svg));
+      return "url('" + url + "')";
+    };
+    CSS.getBackgroundImage = function(options) {
+      var svg;
+      svg = CSS._getBackgroundSvg(options);
+      return CSS.getEncodedSvg(svg);
+    };
+    return templateList = ['build', 'contract', 'dictionary', 'down', 'download'];
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Util', function(Util, App, Backbone, Marionette, $, _) {
+    return Util.formatCheckers = {
+      isMarkdown: function(string) {
+        if (!_.isString(string)) {
+          return false;
+        }
+      },
+      isAtlasArray: function(string) {
+        if (!_.isString(string)) {
+          return false;
+        }
+        return (string.indexOf("|") > -1) && (string.indexOf("\n") === -1);
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Util', function(Util, App, Backbone, Marionette, $, _) {
+    return Util.formatters = {
+      currency: function(v) {
+        var formatter;
+        if (typeof numeral === "undefined" || numeral === null) {
+          return v;
+        }
+        formatter = v > 999 ? '($0a)' : '($0)';
+        return numeral(v).format(formatter);
+      },
+      number: function(v) {
+        var formatter;
+        if (typeof numeral === "undefined" || numeral === null) {
+          return v;
+        }
+        formatter = v > 99999 ? '(0a)' : '(0)';
+        return numeral(v).format(formatter);
+      },
+      percent: function(v) {
+        return v + '%';
+      },
+      htmlToHtml: function(html) {
+        var $html, newHtml;
+        $html = $(html);
+        $html.find('a').attr('target', '_blank');
+        newHtml = $('<div></div>').append($html.clone()).html();
+        return newHtml;
+      },
+      atlasArrayToArray: function(atlasArray) {
+        var arr;
+        arr = atlasArray.split("|");
+        arr = _.map(arr, function(item) {
+          return item.trim();
+        });
+        return arr;
+      },
+      removeLineBreaks: function(string) {
+        string = String(string);
+        return string.replace(/(\r\n|\n|\r)/gm, '');
+      },
+      removeSpaces: function(string) {
+        string = String(string);
+        return string.replace(/\s+/g, '');
+      },
+      hyphenate: function(string) {
+        string = String(string);
+        return string.replace('ommunication', 'ommuni-cation');
+      },
+      mdToHtml: function(string) {
+        var html;
+        if (string != null) {
+          html = marked(string);
+        }
+        if (html != null) {
+          return this.htmlToHtml(html);
+        }
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Util', function(Util, App, Backbone, Marionette, $, _) {
+    if (Util.templateHelpers == null) {
+      Util.templateHelpers = {};
+    }
+    return Util.templateHelpers.addDashOnLongWord = function(word) {
+      if (word == null) {
+        return word;
+      }
+      word = String(word);
+      if (word.length < 11) {
+        return word;
+      }
+      return word.slice(0, -4) + '-' + word.slice(-4);
+    };
+  });
+
+}).call(this);
+
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+'use strict';
+
+var base = require('./base.js'),
+    baseFilter = require('./base_filter.js'),
+    coreDatum = './core_datum.js',
+    filter = require('./filter.js'),
+    image = require('./image.js'),
+    infoBoxSection = require('./info_box_section.js'),
+    item = require('./item.js'),
+    project = require('./project.js'),
+    projectSection = require('./project_section.js'),
+    projectTemplate = require('./project_template.js'),
+    researcher = require('./researcher.js'),
+    richGeoFeature = require('./rich_geo_feature.js'),
+    variable = require('./variable.js');
+
+window.Atlas.module('Models', function (Models) {
+
+	Models.BaseModel = base.Model;
+	Models.BaseCollection = base.Collection;
+
+	Models.BaseFilterModel = baseFilter.Model;
+	Models.BaseFilterCollection = baseFilter.Collection;
+
+	Models.CoreDatum = coreDatum.Model;
+	Models.CoreData = coreDatum.Collection;
+
+	Models.Filter = filter.Model;
+	Models.Filters = filter.Collection;
+
+	Models.Image = image.Model;
+	Models.Images = image.Collection;
+
+	Models.InfoBoxSection = infoBoxSection.Model;
+	Models.InfoBoxSections = infoBoxSection.Collection;
+
+	Models.Item = item.Model;
+	Models.Items = item.Collection;
+
+	Models.Project = project.Model;
+	Models.Projects = project.Collection;
+
+	Models.ProjectSection = projectSection.Model;
+	Models.ProjectSections = projectSection.Collection;
+
+	Models.ProjectTemplate = projectTemplate.Model;
+	Models.ProjectTemplates = projectTemplate.Collection;
+
+	Models.Researcher = researcher.Model;
+	Models.Researchers = researcher.Collection;
+
+	Models.RichGeoFeature = richGeoFeature.Model;
+	Models.RichGeoFeatures = richGeoFeature.Collection;
+
+	Models.Variable = variable.Model;
+	Models.Variables = variable.Collection;
+});
+
+},{"./base.js":2,"./base_filter.js":4,"./filter.js":5,"./image.js":6,"./info_box_section.js":7,"./item.js":8,"./project.js":9,"./project_section.js":10,"./project_template.js":11,"./researcher.js":12,"./rich_geo_feature.js":13,"./variable.js":14}],2:[function(require,module,exports){
+'use strict';
+
+var Backbone = window.Backbone,
+    _ = window._,
+    $ = window.$;
+
+var Model = Backbone.Model.extend({
+
+	/** 
+  * Recognize and process data.
+  * @param {object} data - Data as key-value pairs.
+  * @returns {object} data - Modified data.
+  */
+	parse: function parse(data) {
+		data = this._adaptMongoId(data);
+		return data;
+	},
+
+	get: function get(field, suffix) {
+		var getFnc = Backbone.Model.prototype.get;
+		if (suffix == null) {
+			return getFnc.apply(this, [field]);
+		}
+		return getFnc.apply(this, [field + '_' + suffix]);
+	},
+
+	/**
+  * Adds fields of a foreign collection, referenced by a foreign id within the model.
+  * @param {string} foreignIdKey - Foreign id key, of the format 'model_id' or 'model_ids'.
+  *                                  the former references a single value, the latter an array.
+  * @param {object} foreignCollection
+  * @param {string} fieldKey - The field of the foreign model to be copied in, e.g. 'name'.
+  * @returns {object} this - The model instance, with 'model_name' field added.
+  */
+	addForeignField: function addForeignField(foreignIdKey, foreignCollection, fieldKey) {
+
+		var newKey,
+		    foreignModel,
+		    foreignIds,
+		    singleForeignIdKey,
+		    // if foreignIdKey holds an array
+		foreignFields = [];
+
+		// belongs_to relationship with a single reference id
+		if (foreignIdKey.slice(-2) === 'id') {
+
+			newKey = foreignIdKey.slice(0, -2) + fieldKey;
+			foreignModel = foreignCollection.findWhere({ id: this.get(foreignIdKey) });
+			this.set(newKey, foreignModel.get(fieldKey));
+
+			// has_many relationship with id references embedded in an array field
+		} else if (foreignIdKey.slice(-3) === 'ids') {
+
+				foreignIds = this.get(foreignIdKey);
+
+				foreignIds.forEach(function (foreignId) {
+					// simple pluralization
+					newKey = foreignIdKey.slice(0, -3) + fieldKey + 's';
+					foreignModel = foreignCollection.findWhere({ id: foreignId });
+					if (foreignModel != null) {
+						foreignFields.push(foreignModel.get(fieldKey));
+					}
+				});
+
+				this.set(newKey, foreignFields);
+			}
+
+		return this;
+	},
+
+	/**
+  * Finds and replaces key.
+  * @param {object} data - Data as key-value pairs.
+  * @param {string} standardKey
+  * @param {array} keyFormatList - List of possible keys, e.g. [latitude, lat, Latitude] for latitude.
+  * @returns {boolean} found - Whether the key is found in the data.
+  */
+	_findAndReplaceKey: function _findAndReplaceKey(data, standardKey, keyFormatList) {
+		var found, i, kf, len;
+		found = false;
+		if (keyFormatList == null) {
+			keyFormatList = [standardKey];
+		}
+		for (i = 0, len = keyFormatList.length; i < len; i++) {
+			kf = keyFormatList[i];
+			if (data[kf]) {
+				found = true;
+				if (kf !== standardKey) {
+					data[standardKey] = data[kf];
+					delete data[kf];
+				}
+			}
+		}
+		return found;
+	},
+
+	/**
+  * Adapts Mongoid ID.
+  * @param {object} data - Data as key-value pairs.
+  * @returns {object} data - Modified data.
+  */
+	_adaptMongoId: function _adaptMongoId(data) {
+		if (data._id != null) {
+			if (data._id.$oid != null) {
+				data.id = String(data._id.$oid);
+			} else {
+				data.id = String(data._id);
+			}
+			delete data._id;
+		} else if (data.id != null && data.id.$oid != null) {
+			data.id = String(data.id.$oid);
+		}
+		return data;
+	},
+
+	/**
+  * Remove the array wrapper, if response is one-member array.
+  * @param {object} resp - Server resonse.
+  * @returns {object} resp - Modified response.
+  */
+	_removeArrayWrapper: function _removeArrayWrapper(resp) {
+		if (_.isArray(resp) && resp.length === 1) {
+			resp = resp[0];
+		}
+		return resp;
+	},
+
+	/**
+  * Remove all line breaks from field.
+  * @param {object} resp - Server response.
+  * @param {string} key - Response key.
+  * @returns {object} resp - Modified response.
+  */
+	_removeLineBreaks: function _removeLineBreaks(resp, key) {
+		if (resp[key] != null) {
+			resp[key] = resp[key].replace(/(\r\n|\n|\r)/gm, '');
+		}
+		return resp;
+	},
+
+	/**
+  * Removes all spaces from field.
+  * @param {object} resp - Server response.
+  * @param {string} key - Response key.
+  * @returns {object} resp - Modified response.
+  */
+	_removeSpaces: function _removeSpaces(resp, key) {
+		if (resp[key] != null) {
+			resp[key] = resp[key].replace(/\s+/g, '');
+		}
+		return resp;
+	},
+
+	/**
+  * Process static html on a key.
+  * @param {object} resp - Server response.
+  * @param {string} key
+  * @returns {object} resp - Modified response.
+  */
+	_processStaticHtml: function _processStaticHtml(resp, key) {
+		var $html, html, newHtml;
+		html = resp[key];
+		$html = $(html);
+		$html.find('a').attr('target', '_blank');
+		newHtml = $('<div></div>').append($html.clone()).html();
+		resp[key] = newHtml;
+		return resp;
+	},
+
+	/**
+  * Get markdown html.
+  * @param {string} key
+  * @returns {} newHtml
+  */
+	getMarkdownHtml: function getMarkdownHtml(key) {
+		var $html, md, newHtml;
+		md = this.get(key);
+		if (md != null) {
+			$html = $(marked(md));
+			$html.find('a').attr('target', '_blank');
+			newHtml = $('<div></div>').append($html.clone()).html();
+			return newHtml;
+		}
+	},
+
+	/**
+  * Set table of contents for html data under a given key.
+  * @param {string} key
+  * @returns {object} this
+  */
+	setHtmlToc: function setHtmlToc(key) {
+
+		var html, $containedHtml, arr;
+
+		html = this.get(key);
+		if (html == null) {
+			return;
+		}
+
+		arr = [];
+
+		$containedHtml = $('<div></div>').append($(html));
+
+		$containedHtml.children().each(function () {
+
+			var $el = $(this),
+			    tagName = $el.prop('tagName'),
+			    content = $el.html(),
+			    tocId = content.replace(/[^a-z0-9]/ig, ' ').replace(/\s+/g, '-').toLowerCase();
+
+			if (tagName.toLowerCase == null) {
+				return;
+			}
+			tagName = tagName.toLowerCase();
+
+			if (['h1', 'h2'].indexOf(tagName) > -1) {
+				$('<span id="toc-' + tocId + '"></span>').insertBefore($el);
+				arr.push({
+					id: tocId,
+					tagName: tagName,
+					content: content
+				});
+			}
+		});
+
+		this.set(key, $containedHtml.html());
+		this.set(key + '_toc', arr);
+	}
+
+});
+
+var Collection = Backbone.Collection.extend({
+
+	model: Model,
+
+	/**
+  * Recognize and process server response by applying the corresponding model's parse method.
+  * @param {object} resp - Server response.
+  * @returns {object} resp - Modified response.
+  */
+	parse: function parse(resp) {
+		var i, max, item;
+		var model = new this.model(),
+		    modelParseMethod = model.parse.bind(model);
+		if (modelParseMethod == null) {
+			return resp;
+		}
+		for (i = 0, max = resp.length; i < max; i += 1) {
+			item = resp[i];
+			resp[i] = modelParseMethod(item);
+		}
+		return resp;
+	}
+
+});
+
+module.exports = {
+	Model: Model,
+	Collection: Collection
+};
+
+},{}],3:[function(require,module,exports){
+// Compiled from Marionette.Accountant
+
+'use strict';
+
+var Backbone = window.Backbone,
+    _ = window._,
+    $ = window.$;
+
+exports.Model = Backbone.Model.extend({
+
+    constructor: function constructor() {
+        Backbone.Model.apply(this, arguments);
+        this.children = [];
+        this.doAccounting();
+    },
+
+    /*
+     * Find key that holds array values within model.
+     *
+     */
+    _getChildrenKey: function _getChildrenKey() {
+        var key, ref, value;
+        ref = this.attributes;
+        for (key in ref) {
+            value = ref[key];
+            if (_.isArray(value)) {
+                return key;
+            }
+        }
+    },
+
+    doAccounting: function doAccounting() {
+        var ChildModelConstructor, child, childModel, children, childrenKey, i, j, len, max, results;
+        childrenKey = this._getChildrenKey();
+        ChildModelConstructor = _.isFunction(this.childModel) ? this.childModel : Backbone.Model;
+        if (childrenKey) {
+            this.set('_childrenKey', childrenKey);
+            children = this.get(childrenKey);
+            this.unset(childrenKey);
+            max = children.length;
+            results = [];
+            for (i = j = 0, len = children.length; j < len; i = ++j) {
+                child = children[i];
+                childModel = new ChildModelConstructor(child);
+                childModel.parent = this;
+                childModel.set('_index', i);
+                results.push(this.children.push(childModel));
+            }
+            return results;
+        }
+    },
+
+    /*
+     * Separate 
+     */
+    createModelTree: function createModelTree() {
+        var self = this,
+            ChildModelConstructor,
+            childModel,
+            children,
+            childrenKey;
+        childrenKey = this._getChildrenKey();
+        ChildModelConstructor = _.isFunction(this.childModel) ? this.childModel : Backbone.Model;
+        if (childrenKey) {
+            this.set('_childrenKey', childrenKey);
+            children = this.get(childrenKey);
+            this.unset(childrenKey);
+            children.forEach(function (child, i) {
+                var childModel = new ChildModelConstructor(child);
+                childModel.parent = self;
+                childModel.set('_index', i);
+                self.children.push(childModel);
+            });
+        }
+    },
+
+    toJSON: function toJSON() {
+        return Backbone.Model.prototype.toJSON.apply(this);
+    },
+
+    toNestedJSON: function toNestedJSON() {
+        var child, childrenKey, j, json, len, nestedJson, ref;
+        json = this.toJSON();
+        if (typeof json['_index'] !== 'undefined') {
+            delete json['_index'];
+        }
+        if (this.children) {
+            childrenKey = this.get('_childrenKey');
+            json[childrenKey] = [];
+            ref = this.children;
+            for (j = 0, len = ref.length; j < len; j++) {
+                child = ref[j];
+                nestedJson = child.toNestedJSON != null ? child.toNestedJSON() : child.toJSON();
+                delete nestedJson['_index'];
+                json[childrenKey].push(nestedJson);
+            }
+            delete json['_childrenKey'];
+        }
+        return json;
+    },
+
+    getChildIndex: function getChildIndex() {
+        if (this.parent) {
+            return this.parent.children.indexOf(this);
+        }
+        return -1;
+    },
+
+    getSiblingCount: function getSiblingCount() {
+        if (this.parent) {
+            return this.parent.children.length;
+        }
+        return -1;
+    },
+
+    getNextSibling: function getNextSibling() {
+        var ci, sc;
+        ci = this.getChildIndex();
+        sc = this.getSiblingCount();
+        if (ci !== -1 && sc !== -1 && ci < sc) {
+            return this.parent.children[ci + 1];
+        }
+    },
+
+    getPreviousSibling: function getPreviousSibling() {
+        var ci, sc;
+        ci = this.getChildIndex();
+        sc = this.getSiblingCount();
+        if (ci !== -1 && sc !== -1 && ci > 0) {
+            return this.parent.children[ci - 1];
+        }
+    }
+
+});
+
+},{}],4:[function(require,module,exports){
+'use strict';
+
+var _ = window._,
+    Backbone = window.Backbone,
+    base = require('./base.js');
+
+exports.Model = base.Model.extend({
+
+	/** Activates model. Takes no collection filter logic into consideration - hence internal only. */
+	activate: function activate() {
+		return this.set('_isActive', true);
+	},
+
+	/** Deactivates model. Takes no collection filter logic into consideration - hence internal only. */
+	deactivate: function deactivate() {
+		return this.set('_isActive', false);
+	},
+
+	/** Toggle the model's active state. */
+	toggleActiveState: function toggleActiveState() {
+		if (this.isActive()) {
+			if (!(this.collection != null && this.collection.hasSingleActiveChild)) {
+				return this.deactivate();
+			}
+		} else {
+			this.activate();
+			if (this.collection != null && this.collection.hasSingleActiveChild) {
+				return this.collection.deactivateSiblings(this);
+			}
+		}
+	},
+
+	/** Get active state. */
+	isActive: function isActive() {
+		return this.get('_isActive');
+	},
+
+	/** 
+  * Tests whether a tested model satisfies a belongs_to relation with the model instance under a specified foreign key. 
+  * Example: this.get('id') === testedModel.get('user_id') if the foreign key is 'user'.
+  * @param {object} testedModel
+  * @param {string} foreignKey
+  * @returns {boolean}
+  */
+	test: function test(testedModel, foreignKey) {
+		var foreignId, foreignIds, id;
+		if (!this.isActive()) {
+			return false;
+		}
+		id = this.get('id');
+		// If there is a single id, test for equality.
+		foreignId = testedModel.get(foreignKey + '_id');
+		if (foreignId != null) {
+			return id === foreignId;
+		}
+		// If there are multiple ids, test for inclusion.
+		foreignIds = testedModel.get(foreignKey + '_ids');
+		if (foreignIds != null) {
+			return foreignIds.indexOf(id) >= 0;
+		}
+		return false;
+	}
+
+});
+
+exports.Collection = base.Collection.extend({
+
+	model: exports.Model,
+
+	/** Initializes active state of the collection's models. */
+	initialize: function initialize() {
+		if (this.initializeActiveStatesOnReset) {
+			return this.on('reset', this.initializeActiveStates);
+		}
+	},
+
+	hasSingleActiveChild: false,
+
+	/**
+  * Deactivate all siblings of an active child element.
+  * @param {} activeChild - Active child model instance from where the method is usually called
+  * @returns {array} results
+  */
+	deactivateSiblings: function deactivateSiblings(activeChild) {
+		var i, len, model, ref, results;
+		ref = this.models;
+		results = [];
+		for (i = 0, len = ref.length; i < len; i++) {
+			model = ref[i];
+			if (model !== activeChild) {
+				results.push(model.deactivate());
+			} else {
+				results.push(void 0);
+			}
+		}
+		return results;
+	},
+
+	/** 
+  * Set and initialize active state of the collection's models. 
+  * If the hasSingleActiveChild is set to true on the collection instance, the first model is set as active and all others are set as inactive.
+  * Otherwise, all models are set as active. 
+  */
+	initializeActiveStates: function initializeActiveStates() {
+		var i, index, len, model, ref;
+		ref = this.models;
+		for (index = i = 0, len = ref.length; i < len; index = ++i) {
+			model = ref[index];
+			model.set('_isActive', !this.hasSingleActiveChild ? true : index === 0 ? true : false);
+		}
+		return this.trigger('initialize:active:states');
+	},
+
+	/**
+  * 
+  * @param {object} testedModel - 
+  * @param {string} foreignKey - 
+  * @returns {boolean}
+  */
+	test: function test(testedModel, foreignKey) {
+		var i, len, model, ref;
+		ref = this.models;
+		for (i = 0, len = ref.length; i < len; i++) {
+			model = ref[i];
+			if (model.test(testedModel, foreignKey)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+});
+
+},{"./base.js":2}],5:[function(require,module,exports){
+'use strict';
+
+var _ = window._,
+    Backbone = window.Backbone,
+    base = require('./base.js'),
+    formatters = require('./../utilities/formatters.js'),
+    baseComposite = require('./base_composite.js');
+
+var LocalBaseModel = baseComposite.Model.extend({
+
+    isActive: function isActive() {
+        return this.get('_isActive');
+    },
+
+    activate: function activate() {
+        this.set('_isActive', true);
+        return this;
+    },
+
+    deactivate: function deactivate() {
+        this.set('_isActive', false);
+        return this;
+    },
+
+    toggle: function toggle() {
+        this.set('_isActive', !this.isActive());
+        return this;
+    },
+
+    activateAllChildren: function activateAllChildren() {
+        this.children.forEach(function (child) {
+            child.activate();
+        });
+        return this;
+    },
+
+    deactivateAllChildren: function deactivateAllChildren() {
+        this.children.forEach(function (child) {
+            child.deactivate();
+        });
+        return this;
+    },
+
+    toggleAllChildren: function toggleAllChildren() {
+        this.children.forEach(function (child) {
+            child.toggle();
+        });
+        return this;
+    },
+
+    /*
+     * Deactivate all siblings, not including self.
+     *
+     */
+    deactivateSiblings: function deactivateSiblings() {
+        var self = this,
+            siblingsIncludingSelf;
+        if (this.parent == null) {
+            return;
+        }
+        siblingsIncludingSelf = this.parent.children;
+        siblingsIncludingSelf.forEach(function (sibling) {
+            if (sibling !== self) {
+                sibling.deactivate();
+            }
+        });
+    },
+
+    /*
+     * Get sibling index.
+     *
+     */
+    getSiblingIndex: function getSiblingIndex() {
+        var siblingsIncludingSelf = this.parent.children;
+        return siblingsIncludingSelf.indexOf(this);
+    },
+
+    /* 
+     * If every sibling in order got integer indeces between 1 and n, interpolate for instance.
+     * @param {number} n - Top friendly integer.
+     * @returns {number}
+     */
+    getFriendlySiblingIndex: function getFriendlySiblingIndex(n) {
+        var i = this.getSiblingIndex(),
+            max = this.getSiblingCountIncludingSelf();
+        return Math.round(i * (n - 1) / (max - 1) + 1);
+    },
+
+    getSiblingCountIncludingSelf: function getSiblingCountIncludingSelf() {
+        return this.parent.children.length;
+    }
+
+});
+
+// Copied from client.
+
+exports.FilterValue = LocalBaseModel.extend({
+
+    test: function test(d, options) {
+        var j, key, len, res, val, value;
+        if (d == null) {
+            return false;
+        }
+        if (!this.get('_isActive') && !(options != null && options.ignoreState)) {
+            return false;
+        }
+        res = false;
+        key = this.parent.get('variable_id');
+        value = d[key];
+        if (!_.isArray(value)) {
+            value = [value];
+        }
+        for (j = 0, len = value.length; j < len; j++) {
+            val = value[j];
+            res = res || this.testValue(val);
+        }
+        return res;
+    },
+
+    testValue: function testValue(value) {
+        var res;
+        res = false;
+        if (this._isNumericFilter()) {
+            if (value < this.get('max') && value >= this.get('min')) {
+                res = true;
+            }
+        } else {
+            if (value === this.get('value')) {
+                res = true;
+            }
+        }
+        return res;
+    },
+
+    _isNumericFilter: function _isNumericFilter() {
+        return this.get('min') != null && this.get('max') != null;
+    },
+
+    isParentActive: function isParentActive() {
+        return this.parent === this.parent.parent.getActiveChild();
+    },
+
+    handleClick: function handleClick() {
+        var activeKeyIndex, keyIndex;
+        this.toggle();
+        keyIndex = this.parent.get('_index');
+        return activeKeyIndex = this.parent.parent.get('activeIndex');
+    }
+
+});
+
+exports.FilterKey = LocalBaseModel.extend({
+
+    childModel: exports.FilterValue,
+
+    /*
+     * Toggle item as it were 'clicked on'. 
+     * If the value is being activated, all its siblings need to be deactivated.
+     *
+     */
+    clickToggle: function clickToggle() {
+        if (this.isActive()) {
+            return;
+        } else {
+            this.deactivateSiblings();
+            this.activate();
+        }
+    },
+
+    /*
+     * When deactivating, activate all children back.
+     *
+     */
+    deactivate: function deactivate() {
+        this.set('_isActive', false);
+        this.children.forEach(function (childModel) {
+            childModel.activate();
+        });
+        return this;
+    },
+
+    toggleOne: function toggleOne(childIndex) {
+        return this.children[childIndex].toggle();
+    },
+
+    getValueIndeces: function getValueIndeces(model) {
+        var child, data, dataIndeces, i, j, len, ref;
+        data = model != null && _.isFunction(model.toJSON) ? model.toJSON() : model;
+        dataIndeces = [];
+        ref = this.children;
+        for (i = j = 0, len = ref.length; j < len; i = ++j) {
+            child = ref[i];
+            if (child.test(data)) {
+                dataIndeces.push(i);
+            }
+        }
+        return dataIndeces;
+    },
+
+    getValue: function getValue(index) {
+        return this.children[index].get('value');
+    },
+
+    test: function test(data, options) {
+        var child, j, len, ref, result;
+        result = false;
+        ref = this.children;
+        for (j = 0, len = ref.length; j < len; j++) {
+            child = ref[j];
+            if (child.test(data, options)) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
+});
+
+exports.FilterTree = LocalBaseModel.extend({
+
+    childModel: exports.FilterKey,
+
+    test: function test(data) {
+        return this.getActiveChild().test(data);
+    },
+
+    /*
+     * 
+     *
+     */
+    setActiveChildByIndex: function setActiveChildByIndex(activeChildIndex) {
+        if (this.children[activeChildIndex] !== this.getActiveChild()) {
+            this.getActiveChild().deactivate();
+            this.children[activeChildIndex].activate();
+            return true;
+        }
+        return false;
+    },
+
+    /*
+     * Return active child.
+     *
+     */
+    getActiveChild: function getActiveChild() {
+        var child, j, len, ref;
+        ref = this.children;
+        for (j = 0, len = ref.length; j < len; j++) {
+            child = ref[j];
+            if (child.isActive()) {
+                return child;
+            }
+        }
+    },
+
+    /*
+     * Get 
+     *
+     */
+    getMatchingValue: function getMatchingValue(model) {
+        var ind;
+        ind = this.getValueIndeces(model)[0];
+        if (this.getActiveChild().children[ind] == null) {
+            return;
+        }
+        return this.getActiveChild().children[ind].get('value');
+    },
+
+    /*
+     *
+     *
+     */
+    getValueCountOnActiveKey: function getValueCountOnActiveKey() {
+        return this.getActiveChild().children.length;
+    },
+
+    getValueIndeces: function getValueIndeces(model) {
+        var ach;
+        ach = this.getActiveChild();
+        return ach.getValueIndeces(model);
+    },
+
+    /*
+     * Get 'friendly', integer-formatted key and value indeces, used for coloring.
+     *
+     */
+    getFriendlyIndeces: function getFriendlyIndeces(model, scaleMax) {
+        var maxIndex, valueIndeces;
+        valueIndeces = this.getValueIndeces(model);
+        maxIndex = this.getValueCountOnActiveKey();
+        return valueIndeces.map(function (valIndex) {
+            var friendlyIndex;
+            friendlyIndex = Math.round(valIndex * (scaleMax - 1) / (maxIndex - 1) + 1);
+            return friendlyIndex;
+        });
+    }
+
+});
+
+},{"./../utilities/formatters.js":15,"./base.js":2,"./base_composite.js":3}],6:[function(require,module,exports){
+'use strict';
+
+var _ = window._,
+    Backbone = window.Backbone,
+    base = require('./base.js');
+
+exports.Model = base.Model.extend({
+
+	urlRoot: '/api/v1/images',
+
+	/** 
+  * Fetches image model url by name key
+  * @returns {string} - Url plus name
+  */
+	url: function url() {
+		return this.urlRoot + ("?name=" + this.get('name'));
+	},
+
+	/**
+  * Recognize and process server response.
+  * @param {object} resp - Server response.
+  * @return {object} resp - Modified response.
+  */
+	parse: function parse(resp) {
+		resp = this._removeArrayWrapper(resp);
+		resp = this._removeLineBreaks(resp, 'encoded');
+		return resp;
+	},
+
+	/** Gets encoded url to use in CSS background-image. */
+	getBackgroundImageCss: function getBackgroundImageCss() {
+		var encoded;
+		encoded = this.get('encoded');
+		if (encoded != null) {
+			return "url('data:image/png;base64," + encoded + "')";
+		}
+	},
+
+	/** Gets html attribute. */
+	getAttributionHtml: function getAttributionHtml() {
+		return this.getMarkdownHtml('credit');
+	}
+});
+
+exports.Collection = base.Collection.extend({
+	model: exports.Model,
+	url: '/api/v1/images'
+});
+
+},{"./base.js":2}],7:[function(require,module,exports){
+'use strict';
+
+var _ = window._,
+    Backbone = window.Backbone,
+    base = require('./base.js');
+
+exports.Model = base.Model.extend();
+
+exports.Collection = base.Collection.extend({
+
+	model: exports.Model,
+
+	getItemSections: function getItemSections(item, variables) {
+		return this.map(function (model) {
+			var varId = model.get('variable_id'),
+			    variable = variables.findWhere({ id: varId });
+			return {
+				variable: variable,
+				field: item.get(varId)
+			};
+		});
+	}
+
+});
+
+},{"./base.js":2}],8:[function(require,module,exports){
+'use strict';
+
+var _ = window._,
+    Backbone = window.Backbone,
+    base = require('./base.js'),
+    rgf = require('./rich_geo_feature.js'),
+    states = require('./../../db/seeds/states.json');
+
+var indexOf = [].indexOf || function (item) {
+	for (var i = 0, l = this.length; i < l; i++) {
+		if (i in this && this[i] === item) return i;
+	}
+	return -1;
+};
+
+/** 
+ * @constructor
+ * Note on methods toLatLongPoint, toRichGeoJson: these methods assume that the model instance has a lat and long fields. 
+ */
+exports.Model = base.Model.extend({
+	/** 
+  * Recognize and process data.
+  * @param {object} data
+  * @returns {object} data - Modified data.
+  */
+	parse: function parse(data) {
+		this._processValues(data);
+		this._checkPindrop(data);
+		this._checkState(data);
+		return data;
+	},
+
+	/** 
+  * Splits up values separated by '|' and removes leading and trailing whitespaces.
+  * Values are not split if there is a return character (assume text).
+  * Values are converted into arrays only if there is a '|' character.
+  * @param {object} data - Data object with key-value pairs.
+  * @returns {object} data - Modified data.
+  */
+	_processValues: function _processValues(data) {
+		var key, value;
+		for (key in data) {
+			value = data[key];
+			if (_.isString(value)) {
+				if (value.indexOf("|") > -1 && value.indexOf("\n") === -1) {
+					data[key] = _.map(value.split('|'), function (item) {
+						return item.trim();
+					});
+				} else {
+					data[key] = value.trim();
+				}
+			}
+		}
+		return data;
+	},
+
+	/** 
+  * Recognizes, validates and returns a pindrop item.
+  * @param {object} data
+  * @returns {object} - Validation summary object.
+  */
+	_checkPindrop: function _checkPindrop(data) {
+		var errors, foundLat, foundLong;
+		errors = [];
+		foundLat = this._findAndReplaceKey(data, 'lat', ['latitude', 'Latitude', 'lat', 'Lat']);
+		foundLong = this._findAndReplaceKey(data, 'long', ['longitude', 'Longitude', 'long', 'Long']);
+		if (foundLat && foundLong) {
+			data._itemType = 'pindrop';
+			return {
+				recognized: true,
+				errors: []
+			};
+		} else if (foundLat || foundLong) {
+			return {
+				recognized: true,
+				errors: ['Latitude or longitude not found.']
+			};
+		}
+		return {
+			recognized: false
+		};
+	},
+
+	/** 
+  * Recognizes, validates and returns a US state.
+  * @param {object} data
+  * @returns {object} - Validation summary object.
+  */
+	_checkState: function _checkState(data) {
+		var errors, stateData;
+		errors = [];
+		if (data.name != null) {
+			stateData = _.where(states, {
+				name: data.name
+			});
+			if (stateData != null && stateData.length > 0) {
+				data.id = stateData[0].id;
+				data.code = stateData[0].code;
+				data._itemType = 'state';
+			} else {
+				errors.push(data.name + ' not recognized as a state. Possibly a typo.');
+			}
+			return {
+				recognized: true,
+				errors: errors
+			};
+		}
+		return {
+			recognized: false
+		};
+	},
+
+	/** 
+  * Get and format image name.
+  * @returns {string} name - Lower-cased name without line breaks.
+  */
+	getImageName: function getImageName() {
+		if (this.get('image') != null) {
+			return this.get('image');
+		}
+		return this.get('name').replace(/(\r\n|\n|\r)/gm, "").toLowerCase();
+	},
+
+	/** 
+  * Sets latitude and longitude as a simple array.
+  * @returns {array} - Spatial data point as simple array [Lat, Long].
+  */
+	toLatLongPoint: function toLatLongPoint() {
+		var lat, long;
+		lat = this.get('lat');
+		long = this.get('long');
+		if (lat == null) {
+			lat = -37.8602828;
+		}
+		if (long == null) {
+			long = 145.0796161;
+		}
+		return [lat, long];
+	},
+
+	/** 
+  * Reverses [Lat, Long] point and sets longitude and latitude as a simple array.
+  * @returns {array} - Spatial data point as simple array [Long, Lat].
+  */
+	toLongLatPoint: function toLongLatPoint() {
+		return this.toLatLongPoint().reverse();
+	},
+
+	/**
+  * Creates geoJson object from current model.
+  * @returns {object} geoJson.
+  */
+	toRichGeoJsonFeature: function toRichGeoJsonFeature() {
+		var geoJson;
+		geoJson = {
+			type: 'Feature',
+			_model: this,
+			geometry: {
+				type: 'Point',
+				coordinates: this.toLongLatPoint()
+			}
+		};
+		return geoJson;
+	},
+
+	/**
+  * Returns display state.
+  * @param {}
+  * @returns {string} displayState - Element of [ 'neutral', 'highlighted', 'inactive' ]
+  */
+	getDisplayState: function getDisplayState(filter, searchTerm, currentDisplayMode) {
+
+		var filterIndeces, valueHoverIndex, isFiltered;
+
+		if (currentDisplayMode === 'filter') {
+
+			filterIndeces = filter.getValueIndeces(this);
+			valueHoverIndex = filter.state.valueHoverIndex;
+			isFiltered = filterIndeces.length > 0;
+
+			if (!isFiltered) {
+				return 'inactive';
+			}
+
+			if (filterIndeces.indexOf(valueHoverIndex) > -1) {
+				return 'highlighted';
+			}
+
+			return;
+		}
+
+		if (this.matchesSearchTerm(searchTerm)) {
+			return 'neutral';
+		}
+		return 'inactive';
+	},
+
+	/** 
+  * Returns layer classnames to be applied on the model.
+  * Classnames consist of group classes and element classes.
+  * Group classes specifiy generic styles such as highlighted, inactive, neutral.
+  * Element classes style components of the graphics corresponding to the item. E.g. map-pin dividers
+  * @param {object} filter - Filter object.
+  * @param {object} valueHoverIndex - Index of hovered value.
+  * @param {string} searchTerm
+  * @param {string} baseClass - Base class.
+  * @param {} currentDisplayMode
+  * @returns {object} layerClasses - Object with three keys: group, element base, and elements (array)
+  */
+	getLayerClasses: function getLayerClasses(filter, searchTerm, baseClass, currentDisplayMode) {
+
+		var filterIndeces, layerClasses, displayState;
+
+		if (baseClass == null) {
+			baseClass = 'map-region';
+		}
+
+		layerClasses = {
+			group: baseClass,
+			elementBase: baseClass + '__element'
+		};
+
+		displayState = this.getDisplayState(filter, searchTerm, currentDisplayMode);
+		if (displayState != null) {
+			layerClasses.group += ' ' + baseClass + '--' + displayState;
+		}
+
+		return layerClasses;
+	},
+
+	/** 
+  * Evaluates whether the name attribute matches a search term.
+  * @param {string} searchTerm
+  * @returns {boolean} - Match result.
+  */
+	matchesSearchTerm: function matchesSearchTerm(searchTerm) {
+		var name;
+		name = this.get('name');
+		if (searchTerm == null || searchTerm.toLowerCase == null) {
+			return false;
+		}
+		if (name == null || name.toLowerCase == null) {
+			return false;
+		}
+		if (searchTerm === "") {
+			return true;
+		}
+		name = name.toLowerCase();
+		searchTerm = searchTerm.toLowerCase();
+		if (name === "") {
+			return false;
+		}
+		if (name.indexOf(searchTerm) === -1) {
+			return false;
+		}
+		return true;
+	}
+
+});
+
+exports.Collection = base.Collection.extend({
+	model: exports.Model,
+
+	/** 
+  * Gets item type first model in a collection.
+  * @returns {string} itemType
+  */
+	getItemType: function getItemType() {
+		var itemType;
+		itemType = this.models[0].get('_itemType');
+		return itemType;
+	},
+
+	/** 
+  * Set active model under collection active field.
+  * @param {} activeModel - Active model or its id.
+  * @returns {object} this
+  */
+	setActive: function setActive(activeModel) {
+		var id;
+		if (_.isObject(activeModel) && indexOf.call(this.models, activeModel) >= 0) {
+			this.active = activeModel;
+		} else {
+			id = parseInt(activeModel, 10);
+			this.active = id === -1 ? void 0 : this.findWhere({
+				id: id
+			});
+		}
+		return this;
+	},
+
+	/** 
+  * Set hovered model under collection hovered field.
+  * @param {} hoveredModel - Hovered model or its id.
+  * @returns {object} this
+  */
+	setHovered: function setHovered(hoveredModel) {
+		var id;
+		if (_.isObject(hoveredModel) && indexOf.call(this.models, hoveredModel) >= 0) {
+			this.hovered = hoveredModel;
+		} else {
+			id = parseInt(hoveredModel, 10);
+			this.hovered = id === -1 ? undefined : this.findWhere({
+				id: id
+			});
+		}
+		return this;
+	},
+
+	/** 
+  * Gets lists of values for a given key.
+  * @param {string} key - Any key in models.
+  * @returns {array} valueList - List of values for specified key.
+  */
+	getValueList: function getValueList(key) {
+		var j, l, len, len1, model, ref, val, value, valueList;
+		valueList = [];
+		ref = this.models;
+		for (j = 0, len = ref.length; j < len; j++) {
+			model = ref[j];
+			value = model.get(key);
+			if (_.isArray(value)) {
+				for (l = 0, len1 = value.length; l < len1; l++) {
+					val = value[l];
+					if (indexOf.call(valueList, val) < 0) {
+						valueList.push(val);
+					}
+				}
+			} else {
+				if (indexOf.call(valueList, value) < 0) {
+					valueList.push(value);
+				}
+			}
+		}
+		return valueList;
+	},
+
+	/** TODO: Gets value list sorted by frequency in the data. */
+	getSortedValueList: function getSortedValueList(key) {},
+
+	/** 
+  * Assumes the model has a latitude and longitude fields.
+  * Must first go through parse method to make sure these fields are named correctly.
+  * @returns {array} array of arrays - Latitude and longitude bounds, two arrays with two elements each.
+  */
+	getLatLongBounds: function getLatLongBounds() {
+		var j, lat, len, long, maxLat, maxLong, minLat, minLong, model, ref;
+		ref = this.models;
+		for (j = 0, len = ref.length; j < len; j++) {
+			model = ref[j];
+			lat = model.get('lat');
+			long = model.get('long');
+			if (typeof minLat === "undefined" || minLat === null || minLat > lat) {
+				minLat = lat;
+			}
+			if (typeof maxLat === "undefined" || maxLat === null || maxLat < lat) {
+				maxLat = lat;
+			}
+			if (typeof minLong === "undefined" || minLong === null || minLong > long) {
+				minLong = long;
+			}
+			if (typeof maxLong === "undefined" || maxLong === null || maxLong < long) {
+				maxLong = long;
+			}
+		}
+		return [[minLat, minLong], [maxLat, maxLong]];
+	},
+
+	/** 
+  * Creates single array from lat, long arrays of each model into one array (array of arrays).
+  * @returns {array} res - Returns array of arrays. E.g. [[lat, long], [lat, long]]
+  */
+	toLatLongMultiPoint: function toLatLongMultiPoint() {
+		var j, len, model, ref, res;
+		res = [];
+		ref = this.models;
+		for (j = 0, len = ref.length; j < len; j++) {
+			model = ref[j];
+			res.push(model.toLatLongPoint());
+		}
+		return res;
+	},
+
+	richGeoJsonBuilders: {
+
+		state: function state(collection, baseGeoData) {
+			var data, richGeoJson, setup;
+			richGeoJson = new rgf.Collection();
+			setup = function (data) {
+				var feature, item, j, len, ref;
+				richGeoJson.features = topojson.feature(data, data.objects.states).features;
+				ref = richGeoJson.features;
+				for (j = 0, len = ref.length; j < len; j++) {
+					feature = ref[j];
+					item = collection.findWhere({
+						id: feature.id
+					});
+					feature._model = item;
+				}
+				return richGeoJson.trigger('sync');
+			};
+			setup(baseGeoData);
+			return richGeoJson;
+		},
+
+		pindrop: function pindrop(collection) {
+			var item, j, len, ref, richGeoJson;
+			richGeoJson = new rgf.Collection();
+			ref = collection.models;
+			for (j = 0, len = ref.length; j < len; j++) {
+				item = ref[j];
+				richGeoJson.features.push(item.toRichGeoJsonFeature());
+			}
+			richGeoJson.trigger('sync');
+			return richGeoJson;
+		}
+
+	},
+
+	/** 
+  * The feature is either ready to use or triggers a sync event on itself once it is.
+  * @returns {} - Generic Rich GeoJson feature.
+  */
+	getRichGeoJson: function getRichGeoJson(baseGeoData) {
+		var type;
+		type = this.getItemType();
+		return this.richGeoJsonBuilders[type](this, baseGeoData);
+	}
+
+});
+
+},{"./../../db/seeds/states.json":18,"./base.js":2,"./rich_geo_feature.js":13}],9:[function(require,module,exports){
+'use strict';
+
+var _ = window._,
+    Backbone = window.Backbone,
+    formatters = require('./../utilities/formatters.js'),
+    base = require('./base.js'),
+    filter = require('./filter.js'),
+    infoBoxSection = require('./info_box_section.js'),
+    variable = require('./variable.js'),
+    item = require('./item.js');
+
+exports.Model = base.Model.extend({
+
+    urlRoot: '/api/v1/projects',
+
+    /** API queries that need to be handled custom. For every key, there is a this.is_#{key} method that filters a model. */
+    customQueryKeys: ['related_to'],
+
+    /** 
+     * Returns the URL of the Atlas API that holds the data for the project. 
+     * @returns {string} url
+     */
+    url: function url() {
+        return this.urlRoot + ("?atlas_url=" + this.get('atlas_url'));
+    },
+
+    /** 
+     * Returns the URL of the Build.Atlas API that holds the data for the project. 
+     * @returns {string} buildUrl
+     */
+    buildUrl: function buildUrl() {
+        return "http://build.atlas.newamerica.org/projects/" + this.get('id') + "/edit";
+    },
+
+    /** 
+     * Conversts model object to json
+     * Checks if it has mandatory fields (id and more than one key). 
+     * returns {boolean} - Whether madatory fields exist
+     */
+    exists: function exists() {
+        var json, key, keyCount;
+        keyCount = 0;
+        json = this.toJSON();
+        for (key in json) {
+            keyCount += 1;
+        }
+        return keyCount !== 1 && json.id != null;
+    },
+
+    /**
+     * Recognize and process JSON data.
+     * @param {object} resp - JSON response.
+     * @returns {object} resp - Modified JSON response.
+     */
+    parse: function parse(resp) {
+        resp = this._adaptMongoId(resp);
+        resp = this._removeArrayWrapper(resp);
+        resp = this._removeSpaces(resp, 'template_name');
+        resp = this._processStaticHtml(resp, 'body_text');
+        return resp;
+    },
+
+    /** 
+     * Filters a project by two filterable collections that it belongs to.
+     * @param {object} projectSections
+     * @param {object} projectTemplates
+     * @returns {boolean} filter - Whether both project sections and templates are in filter variable.
+     */
+    compositeFilter: function compositeFilter(projectSections, projectTemplates) {
+        var filter, sectionsFilter, templatesFilter;
+        sectionsFilter = this.filter(projectSections, 'project_section');
+        templatesFilter = this.filter(projectTemplates, 'project_template');
+        filter = sectionsFilter && templatesFilter;
+        return filter;
+    },
+
+    /*
+     * Custom query method to find related projects based on tags.
+     * @param {string} project - Project Id.
+     * @returns {boolean} - Related status.
+     */
+    isRelatedTo: function isRelatedTo(project) {
+        var self = this,
+            prj,
+            tags0,
+            tags1,
+            i,
+            max;
+        if (this === project) {
+            return false;
+        }
+        tags0 = this.get('tags');
+        tags1 = project.get('tags');
+        if (tags0 === '' || tags1 === '') {
+            return false;
+        }
+        tags0 = tags0.split(',');
+        tags1 = tags1.split(',');
+        for (i = 0, max = tags0.length; i < max; i += 1) {
+            if (tags1.indexOf(tags0[i]) > -1) {
+                return true;
+            }
+        }
+        return false;
+    },
+
+    /**
+     * Filter collection by its foreign key.
+     * @param {object} collection
+     * @param {string} foreignKey
+     * @returns {boolean}
+     */
+    filter: function filter(collection, foreignKey) {
+        if (collection != null && collection.test != null) {
+            return collection.test(this, foreignKey);
+        }
+        return true;
+    },
+
+    /** Get imgage attribution html. */
+    getImageAttributionHtml: function getImageAttributionHtml() {
+        return this.getMarkdownHtml('image_credit');
+    },
+
+    /** If there is a data field, convert to appropriate collections. */
+    buildData: function buildData() {
+        var data;
+        data = this.get('data');
+        if (data != null) {
+            data.infobox_variables = new infoBoxSection.Collection(data.infobox_variables, {
+                parse: true
+            });
+            data.variables = new variable.Collection(data.variables, {
+                parse: true
+            });
+            data.items = new item.Collection(data.items, {
+                parse: true
+            });
+            this.buildFilterTree();
+        }
+    },
+
+    buildFilterTree: function buildFilterTree(items, variables, filters) {
+
+        var self = this,
+            filterTree,
+            filterVariables,
+            data = this.get('data'),
+            items = data.items,
+            variables = data.variables,
+            filters = data.filters;
+
+        if (filters == null) {
+            filters = [];
+        }
+
+        var fv = variables.getFilterVariables();
+
+        filterVariables = fv.map(function (variable, index) {
+
+            var formatter, nd, o, variable;
+
+            if (variable.get('format') != null) {
+                formatter = formatters[variable.get('format')];
+            }
+
+            o = {
+                variable: variable,
+                variable_id: variable.get('id'),
+                display_title: variable.get('display_title'),
+                short_description: variable.get('short_description'),
+                long_description: variable.getMarkdownHtml('long_description'),
+                type: variable.get('filter_type'),
+                _isActive: index === 0 ? true : false
+            };
+
+            nd = variable.get('numerical_filter_dividers');
+
+            if (nd != null) {
+                o.values = variable.getNumericalFilter(formatter);
+            } else {
+                o.values = _.map(items.getValueList(variable.get('id')), function (item) {
+                    if (formatter != null) {
+                        item = formatter(item);
+                    }
+                    return {
+                        value: item
+                    };
+                });
+            }
+
+            _.map(o.values, function (val) {
+                val._isActive = true;
+                return val;
+            });
+
+            return o;
+        });
+
+        filterTree = {
+            variables: filterVariables
+        };
+
+        data.filter = new filter.FilterTree(filterTree);
+        data.filter.state = {};
+    },
+
+    /**
+     * Prepares model on the client.
+     * @param {object} App - Marionette application instance. 
+     */
+    prepOnClient: function prepOnClient() {
+        this.buildData();
+        this.setHtmlToc('body_text');
+    }
+
+});
+
+exports.Collection = base.Collection.extend({
+
+    /**
+     * Initializes collection
+     */
+    // initialize: function() {
+    //     return this.on('reset', this.filter);
+    // },
+
+    model: exports.Model,
+
+    /**
+     * Creates new URL using base API path and query.
+     * @returns {string} base - Modified root URL.
+     */
+    url: function url() {
+        var base;
+        base = '/api/v1/projects';
+        if (this.queryString != null) {
+            return base + "?" + this.queryString;
+        }
+        return base;
+    },
+
+    /**
+     * Used to compare two models when sorting.
+     * @param {object} model1
+     * @param {object} model2
+     * @returns {number} comparator - A comparator whose sign determines the sorting order.
+     */
+    comparator: function comparator(model1, model2) {
+        var i1, i2;
+        i1 = model1.get('is_section_overview') === 'Yes' ? 10 : 0;
+        i2 = model2.get('is_section_overview') === 'Yes' ? 10 : 0;
+        if (model1.get('title') < model2.get('title')) {
+            i1 += 1;
+        } else {
+            i2 += 1;
+        }
+        return i2 - i1;
+    },
+
+    /** 
+     * Filter all children by project sections and templates.
+     * @param {collection} projectSections
+     * @param {collection} projectTemplates
+     * @returns {object} this
+     */
+    filter: function filter(projectSections, projectTemplates) {
+        var i, len, model, ref;
+        if (projectSections.models == null || projectSections.models.length === 0) {
+            return;
+        }
+        if (projectTemplates.models == null || projectTemplates.models.length === 0) {
+            return;
+        }
+        if (this.models.length === 0) {
+            return;
+        }
+        ref = this.models;
+        for (i = 0, len = ref.length; i < len; i++) {
+            model = ref[i];
+            model.compositeFilter(projectSections, projectTemplates);
+        }
+        return this;
+    },
+
+    /**
+     * Recognize and process server response.
+     * @param {object} resp - Server response.
+     * @returns {object} resp - Modified response.
+     */
+    parse: function parse(resp) {
+        var i, max, item;
+        if (exports.Model.prototype.parse == null) {
+            return resp;
+        }
+        for (i = 0, max = resp.length; i < max; i += 1) {
+            item = resp[i];
+            resp[i] = exports.Model.prototype.parse(item);
+        }
+        return resp;
+    }
+
+});
+
+},{"./../utilities/formatters.js":15,"./base.js":2,"./filter.js":5,"./info_box_section.js":7,"./item.js":8,"./variable.js":14}],10:[function(require,module,exports){
+'use strict';
+
+var _ = window._,
+    Backbone = window.Backbone,
+    baseFilter = require('./base_filter'),
+    seed = require('./../../db/seeds/project_sections.json');
+
+exports.Model = baseFilter.Model.extend({
+	urlRoot: '/api/v1/project_sections'
+});
+
+exports.Collection = baseFilter.Collection.extend({
+	model: exports.Model,
+	url: '/api/v1/project_sections',
+	hasSingleActiveChild: false,
+	initializeActiveStatesOnReset: true,
+	initialize: function initialize() {
+		this.reset(seed);
+	}
+});
+
+},{"./../../db/seeds/project_sections.json":16,"./base_filter":4}],11:[function(require,module,exports){
+'use strict';
+
+var _ = window._,
+    Backbone = window.Backbone,
+    baseFilter = require('./base_filter.js'),
+    seed = require('./../../db/seeds/project_templates.json');
+
+exports.Model = baseFilter.Model.extend({
+	urlRoot: '/api/v1/project_templates'
+});
+
+exports.Collection = baseFilter.Collection.extend({
+	model: exports.Model,
+	url: '/api/v1/project_templates',
+	hasSingleActiveChild: true,
+	initializeActiveStatesOnReset: true,
+	comparator: 'order',
+	initialize: function initialize() {
+		this.reset(seed);
+	}
+});
+
+},{"./../../db/seeds/project_templates.json":17,"./base_filter.js":4}],12:[function(require,module,exports){
+'use strict';
+
+var _ = window._,
+    Backbone = window.Backbone,
+    base = require('./base.js');
+
+exports.Model = base.Model.extend();
+exports.Collection = base.Collection.extend({
+	model: exports.Model
+});
+
+},{"./base.js":2}],13:[function(require,module,exports){
+'use strict';
+
+var _ = window._,
+    Backbone = window.Backbone;
+
+exports.Model = Backbone.Model.extend({});
+
+exports.Collection = Backbone.Collection.extend({
+
+	initialize: function initialize() {
+		_.extend(this, Backbone.Events);
+		this.type = 'FeatureCollection';
+		return this.features = [];
+	},
+
+	model: exports.Model,
+
+	onReady: function onReady(next) {
+		if (this.features.length > 0) {
+			next();
+			return;
+		}
+		return this.on('sync', next);
+	}
+
+});
+
+},{}],14:[function(require,module,exports){
+'use strict';
+
+var _ = window._,
+    Backbone = window.Backbone,
+    base = require('./base.js'),
+    formatters = require('./../utilities/formatters.js'),
+    $ = window.$;
+
+exports.Model = base.Model.extend({
+
+    /*
+        * Set a numerical filter, splitting up |10|20|30| type numerical divider strings into
+        *   presentable and testable objects. See specs for example.
+        * @param {function} formatter - Optional formatter function for values.
+        */
+    getNumericalFilter: function getNumericalFilter(formatter) {
+
+        var i,
+            len,
+            numericalFilter,
+            values,
+            numericalDividers = this.get('numerical_filter_dividers');
+
+        if (formatter == null) {
+            formatter = formatters['number'];
+        }
+
+        values = _.map(numericalDividers.split('|'), function (member, index) {
+            if (member === "") {
+                if (index === 0) {
+                    return -1000000000;
+                }
+                return +1000000000;
+            }
+            return parseInt(member, 10);
+        });
+
+        numericalFilter = [];
+
+        for (i = 0, len = values.length; i < len - 1; i += 1) {
+            numericalFilter.push(this.getNumericalFilterValue(values[i], values[i + 1], formatter));
+        }
+
+        return numericalFilter;
+    },
+
+    /*
+     * Returns single numerical filter value.
+     * @param {number} min - Minimum value.
+     * @param {number} max - Maximum value.
+     * @param {function} formatter - Formatter function.
+     * @returns {object}
+     */
+    getNumericalFilterValue: function getNumericalFilterValue(min, max, formatter) {
+        var filterValue, maxDisplay, minDisplay;
+        filterValue = {
+            min: min,
+            max: max
+        };
+        minDisplay = min;
+        maxDisplay = max;
+        minDisplay = formatter(minDisplay);
+        maxDisplay = formatter(maxDisplay);
+        if (min === -1000000000) {
+            filterValue.value = "Less than " + maxDisplay;
+        } else if (max === +1000000000) {
+            filterValue.value = "Greater than " + minDisplay;
+        } else {
+            filterValue.value = "Between " + minDisplay + " and " + maxDisplay;
+        }
+        return filterValue;
+    }
+
+});
+
+exports.Collection = base.Collection.extend({
+
+    model: exports.Model,
+
+    getFilterVariables: function getFilterVariables() {
+        var models;
+        models = this.filter(function (item) {
+            return item.get('filter_menu_order') != null;
+        });
+        models.sort(function (a, b) {
+            return a.get('filter_menu_order') - b.get('filter_menu_order');
+        });
+        return models;
+    }
+
+});
+
+},{"./../utilities/formatters.js":15,"./base.js":2}],15:[function(require,module,exports){
+'use strict';
+
+var numeral = require('numeral'),
+    marked = require('marked'),
+    $ = window.$;
+
+var formatters = {
+
+	currency: function currency(v) {
+		var formatter;
+		if (typeof numeral === "undefined" || numeral === null) {
+			return v;
+		}
+		formatter = v > 999 ? '($0a)' : '($0)';
+		return numeral(v).format(formatter);
+	},
+
+	number: function number(v) {
+		var formatter;
+		if (typeof numeral === "undefined" || numeral === null) {
+			return v;
+		}
+		formatter = v > 99999 ? '(0a)' : '(0)';
+		return numeral(v).format(formatter);
+	},
+
+	percent: function percent(v) {
+		return v + '%';
+	},
+
+	html: function html(_html) {
+		var $html, newHtml;
+		$html = $(_html);
+		$html.find('a').attr('target', '_blank');
+		newHtml = $('<div></div>').append($html.clone()).html();
+		return newHtml;
+	},
+
+	atlasArray: function atlasArray(_atlasArray) {
+		var arr;
+		arr = _atlasArray.split("|");
+		arr = _.map(arr, function (item) {
+			return item.trim();
+		});
+		return arr;
+	},
+
+	removeLineBreaks: function removeLineBreaks(string) {
+		string = String(string);
+		return string.replace(/(\r\n|\n|\r)/gm, '');
+	},
+
+	removeSpaces: function removeSpaces(string) {
+		string = String(string);
+		return string.replace(/\s+/g, '');
+	},
+
+	hyphenate: function hyphenate(string) {
+		string = String(string);
+		return string.replace('ommunication', 'ommuni-cation');
+	},
+
+	mdToHtml: function mdToHtml(string) {
+		var html;
+		if (string != null) {
+			html = marked(string);
+		}
+		if (html != null) {
+			return this.htmlToHtml(html);
+		}
+	}
+
+};
+
+module.exports = formatters;
+
+},{"marked":19,"numeral":20}],16:[function(require,module,exports){
+module.exports=[
+	{ "id": "0", "name": "Early Education" },
+	{ "id": "1", "name": "PreK-12 Education" },
+	{ "id": "2", "name": "Higher Education" },
+	{ "id": "3", "name": "Learning Technologies" },
+	{ "id": "4", "name": "Dual Language Learners" },
+	{ "id": "5", "name": "Workforce Development" },
+	{ "id": "6", "name": "Federal Education Budget" }
+]
+},{}],17:[function(require,module,exports){
+module.exports=[
+	{ "id": "0", "order": 0, "display_name": "Analysis Tools", "name": "Tilemap" },
+	{ "id": "1", "order": 3, "display_name": "Explainers", "name": "Explainer" },
+	{ "id": "2", "order": 1, "display_name": "Policy Briefs", "name": "Policy Brief" },
+	{ "id": "3", "order": 2, "display_name": "Polling", "name": "Polling" }
+]
+},{}],18:[function(require,module,exports){
+module.exports=[
+  {
+    "id": 1,
+    "name": "Alabama",
+    "code": "AL"
+  }, {
+    "id": 2,
+    "name": "Alaska",
+    "code": "AK"
+  }, {
+    "id": 60,
+    "name": "American Samoa",
+    "code": "AS"
+  }, {
+    "id": 4,
+    "name": "Arizona",
+    "code": "AZ"
+  }, {
+    "id": 5,
+    "name": "Arkansas",
+    "code": "AR"
+  }, {
+    "id": 6,
+    "name": "California",
+    "code": "CA"
+  }, {
+    "id": 8,
+    "name": "Colorado",
+    "code": "CO"
+  }, {
+    "id": 9,
+    "name": "Connecticut",
+    "code": "CT"
+  }, {
+    "id": 10,
+    "name": "Delaware",
+    "code": "DE"
+  }, {
+    "id": 11,
+    "name": "District of Columbia",
+    "code": "DC"
+  }, {
+    "id": 12,
+    "name": "Florida",
+    "code": "FL"
+  }, {
+    "id": 13,
+    "name": "Georgia",
+    "code": "GA"
+  }, {
+    "id": 66,
+    "name": "Guam",
+    "code": "GU"
+  }, {
+    "id": 15,
+    "name": "Hawaii",
+    "code": "HI"
+  }, {
+    "id": 16,
+    "name": "Idaho",
+    "code": "ID"
+  }, {
+    "id": 17,
+    "name": "Illinois",
+    "code": "IL"
+  }, {
+    "id": 18,
+    "name": "Indiana",
+    "code": "IN"
+  }, {
+    "id": 19,
+    "name": "Iowa",
+    "code": "IA"
+  }, {
+    "id": 20,
+    "name": "Kansas",
+    "code": "KS"
+  }, {
+    "id": 21,
+    "name": "Kentucky",
+    "code": "KY"
+  }, {
+    "id": 22,
+    "name": "Louisiana",
+    "code": "LA"
+  }, {
+    "id": 23,
+    "name": "Maine",
+    "code": "ME"
+  }, {
+    "id": 24,
+    "name": "Maryland",
+    "code": "MD"
+  }, {
+    "id": 25,
+    "name": "Massachusetts",
+    "code": "MA"
+  }, {
+    "id": 26,
+    "name": "Michigan",
+    "code": "MI"
+  }, {
+    "id": 27,
+    "name": "Minnesota",
+    "code": "MN"
+  }, {
+    "id": 28,
+    "name": "Mississippi",
+    "code": "MS"
+  }, {
+    "id": 29,
+    "name": "Missouri",
+    "code": "MO"
+  }, {
+    "id": 30,
+    "name": "Montana",
+    "code": "MT"
+  }, {
+    "id": 31,
+    "name": "Nebraska",
+    "code": "NE"
+  }, {
+    "id": 32,
+    "name": "Nevada",
+    "code": "NV"
+  }, {
+    "id": 33,
+    "name": "New Hampshire",
+    "code": "NH"
+  }, {
+    "id": 34,
+    "name": "New Jersey",
+    "code": "NJ"
+  }, {
+    "id": 35,
+    "name": "New Mexico",
+    "code": "NM"
+  }, {
+    "id": 36,
+    "name": "New York",
+    "code": "NY"
+  }, {
+    "id": 37,
+    "name": "North Carolina",
+    "code": "NC"
+  }, {
+    "id": 38,
+    "name": "North Dakota",
+    "code": "ND"
+  }, {
+    "id": 39,
+    "name": "Ohio",
+    "code": "OH"
+  }, {
+    "id": 40,
+    "name": "Oklahoma",
+    "code": "OK"
+  }, {
+    "id": 41,
+    "name": "Oregon",
+    "code": "OR"
+  }, {
+    "id": 42,
+    "name": "Pennsylvania",
+    "code": "PA"
+  }, {
+    "id": 72,
+    "name": "Puerto Rico",
+    "code": "PR"
+  }, {
+    "id": 44,
+    "name": "Rhode Island",
+    "code": "RI"
+  }, {
+    "id": 45,
+    "name": "South Carolina",
+    "code": "SC"
+  }, {
+    "id": 46,
+    "name": "South Dakota",
+    "code": "SD"
+  }, {
+    "id": 47,
+    "name": "Tennessee",
+    "code": "TN"
+  }, {
+    "id": 48,
+    "name": "Texas",
+    "code": "TX"
+  }, {
+    "id": 49,
+    "name": "Utah",
+    "code": "UT"
+  }, {
+    "id": 50,
+    "name": "Vermont",
+    "code": "VT"
+  }, {
+    "id": 51,
+    "name": "Virginia",
+    "code": "VA"
+  }, {
+    "id": 78,
+    "name": "Virgin Islands of the U.S.",
+    "code": "VI"
+  }, {
+    "id": 53,
+    "name": "Washington",
+    "code": "WA"
+  }, {
+    "id": 54,
+    "name": "West Virginia",
+    "code": "WV"
+  }, {
+    "id": 55,
+    "name": "Wisconsin",
+    "code": "WI"
+  }, {
+    "id": 56,
+    "name": "Wyoming",
+    "code": "WY"
+  }
+]
+},{}],19:[function(require,module,exports){
+(function (global){
+/**
+ * marked - a markdown parser
+ * Copyright (c) 2011-2014, Christopher Jeffrey. (MIT Licensed)
+ * https://github.com/chjj/marked
+ */
+
+;(function() {
+
+/**
+ * Block-Level Grammar
+ */
+
+var block = {
+  newline: /^\n+/,
+  code: /^( {4}[^\n]+\n*)+/,
+  fences: noop,
+  hr: /^( *[-*_]){3,} *(?:\n+|$)/,
+  heading: /^ *(#{1,6}) *([^\n]+?) *#* *(?:\n+|$)/,
+  nptable: noop,
+  lheading: /^([^\n]+)\n *(=|-){2,} *(?:\n+|$)/,
+  blockquote: /^( *>[^\n]+(\n(?!def)[^\n]+)*\n*)+/,
+  list: /^( *)(bull) [\s\S]+?(?:hr|def|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,
+  html: /^ *(?:comment *(?:\n|\s*$)|closed *(?:\n{2,}|\s*$)|closing *(?:\n{2,}|\s*$))/,
+  def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +["(]([^\n]+)[")])? *(?:\n+|$)/,
+  table: noop,
+  paragraph: /^((?:[^\n]+\n?(?!hr|heading|lheading|blockquote|tag|def))+)\n*/,
+  text: /^[^\n]+/
+};
+
+block.bullet = /(?:[*+-]|\d+\.)/;
+block.item = /^( *)(bull) [^\n]*(?:\n(?!\1bull )[^\n]*)*/;
+block.item = replace(block.item, 'gm')
+  (/bull/g, block.bullet)
+  ();
+
+block.list = replace(block.list)
+  (/bull/g, block.bullet)
+  ('hr', '\\n+(?=\\1?(?:[-*_] *){3,}(?:\\n+|$))')
+  ('def', '\\n+(?=' + block.def.source + ')')
+  ();
+
+block.blockquote = replace(block.blockquote)
+  ('def', block.def)
+  ();
+
+block._tag = '(?!(?:'
+  + 'a|em|strong|small|s|cite|q|dfn|abbr|data|time|code'
+  + '|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo'
+  + '|span|br|wbr|ins|del|img)\\b)\\w+(?!:/|[^\\w\\s@]*@)\\b';
+
+block.html = replace(block.html)
+  ('comment', /<!--[\s\S]*?-->/)
+  ('closed', /<(tag)[\s\S]+?<\/\1>/)
+  ('closing', /<tag(?:"[^"]*"|'[^']*'|[^'">])*?>/)
+  (/tag/g, block._tag)
+  ();
+
+block.paragraph = replace(block.paragraph)
+  ('hr', block.hr)
+  ('heading', block.heading)
+  ('lheading', block.lheading)
+  ('blockquote', block.blockquote)
+  ('tag', '<' + block._tag)
+  ('def', block.def)
+  ();
+
+/**
+ * Normal Block Grammar
+ */
+
+block.normal = merge({}, block);
+
+/**
+ * GFM Block Grammar
+ */
+
+block.gfm = merge({}, block.normal, {
+  fences: /^ *(`{3,}|~{3,})[ \.]*(\S+)? *\n([\s\S]*?)\s*\1 *(?:\n+|$)/,
+  paragraph: /^/,
+  heading: /^ *(#{1,6}) +([^\n]+?) *#* *(?:\n+|$)/
+});
+
+block.gfm.paragraph = replace(block.paragraph)
+  ('(?!', '(?!'
+    + block.gfm.fences.source.replace('\\1', '\\2') + '|'
+    + block.list.source.replace('\\1', '\\3') + '|')
+  ();
+
+/**
+ * GFM + Tables Block Grammar
+ */
+
+block.tables = merge({}, block.gfm, {
+  nptable: /^ *(\S.*\|.*)\n *([-:]+ *\|[-| :]*)\n((?:.*\|.*(?:\n|$))*)\n*/,
+  table: /^ *\|(.+)\n *\|( *[-:]+[-| :]*)\n((?: *\|.*(?:\n|$))*)\n*/
+});
+
+/**
+ * Block Lexer
+ */
+
+function Lexer(options) {
+  this.tokens = [];
+  this.tokens.links = {};
+  this.options = options || marked.defaults;
+  this.rules = block.normal;
+
+  if (this.options.gfm) {
+    if (this.options.tables) {
+      this.rules = block.tables;
+    } else {
+      this.rules = block.gfm;
+    }
+  }
+}
+
+/**
+ * Expose Block Rules
+ */
+
+Lexer.rules = block;
+
+/**
+ * Static Lex Method
+ */
+
+Lexer.lex = function(src, options) {
+  var lexer = new Lexer(options);
+  return lexer.lex(src);
+};
+
+/**
+ * Preprocessing
+ */
+
+Lexer.prototype.lex = function(src) {
+  src = src
+    .replace(/\r\n|\r/g, '\n')
+    .replace(/\t/g, '    ')
+    .replace(/\u00a0/g, ' ')
+    .replace(/\u2424/g, '\n');
+
+  return this.token(src, true);
+};
+
+/**
+ * Lexing
+ */
+
+Lexer.prototype.token = function(src, top, bq) {
+  var src = src.replace(/^ +$/gm, '')
+    , next
+    , loose
+    , cap
+    , bull
+    , b
+    , item
+    , space
+    , i
+    , l;
+
+  while (src) {
+    // newline
+    if (cap = this.rules.newline.exec(src)) {
+      src = src.substring(cap[0].length);
+      if (cap[0].length > 1) {
+        this.tokens.push({
+          type: 'space'
+        });
+      }
+    }
+
+    // code
+    if (cap = this.rules.code.exec(src)) {
+      src = src.substring(cap[0].length);
+      cap = cap[0].replace(/^ {4}/gm, '');
+      this.tokens.push({
+        type: 'code',
+        text: !this.options.pedantic
+          ? cap.replace(/\n+$/, '')
+          : cap
+      });
+      continue;
+    }
+
+    // fences (gfm)
+    if (cap = this.rules.fences.exec(src)) {
+      src = src.substring(cap[0].length);
+      this.tokens.push({
+        type: 'code',
+        lang: cap[2],
+        text: cap[3] || ''
+      });
+      continue;
+    }
+
+    // heading
+    if (cap = this.rules.heading.exec(src)) {
+      src = src.substring(cap[0].length);
+      this.tokens.push({
+        type: 'heading',
+        depth: cap[1].length,
+        text: cap[2]
+      });
+      continue;
+    }
+
+    // table no leading pipe (gfm)
+    if (top && (cap = this.rules.nptable.exec(src))) {
+      src = src.substring(cap[0].length);
+
+      item = {
+        type: 'table',
+        header: cap[1].replace(/^ *| *\| *$/g, '').split(/ *\| */),
+        align: cap[2].replace(/^ *|\| *$/g, '').split(/ *\| */),
+        cells: cap[3].replace(/\n$/, '').split('\n')
+      };
+
+      for (i = 0; i < item.align.length; i++) {
+        if (/^ *-+: *$/.test(item.align[i])) {
+          item.align[i] = 'right';
+        } else if (/^ *:-+: *$/.test(item.align[i])) {
+          item.align[i] = 'center';
+        } else if (/^ *:-+ *$/.test(item.align[i])) {
+          item.align[i] = 'left';
+        } else {
+          item.align[i] = null;
+        }
+      }
+
+      for (i = 0; i < item.cells.length; i++) {
+        item.cells[i] = item.cells[i].split(/ *\| */);
+      }
+
+      this.tokens.push(item);
+
+      continue;
+    }
+
+    // lheading
+    if (cap = this.rules.lheading.exec(src)) {
+      src = src.substring(cap[0].length);
+      this.tokens.push({
+        type: 'heading',
+        depth: cap[2] === '=' ? 1 : 2,
+        text: cap[1]
+      });
+      continue;
+    }
+
+    // hr
+    if (cap = this.rules.hr.exec(src)) {
+      src = src.substring(cap[0].length);
+      this.tokens.push({
+        type: 'hr'
+      });
+      continue;
+    }
+
+    // blockquote
+    if (cap = this.rules.blockquote.exec(src)) {
+      src = src.substring(cap[0].length);
+
+      this.tokens.push({
+        type: 'blockquote_start'
+      });
+
+      cap = cap[0].replace(/^ *> ?/gm, '');
+
+      // Pass `top` to keep the current
+      // "toplevel" state. This is exactly
+      // how markdown.pl works.
+      this.token(cap, top, true);
+
+      this.tokens.push({
+        type: 'blockquote_end'
+      });
+
+      continue;
+    }
+
+    // list
+    if (cap = this.rules.list.exec(src)) {
+      src = src.substring(cap[0].length);
+      bull = cap[2];
+
+      this.tokens.push({
+        type: 'list_start',
+        ordered: bull.length > 1
+      });
+
+      // Get each top-level item.
+      cap = cap[0].match(this.rules.item);
+
+      next = false;
+      l = cap.length;
+      i = 0;
+
+      for (; i < l; i++) {
+        item = cap[i];
+
+        // Remove the list item's bullet
+        // so it is seen as the next token.
+        space = item.length;
+        item = item.replace(/^ *([*+-]|\d+\.) +/, '');
+
+        // Outdent whatever the
+        // list item contains. Hacky.
+        if (~item.indexOf('\n ')) {
+          space -= item.length;
+          item = !this.options.pedantic
+            ? item.replace(new RegExp('^ {1,' + space + '}', 'gm'), '')
+            : item.replace(/^ {1,4}/gm, '');
+        }
+
+        // Determine whether the next list item belongs here.
+        // Backpedal if it does not belong in this list.
+        if (this.options.smartLists && i !== l - 1) {
+          b = block.bullet.exec(cap[i + 1])[0];
+          if (bull !== b && !(bull.length > 1 && b.length > 1)) {
+            src = cap.slice(i + 1).join('\n') + src;
+            i = l - 1;
+          }
+        }
+
+        // Determine whether item is loose or not.
+        // Use: /(^|\n)(?! )[^\n]+\n\n(?!\s*$)/
+        // for discount behavior.
+        loose = next || /\n\n(?!\s*$)/.test(item);
+        if (i !== l - 1) {
+          next = item.charAt(item.length - 1) === '\n';
+          if (!loose) loose = next;
+        }
+
+        this.tokens.push({
+          type: loose
+            ? 'loose_item_start'
+            : 'list_item_start'
+        });
+
+        // Recurse.
+        this.token(item, false, bq);
+
+        this.tokens.push({
+          type: 'list_item_end'
+        });
+      }
+
+      this.tokens.push({
+        type: 'list_end'
+      });
+
+      continue;
+    }
+
+    // html
+    if (cap = this.rules.html.exec(src)) {
+      src = src.substring(cap[0].length);
+      this.tokens.push({
+        type: this.options.sanitize
+          ? 'paragraph'
+          : 'html',
+        pre: !this.options.sanitizer
+          && (cap[1] === 'pre' || cap[1] === 'script' || cap[1] === 'style'),
+        text: cap[0]
+      });
+      continue;
+    }
+
+    // def
+    if ((!bq && top) && (cap = this.rules.def.exec(src))) {
+      src = src.substring(cap[0].length);
+      this.tokens.links[cap[1].toLowerCase()] = {
+        href: cap[2],
+        title: cap[3]
+      };
+      continue;
+    }
+
+    // table (gfm)
+    if (top && (cap = this.rules.table.exec(src))) {
+      src = src.substring(cap[0].length);
+
+      item = {
+        type: 'table',
+        header: cap[1].replace(/^ *| *\| *$/g, '').split(/ *\| */),
+        align: cap[2].replace(/^ *|\| *$/g, '').split(/ *\| */),
+        cells: cap[3].replace(/(?: *\| *)?\n$/, '').split('\n')
+      };
+
+      for (i = 0; i < item.align.length; i++) {
+        if (/^ *-+: *$/.test(item.align[i])) {
+          item.align[i] = 'right';
+        } else if (/^ *:-+: *$/.test(item.align[i])) {
+          item.align[i] = 'center';
+        } else if (/^ *:-+ *$/.test(item.align[i])) {
+          item.align[i] = 'left';
+        } else {
+          item.align[i] = null;
+        }
+      }
+
+      for (i = 0; i < item.cells.length; i++) {
+        item.cells[i] = item.cells[i]
+          .replace(/^ *\| *| *\| *$/g, '')
+          .split(/ *\| */);
+      }
+
+      this.tokens.push(item);
+
+      continue;
+    }
+
+    // top-level paragraph
+    if (top && (cap = this.rules.paragraph.exec(src))) {
+      src = src.substring(cap[0].length);
+      this.tokens.push({
+        type: 'paragraph',
+        text: cap[1].charAt(cap[1].length - 1) === '\n'
+          ? cap[1].slice(0, -1)
+          : cap[1]
+      });
+      continue;
+    }
+
+    // text
+    if (cap = this.rules.text.exec(src)) {
+      // Top-level should never reach here.
+      src = src.substring(cap[0].length);
+      this.tokens.push({
+        type: 'text',
+        text: cap[0]
+      });
+      continue;
+    }
+
+    if (src) {
+      throw new
+        Error('Infinite loop on byte: ' + src.charCodeAt(0));
+    }
+  }
+
+  return this.tokens;
+};
+
+/**
+ * Inline-Level Grammar
+ */
+
+var inline = {
+  escape: /^\\([\\`*{}\[\]()#+\-.!_>])/,
+  autolink: /^<([^ >]+(@|:\/)[^ >]+)>/,
+  url: noop,
+  tag: /^<!--[\s\S]*?-->|^<\/?\w+(?:"[^"]*"|'[^']*'|[^'">])*?>/,
+  link: /^!?\[(inside)\]\(href\)/,
+  reflink: /^!?\[(inside)\]\s*\[([^\]]*)\]/,
+  nolink: /^!?\[((?:\[[^\]]*\]|[^\[\]])*)\]/,
+  strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
+  em: /^\b_((?:[^_]|__)+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
+  code: /^(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,
+  br: /^ {2,}\n(?!\s*$)/,
+  del: noop,
+  text: /^[\s\S]+?(?=[\\<!\[_*`]| {2,}\n|$)/
+};
+
+inline._inside = /(?:\[[^\]]*\]|[^\[\]]|\](?=[^\[]*\]))*/;
+inline._href = /\s*<?([\s\S]*?)>?(?:\s+['"]([\s\S]*?)['"])?\s*/;
+
+inline.link = replace(inline.link)
+  ('inside', inline._inside)
+  ('href', inline._href)
+  ();
+
+inline.reflink = replace(inline.reflink)
+  ('inside', inline._inside)
+  ();
+
+/**
+ * Normal Inline Grammar
+ */
+
+inline.normal = merge({}, inline);
+
+/**
+ * Pedantic Inline Grammar
+ */
+
+inline.pedantic = merge({}, inline.normal, {
+  strong: /^__(?=\S)([\s\S]*?\S)__(?!_)|^\*\*(?=\S)([\s\S]*?\S)\*\*(?!\*)/,
+  em: /^_(?=\S)([\s\S]*?\S)_(?!_)|^\*(?=\S)([\s\S]*?\S)\*(?!\*)/
+});
+
+/**
+ * GFM Inline Grammar
+ */
+
+inline.gfm = merge({}, inline.normal, {
+  escape: replace(inline.escape)('])', '~|])')(),
+  url: /^(https?:\/\/[^\s<]+[^<.,:;"')\]\s])/,
+  del: /^~~(?=\S)([\s\S]*?\S)~~/,
+  text: replace(inline.text)
+    (']|', '~]|')
+    ('|', '|https?://|')
+    ()
+});
+
+/**
+ * GFM + Line Breaks Inline Grammar
+ */
+
+inline.breaks = merge({}, inline.gfm, {
+  br: replace(inline.br)('{2,}', '*')(),
+  text: replace(inline.gfm.text)('{2,}', '*')()
+});
+
+/**
+ * Inline Lexer & Compiler
+ */
+
+function InlineLexer(links, options) {
+  this.options = options || marked.defaults;
+  this.links = links;
+  this.rules = inline.normal;
+  this.renderer = this.options.renderer || new Renderer;
+  this.renderer.options = this.options;
+
+  if (!this.links) {
+    throw new
+      Error('Tokens array requires a `links` property.');
+  }
+
+  if (this.options.gfm) {
+    if (this.options.breaks) {
+      this.rules = inline.breaks;
+    } else {
+      this.rules = inline.gfm;
+    }
+  } else if (this.options.pedantic) {
+    this.rules = inline.pedantic;
+  }
+}
+
+/**
+ * Expose Inline Rules
+ */
+
+InlineLexer.rules = inline;
+
+/**
+ * Static Lexing/Compiling Method
+ */
+
+InlineLexer.output = function(src, links, options) {
+  var inline = new InlineLexer(links, options);
+  return inline.output(src);
+};
+
+/**
+ * Lexing/Compiling
+ */
+
+InlineLexer.prototype.output = function(src) {
+  var out = ''
+    , link
+    , text
+    , href
+    , cap;
+
+  while (src) {
+    // escape
+    if (cap = this.rules.escape.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += cap[1];
+      continue;
+    }
+
+    // autolink
+    if (cap = this.rules.autolink.exec(src)) {
+      src = src.substring(cap[0].length);
+      if (cap[2] === '@') {
+        text = cap[1].charAt(6) === ':'
+          ? this.mangle(cap[1].substring(7))
+          : this.mangle(cap[1]);
+        href = this.mangle('mailto:') + text;
+      } else {
+        text = escape(cap[1]);
+        href = text;
+      }
+      out += this.renderer.link(href, null, text);
+      continue;
+    }
+
+    // url (gfm)
+    if (!this.inLink && (cap = this.rules.url.exec(src))) {
+      src = src.substring(cap[0].length);
+      text = escape(cap[1]);
+      href = text;
+      out += this.renderer.link(href, null, text);
+      continue;
+    }
+
+    // tag
+    if (cap = this.rules.tag.exec(src)) {
+      if (!this.inLink && /^<a /i.test(cap[0])) {
+        this.inLink = true;
+      } else if (this.inLink && /^<\/a>/i.test(cap[0])) {
+        this.inLink = false;
+      }
+      src = src.substring(cap[0].length);
+      out += this.options.sanitize
+        ? this.options.sanitizer
+          ? this.options.sanitizer(cap[0])
+          : escape(cap[0])
+        : cap[0]
+      continue;
+    }
+
+    // link
+    if (cap = this.rules.link.exec(src)) {
+      src = src.substring(cap[0].length);
+      this.inLink = true;
+      out += this.outputLink(cap, {
+        href: cap[2],
+        title: cap[3]
+      });
+      this.inLink = false;
+      continue;
+    }
+
+    // reflink, nolink
+    if ((cap = this.rules.reflink.exec(src))
+        || (cap = this.rules.nolink.exec(src))) {
+      src = src.substring(cap[0].length);
+      link = (cap[2] || cap[1]).replace(/\s+/g, ' ');
+      link = this.links[link.toLowerCase()];
+      if (!link || !link.href) {
+        out += cap[0].charAt(0);
+        src = cap[0].substring(1) + src;
+        continue;
+      }
+      this.inLink = true;
+      out += this.outputLink(cap, link);
+      this.inLink = false;
+      continue;
+    }
+
+    // strong
+    if (cap = this.rules.strong.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += this.renderer.strong(this.output(cap[2] || cap[1]));
+      continue;
+    }
+
+    // em
+    if (cap = this.rules.em.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += this.renderer.em(this.output(cap[2] || cap[1]));
+      continue;
+    }
+
+    // code
+    if (cap = this.rules.code.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += this.renderer.codespan(escape(cap[2], true));
+      continue;
+    }
+
+    // br
+    if (cap = this.rules.br.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += this.renderer.br();
+      continue;
+    }
+
+    // del (gfm)
+    if (cap = this.rules.del.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += this.renderer.del(this.output(cap[1]));
+      continue;
+    }
+
+    // text
+    if (cap = this.rules.text.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += this.renderer.text(escape(this.smartypants(cap[0])));
+      continue;
+    }
+
+    if (src) {
+      throw new
+        Error('Infinite loop on byte: ' + src.charCodeAt(0));
+    }
+  }
+
+  return out;
+};
+
+/**
+ * Compile Link
+ */
+
+InlineLexer.prototype.outputLink = function(cap, link) {
+  var href = escape(link.href)
+    , title = link.title ? escape(link.title) : null;
+
+  return cap[0].charAt(0) !== '!'
+    ? this.renderer.link(href, title, this.output(cap[1]))
+    : this.renderer.image(href, title, escape(cap[1]));
+};
+
+/**
+ * Smartypants Transformations
+ */
+
+InlineLexer.prototype.smartypants = function(text) {
+  if (!this.options.smartypants) return text;
+  return text
+    // em-dashes
+    .replace(/---/g, '\u2014')
+    // en-dashes
+    .replace(/--/g, '\u2013')
+    // opening singles
+    .replace(/(^|[-\u2014/(\[{"\s])'/g, '$1\u2018')
+    // closing singles & apostrophes
+    .replace(/'/g, '\u2019')
+    // opening doubles
+    .replace(/(^|[-\u2014/(\[{\u2018\s])"/g, '$1\u201c')
+    // closing doubles
+    .replace(/"/g, '\u201d')
+    // ellipses
+    .replace(/\.{3}/g, '\u2026');
+};
+
+/**
+ * Mangle Links
+ */
+
+InlineLexer.prototype.mangle = function(text) {
+  if (!this.options.mangle) return text;
+  var out = ''
+    , l = text.length
+    , i = 0
+    , ch;
+
+  for (; i < l; i++) {
+    ch = text.charCodeAt(i);
+    if (Math.random() > 0.5) {
+      ch = 'x' + ch.toString(16);
+    }
+    out += '&#' + ch + ';';
+  }
+
+  return out;
+};
+
+/**
+ * Renderer
+ */
+
+function Renderer(options) {
+  this.options = options || {};
+}
+
+Renderer.prototype.code = function(code, lang, escaped) {
+  if (this.options.highlight) {
+    var out = this.options.highlight(code, lang);
+    if (out != null && out !== code) {
+      escaped = true;
+      code = out;
+    }
+  }
+
+  if (!lang) {
+    return '<pre><code>'
+      + (escaped ? code : escape(code, true))
+      + '\n</code></pre>';
+  }
+
+  return '<pre><code class="'
+    + this.options.langPrefix
+    + escape(lang, true)
+    + '">'
+    + (escaped ? code : escape(code, true))
+    + '\n</code></pre>\n';
+};
+
+Renderer.prototype.blockquote = function(quote) {
+  return '<blockquote>\n' + quote + '</blockquote>\n';
+};
+
+Renderer.prototype.html = function(html) {
+  return html;
+};
+
+Renderer.prototype.heading = function(text, level, raw) {
+  return '<h'
+    + level
+    + ' id="'
+    + this.options.headerPrefix
+    + raw.toLowerCase().replace(/[^\w]+/g, '-')
+    + '">'
+    + text
+    + '</h'
+    + level
+    + '>\n';
+};
+
+Renderer.prototype.hr = function() {
+  return this.options.xhtml ? '<hr/>\n' : '<hr>\n';
+};
+
+Renderer.prototype.list = function(body, ordered) {
+  var type = ordered ? 'ol' : 'ul';
+  return '<' + type + '>\n' + body + '</' + type + '>\n';
+};
+
+Renderer.prototype.listitem = function(text) {
+  return '<li>' + text + '</li>\n';
+};
+
+Renderer.prototype.paragraph = function(text) {
+  return '<p>' + text + '</p>\n';
+};
+
+Renderer.prototype.table = function(header, body) {
+  return '<table>\n'
+    + '<thead>\n'
+    + header
+    + '</thead>\n'
+    + '<tbody>\n'
+    + body
+    + '</tbody>\n'
+    + '</table>\n';
+};
+
+Renderer.prototype.tablerow = function(content) {
+  return '<tr>\n' + content + '</tr>\n';
+};
+
+Renderer.prototype.tablecell = function(content, flags) {
+  var type = flags.header ? 'th' : 'td';
+  var tag = flags.align
+    ? '<' + type + ' style="text-align:' + flags.align + '">'
+    : '<' + type + '>';
+  return tag + content + '</' + type + '>\n';
+};
+
+// span level renderer
+Renderer.prototype.strong = function(text) {
+  return '<strong>' + text + '</strong>';
+};
+
+Renderer.prototype.em = function(text) {
+  return '<em>' + text + '</em>';
+};
+
+Renderer.prototype.codespan = function(text) {
+  return '<code>' + text + '</code>';
+};
+
+Renderer.prototype.br = function() {
+  return this.options.xhtml ? '<br/>' : '<br>';
+};
+
+Renderer.prototype.del = function(text) {
+  return '<del>' + text + '</del>';
+};
+
+Renderer.prototype.link = function(href, title, text) {
+  if (this.options.sanitize) {
+    try {
+      var prot = decodeURIComponent(unescape(href))
+        .replace(/[^\w:]/g, '')
+        .toLowerCase();
+    } catch (e) {
+      return '';
+    }
+    if (prot.indexOf('javascript:') === 0 || prot.indexOf('vbscript:') === 0) {
+      return '';
+    }
+  }
+  var out = '<a href="' + href + '"';
+  if (title) {
+    out += ' title="' + title + '"';
+  }
+  out += '>' + text + '</a>';
+  return out;
+};
+
+Renderer.prototype.image = function(href, title, text) {
+  var out = '<img src="' + href + '" alt="' + text + '"';
+  if (title) {
+    out += ' title="' + title + '"';
+  }
+  out += this.options.xhtml ? '/>' : '>';
+  return out;
+};
+
+Renderer.prototype.text = function(text) {
+  return text;
+};
+
+/**
+ * Parsing & Compiling
+ */
+
+function Parser(options) {
+  this.tokens = [];
+  this.token = null;
+  this.options = options || marked.defaults;
+  this.options.renderer = this.options.renderer || new Renderer;
+  this.renderer = this.options.renderer;
+  this.renderer.options = this.options;
+}
+
+/**
+ * Static Parse Method
+ */
+
+Parser.parse = function(src, options, renderer) {
+  var parser = new Parser(options, renderer);
+  return parser.parse(src);
+};
+
+/**
+ * Parse Loop
+ */
+
+Parser.prototype.parse = function(src) {
+  this.inline = new InlineLexer(src.links, this.options, this.renderer);
+  this.tokens = src.reverse();
+
+  var out = '';
+  while (this.next()) {
+    out += this.tok();
+  }
+
+  return out;
+};
+
+/**
+ * Next Token
+ */
+
+Parser.prototype.next = function() {
+  return this.token = this.tokens.pop();
+};
+
+/**
+ * Preview Next Token
+ */
+
+Parser.prototype.peek = function() {
+  return this.tokens[this.tokens.length - 1] || 0;
+};
+
+/**
+ * Parse Text Tokens
+ */
+
+Parser.prototype.parseText = function() {
+  var body = this.token.text;
+
+  while (this.peek().type === 'text') {
+    body += '\n' + this.next().text;
+  }
+
+  return this.inline.output(body);
+};
+
+/**
+ * Parse Current Token
+ */
+
+Parser.prototype.tok = function() {
+  switch (this.token.type) {
+    case 'space': {
+      return '';
+    }
+    case 'hr': {
+      return this.renderer.hr();
+    }
+    case 'heading': {
+      return this.renderer.heading(
+        this.inline.output(this.token.text),
+        this.token.depth,
+        this.token.text);
+    }
+    case 'code': {
+      return this.renderer.code(this.token.text,
+        this.token.lang,
+        this.token.escaped);
+    }
+    case 'table': {
+      var header = ''
+        , body = ''
+        , i
+        , row
+        , cell
+        , flags
+        , j;
+
+      // header
+      cell = '';
+      for (i = 0; i < this.token.header.length; i++) {
+        flags = { header: true, align: this.token.align[i] };
+        cell += this.renderer.tablecell(
+          this.inline.output(this.token.header[i]),
+          { header: true, align: this.token.align[i] }
+        );
+      }
+      header += this.renderer.tablerow(cell);
+
+      for (i = 0; i < this.token.cells.length; i++) {
+        row = this.token.cells[i];
+
+        cell = '';
+        for (j = 0; j < row.length; j++) {
+          cell += this.renderer.tablecell(
+            this.inline.output(row[j]),
+            { header: false, align: this.token.align[j] }
+          );
+        }
+
+        body += this.renderer.tablerow(cell);
+      }
+      return this.renderer.table(header, body);
+    }
+    case 'blockquote_start': {
+      var body = '';
+
+      while (this.next().type !== 'blockquote_end') {
+        body += this.tok();
+      }
+
+      return this.renderer.blockquote(body);
+    }
+    case 'list_start': {
+      var body = ''
+        , ordered = this.token.ordered;
+
+      while (this.next().type !== 'list_end') {
+        body += this.tok();
+      }
+
+      return this.renderer.list(body, ordered);
+    }
+    case 'list_item_start': {
+      var body = '';
+
+      while (this.next().type !== 'list_item_end') {
+        body += this.token.type === 'text'
+          ? this.parseText()
+          : this.tok();
+      }
+
+      return this.renderer.listitem(body);
+    }
+    case 'loose_item_start': {
+      var body = '';
+
+      while (this.next().type !== 'list_item_end') {
+        body += this.tok();
+      }
+
+      return this.renderer.listitem(body);
+    }
+    case 'html': {
+      var html = !this.token.pre && !this.options.pedantic
+        ? this.inline.output(this.token.text)
+        : this.token.text;
+      return this.renderer.html(html);
+    }
+    case 'paragraph': {
+      return this.renderer.paragraph(this.inline.output(this.token.text));
+    }
+    case 'text': {
+      return this.renderer.paragraph(this.parseText());
+    }
+  }
+};
+
+/**
+ * Helpers
+ */
+
+function escape(html, encode) {
+  return html
+    .replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function unescape(html) {
+  return html.replace(/&([#\w]+);/g, function(_, n) {
+    n = n.toLowerCase();
+    if (n === 'colon') return ':';
+    if (n.charAt(0) === '#') {
+      return n.charAt(1) === 'x'
+        ? String.fromCharCode(parseInt(n.substring(2), 16))
+        : String.fromCharCode(+n.substring(1));
+    }
+    return '';
+  });
+}
+
+function replace(regex, opt) {
+  regex = regex.source;
+  opt = opt || '';
+  return function self(name, val) {
+    if (!name) return new RegExp(regex, opt);
+    val = val.source || val;
+    val = val.replace(/(^|[^\[])\^/g, '$1');
+    regex = regex.replace(name, val);
+    return self;
+  };
+}
+
+function noop() {}
+noop.exec = noop;
+
+function merge(obj) {
+  var i = 1
+    , target
+    , key;
+
+  for (; i < arguments.length; i++) {
+    target = arguments[i];
+    for (key in target) {
+      if (Object.prototype.hasOwnProperty.call(target, key)) {
+        obj[key] = target[key];
+      }
+    }
+  }
+
+  return obj;
+}
+
+
+/**
+ * Marked
+ */
+
+function marked(src, opt, callback) {
+  if (callback || typeof opt === 'function') {
+    if (!callback) {
+      callback = opt;
+      opt = null;
+    }
+
+    opt = merge({}, marked.defaults, opt || {});
+
+    var highlight = opt.highlight
+      , tokens
+      , pending
+      , i = 0;
+
+    try {
+      tokens = Lexer.lex(src, opt)
+    } catch (e) {
+      return callback(e);
+    }
+
+    pending = tokens.length;
+
+    var done = function(err) {
+      if (err) {
+        opt.highlight = highlight;
+        return callback(err);
+      }
+
+      var out;
+
+      try {
+        out = Parser.parse(tokens, opt);
+      } catch (e) {
+        err = e;
+      }
+
+      opt.highlight = highlight;
+
+      return err
+        ? callback(err)
+        : callback(null, out);
+    };
+
+    if (!highlight || highlight.length < 3) {
+      return done();
+    }
+
+    delete opt.highlight;
+
+    if (!pending) return done();
+
+    for (; i < tokens.length; i++) {
+      (function(token) {
+        if (token.type !== 'code') {
+          return --pending || done();
+        }
+        return highlight(token.text, token.lang, function(err, code) {
+          if (err) return done(err);
+          if (code == null || code === token.text) {
+            return --pending || done();
+          }
+          token.text = code;
+          token.escaped = true;
+          --pending || done();
+        });
+      })(tokens[i]);
+    }
+
+    return;
+  }
+  try {
+    if (opt) opt = merge({}, marked.defaults, opt);
+    return Parser.parse(Lexer.lex(src, opt), opt);
+  } catch (e) {
+    e.message += '\nPlease report this to https://github.com/chjj/marked.';
+    if ((opt || marked.defaults).silent) {
+      return '<p>An error occured:</p><pre>'
+        + escape(e.message + '', true)
+        + '</pre>';
+    }
+    throw e;
+  }
+}
+
+/**
+ * Options
+ */
+
+marked.options =
+marked.setOptions = function(opt) {
+  merge(marked.defaults, opt);
+  return marked;
+};
+
+marked.defaults = {
+  gfm: true,
+  tables: true,
+  breaks: false,
+  pedantic: false,
+  sanitize: false,
+  sanitizer: null,
+  mangle: true,
+  smartLists: false,
+  silent: false,
+  highlight: null,
+  langPrefix: 'lang-',
+  smartypants: false,
+  headerPrefix: '',
+  renderer: new Renderer,
+  xhtml: false
+};
+
+/**
+ * Expose
+ */
+
+marked.Parser = Parser;
+marked.parser = Parser.parse;
+
+marked.Renderer = Renderer;
+
+marked.Lexer = Lexer;
+marked.lexer = Lexer.lex;
+
+marked.InlineLexer = InlineLexer;
+marked.inlineLexer = InlineLexer.output;
+
+marked.parse = marked;
+
+if (typeof module !== 'undefined' && typeof exports === 'object') {
+  module.exports = marked;
+} else if (typeof define === 'function' && define.amd) {
+  define(function() { return marked; });
+} else {
+  this.marked = marked;
+}
+
+}).call(function() {
+  return this || (typeof window !== 'undefined' ? window : global);
+}());
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],20:[function(require,module,exports){
+/*!
+ * numeral.js
+ * version : 1.5.3
+ * author : Adam Draper
+ * license : MIT
+ * http://adamwdraper.github.com/Numeral-js/
+ */
+
+(function () {
+
+    /************************************
+        Constants
+    ************************************/
+
+    var numeral,
+        VERSION = '1.5.3',
+        // internal storage for language config files
+        languages = {},
+        currentLanguage = 'en',
+        zeroFormat = null,
+        defaultFormat = '0,0',
+        // check for nodeJS
+        hasModule = (typeof module !== 'undefined' && module.exports);
+
+
+    /************************************
+        Constructors
+    ************************************/
+
+
+    // Numeral prototype object
+    function Numeral (number) {
+        this._value = number;
+    }
+
+    /**
+     * Implementation of toFixed() that treats floats more like decimals
+     *
+     * Fixes binary rounding issues (eg. (0.615).toFixed(2) === '0.61') that present
+     * problems for accounting- and finance-related software.
+     */
+    function toFixed (value, precision, roundingFunction, optionals) {
+        var power = Math.pow(10, precision),
+            optionalsRegExp,
+            output;
+            
+        //roundingFunction = (roundingFunction !== undefined ? roundingFunction : Math.round);
+        // Multiply up by precision, round accurately, then divide and use native toFixed():
+        output = (roundingFunction(value * power) / power).toFixed(precision);
+
+        if (optionals) {
+            optionalsRegExp = new RegExp('0{1,' + optionals + '}$');
+            output = output.replace(optionalsRegExp, '');
+        }
+
+        return output;
+    }
+
+    /************************************
+        Formatting
+    ************************************/
+
+    // determine what type of formatting we need to do
+    function formatNumeral (n, format, roundingFunction) {
+        var output;
+
+        // figure out what kind of format we are dealing with
+        if (format.indexOf('$') > -1) { // currency!!!!!
+            output = formatCurrency(n, format, roundingFunction);
+        } else if (format.indexOf('%') > -1) { // percentage
+            output = formatPercentage(n, format, roundingFunction);
+        } else if (format.indexOf(':') > -1) { // time
+            output = formatTime(n, format);
+        } else { // plain ol' numbers or bytes
+            output = formatNumber(n._value, format, roundingFunction);
+        }
+
+        // return string
+        return output;
+    }
+
+    // revert to number
+    function unformatNumeral (n, string) {
+        var stringOriginal = string,
+            thousandRegExp,
+            millionRegExp,
+            billionRegExp,
+            trillionRegExp,
+            suffixes = ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+            bytesMultiplier = false,
+            power;
+
+        if (string.indexOf(':') > -1) {
+            n._value = unformatTime(string);
+        } else {
+            if (string === zeroFormat) {
+                n._value = 0;
+            } else {
+                if (languages[currentLanguage].delimiters.decimal !== '.') {
+                    string = string.replace(/\./g,'').replace(languages[currentLanguage].delimiters.decimal, '.');
+                }
+
+                // see if abbreviations are there so that we can multiply to the correct number
+                thousandRegExp = new RegExp('[^a-zA-Z]' + languages[currentLanguage].abbreviations.thousand + '(?:\\)|(\\' + languages[currentLanguage].currency.symbol + ')?(?:\\))?)?$');
+                millionRegExp = new RegExp('[^a-zA-Z]' + languages[currentLanguage].abbreviations.million + '(?:\\)|(\\' + languages[currentLanguage].currency.symbol + ')?(?:\\))?)?$');
+                billionRegExp = new RegExp('[^a-zA-Z]' + languages[currentLanguage].abbreviations.billion + '(?:\\)|(\\' + languages[currentLanguage].currency.symbol + ')?(?:\\))?)?$');
+                trillionRegExp = new RegExp('[^a-zA-Z]' + languages[currentLanguage].abbreviations.trillion + '(?:\\)|(\\' + languages[currentLanguage].currency.symbol + ')?(?:\\))?)?$');
+
+                // see if bytes are there so that we can multiply to the correct number
+                for (power = 0; power <= suffixes.length; power++) {
+                    bytesMultiplier = (string.indexOf(suffixes[power]) > -1) ? Math.pow(1024, power + 1) : false;
+
+                    if (bytesMultiplier) {
+                        break;
+                    }
+                }
+
+                // do some math to create our number
+                n._value = ((bytesMultiplier) ? bytesMultiplier : 1) * ((stringOriginal.match(thousandRegExp)) ? Math.pow(10, 3) : 1) * ((stringOriginal.match(millionRegExp)) ? Math.pow(10, 6) : 1) * ((stringOriginal.match(billionRegExp)) ? Math.pow(10, 9) : 1) * ((stringOriginal.match(trillionRegExp)) ? Math.pow(10, 12) : 1) * ((string.indexOf('%') > -1) ? 0.01 : 1) * (((string.split('-').length + Math.min(string.split('(').length-1, string.split(')').length-1)) % 2)? 1: -1) * Number(string.replace(/[^0-9\.]+/g, ''));
+
+                // round if we are talking about bytes
+                n._value = (bytesMultiplier) ? Math.ceil(n._value) : n._value;
+            }
+        }
+        return n._value;
+    }
+
+    function formatCurrency (n, format, roundingFunction) {
+        var symbolIndex = format.indexOf('$'),
+            openParenIndex = format.indexOf('('),
+            minusSignIndex = format.indexOf('-'),
+            space = '',
+            spliceIndex,
+            output;
+
+        // check for space before or after currency
+        if (format.indexOf(' $') > -1) {
+            space = ' ';
+            format = format.replace(' $', '');
+        } else if (format.indexOf('$ ') > -1) {
+            space = ' ';
+            format = format.replace('$ ', '');
+        } else {
+            format = format.replace('$', '');
+        }
+
+        // format the number
+        output = formatNumber(n._value, format, roundingFunction);
+
+        // position the symbol
+        if (symbolIndex <= 1) {
+            if (output.indexOf('(') > -1 || output.indexOf('-') > -1) {
+                output = output.split('');
+                spliceIndex = 1;
+                if (symbolIndex < openParenIndex || symbolIndex < minusSignIndex){
+                    // the symbol appears before the "(" or "-"
+                    spliceIndex = 0;
+                }
+                output.splice(spliceIndex, 0, languages[currentLanguage].currency.symbol + space);
+                output = output.join('');
+            } else {
+                output = languages[currentLanguage].currency.symbol + space + output;
+            }
+        } else {
+            if (output.indexOf(')') > -1) {
+                output = output.split('');
+                output.splice(-1, 0, space + languages[currentLanguage].currency.symbol);
+                output = output.join('');
+            } else {
+                output = output + space + languages[currentLanguage].currency.symbol;
+            }
+        }
+
+        return output;
+    }
+
+    function formatPercentage (n, format, roundingFunction) {
+        var space = '',
+            output,
+            value = n._value * 100;
+
+        // check for space before %
+        if (format.indexOf(' %') > -1) {
+            space = ' ';
+            format = format.replace(' %', '');
+        } else {
+            format = format.replace('%', '');
+        }
+
+        output = formatNumber(value, format, roundingFunction);
+        
+        if (output.indexOf(')') > -1 ) {
+            output = output.split('');
+            output.splice(-1, 0, space + '%');
+            output = output.join('');
+        } else {
+            output = output + space + '%';
+        }
+
+        return output;
+    }
+
+    function formatTime (n) {
+        var hours = Math.floor(n._value/60/60),
+            minutes = Math.floor((n._value - (hours * 60 * 60))/60),
+            seconds = Math.round(n._value - (hours * 60 * 60) - (minutes * 60));
+        return hours + ':' + ((minutes < 10) ? '0' + minutes : minutes) + ':' + ((seconds < 10) ? '0' + seconds : seconds);
+    }
+
+    function unformatTime (string) {
+        var timeArray = string.split(':'),
+            seconds = 0;
+        // turn hours and minutes into seconds and add them all up
+        if (timeArray.length === 3) {
+            // hours
+            seconds = seconds + (Number(timeArray[0]) * 60 * 60);
+            // minutes
+            seconds = seconds + (Number(timeArray[1]) * 60);
+            // seconds
+            seconds = seconds + Number(timeArray[2]);
+        } else if (timeArray.length === 2) {
+            // minutes
+            seconds = seconds + (Number(timeArray[0]) * 60);
+            // seconds
+            seconds = seconds + Number(timeArray[1]);
+        }
+        return Number(seconds);
+    }
+
+    function formatNumber (value, format, roundingFunction) {
+        var negP = false,
+            signed = false,
+            optDec = false,
+            abbr = '',
+            abbrK = false, // force abbreviation to thousands
+            abbrM = false, // force abbreviation to millions
+            abbrB = false, // force abbreviation to billions
+            abbrT = false, // force abbreviation to trillions
+            abbrForce = false, // force abbreviation
+            bytes = '',
+            ord = '',
+            abs = Math.abs(value),
+            suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+            min,
+            max,
+            power,
+            w,
+            precision,
+            thousands,
+            d = '',
+            neg = false;
+
+        // check if number is zero and a custom zero format has been set
+        if (value === 0 && zeroFormat !== null) {
+            return zeroFormat;
+        } else {
+            // see if we should use parentheses for negative number or if we should prefix with a sign
+            // if both are present we default to parentheses
+            if (format.indexOf('(') > -1) {
+                negP = true;
+                format = format.slice(1, -1);
+            } else if (format.indexOf('+') > -1) {
+                signed = true;
+                format = format.replace(/\+/g, '');
+            }
+
+            // see if abbreviation is wanted
+            if (format.indexOf('a') > -1) {
+                // check if abbreviation is specified
+                abbrK = format.indexOf('aK') >= 0;
+                abbrM = format.indexOf('aM') >= 0;
+                abbrB = format.indexOf('aB') >= 0;
+                abbrT = format.indexOf('aT') >= 0;
+                abbrForce = abbrK || abbrM || abbrB || abbrT;
+
+                // check for space before abbreviation
+                if (format.indexOf(' a') > -1) {
+                    abbr = ' ';
+                    format = format.replace(' a', '');
+                } else {
+                    format = format.replace('a', '');
+                }
+
+                if (abs >= Math.pow(10, 12) && !abbrForce || abbrT) {
+                    // trillion
+                    abbr = abbr + languages[currentLanguage].abbreviations.trillion;
+                    value = value / Math.pow(10, 12);
+                } else if (abs < Math.pow(10, 12) && abs >= Math.pow(10, 9) && !abbrForce || abbrB) {
+                    // billion
+                    abbr = abbr + languages[currentLanguage].abbreviations.billion;
+                    value = value / Math.pow(10, 9);
+                } else if (abs < Math.pow(10, 9) && abs >= Math.pow(10, 6) && !abbrForce || abbrM) {
+                    // million
+                    abbr = abbr + languages[currentLanguage].abbreviations.million;
+                    value = value / Math.pow(10, 6);
+                } else if (abs < Math.pow(10, 6) && abs >= Math.pow(10, 3) && !abbrForce || abbrK) {
+                    // thousand
+                    abbr = abbr + languages[currentLanguage].abbreviations.thousand;
+                    value = value / Math.pow(10, 3);
+                }
+            }
+
+            // see if we are formatting bytes
+            if (format.indexOf('b') > -1) {
+                // check for space before
+                if (format.indexOf(' b') > -1) {
+                    bytes = ' ';
+                    format = format.replace(' b', '');
+                } else {
+                    format = format.replace('b', '');
+                }
+
+                for (power = 0; power <= suffixes.length; power++) {
+                    min = Math.pow(1024, power);
+                    max = Math.pow(1024, power+1);
+
+                    if (value >= min && value < max) {
+                        bytes = bytes + suffixes[power];
+                        if (min > 0) {
+                            value = value / min;
+                        }
+                        break;
+                    }
+                }
+            }
+
+            // see if ordinal is wanted
+            if (format.indexOf('o') > -1) {
+                // check for space before
+                if (format.indexOf(' o') > -1) {
+                    ord = ' ';
+                    format = format.replace(' o', '');
+                } else {
+                    format = format.replace('o', '');
+                }
+
+                ord = ord + languages[currentLanguage].ordinal(value);
+            }
+
+            if (format.indexOf('[.]') > -1) {
+                optDec = true;
+                format = format.replace('[.]', '.');
+            }
+
+            w = value.toString().split('.')[0];
+            precision = format.split('.')[1];
+            thousands = format.indexOf(',');
+
+            if (precision) {
+                if (precision.indexOf('[') > -1) {
+                    precision = precision.replace(']', '');
+                    precision = precision.split('[');
+                    d = toFixed(value, (precision[0].length + precision[1].length), roundingFunction, precision[1].length);
+                } else {
+                    d = toFixed(value, precision.length, roundingFunction);
+                }
+
+                w = d.split('.')[0];
+
+                if (d.split('.')[1].length) {
+                    d = languages[currentLanguage].delimiters.decimal + d.split('.')[1];
+                } else {
+                    d = '';
+                }
+
+                if (optDec && Number(d.slice(1)) === 0) {
+                    d = '';
+                }
+            } else {
+                w = toFixed(value, null, roundingFunction);
+            }
+
+            // format number
+            if (w.indexOf('-') > -1) {
+                w = w.slice(1);
+                neg = true;
+            }
+
+            if (thousands > -1) {
+                w = w.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1' + languages[currentLanguage].delimiters.thousands);
+            }
+
+            if (format.indexOf('.') === 0) {
+                w = '';
+            }
+
+            return ((negP && neg) ? '(' : '') + ((!negP && neg) ? '-' : '') + ((!neg && signed) ? '+' : '') + w + d + ((ord) ? ord : '') + ((abbr) ? abbr : '') + ((bytes) ? bytes : '') + ((negP && neg) ? ')' : '');
+        }
+    }
+
+    /************************************
+        Top Level Functions
+    ************************************/
+
+    numeral = function (input) {
+        if (numeral.isNumeral(input)) {
+            input = input.value();
+        } else if (input === 0 || typeof input === 'undefined') {
+            input = 0;
+        } else if (!Number(input)) {
+            input = numeral.fn.unformat(input);
+        }
+
+        return new Numeral(Number(input));
+    };
+
+    // version number
+    numeral.version = VERSION;
+
+    // compare numeral object
+    numeral.isNumeral = function (obj) {
+        return obj instanceof Numeral;
+    };
+
+    // This function will load languages and then set the global language.  If
+    // no arguments are passed in, it will simply return the current global
+    // language key.
+    numeral.language = function (key, values) {
+        if (!key) {
+            return currentLanguage;
+        }
+
+        if (key && !values) {
+            if(!languages[key]) {
+                throw new Error('Unknown language : ' + key);
+            }
+            currentLanguage = key;
+        }
+
+        if (values || !languages[key]) {
+            loadLanguage(key, values);
+        }
+
+        return numeral;
+    };
+    
+    // This function provides access to the loaded language data.  If
+    // no arguments are passed in, it will simply return the current
+    // global language object.
+    numeral.languageData = function (key) {
+        if (!key) {
+            return languages[currentLanguage];
+        }
+        
+        if (!languages[key]) {
+            throw new Error('Unknown language : ' + key);
+        }
+        
+        return languages[key];
+    };
+
+    numeral.language('en', {
+        delimiters: {
+            thousands: ',',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function (number) {
+            var b = number % 10;
+            return (~~ (number % 100 / 10) === 1) ? 'th' :
+                (b === 1) ? 'st' :
+                (b === 2) ? 'nd' :
+                (b === 3) ? 'rd' : 'th';
+        },
+        currency: {
+            symbol: '$'
+        }
+    });
+
+    numeral.zeroFormat = function (format) {
+        zeroFormat = typeof(format) === 'string' ? format : null;
+    };
+
+    numeral.defaultFormat = function (format) {
+        defaultFormat = typeof(format) === 'string' ? format : '0.0';
+    };
+
+    /************************************
+        Helpers
+    ************************************/
+
+    function loadLanguage(key, values) {
+        languages[key] = values;
+    }
+
+    /************************************
+        Floating-point helpers
+    ************************************/
+
+    // The floating-point helper functions and implementation
+    // borrows heavily from sinful.js: http://guipn.github.io/sinful.js/
+
+    /**
+     * Array.prototype.reduce for browsers that don't support it
+     * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce#Compatibility
+     */
+    if ('function' !== typeof Array.prototype.reduce) {
+        Array.prototype.reduce = function (callback, opt_initialValue) {
+            'use strict';
+            
+            if (null === this || 'undefined' === typeof this) {
+                // At the moment all modern browsers, that support strict mode, have
+                // native implementation of Array.prototype.reduce. For instance, IE8
+                // does not support strict mode, so this check is actually useless.
+                throw new TypeError('Array.prototype.reduce called on null or undefined');
+            }
+            
+            if ('function' !== typeof callback) {
+                throw new TypeError(callback + ' is not a function');
+            }
+
+            var index,
+                value,
+                length = this.length >>> 0,
+                isValueSet = false;
+
+            if (1 < arguments.length) {
+                value = opt_initialValue;
+                isValueSet = true;
+            }
+
+            for (index = 0; length > index; ++index) {
+                if (this.hasOwnProperty(index)) {
+                    if (isValueSet) {
+                        value = callback(value, this[index], index, this);
+                    } else {
+                        value = this[index];
+                        isValueSet = true;
+                    }
+                }
+            }
+
+            if (!isValueSet) {
+                throw new TypeError('Reduce of empty array with no initial value');
+            }
+
+            return value;
+        };
+    }
+
+    
+    /**
+     * Computes the multiplier necessary to make x >= 1,
+     * effectively eliminating miscalculations caused by
+     * finite precision.
+     */
+    function multiplier(x) {
+        var parts = x.toString().split('.');
+        if (parts.length < 2) {
+            return 1;
+        }
+        return Math.pow(10, parts[1].length);
+    }
+
+    /**
+     * Given a variable number of arguments, returns the maximum
+     * multiplier that must be used to normalize an operation involving
+     * all of them.
+     */
+    function correctionFactor() {
+        var args = Array.prototype.slice.call(arguments);
+        return args.reduce(function (prev, next) {
+            var mp = multiplier(prev),
+                mn = multiplier(next);
+        return mp > mn ? mp : mn;
+        }, -Infinity);
+    }        
+
+
+    /************************************
+        Numeral Prototype
+    ************************************/
+
+
+    numeral.fn = Numeral.prototype = {
+
+        clone : function () {
+            return numeral(this);
+        },
+
+        format : function (inputString, roundingFunction) {
+            return formatNumeral(this, 
+                  inputString ? inputString : defaultFormat, 
+                  (roundingFunction !== undefined) ? roundingFunction : Math.round
+              );
+        },
+
+        unformat : function (inputString) {
+            if (Object.prototype.toString.call(inputString) === '[object Number]') { 
+                return inputString; 
+            }
+            return unformatNumeral(this, inputString ? inputString : defaultFormat);
+        },
+
+        value : function () {
+            return this._value;
+        },
+
+        valueOf : function () {
+            return this._value;
+        },
+
+        set : function (value) {
+            this._value = Number(value);
+            return this;
+        },
+
+        add : function (value) {
+            var corrFactor = correctionFactor.call(null, this._value, value);
+            function cback(accum, curr, currI, O) {
+                return accum + corrFactor * curr;
+            }
+            this._value = [this._value, value].reduce(cback, 0) / corrFactor;
+            return this;
+        },
+
+        subtract : function (value) {
+            var corrFactor = correctionFactor.call(null, this._value, value);
+            function cback(accum, curr, currI, O) {
+                return accum - corrFactor * curr;
+            }
+            this._value = [value].reduce(cback, this._value * corrFactor) / corrFactor;            
+            return this;
+        },
+
+        multiply : function (value) {
+            function cback(accum, curr, currI, O) {
+                var corrFactor = correctionFactor(accum, curr);
+                return (accum * corrFactor) * (curr * corrFactor) /
+                    (corrFactor * corrFactor);
+            }
+            this._value = [this._value, value].reduce(cback, 1);
+            return this;
+        },
+
+        divide : function (value) {
+            function cback(accum, curr, currI, O) {
+                var corrFactor = correctionFactor(accum, curr);
+                return (accum * corrFactor) / (curr * corrFactor);
+            }
+            this._value = [this._value, value].reduce(cback);            
+            return this;
+        },
+
+        difference : function (value) {
+            return Math.abs(numeral(this._value).subtract(value).value());
+        }
+
+    };
+
+    /************************************
+        Exposing Numeral
+    ************************************/
+
+    // CommonJS module is defined
+    if (hasModule) {
+        module.exports = numeral;
+    }
+
+    /*global ender:false */
+    if (typeof ender === 'undefined') {
+        // here, `this` means `window` in the browser, or `global` on the server
+        // add `numeral` as a global object via a string identifier,
+        // for Closure Compiler 'advanced' mode
+        this['numeral'] = numeral;
+    }
+
+    /*global define:false */
+    if (typeof define === 'function' && define.amd) {
+        define([], function () {
+            return numeral;
+        });
+    }
+}).call(this);
+
+},{}]},{},[1]);
+
+(function() {
+  this.Atlas.module('Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    var entityManager;
+    entityManager = new App.Base.EntityManager({
+      entityConstructor: App.Models.CoreDatum,
+      entitiesConstructor: App.Models.CoreData
+    });
+    App.reqres.setHandler('core:datum:entities', function() {
+      return entityManager.getEntities({
+        cache: true
+      });
+    });
+    return App.reqres.setHandler('core:datum:entity', function(query) {
+      return entityManager.getEntity(query);
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    var entityManager;
+    entityManager = new App.Base.EntityManager({
+      entityConstructor: App.Models.Image,
+      entitiesConstructor: App.Models.Images
+    });
+    App.reqres.setHandler('image:entities', function(options) {
+      return entityManager.getEntities(options);
+    });
+    return App.reqres.setHandler('image:entity', function(query) {
+      return entityManager.getEntity(query);
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    var entityManager;
+    entityManager = new App.Base.EntityManager({
+      entityConstructor: App.Models.Project,
+      entitiesConstructor: App.Models.Projects
+    });
+    App.reqres.setHandler('project:entities', function(options) {
+      return entityManager.getEntities(options);
+    });
+    return App.reqres.setHandler('project:entity', function(query) {
+      return entityManager.getEntity(query);
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    var coll, entityManager;
+    entityManager = new App.Base.EntityManager({
+      entitiesConstructor: App.Models.ProjectSections
+    });
+    coll = new App.Models.ProjectSections();
+    coll.initializeActiveStates();
+    entityManager.entitiesCache = coll;
+    return App.reqres.setHandler('project:section:entities', function() {
+      return entityManager.getEntities({
+        cache: true
+      });
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Entities', function(Entities, App, Backbone, Marionette, $, _) {
+    var coll, entityManager;
+    entityManager = new App.Base.EntityManager({
+      entitiesConstructor: App.Models.ProjectTemplates
+    });
+    coll = new App.Models.ProjectTemplates();
+    coll.initializeActiveStates();
+    entityManager.entitiesCache = coll;
+    return App.reqres.setHandler('project:template:entities', function() {
+      return entityManager.getEntities({
+        cache: true
+      });
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Map', function(Map, App, Backbone, Marionette, $, _) {
+    this.startWithParent = false;
+    this.on('start', function() {
+      return this.Controller.show();
+    });
+    return this.on('stop', function() {
+      return this.Controller.destroy();
+    });
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Map', function(Map, App, Backbone, Marionette, $, _) {
+    return Map.control = {
+      center: function(latLng, widthRatio, heightRatio) {
+        var map, mapSize, pt;
+        if (widthRatio == null) {
+          widthRatio = 0.5;
+        }
+        if (heightRatio == null) {
+          heightRatio = 0.5;
+        }
+        map = this;
+        pt = map.latLngToContainerPoint(latLng);
+        mapSize = map.getSize();
+        map.panBy([-mapSize.x * widthRatio + pt.x, -mapSize.y * heightRatio + pt.y], {
+          animate: true,
+          duration: 0.5
+        });
+        return this;
+      },
+      centerToPixel: function(location, widthRatio, heightRatio) {
+        var map, mapSize, pt;
+        if (widthRatio == null) {
+          widthRatio = 0.5;
+        }
+        if (heightRatio == null) {
+          heightRatio = 0.5;
+        }
+        map = this;
+        pt = location;
+        mapSize = map.getSize();
+        map.panBy([-mapSize.x * widthRatio + pt.x, -mapSize.y * heightRatio + pt.y], {
+          animate: true,
+          duration: 0.5
+        });
+        return this;
+      },
+      getView: function() {
+        var ll, map;
+        map = this;
+        ll = map.getBounds().getCenter();
+        return [ll.lat, ll.lng];
+      },
+      changeZoom: function(dZoom) {
+        var map, z;
+        map = this;
+        z = map.getZoom();
+        map.setView(map.getView(), z + dZoom);
+        return this;
+      },
+      setZoom: function(zoom) {
+        var map;
+        map = this;
+        map.setView(map.getView(), zoom);
+        return this;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Map', function(Map, App, Backbone, Marionette, $, _) {
+    return Map.Controller = {
+      show: function() {
+        return $().ensureScript('L', '/assets/vendor/mapbox.js', this.showMain.bind(this));
+      },
+      showMain: function() {
+        Map.rootView = new Map.RootView().render();
+        this.$loading = $("<div class='loading-icon'><div>Loading...</div></div>");
+        $('.atl__main').append(this.$loading);
+        return $().ensureScript('d3', '/assets/vendor/d3.min.js', this.showOverlay.bind(this));
+      },
+      showOverlay: function() {
+        var View, itemType, items, launch;
+        items = Map.props.project.get('data').items;
+        itemType = items.getItemType();
+        View = itemType === 'state' ? Map.PathOverlayView : Map.PindropOverlayView;
+        launch = function(baseGeoData) {
+          var coll;
+          coll = items.getRichGeoJson(baseGeoData);
+          return coll.onReady(function() {
+            var overlayView;
+            overlayView = new View();
+            overlayView.collection = coll;
+            Map.overlayView = overlayView;
+            return overlayView.render();
+          });
+        };
+        this.getStateBaseGeoData(launch);
+        return this;
+      },
+      getStateBaseGeoData: function(next) {
+        var data;
+        data = App['us-states-10m'];
+        if (data != null) {
+          return next(data);
+        } else {
+          return $.ajax({
+            url: '/data/us-states-10m.js',
+            dataType: 'script',
+            success: function() {
+              return next(App['us-states-10m']);
+            }
+          });
+        }
+      },
+      destroy: function() {
+        if ((Map.overlayView != null) && (Map.overlayView.destroy != null)) {
+          Map.overlayView.destroy();
+        }
+        if ((Map.mapView != null) && (Map.mapView.destroy != null)) {
+          return Map.mapView.destroy();
+        }
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  this.Atlas.module('Map', function(Map, App, Backbone, Marionette, $, _) {
+    return Map.RootView = Marionette.Object.extend({
+      el: '#atl__map',
+      initialize: function(options) {
+        this.elId = this.el.substr(1);
+        this.$el = $(this.el);
+        return this;
+      },
+      _getZoomLevel: function() {
+        var width;
+        width = this.$el.width();
+        if (width > 1350) {
+          return 5;
+        }
+        if (width > 700) {
+          return 4;
+        }
+        return 3;
+      },
+      _setupMap: function() {
+        var zoomLevel;
+        zoomLevel = this._getZoomLevel();
+        this.map.setView([37.6, -95.665], zoomLevel);
+        this.map.scrollWheelZoom.disable();
+        _.extend(this.map, Map.control);
+        this.map.ignoreNextClick = false;
+        this.map.on('dragend', (function(_this) {
+          return function(e) {
+            var items;
+            items = Map.props.project.get('data').items;
+            if (e.distance > 15 && (items.hovered != null)) {
+              return _this.map.ignoreNextClick = true;
+            }
+          };
+        })(this));
+        return Map.map = this.map;
+      },
+      render: function() {
+        L.mapbox.accessToken = 'pk.eyJ1Ijoicm9zc3ZhbmRlcmxpbmRlIiwiYSI6ImRxc0hRR28ifQ.XwCYSPHrGbRvofTV-CIUqw';
+        this.map = L.mapbox.map(this.elId, 'rossvanderlinde.874ab107', {
+          attributionControl: true,
+          zoomControl: false,
+          inertia: false
+        });
+        this.$attribution = $('.leaflet-control-attribution');
+        this.$attribution.hide();
+        this._setupMap();
+        this._addControl();
+        return this;
+      },
+      _addControl: function() {
+        var html;
+        html = "<div class='atl__map-control'> <div id='atl__map-attribution' class='atl__map-control__button bg-img-info--black'></div> <div id='atl__map-zoom-in'  class='atl__map-control__button bg-img-plus--black'></div> <div id='atl__map-zoom-out' class='atl__map-control__button bg-img-minus--black'></div> <div class='atl__help atl__help--left'> View <b>copyright</b> information about the map and <b>zoom</b> in and out. </div> </div>";
+        this.$el.append(html);
+        this.$zoomInButton = $('#atl__map-zoom-in');
+        this.$zoomOutButton = $('#atl__map-zoom-out');
+        this.$attributionButton = $('#atl__map-attribution');
+        this._setZoomEvents();
+        return this._setAttributionEvents();
+      },
+      _setZoomEvents: function() {
+        var map;
+        map = this.map;
+        this.$zoomInButton.on('click', function() {
+          return map.changeZoom(+1);
+        });
+        this.$zoomOutButton.on('click', function() {
+          return map.changeZoom(-1);
+        });
+        return this;
+      },
+      _setAttributionEvents: function() {
+        return this.$attributionButton.on('click', (function(_this) {
+          return function() {
+            return _this.$attribution.toggle();
+          };
+        })(this));
+      },
+      clearZoom: function() {
+        this.$zoomInButton.off();
+        this.$zoomOutButton.off();
+        return this;
+      },
+      destroy: function() {
+        this.clearZoom();
+        if (this.map) {
+          this.map.clearAllEventListeners();
+          this.map.remove();
+        }
+        return this;
+      }
+    });
+  });
+
+}).call(this);
+
+(function() {
+  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  this.Atlas.module("Map", function(Map, App, Backbone, Marionette, $, _) {
+    return Map.OverlayBaseView = (function(superClass) {
+      extend(OverlayBaseView, superClass);
+
+      function OverlayBaseView() {
+        return OverlayBaseView.__super__.constructor.apply(this, arguments);
+      }
+
+      OverlayBaseView.prototype.initialize = function() {
+        this.listenTo(App.vent, 'key:click display:mode:change', this.updateAnimated);
+        this.listenTo(App.vent, 'value:mouseover value:mouseout value:click search:term:change', this.update);
+        App.reqres.setHandler('item:map:position', (function(_this) {
+          return function(item) {
+            return _this.getItemMapPosition(item);
+          };
+        })(this));
+        return this;
+      };
+
+      OverlayBaseView.prototype.setHeaderStripColor = function() {
+        var cls, filter, hoveredItem, indeces, items, project;
+        project = Map.props.project;
+        items = project.get('data').items;
+        filter = project.get('data').filter;
+        hoveredItem = items.hovered;
+        if (hoveredItem != null) {
+          indeces = filter.getFriendlyIndeces(hoveredItem, 15);
+          cls = "bg-c-" + indeces[0];
+          return App.commands.execute('set:header:strip:color', {
+            className: cls
+          });
+        } else {
+          return App.commands.execute('set:header:strip:color', 'none');
+        }
+      };
+
+      OverlayBaseView.prototype.getItemMapPosition = function(item) {
+        var feature, identityPath, latLong, longLatArrayCentroid, map;
+        identityPath = d3.geo.path().projection(function(d) {
+          return d;
+        });
+        feature = this._getFeatureByModel(item);
+        longLatArrayCentroid = identityPath.centroid(feature);
+        latLong = L.latLng(longLatArrayCentroid[1], longLatArrayCentroid[0]);
+        map = Map.map;
+        return map.latLngToContainerPoint(latLong);
+      };
+
+      OverlayBaseView.prototype.updateAnimated = function() {
+        var $el;
+        $el = $('.leaflet-overlay-pane');
+        return $el.stop().animate({
+          opacity: 0
+        }, 750, 'swing', (function(_this) {
+          return function() {
+            _this.update();
+            return $el.animate({
+              opacity: 1
+            }, 750);
+          };
+        })(this));
+      };
+
+      OverlayBaseView.prototype.onFeatureMouseOut = function(feature) {
+        var items, project;
+        project = Map.props.project;
+        items = project.get('data').items;
+        items.setHovered(-1);
+        this.setHeaderStripColor();
+        return App.commands.execute('update:tilemap');
+      };
+
+      OverlayBaseView.prototype.onFeatureMouseOver = function(feature) {
+        var items, model, project;
+        if (this.bringFeatureToFront != null) {
+          this.bringFeatureToFront(feature);
+        }
+        project = Map.props.project;
+        items = project.get('data').items;
+        model = feature._model != null ? feature._model : feature.id;
+        items.setHovered(model);
+        this.setHeaderStripColor();
+        return App.commands.execute('update:tilemap');
+      };
+
+      OverlayBaseView.prototype.onFeatureClick = function(feature) {
+        var message;
+        if ((Map.map != null) && Map.map.ignoreNextClick) {
+          Map.map.ignoreNextClick = false;
+          return;
+        }
+        if (d3.event.stopPropagation != null) {
+          d3.event.stopPropagation();
+        }
+        message = feature._model != null ? feature._model : feature.id;
+        App.vent.trigger('item:activate', message);
+        Map.map.ignoreNextClick = false;
+        return this.activeFeature = feature;
+      };
+
+      OverlayBaseView.prototype.onRender = function() {
+        return $('.loading-icon').remove();
+      };
+
+      OverlayBaseView.prototype.onMapClick = function(e) {
+        if (this.activeFeature != null) {
+          this.activeFeature = void 0;
+          return App.vent.trigger('item:deactivate');
+        }
+      };
+
+      OverlayBaseView.prototype._getFeatureByModel = function(model) {
+        var feature, i, len, ref;
+        ref = this.collection.features;
+        for (i = 0, len = ref.length; i < len; i++) {
+          feature = ref[i];
+          if (feature._model === model) {
+            return feature;
+          }
+        }
+      };
+
+      OverlayBaseView.prototype.getFeatureDisplayState = function(feature) {
+        var display, filter, model, searchTerm;
+        display = Map.props.uiState.display;
+        filter = Map.props.project.get('data').filter;
+        searchTerm = App.reqres.request('search:term');
+        model = feature._model;
+        if (model != null) {
+          return model.getDisplayState(filter, searchTerm, display);
+        }
+      };
+
+      OverlayBaseView.prototype._areBoundsFinite = function(bounds) {
+        return isFinite(bounds[0][0]) && isFinite(bounds[0][1]) && isFinite(bounds[1][0]) && isFinite(bounds[1][1]);
+      };
+
+      OverlayBaseView.prototype.resizeContainer = function(geoJson, path, extraExpansion) {
+        var bottomRight, bounds, topLeft;
+        bounds = path.bounds(geoJson);
+        if (this._areBoundsFinite(bounds)) {
+          bounds[0][0] -= extraExpansion;
+          bounds[0][1] -= extraExpansion;
+          bounds[1][0] += extraExpansion;
+          bounds[1][1] += extraExpansion;
+          topLeft = bounds[0];
+          bottomRight = bounds[1];
+          this.svg.attr({
+            'width': bottomRight[0] - topLeft[0],
+            'height': bottomRight[1] - topLeft[1] + 50
+          });
+          this.svg.style({
+            'left': topLeft[0] + 'px',
+            'top': topLeft[1] + 'px'
+          });
+          return this.g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+        }
+      };
+
+      OverlayBaseView.prototype.destroy = function() {
+        this.stopListening();
+        this.g.selectAll('path').remove();
+        this.g.remove();
+        this.svg.remove();
+        return this;
+      };
+
+      return OverlayBaseView;
+
+    })(Marionette.Object);
+  });
+
+}).call(this);
+
+(function() {
+  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  this.Atlas.module("Map", function(Map, App, Backbone, Marionette, $, _) {
+    return Map.PathOverlayView = (function(superClass) {
+      var getProjectedPoint;
+
+      extend(PathOverlayView, superClass);
+
+      function PathOverlayView() {
+        return PathOverlayView.__super__.constructor.apply(this, arguments);
+      }
+
+      PathOverlayView.prototype.bringFeatureToFront = function(feature) {
+        return this.g.selectAll('path').sort(function(a, b) {
+          if (a.id !== feature.id) {
+            return -1;
+          }
+          return +1;
+        });
+      };
+
+      PathOverlayView.prototype.renderSvgContainer = function() {
+        this.svg = d3.select(Map.map.getPanes().overlayPane).append('svg').attr('class', 'deethree');
+        return this.g = this.svg.append('g').attr('class', 'leaflet-zoom-hide');
+      };
+
+      PathOverlayView.prototype.render = function() {
+        var self;
+        if (this.renderSvgContainer != null) {
+          this.renderSvgContainer();
+        }
+        this.geoJson = this.collection;
+        self = this;
+        this.g.selectAll('path').data(this.geoJson.features).enter().append('path').on('mouseover', this.onFeatureMouseOver.bind(this)).on('mouseout', this.onFeatureMouseOut.bind(this)).on('click', function(d) {
+          if (d3.event.defaultPrevented) {
+            return;
+          }
+          return self.onFeatureClick(d);
+        });
+        this.update();
+        this.onRender();
+        Map.map.on('viewreset', this.update.bind(this));
+        Map.map.on('click', this.onMapClick.bind(this));
+        return this;
+      };
+
+      getProjectedPoint = function(long, lat) {
+        return Map.map.latLngToLayerPoint(new L.LatLng(lat, long));
+      };
+
+      PathOverlayView.prototype.getPath = function() {
+        var path, projectPoint, transform;
+        getProjectedPoint = function(long, lat) {
+          return Map.map.latLngToLayerPoint(new L.LatLng(lat, long));
+        };
+        projectPoint = function(long, lat) {
+          var point;
+          point = getProjectedPoint(long, lat);
+          this.stream.point(point.x, point.y);
+          return this;
+        };
+        transform = d3.geo.transform({
+          point: projectPoint
+        });
+        path = d3.geo.path().projection(transform);
+        return path;
+      };
+
+      PathOverlayView.prototype.getFill = function(feature) {
+        var filter, id, valueIndeces;
+        filter = Map.props.project.get('data').filter;
+        valueIndeces = filter.getFriendlyIndeces(feature._model, 15);
+        if ((valueIndeces == null) || valueIndeces.length === 0) {
+          return;
+        }
+        if (valueIndeces.length === 1) {
+          return App.CSS.Colors.toRgb(valueIndeces[0] - 1);
+        }
+        id = App.reqres.request('get:pattern:id', valueIndeces);
+        return "url(#stripe-pattern-" + id + ")";
+      };
+
+      PathOverlayView.prototype.update = function() {
+        var geoJson, path;
+        path = this.getPath();
+        geoJson = this.collection;
+        this.g.selectAll('path').attr({
+          'class': (function(_this) {
+            return function(feature) {
+              var cls, displayState;
+              displayState = _this.getFeatureDisplayState(feature);
+              cls = 'map-region map-region__element';
+              if (displayState != null) {
+                cls += " map-region--" + displayState;
+              }
+              return cls;
+            };
+          })(this),
+          'd': path,
+          'fill': this.getFill.bind(this)
+        });
+        this.resizeContainer(geoJson, path, 0);
+        return this;
+      };
+
+      return PathOverlayView;
+
+    })(Map.OverlayBaseView);
+  });
+
+}).call(this);
+
+(function() {
+  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  this.Atlas.module("Map", function(Map, App, Backbone, Marionette, $, _) {
+    return Map.PindropOverlayView = (function(superClass) {
+      extend(PindropOverlayView, superClass);
+
+      function PindropOverlayView() {
+        return PindropOverlayView.__super__.constructor.apply(this, arguments);
+      }
+
+      PindropOverlayView.prototype.renderSvgContainer = function() {
+        this.svg = d3.select(Map.map.getPanes().overlayPane).append('svg').attr('class', 'deethree');
+        return this.g = this.svg.append('g').attr('class', 'leaflet-zoom-hide');
+      };
+
+      PindropOverlayView.prototype.setMapEventListeners = function() {
+        Map.map.on('viewreset', this.update.bind(this));
+        return Map.map.on('click', this.onMapClick.bind(this));
+      };
+
+      PindropOverlayView.prototype.render = function() {
+        var pindrop;
+        if (this.renderSvgContainer != null) {
+          this.renderSvgContainer();
+        }
+        this.shape = App.Assets.svg.shapes.pindrop_new;
+        pindrop = [
+          {
+            path: this.shape.paths.slice_1_of_2,
+            className: 'map-pin__1-of-2'
+          }, {
+            path: this.shape.paths.slice_2_of_2,
+            className: 'map-pin__2-of-2'
+          }, {
+            path: this.shape.paths.slice_1_of_3,
+            className: 'map-pin__1-of-3'
+          }, {
+            path: this.shape.paths.slice_2_of_3_a,
+            className: 'map-pin__2-of-3'
+          }, {
+            path: this.shape.paths.slice_2_of_3_b,
+            className: 'map-pin__2-of-3'
+          }, {
+            path: this.shape.paths.slice_3_of_3,
+            className: 'map-pin__3-of-3'
+          }, {
+            path: this.shape.paths.outer,
+            className: 'map-pin__outer'
+          }, {
+            path: this.shape.paths.inner,
+            className: 'map-pin__inner'
+          }
+        ];
+        this.g.selectAll('g').data(this.collection.features).enter().append('g').attr({
+          'class': 'map-pin'
+        }).on('mouseover', this.onFeatureMouseOver.bind(this)).on('mouseout', this.onFeatureMouseOut.bind(this)).on('click', this.onFeatureClick.bind(this)).selectAll('path').data(pindrop).enter().append('path').attr({
+          'd': function(d) {
+            return d.path;
+          },
+          'class': function(d) {
+            return d.className;
+          }
+        });
+        this.update();
+        this.onRender();
+        return this.setMapEventListeners();
+      };
+
+      PindropOverlayView.prototype.getFills = function(feature) {
+        var filter, valueIndeces;
+        filter = Map.props.project.get('data').filter;
+        valueIndeces = filter.getFriendlyIndeces(feature._model, 15);
+        if ((valueIndeces == null) || valueIndeces.length === 0) {
+          return;
+        }
+        return valueIndeces.map(function(valueIndex) {
+          return App.CSS.Colors.toRgb(valueIndex - 1);
+        });
+      };
+
+      PindropOverlayView.prototype.update = function() {
+        var getIndecesFromClassName, getProjectedPoint, path, projectPoint, self, transform;
+        getProjectedPoint = function(long, lat) {
+          return Map.map.latLngToLayerPoint(new L.LatLng(lat, long));
+        };
+        projectPoint = function(long, lat) {
+          var point;
+          point = getProjectedPoint(long, lat);
+          this.stream.point(point.x, point.y);
+          return this;
+        };
+        getIndecesFromClassName = function(cls) {
+          var indeces;
+          indeces = cls.split('__')[1].split('-');
+          if (indeces[2] != null) {
+            indeces = indeces = [parseInt(indeces[0], 10), parseInt(indeces[2], 10)];
+            return indeces;
+          }
+        };
+        transform = d3.geo.transform({
+          point: projectPoint
+        });
+        path = d3.geo.path().projection(transform);
+        self = this;
+        this.g.selectAll('g').attr({
+          transform: function(d) {
+            var coord, pt, x, y;
+            coord = d.geometry.coordinates;
+            pt = getProjectedPoint(coord[0], coord[1]);
+            x = pt.x - self.shape.dim.width / 2;
+            y = pt.y - self.shape.dim.height;
+            return "translate(" + x + "," + y + ")";
+          },
+          "class": function(feature) {
+            var cls, displayState;
+            displayState = self.getFeatureDisplayState(feature);
+            cls = 'map-pin map-pin__element';
+            if (displayState != null) {
+              cls += " map-pin--" + displayState;
+            }
+            return cls;
+          }
+        }).selectAll('path').attr({
+          'class': function(d, i) {
+            var baseClass;
+            baseClass = 'map-pin__element';
+            return d.className + ' ' + baseClass;
+          },
+          'fill': function(d, i) {
+            var colorIndex, colors, indeces, parentFeature;
+            parentFeature = d3.select(this.parentNode).datum();
+            colors = self.getFills(parentFeature);
+            if (colors == null) {
+              return 'none';
+            }
+            indeces = getIndecesFromClassName(d.className);
+            if (indeces != null) {
+              if (colors.length === 1) {
+                return colors[0];
+              }
+              if (((colors.length === 2) && (indeces[1] === 2)) || ((colors.length === 3) && (indeces[1] === 3)) || (colors.length > 3)) {
+                colorIndex = indeces[0] - 1;
+                if (colors[colorIndex] != null) {
+                  return colors[colorIndex];
+                }
+              }
+            }
+            return 'none';
+          }
+        });
+        this.resizeContainer(this.collection, path, 100);
+        return this;
+      };
+
+      return PindropOverlayView;
+
+    })(Map.OverlayBaseView);
+  });
+
+}).call(this);

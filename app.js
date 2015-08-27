@@ -31,7 +31,7 @@ var removeQueryString = function(url) {
 		url = url.slice(0, url.indexOf('?'));
 	}
 	return url;
-};
+}; 
 
 // Serve gzipped javascript if available
 //   This must be declared before static routes are configured.
