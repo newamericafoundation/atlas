@@ -58,14 +58,17 @@ var formatters = {
 	    return string.replace('ommunication', 'ommuni-cation');
 	},
 
-	mdToHtml: function(string) {
+	markdown: function(string) {
 	    var html;
 	    if (string != null) {
 	        html = marked(string);
 	    }
-	    if (html != null) {
-	        return this.htmlToHtml(html);
-	    }
+	    return html;
+	},
+
+	// deprecated
+	mdToHtml: function(string) {
+	    return this.markdown(string);
 	}
 
 };

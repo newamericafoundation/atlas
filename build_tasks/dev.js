@@ -24,7 +24,8 @@ var devTasks = [
     {
         name: 'js-build-source',
         shouldRun: function(file) {
-            return (file.slice(0, 18) === 'app/assets/scripts');
+            var ext = path.extname(file);
+            return ((file.slice(0, 4) === 'app/') && (['.js', '.coffee'].indexOf(ext) > -1));
         }
     },
 

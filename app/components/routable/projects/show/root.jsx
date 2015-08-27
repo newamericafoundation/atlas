@@ -6,6 +6,7 @@ Comp.Projects.Show = class extends React.Component {
 			ui: {
 				currentSpecifier: '2012', // if time-dependent data is visualized, this field holds the active specifier, such as the year
 				display: 'filter', // display type, e.g. filter or search
+				itemsDisplayMode: 'map',
 				isCollapsed: false, // depends on screen size
 				isCollapsedMaster: false, // master toggle
 				isInfoBoxActive: false, // stores whether the info box is active

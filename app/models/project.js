@@ -3,7 +3,6 @@ var _ = require('underscore'),
     formatters = require('./../utilities/formatters.js'),
     base = require('./base.js'),
     filter = require('./filter.js'),
-    infoBoxSection = require('./info_box_section.js'),
     variable = require('./variable.js'),
     item = require('./item.js');
 
@@ -122,9 +121,6 @@ exports.Model = base.Model.extend({
         var data;
         data = this.get('data');
         if (data != null) {
-            data.infobox_variables = new infoBoxSection.Collection(data.infobox_variables, {
-                parse: true
-            });
             data.variables = new variable.Collection(data.variables, {
                 parse: true
             });

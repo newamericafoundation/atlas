@@ -3,7 +3,6 @@ var base = require('./base.js'),
 	coreDatum = ('./core_datum.js'), 
 	filter = require('./filter.js'), 
 	image = require('./image.js'), 
-	infoBoxSection = require('./info_box_section.js'), 
 	item = require('./item.js'), 
 	project = require('./project.js'), 
 	projectSection = require('./project_section.js'), 
@@ -28,9 +27,6 @@ window.Atlas.module('Models', function(Models) {
 
 	Models.Image = image.Model;
 	Models.Images = image.Collection;
-
-	Models.InfoBoxSection = infoBoxSection.Model;
-	Models.InfoBoxSections = infoBoxSection.Collection;
 
 	Models.Item = item.Model;
 	Models.Items = item.Collection;

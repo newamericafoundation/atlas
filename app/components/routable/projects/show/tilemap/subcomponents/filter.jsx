@@ -95,8 +95,8 @@ Comp.Projects.Show.Tilemap.FilterKey = class extends React.Component {
 	}
 
 	toggle() {
+		var App = this.props.App;
 		this.props.filterKey.clickToggle();
-		App = this.props.App;
 		if (App == null) { return; }
 		App.vent.trigger('key:click');
 	}

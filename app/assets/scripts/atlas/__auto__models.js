@@ -6,7 +6,6 @@ var base = require('./base.js'),
     coreDatum = './core_datum.js',
     filter = require('./filter.js'),
     image = require('./image.js'),
-    infoBoxSection = require('./info_box_section.js'),
     item = require('./item.js'),
     project = require('./project.js'),
     projectSection = require('./project_section.js'),
@@ -32,9 +31,6 @@ window.Atlas.module('Models', function (Models) {
 	Models.Image = image.Model;
 	Models.Images = image.Collection;
 
-	Models.InfoBoxSection = infoBoxSection.Model;
-	Models.InfoBoxSections = infoBoxSection.Collection;
-
 	Models.Item = item.Model;
 	Models.Items = item.Collection;
 
@@ -57,7 +53,7 @@ window.Atlas.module('Models', function (Models) {
 	Models.Variables = variable.Collection;
 });
 
-},{"./base.js":2,"./base_filter.js":4,"./filter.js":5,"./image.js":6,"./info_box_section.js":7,"./item.js":8,"./project.js":9,"./project_section.js":10,"./project_template.js":11,"./researcher.js":12,"./rich_geo_feature.js":13,"./variable.js":14}],2:[function(require,module,exports){
+},{"./base.js":2,"./base_filter.js":4,"./filter.js":5,"./image.js":6,"./item.js":7,"./project.js":8,"./project_section.js":9,"./project_template.js":10,"./researcher.js":11,"./rich_geo_feature.js":12,"./variable.js":13}],2:[function(require,module,exports){
 'use strict';
 
 var Backbone = window.Backbone,
@@ -888,7 +884,7 @@ exports.FilterTree = LocalBaseModel.extend({
 
 });
 
-},{"./../utilities/formatters.js":15,"./base.js":2,"./base_composite.js":3}],6:[function(require,module,exports){
+},{"./../utilities/formatters.js":14,"./base.js":2,"./base_composite.js":3}],6:[function(require,module,exports){
 'use strict';
 
 var _ = window._,
@@ -939,32 +935,6 @@ exports.Collection = base.Collection.extend({
 });
 
 },{"./base.js":2}],7:[function(require,module,exports){
-'use strict';
-
-var _ = window._,
-    Backbone = window.Backbone,
-    base = require('./base.js');
-
-exports.Model = base.Model.extend();
-
-exports.Collection = base.Collection.extend({
-
-	model: exports.Model,
-
-	getItemSections: function getItemSections(item, variables) {
-		return this.map(function (model) {
-			var varId = model.get('variable_id'),
-			    variable = variables.findWhere({ id: varId });
-			return {
-				variable: variable,
-				field: item.get(varId)
-			};
-		});
-	}
-
-});
-
-},{"./base.js":2}],8:[function(require,module,exports){
 'use strict';
 
 var _ = window._,
@@ -1396,7 +1366,7 @@ exports.Collection = base.Collection.extend({
 
 });
 
-},{"./../../db/seeds/states.json":18,"./base.js":2,"./rich_geo_feature.js":13}],9:[function(require,module,exports){
+},{"./../../db/seeds/states.json":17,"./base.js":2,"./rich_geo_feature.js":12}],8:[function(require,module,exports){
 'use strict';
 
 var _ = window._,
@@ -1404,7 +1374,6 @@ var _ = window._,
     formatters = require('./../utilities/formatters.js'),
     base = require('./base.js'),
     filter = require('./filter.js'),
-    infoBoxSection = require('./info_box_section.js'),
     variable = require('./variable.js'),
     item = require('./item.js');
 
@@ -1526,9 +1495,6 @@ exports.Model = base.Model.extend({
         var data;
         data = this.get('data');
         if (data != null) {
-            data.infobox_variables = new infoBoxSection.Collection(data.infobox_variables, {
-                parse: true
-            });
             data.variables = new variable.Collection(data.variables, {
                 parse: true
             });
@@ -1701,7 +1667,7 @@ exports.Collection = base.Collection.extend({
 
 });
 
-},{"./../utilities/formatters.js":15,"./base.js":2,"./filter.js":5,"./info_box_section.js":7,"./item.js":8,"./variable.js":14}],10:[function(require,module,exports){
+},{"./../utilities/formatters.js":14,"./base.js":2,"./filter.js":5,"./item.js":7,"./variable.js":13}],9:[function(require,module,exports){
 'use strict';
 
 var _ = window._,
@@ -1723,7 +1689,7 @@ exports.Collection = baseFilter.Collection.extend({
 	}
 });
 
-},{"./../../db/seeds/project_sections.json":16,"./base_filter":4}],11:[function(require,module,exports){
+},{"./../../db/seeds/project_sections.json":15,"./base_filter":4}],10:[function(require,module,exports){
 'use strict';
 
 var _ = window._,
@@ -1746,7 +1712,7 @@ exports.Collection = baseFilter.Collection.extend({
 	}
 });
 
-},{"./../../db/seeds/project_templates.json":17,"./base_filter.js":4}],12:[function(require,module,exports){
+},{"./../../db/seeds/project_templates.json":16,"./base_filter.js":4}],11:[function(require,module,exports){
 'use strict';
 
 var _ = window._,
@@ -1758,7 +1724,7 @@ exports.Collection = base.Collection.extend({
 	model: exports.Model
 });
 
-},{"./base.js":2}],13:[function(require,module,exports){
+},{"./base.js":2}],12:[function(require,module,exports){
 'use strict';
 
 var _ = window._,
@@ -1786,7 +1752,7 @@ exports.Collection = Backbone.Collection.extend({
 
 });
 
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 var _ = window._,
@@ -1796,6 +1762,21 @@ var _ = window._,
     $ = window.$;
 
 exports.Model = base.Model.extend({
+
+    /*
+     * Return the field of an item corresponding to the variable, applying 
+     * formatting as needed.
+     * @param {object} item
+     * @returns {string} formattedField
+     */
+    getFormattedField: function getFormattedField(item) {
+        var rawField = item.get(this.get('id')),
+            format = this.get('format');
+        if (format == null || formatters[format] == null) {
+            return rawField;
+        }
+        return formatters[format](rawField);
+    },
 
     /*
         * Set a numerical filter, splitting up |10|20|30| type numerical divider strings into
@@ -1879,7 +1860,7 @@ exports.Collection = base.Collection.extend({
 
 });
 
-},{"./../utilities/formatters.js":15,"./base.js":2}],15:[function(require,module,exports){
+},{"./../utilities/formatters.js":14,"./base.js":2}],14:[function(require,module,exports){
 'use strict';
 
 var numeral = require('numeral'),
@@ -1942,21 +1923,24 @@ var formatters = {
 		return string.replace('ommunication', 'ommuni-cation');
 	},
 
-	mdToHtml: function mdToHtml(string) {
+	markdown: function markdown(string) {
 		var html;
 		if (string != null) {
 			html = marked(string);
 		}
-		if (html != null) {
-			return this.htmlToHtml(html);
-		}
+		return html;
+	},
+
+	// deprecated
+	mdToHtml: function mdToHtml(string) {
+		return this.markdown(string);
 	}
 
 };
 
 module.exports = formatters;
 
-},{"marked":19,"numeral":20}],16:[function(require,module,exports){
+},{"marked":18,"numeral":19}],15:[function(require,module,exports){
 module.exports=[
 	{ "id": "0", "name": "Early Education" },
 	{ "id": "1", "name": "PreK-12 Education" },
@@ -1966,14 +1950,14 @@ module.exports=[
 	{ "id": "5", "name": "Workforce Development" },
 	{ "id": "6", "name": "Federal Education Budget" }
 ]
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 module.exports=[
 	{ "id": "0", "order": 0, "display_name": "Analysis Tools", "name": "Tilemap" },
 	{ "id": "1", "order": 3, "display_name": "Explainers", "name": "Explainer" },
 	{ "id": "2", "order": 1, "display_name": "Policy Briefs", "name": "Policy Brief" },
 	{ "id": "3", "order": 2, "display_name": "Polling", "name": "Polling" }
 ]
-},{}],18:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports=[
   {
     "id": 1,
@@ -2197,7 +2181,7 @@ module.exports=[
     "code": "WY"
   }
 ]
-},{}],19:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 (function (global){
 /**
  * marked - a markdown parser
@@ -3486,7 +3470,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
 }());
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],20:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 /*!
  * numeral.js
  * version : 1.5.3

@@ -27,7 +27,6 @@ Comp.Projects.Show.Explainer.Related = class extends React.Component {
 
 	isListEmpty() {
 		var relatedItems = this.props.related;
-		console.log(relatedItems);
 		if (relatedItems == null) { return true; }
 		return (relatedItems.length === 0);
 	}

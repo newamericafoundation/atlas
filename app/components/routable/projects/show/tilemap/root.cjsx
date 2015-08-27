@@ -6,6 +6,7 @@ Comp.Projects.Show.Tilemap = React.createClass
 
 	render: ->
 		<div className='atl__main fill-parent'>
+			{ @renderItems() }
 			<Comp.Projects.Show.Tilemap.Map {...@props} />
 			<Comp.Projects.Show.Tilemap.TopBar {...@props} />			
 			<Comp.Projects.Show.Tilemap.SettingsBar {...@props} />
@@ -13,6 +14,11 @@ Comp.Projects.Show.Tilemap = React.createClass
 			<Comp.Projects.Show.Tilemap.InfoBox {...@props} activeItem={ @getActiveItem() } />
 			{ @renderBaseLayer() }
 		</div>
+
+	renderItems: ->
+		if @props.uiState.itemsDisplayMode is 'map'
+			return <Comp.Projects.Show.Tilemap.Map {...@props} />
+		return <Comp.Projects.Show.Tilemap.List {...@props} />
 
 	renderBaseLayer: ->
 		return undefined

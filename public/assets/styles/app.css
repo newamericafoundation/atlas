@@ -799,6 +799,15 @@ th {
     width: 48px;
     height: 48px; }
 
+.icons__icon {
+  cursor: pointer;
+  width: 75px;
+  height: 75px;
+  padding: 25px;
+  opacity: 0.7; }
+  .icons__icon:hover, .icons__icon--active {
+    opacity: 1; }
+
 * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -5386,7 +5395,15 @@ label {
   .atl__top-bar__icons {
     float: left;
     width: 200px; }
+    .atl__top-bar__icons .icons {
+      width: 75px;
+      height: 75px;
+      width: 300px; }
+      .atl__top-bar__icons .icons li {
+        float: left;
+        fill: #fffaef; }
   .atl__top-bar__timeline {
+    margin-left: 60px;
     float: left;
     width: 200px; }
   .atl__top-bar__summary {

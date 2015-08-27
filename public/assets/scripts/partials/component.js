@@ -2965,6 +2965,7 @@ Comp.Projects.Show = (function (_React$Component) {
 			ui: {
 				currentSpecifier: '2012', // if time-dependent data is visualized, this field holds the active specifier, such as the year
 				display: 'filter', // display type, e.g. filter or search
+				itemsDisplayMode: 'map',
 				isCollapsed: false, // depends on screen size
 				isCollapsedMaster: false, // master toggle
 				isInfoBoxActive: false, // stores whether the info box is active
@@ -3137,9 +3138,15 @@ Comp.Projects.Show.Tilemap = React.createClass({
   render: function() {
     return React.createElement("div", {
       "className": 'atl__main fill-parent'
-    }, React.createElement(Comp.Projects.Show.Tilemap.Map, React.__spread({}, this.props)), React.createElement(Comp.Projects.Show.Tilemap.TopBar, React.__spread({}, this.props)), React.createElement(Comp.Projects.Show.Tilemap.SettingsBar, React.__spread({}, this.props)), React.createElement(Comp.Projects.Show.Tilemap.Popup, React.__spread({}, this.props)), React.createElement(Comp.Projects.Show.Tilemap.InfoBox, React.__spread({}, this.props, {
+    }, this.renderItems(), React.createElement(Comp.Projects.Show.Tilemap.Map, React.__spread({}, this.props)), React.createElement(Comp.Projects.Show.Tilemap.TopBar, React.__spread({}, this.props)), React.createElement(Comp.Projects.Show.Tilemap.SettingsBar, React.__spread({}, this.props)), React.createElement(Comp.Projects.Show.Tilemap.Popup, React.__spread({}, this.props)), React.createElement(Comp.Projects.Show.Tilemap.InfoBox, React.__spread({}, this.props, {
       "activeItem": this.getActiveItem()
     })), this.renderBaseLayer());
+  },
+  renderItems: function() {
+    if (this.props.uiState.itemsDisplayMode === 'map') {
+      return React.createElement(Comp.Projects.Show.Tilemap.Map, React.__spread({}, this.props));
+    }
+    return React.createElement(Comp.Projects.Show.Tilemap.List, React.__spread({}, this.props));
   },
   renderBaseLayer: function() {
     return void 0;
@@ -3423,8 +3430,8 @@ Comp.Projects.Show.Tilemap.FilterKey = (function (_React$Component2) {
 	}, {
 		key: 'toggle',
 		value: function toggle() {
+			var App = this.props.App;
 			this.props.filterKey.clickToggle();
-			App = this.props.App;
 			if (App == null) {
 				return;
 			}
@@ -3638,6 +3645,8 @@ Comp.Projects.Show.Tilemap.InfoBox = React.createClass({
     };
   },
   render: function() {
+    var content;
+    content = this.getContent();
     return React.createElement("div", {
       "className": "atl__info-box",
       "ref": 'main'
@@ -3665,13 +3674,21 @@ Comp.Projects.Show.Tilemap.InfoBox = React.createClass({
       "className": "atl__toc"
     }, React.createElement("p", null, "Page Contents"), React.createElement("div", {
       "id": "atl__toc__list"
-    })), React.createElement("div", {
+    }, this.renderTocList())), React.createElement("div", {
       "id": "atl__related"
     }))), React.createElement("div", {
       "className": "atl-grid__2-3"
-    }, React.createElement(Comp.Projects.Show.Tilemap.InfoBox.Content, React.__spread({}, this.props))), React.createElement("div", {
+    }, React.createElement("div", {
+      "className": 'static-content',
+      "dangerouslySetInnerHTML": {
+        __html: content.body
+      }
+    })), React.createElement("div", {
       "className": "atl-grid__3-3"
     }))));
+  },
+  shouldComponentUpdate: function(nextProps) {
+    return this.props.activeItem !== nextProps.activeItem;
   },
   componentWillMount: function() {
     var App;
@@ -3778,61 +3795,129 @@ Comp.Projects.Show.Tilemap.InfoBox = React.createClass({
     }), React.createElement("div", {
       "className": "icon-button__text"
     }, "Website")));
-  }
-});
-
-Comp.Projects.Show.Tilemap.InfoBox.Content = React.createClass({
-  render: function() {
-    var activeItem, html, project;
-    project = this.props.project;
-    activeItem = this.props.activeItem;
-    html = activeItem != null ? this.getContentHtml() : project.get('body_text');
-    return React.createElement("div", {
-      "className": 'static-content',
-      "dangerouslySetInnerHTML": {
-        __html: html
-      }
-    });
   },
-  getContentHtml: function() {
-    var App, activeItem, getSectionHtml, html, infoBoxSections, project, variables;
+  getContent: function() {
+    var activeItem, body, cntnt, project, toc;
+    body = '';
+    toc = '';
     project = this.props.project;
-    App = this.props.App;
-    getSectionHtml = function(raw) {
-      var formatters, html;
-      if ((raw == null) || _.isArray(raw)) {
-        return raw;
-      }
-      if (_.isNumber(raw)) {
-        return raw.toString();
-      }
-      html = marked(raw);
-      formatters = App.Util.formatters;
-      return formatters.htmlToHtml(html);
-    };
     activeItem = this.props.activeItem;
-    infoBoxSections = project.get('data').infobox_variables;
-    variables = project.get('data').variables;
-    html = "";
-    infoBoxSections.getItemSections(activeItem, variables).forEach((function(_this) {
-      return function(section) {
-        return html += "<h1>" + (section.variable.get('display_title')) + "</h1>" + (getSectionHtml(section.field));
+    if (activeItem != null) {
+      this.ensureActiveItemContent();
+      body = activeItem.get('info_box_content');
+      toc = activeItem.get('info_box_content_toc');
+    } else {
+      body = project.get('body_text');
+      toc = project.get('body_text_toc');
+    }
+    return cntnt = {
+      body: body,
+      toc: toc
+    };
+  },
+  renderTocList: function() {
+    var renderedList, tocItems;
+    tocItems = this.getContent().toc;
+    if (!((tocItems != null) && (tocItems.map != null) && tocItems.length > 0)) {
+      return;
+    }
+    return renderedList = tocItems.map((function(_this) {
+      return function(item, i) {
+        return React.createElement("li", {
+          "className": 'toc-' + item.tagName,
+          "key": 'toc-' + i
+        }, React.createElement("a", {
+          "href": "#toc-" + item.id,
+          "onClick": _this.triggerScrollAfterDelay.bind(_this)
+        }, item.content));
       };
     })(this));
-    return html;
   },
-  componentDidMount: function() {
-    return $('#atl__toc__list').toc({
-      selectors: 'h1,h2',
-      container: '.static-content',
-      templates: {
-        h2: _.template('<%= title %>'),
-        h3: _.template('<%= title %>')
-      }
+  triggerScrollAfterDelay: function() {
+    var App, fn;
+    App = this.props.App;
+    if (App == null) {
+      return;
+    }
+    fn = function() {
+      return App.vent.trigger('scroll');
+    };
+    return setTimeout(fn, 75);
+  },
+  ensureActiveItemContent: function() {
+    var App, activeItem, html, infoBoxVar, project, variables;
+    project = this.props.project;
+    App = this.props.App;
+    activeItem = this.props.activeItem;
+    if ((activeItem == null) || (activeItem.get('info_box_content') != null)) {
+      return;
+    }
+    variables = project.get('data').variables;
+    infoBoxVar = variables.filter(function(variable) {
+      return variable.get('infobox_order') != null;
     });
+    infoBoxVar.sort(function(a, b) {
+      return a.get('infobox_order') > b.get('infobox_order');
+    });
+    html = "";
+    infoBoxVar.forEach((function(_this) {
+      return function(variable) {
+        return html += "<h1>" + (variable.get('display_title')) + "</h1>" + (variable.getFormattedField(activeItem));
+      };
+    })(this));
+    console.log('setting content indeed');
+    activeItem.set('info_box_content', html);
+    return activeItem.setHtmlToc('info_box_content');
   }
 });
 
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Projects.Show.Tilemap.List = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class() {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).apply(this, arguments);
+	}
+
+	_createClass(_class, [{
+		key: 'render',
+		value: function render() {
+			return React.createElement(
+				'div',
+				{ className: 'fill-parent bg-c-off-white' },
+				this.renderItems()
+			);
+		}
+	}, {
+		key: 'renderItems',
+		value: function renderItems() {
+			var project = this.props.project;
+			if (project == null) {
+				return;
+			}
+			return project.get('data').items.map(function (item) {
+				return React.createElement(
+					'p',
+					null,
+					item.get('name')
+				);
+			});
+		}
+	}]);
+
+	return _class;
+})(React.Component);
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -4162,6 +4247,8 @@ Comp.Projects.Show.Tilemap.SettingsBar = (function (_React$Component) {
 })(React.Component);
 "use strict";
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
@@ -4182,13 +4269,14 @@ Comp.Projects.Show.Tilemap.TopBar = (function (_React$Component) {
 	_createClass(_class, [{
 		key: "render",
 		value: function render() {
+			var IconsComp = Comp.Projects.Show.Tilemap.TopBarIcons;
 			return React.createElement(
 				"div",
 				{ className: "atl__top-bar" },
 				React.createElement(
 					"div",
 					{ className: "atl__top-bar__content" },
-					React.createElement("div", { className: "atl__top-bar__icons" }),
+					React.createElement(IconsComp, this.props),
 					React.createElement("div", { className: "atl__top-bar__timeline" }),
 					React.createElement(
 						"div",
@@ -4231,6 +4319,104 @@ Comp.Projects.Show.Tilemap.TopBar = (function (_React$Component) {
 
 	return _class;
 })(React.Component);
+
+Comp.Projects.Show.Tilemap.TopBarIcons = (function (_React$Component2) {
+	_inherits(_class2, _React$Component2);
+
+	function _class2() {
+		_classCallCheck(this, _class2);
+
+		_get(Object.getPrototypeOf(_class2.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class2, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"div",
+				{ className: "atl__top-bar__icons" },
+				React.createElement(
+					"ul",
+					{ className: "icons" },
+					this.renderIcons()
+				)
+			);
+		}
+	}, {
+		key: "getIconData",
+		value: function getIconData() {
+			return [{
+				id: 'map',
+				reactIconName: 'List'
+			}, {
+				id: 'list',
+				reactIconName: 'List'
+			}, {
+				id: 'graph',
+				reactIconName: 'Graph'
+			}, {
+				id: 'info',
+				reactIconName: 'Dictionary'
+			}];
+		}
+	}, {
+		key: "renderIcons",
+		value: function renderIcons() {
+			var _this = this;
+
+			var IconComp = Comp.Projects.Show.Tilemap.TopBarIcon;
+			return this.getIconData().map(function (icon) {
+				return React.createElement(IconComp, _extends({}, _this.props, { icon: icon }));
+			});
+		}
+	}]);
+
+	return _class2;
+})(React.Component);
+
+Comp.Projects.Show.Tilemap.TopBarIcon = (function (_React$Component3) {
+	_inherits(_class3, _React$Component3);
+
+	function _class3() {
+		_classCallCheck(this, _class3);
+
+		_get(Object.getPrototypeOf(_class3.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class3, [{
+		key: "render",
+		value: function render() {
+			var Icon = Comp.Icons[this.props.icon.reactIconName];
+			return React.createElement(
+				"li",
+				{ className: 'icons__icon ' + this.getModifierClass(), onClick: this.changeGlobalItemsDisplayMode.bind(this) },
+				React.createElement(Icon, null)
+			);
+		}
+	}, {
+		key: "changeGlobalItemsDisplayMode",
+		value: function changeGlobalItemsDisplayMode() {
+			this.props.setUiState({
+				itemsDisplayMode: this.props.icon.id
+			});
+		}
+	}, {
+		key: "getModifierClass",
+		value: function getModifierClass() {
+			if (this.isActive()) {
+				return 'icons__icon--active';
+			}
+			return '';
+		}
+	}, {
+		key: "isActive",
+		value: function isActive() {
+			return this.props.uiState.itemsDisplayMode === this.props.icon.id;
+		}
+	}]);
+
+	return _class3;
+})(React.Component);
 Comp.Projects.Show.Explainer = React.createClass({
   displayName: 'Projects.Show.Explainer',
   render: function() {
@@ -4269,12 +4455,19 @@ Comp.Projects.Show.Explainer = React.createClass({
     }))));
   },
   renderToc: function() {
+    return React.createElement("div", {
+      "className": "atl__toc"
+    }, React.createElement("p", null, "Page Contents"), React.createElement("div", {
+      "id": "atl__toc__list"
+    }, React.createElement("ul", null, this.renderTocList())));
+  },
+  renderTocList: function() {
     var renderedList, tocItems;
     tocItems = this.props.project.get('body_text_toc');
     if (!((tocItems != null) && (tocItems.map != null) && tocItems.length > 0)) {
       return;
     }
-    renderedList = tocItems.map((function(_this) {
+    return renderedList = tocItems.map((function(_this) {
       return function(item, i) {
         return React.createElement("li", {
           "className": 'toc-' + item.tagName,
@@ -4285,11 +4478,6 @@ Comp.Projects.Show.Explainer = React.createClass({
         }, item.content));
       };
     })(this));
-    return React.createElement("div", {
-      "className": "atl__toc"
-    }, React.createElement("p", null, "Page Contents"), React.createElement("div", {
-      "id": "atl__toc__list"
-    }, React.createElement("ul", null, renderedList)));
   },
   componentDidMount: function() {
     this.buildAtlasCharts();
@@ -4446,7 +4634,6 @@ Comp.Projects.Show.Explainer.Related = (function (_React$Component) {
 		key: "isListEmpty",
 		value: function isListEmpty() {
 			var relatedItems = this.props.related;
-			console.log(relatedItems);
 			if (relatedItems == null) {
 				return true;
 			}

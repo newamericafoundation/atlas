@@ -31,6 +31,16 @@ Comp.Projects.Show.Explainer = React.createClass
 		</div>
 
 	renderToc: ->
+		<div className="atl__toc">
+			<p>Page Contents</p>
+			<div id="atl__toc__list">
+				<ul>
+					{ @renderTocList() }
+				</ul>
+			</div>
+		</div>
+
+	renderTocList: ->
 		tocItems = @props.project.get('body_text_toc')
 		return unless (tocItems? and tocItems.map? and tocItems.length > 0)
 		renderedList = tocItems.map (item, i) =>
@@ -39,14 +49,6 @@ Comp.Projects.Show.Explainer = React.createClass
 					{ item.content }
 				</a>
 			</li>
-		<div className="atl__toc">
-			<p>Page Contents</p>
-			<div id="atl__toc__list">
-				<ul>
-					{ renderedList }
-				</ul>
-			</div>
-		</div>
 
 	componentDidMount: ->
 		@buildAtlasCharts()

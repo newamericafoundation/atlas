@@ -7,6 +7,19 @@ var _ = require('underscore'),
 
 exports.Model = base.Model.extend({
 
+    /*
+     * Return the field of an item corresponding to the variable, applying 
+     * formatting as needed.
+     * @param {object} item
+     * @returns {string} formattedField
+     */
+    getFormattedField: function(item) {
+        var rawField = item.get(this.get('id')),
+            format = this.get('format');
+        if (format == null || formatters[format] == null) { return rawField; }
+        return formatters[format](rawField);
+    },
+
 	/*
      * Set a numerical filter, splitting up |10|20|30| type numerical divider strings into
      *   presentable and testable objects. See specs for example.

@@ -16,9 +16,23 @@
 	&__icons {
 		float: left;
 		width: 200px;
+
+		.icons {
+			width: $top-bar-height;
+			height: $top-bar-height;
+			width: 4 * $top-bar-height;
+
+			li {
+				float: left;
+				fill: map-get($palette, off-white);
+			}
+
+		}
+
 	}
 
 	&__timeline {
+		margin-left: 60px;
 		float: left;
 		width: 200px;
 	}
