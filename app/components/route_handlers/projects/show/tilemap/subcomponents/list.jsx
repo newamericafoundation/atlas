@@ -2,7 +2,7 @@ Comp.Projects.Show.Tilemap.List = class extends React.Component {
 
 	render() {
 		return (
-			<div className='fill-parent bg-c-off-white'>
+			<div className='atl__list fill-parent bg-c-off-white'>
 				{ this.renderItems() }
 			</div>
 		);

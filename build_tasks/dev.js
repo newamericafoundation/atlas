@@ -1,6 +1,7 @@
 import gulp from 'gulp';
 import nodemon from 'gulp-nodemon';
 import liveReload from 'gulp-livereload';
+import notify from 'gulp-notify';
 import path from 'path';
 
 var devTasks = [
@@ -60,9 +61,10 @@ gulp.task('dev', () => {
         ignore: [ 'node_modules/**/*', 'bower_components/**/*', 'spec/**/*', 'db/**/*' ],
         tasks: buildTaskList
     })
-    .on('restart', function() { 
+    .on('restart', () => { 
         gulp.src('./app.js')
-            .pipe(liveReload());
+            .pipe(liveReload())
+            .pipe(notify('Reloading, please wait..'));
     });
 });
 
@@ -72,7 +74,7 @@ gulp.task('dev-intranet', () => {
     nodemon({
         script: './app.js',
         ext: 'js jade scss coffee cjsx jsx',
-        tasks: function(changedFiles) {
+        tasks: (changedFiles) => {
             return ['default'];
         }
     })

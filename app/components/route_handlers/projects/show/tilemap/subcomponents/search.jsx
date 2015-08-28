@@ -22,13 +22,19 @@ Comp.Projects.Show.Tilemap.Search = class extends React.Component {
 			return this.state.searchTerm; 
 		});
 	}
+
+	componentWillUnmount() {
+		var App = this.props.App;
+		if (App == null) { return; }
+		App.reqres.removeHandler('search:term');
+	}
 	
 	setSearchTerm(e) {
 		this.setState({ searchTerm: e.target.value }, () => {
 			var App;
 			App = this.props.App;
 			if (App == null) { return; }
-			App.vent.trigger('search:term:change');
+			App.commands.execute('update:tilemap');
 		});
 	}
 

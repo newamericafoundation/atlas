@@ -2,7 +2,10 @@ var express = require('express'),
 	router = express.Router(),
 	resources = [ 'projects', 'project_sections', 'project_templates', 'core_data', 'images', 'researchers' ],
 	fingerprintManifest = require('./fingerprint-manifest'),
-	json2csv = require('nice-json2csv');
+	json2csv = require('nice-json2csv'),
+	multer = require('multer');
+
+var upload = multer({ dest: 'uploads/' });
 
 router.use(json2csv.expressDecorator);
 
@@ -36,6 +39,19 @@ router.get('/', welcome_index);
 router.get('/welcome', welcome_index);
 router.get('/menu', projects_index);
 router.get('/*', projects_show);
+
+var dataUpload = upload.fields([
+	{
+		name: 'data',
+		maxCount: 1
+	}
+]);
+
+router.post('/post-test', upload.single('data'), (req, res) => {
+	console.dir(req.body);
+	console.dir(req.files);
+	res.json({ 'message': 'success' })
+});
 
 // Special print route that takes a title and html as post parameter.
 router.post('/print', function(req, res) {

@@ -17,16 +17,19 @@ module.exports = {
 		    // bower scripts
 		    vendor: [
 		        './bower_components/jquery/dist/jquery.js',
-		        './bower_components/marked/lib/marked.js',
 		        './bower_components/jquery-mousewheel/jquery.mousewheel.js',
+		        './bower_components/selectize/dist/js/standalone/selectize.js',
+		        './bower_components/marked/lib/marked.js',
 		        './bower_components/underscore/underscore.js',
 		        './bower_components/backbone/backbone.js',
 		        './bower_components/marionette/lib/backbone.marionette.js',
 		        './bower_components/react/react.js',
+		        './bower_components/react-router/umd/ReactRouter.js',
 		        './bower_components/topojson/topojson.js',
 		        './bower_components/chartist/dist/chartist.js',
 		        './bower_components/chartist-html/build/chartist-html.js',
 		        './bower_components/moment/moment.js',
+
 		        './bower_components/numeral/numeral.js'
 		    ],
 
@@ -46,23 +49,19 @@ module.exports = {
 		    // view and controller code
 		    component: [
 		        './app/components/init.jsx',
-		        './app/components/non_routable/loading.jsx',
-		        './app/components/non_routable/setup.cjsx',
-		        './app/components/non_routable/icons/**/*',
-		        './app/components/non_routable/layout.cjsx',
-		        './app/components/non_routable/header.cjsx',
-		        './app/components/non_routable/side_bar.cjsx',
-		        './app/components/non_routable/intranet/**/*.cjsx',
-		        './app/components/routable/about/**/*.cjsx',
-		        './app/components/routable/welcome/**/*',
-		        './app/components/routable/projects/root.cjsx',
-		        './app/components/routable/projects/index/root.cjsx',
-		        './app/components/routable/projects/index/subcomponents/**/*.cjsx',
-		        './app/components/routable/projects/show/root.jsx',
-		        './app/components/routable/projects/show/tilemap/root.cjsx',
-		        './app/components/routable/projects/show/tilemap/subcomponents/**/*',
-		        './app/components/routable/projects/show/explainer/root.cjsx',
-		        './app/components/routable/projects/show/explainer/subcomponents/**/*'
+		        './app/components/general/**/*',
+		        './app/components/form/root.jsx',
+		        './app/components/form/subcomponents/**/*',
+		        './app/components/route_handlers/about/**/*.cjsx',
+		        './app/components/route_handlers/welcome/**/*',
+		        './app/components/route_handlers/projects/index/root.cjsx',
+		        './app/components/route_handlers/projects/index/subcomponents/**/*.cjsx',
+		        './app/components/route_handlers/projects/new/root.jsx',
+		        './app/components/route_handlers/projects/show/root.jsx',
+		        './app/components/route_handlers/projects/show/tilemap/root.jsx',
+		        './app/components/route_handlers/projects/show/tilemap/subcomponents/**/*',
+		        './app/components/route_handlers/projects/show/explainer/root.cjsx',
+		        './app/components/route_handlers/projects/show/explainer/subcomponents/**/*'
 		    ]
 
     	}

@@ -11,7 +11,6 @@ Comp.Projects.Show.Tilemap.SettingsBar = class extends React.Component {
 			filter: 0,
 			header: 80
 		};
-		this.shouldCheckCollapse = true;
 	}
 
 	render() {
@@ -26,17 +25,20 @@ Comp.Projects.Show.Tilemap.SettingsBar = class extends React.Component {
 		
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.checkOverflow();
-		$(window).on('resize', () => {
+		// namespace resize event for convenient removal
+		$(window).on('resize.settings-bar-overflow', () => {
 			this.checkOverflow();
 		});
 	}
 
-	componentWillUpdate() {
-		this.checkOverflow();
+	componentWillUnmount() {
+		// remove namespaced event
+		$(window).off('resize.settings-bar-overflow');
 	}
 
+	// If content is overflowing, set global collapsed state.
 	checkOverflow() {
 		var totalHeight, isCollapsed,
 			App = this.props.App;
@@ -44,14 +46,13 @@ Comp.Projects.Show.Tilemap.SettingsBar = class extends React.Component {
 		this.heights.window = $(window).height();
 		totalHeight = this.heights.headline + this.heights.filter + this.heights.header;
 		isCollapsed = totalHeight > this.heights.window;
-		// if (App.uiState.isCollapsed !== isCollapsed) {
-		// 	App.uiState.isCollapsed = isCollapsed;
-		// }
 		if (this.props.uiState.isCollapsed !== isCollapsed) {
 			this.props.setUiState({ isCollapsed: isCollapsed });
 		}
 	}
 
+	// Method passed to child components so they can log their heights on the current
+	//   component's state. Current component can then check whether its contents are overflowing.
 	cacheHeight(elementName, height) {
 		this.heights[elementName] = height;
 	}

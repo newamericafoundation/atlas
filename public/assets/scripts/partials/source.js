@@ -8424,104 +8424,6 @@ var slider = $.widget( "ui.slider", $.ui.mouse, {
 
 
 }));
-/*!
- * toc - jQuery Table of Contents Plugin v0.3.2
- * Removed event bindings.
-*/
-
-(function($) {
-var verboseIdCache = {};
-$.fn.toc = function(options) {
-  var self = this;
-  var opts = $.extend({}, jQuery.fn.toc.defaults, options);
-
-  var container = $(opts.container);
-  var headings = $(opts.selectors, container);
-  var headingOffsets = [];
-
-  return this.each(function() {
-    //build TOC
-    var el = $(this);
-    var ul = $(opts.listType);
-
-    headings.each(function(i, heading) {
-      var $h = $(heading);
-      headingOffsets.push($h.offset().top - opts.highlightOffset);
-
-      var anchorName = opts.anchorName(i, heading, opts.prefix);
-
-      var tagName = $h.prop('tagName').toLowerCase();
-
-      var text = opts.headerText(i, heading, $h);
-
-      var templateFunction;
-
-      if (opts.templates) {
-        templateFunction = opts.templates[tagName]; 
-        if (templateFunction) {
-          text = templateFunction({ title: text });
-        }
-      }
-
-      //add anchor
-      if(heading.id !== anchorName) {
-        var anchor = $('<span/>').attr('id', anchorName).insertBefore($h);
-      }
-
-      //build TOC item
-      var a = $('<a/>')
-        .html(text)
-        .attr('href', '#' + anchorName);
-
-      var li = $('<li/>')
-        .addClass(opts.itemClass(i, heading, $h, opts.prefix))
-        .append(a);
-
-      ul.append(li);
-
-    });
-
-    el.html(ul);
-
-  });
-
-};
-
-
-jQuery.fn.toc.defaults = {
-  container: 'body',
-  listType: '<ul/>',
-  selectors: 'h1,h2,h3',
-  prefix: 'toc',
-  anchorName: function(i, heading, prefix) {
-    if(heading.id.length) {
-      return heading.id;
-    }
-
-    var candidateId = $(heading).text().replace(/[^a-z0-9]/ig, ' ').replace(/\s+/g, '-').toLowerCase();
-    if (verboseIdCache[candidateId]) {
-      var j = 2;
-      
-      while(verboseIdCache[candidateId + j]) {
-        j++;
-      }
-      candidateId = candidateId + '-' + j;
-      
-    }
-    verboseIdCache[candidateId] = true;
-
-    return prefix + '-' + candidateId;
-  },
-  headerText: function(i, heading, $heading) {
-    return $heading.data('toc-title') || $heading.text();
-  },
-  itemClass: function(i, heading, $heading, prefix) {
-    return prefix + '-' + $heading[0].tagName.toLowerCase();
-  }
-
-};
-
-})(jQuery);
 (function() {
   if (typeof ChartistHtml !== "undefined" && ChartistHtml !== null) {
     ChartistHtml.config.baseClass = "atlas-chart";
@@ -8691,6 +8593,7 @@ jQuery.fn.toc.defaults = {
         'about': 'about_index',
         'menu': 'projects_index',
         'show': 'projects_show',
+        'projects/new': 'projects_new',
         ':atlas_url': 'projects_show',
         '*notFound': 'welcome_index'
       },
@@ -8767,6 +8670,15 @@ jQuery.fn.toc.defaults = {
           theme: 'atlas',
           headerTitle: 'Atlas',
           routableComponentName: 'Projects.Show'
+        });
+      },
+      projects_new: function() {
+        this._initiateNavigation('projects_new');
+        return this.renderReactLayout({
+          route: 'projects_new',
+          theme: 'atlas',
+          headerTitle: 'Atlas',
+          routableComponentName: 'Projects.New'
         });
       },
       dashboard_index: function() {
@@ -10875,6 +10787,67 @@ var _ = window._,
     item = require('./item.js');
 
 exports.Model = base.Model.extend({
+
+    fields: [{
+        id: 'title',
+        formComponentName: 'Text',
+        formComponentProps: {
+            id: 'title',
+            labelText: 'Project Title',
+            hint: '',
+            placeholder: 'Enter Project Title'
+        }
+    }, {
+        id: 'author',
+        formComponentName: 'Text',
+        formComponentProps: {
+            id: 'author',
+            labelText: 'Author',
+            hint: '',
+            placeholder: 'Enter Author'
+        }
+    }, {
+        id: 'project_section_ids',
+        name: 'Project Sections',
+        formComponentName: 'MultipleSelect',
+        foreignModelName: 'ProjectSection',
+        formComponentProps: {
+            id: 'project_section_ids',
+            labelText: 'Project Sections',
+            hint: ''
+        }
+    }, {
+        id: 'project_template_id',
+        formComponentName: 'SingleSelect',
+        formComponentProps: {
+            id: 'project_template_id',
+            labelText: 'Project Template',
+            hint: 'Determines how data is displayed, e.g. Explainer'
+        },
+        foreignModelName: 'ProjectTemplate'
+    }, {
+        id: 'tags',
+        formComponentName: 'SelectizeText',
+        formComponentProps: {
+            id: 'tags',
+            labelText: 'Tags'
+        }
+    }, {
+        id: 'body_text',
+        formComponentName: 'CKeditorInput',
+        formComponentProps: {
+            labelText: 'Body Text'
+        }
+    }, {
+        id: 'data',
+        formComponentName: 'SpreadsheetFile',
+        formComponentProps: {
+            id: 'data',
+            labelText: 'Data file',
+            hint: '',
+            worksheets: ['data', 'variables']
+        }
+    }],
 
     urlRoot: '/api/v1/projects',
 
@@ -13860,11 +13833,11 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
         }
       },
       destroy: function() {
-        if ((Map.overlayView != null) && (Map.overlayView.destroy != null)) {
+        if (Map.overlayView != null) {
           Map.overlayView.destroy();
         }
-        if ((Map.mapView != null) && (Map.mapView.destroy != null)) {
-          return Map.mapView.destroy();
+        if (Map.rootView != null) {
+          return Map.rootView.destroy();
         }
       }
     };
@@ -13982,8 +13955,6 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
       }
 
       OverlayBaseView.prototype.initialize = function() {
-        this.listenTo(App.vent, 'key:click display:mode:change', this.updateAnimated);
-        this.listenTo(App.vent, 'value:mouseover value:mouseout value:click search:term:change', this.update);
         App.reqres.setHandler('item:map:position', (function(_this) {
           return function(item) {
             return _this.getItemMapPosition(item);
@@ -14014,7 +13985,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
         identityPath = d3.geo.path().projection(function(d) {
           return d;
         });
-        feature = this._getFeatureByModel(item);
+        feature = this.getFeatureByModel(item);
         longLatArrayCentroid = identityPath.centroid(feature);
         latLong = L.latLng(longLatArrayCentroid[1], longLatArrayCentroid[0]);
         map = Map.map;
@@ -14059,7 +14030,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
       };
 
       OverlayBaseView.prototype.onFeatureClick = function(feature) {
-        var message;
+        var items, model, project;
         if ((Map.map != null) && Map.map.ignoreNextClick) {
           Map.map.ignoreNextClick = false;
           return;
@@ -14067,8 +14038,13 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
         if (d3.event.stopPropagation != null) {
           d3.event.stopPropagation();
         }
-        message = feature._model != null ? feature._model : feature.id;
-        App.vent.trigger('item:activate', message);
+        model = feature._model;
+        project = Map.props.project;
+        items = project.get('data').items;
+        items.setActive(model);
+        Map.props.setUiState({
+          isInfoBoxActive: true
+        });
         Map.map.ignoreNextClick = false;
         return this.activeFeature = feature;
       };
@@ -14084,7 +14060,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
         }
       };
 
-      OverlayBaseView.prototype._getFeatureByModel = function(model) {
+      OverlayBaseView.prototype.getFeatureByModel = function(model) {
         var feature, i, len, ref;
         ref = this.collection.features;
         for (i = 0, len = ref.length; i < len; i++) {
@@ -14097,6 +14073,9 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
 
       OverlayBaseView.prototype.getFeatureDisplayState = function(feature) {
         var display, filter, model, searchTerm;
+        if (Map.props.uiState == null) {
+          return;
+        }
         display = Map.props.uiState.display;
         filter = Map.props.project.get('data').filter;
         searchTerm = App.reqres.request('search:term');
@@ -14233,6 +14212,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
 
       PathOverlayView.prototype.update = function() {
         var geoJson, path;
+        console.log('updating paths');
         path = this.getPath();
         geoJson = this.collection;
         this.g.selectAll('path').attr({

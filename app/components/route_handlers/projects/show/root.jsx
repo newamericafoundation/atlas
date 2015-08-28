@@ -124,7 +124,6 @@ Comp.Projects.Show = class extends React.Component {
 				Backbone.history.navigate('welcome', { trigger: true });
 			}
 		});
-
 	}
 
 	componentDidMount() {

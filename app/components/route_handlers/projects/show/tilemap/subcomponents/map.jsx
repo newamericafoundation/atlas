@@ -4,8 +4,6 @@ Comp.Projects.Show.Tilemap.Map = class extends React.Component {
 		super(props);
 	}
 
-	get displayName() { return 'Comp.Projects.Show.Tilemap.Map'; }
-
 	render() {
 		return (
 			<div className="fill-parent" id="atl__map"></div>
@@ -17,7 +15,8 @@ Comp.Projects.Show.Tilemap.Map = class extends React.Component {
 		if (App == null) { return; }
 		App.Map.props = { 
 			project: this.props.project,
-			uiState: this.props.uiState
+			uiState: this.props.uiState,
+			setUiState: this.props.setUiState
 		};
 		App.Map.start();
 	}
@@ -27,6 +26,15 @@ Comp.Projects.Show.Tilemap.Map = class extends React.Component {
 		if (App == null) { return; }
 		App.Map.props = { project: undefined };
 		App.Map.stop();
+	}
+
+	componentDidUpdate() {
+		var App = this.props.App;
+		if (App == null) { return; }
+		if (App.Map.overlayView) {
+			App.Map.overlayView.update();
+		} else {
+		}
 	}
 
 }

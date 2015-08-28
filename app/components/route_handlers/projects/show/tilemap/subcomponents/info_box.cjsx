@@ -1,7 +1,5 @@
 Comp.Projects.Show.Tilemap.InfoBox = React.createClass
 
-	mixins: [ Comp.Mixins.BackboneEvents ]
-
 	getInitialState: ->
 		{
 			transitionEventNamespace: 0
@@ -44,12 +42,6 @@ Comp.Projects.Show.Tilemap.InfoBox = React.createClass
 
 	shouldComponentUpdate: (nextProps) ->
 		return (@props.activeItem isnt nextProps.activeItem)
-
-	componentWillMount: ->
-		App = @props.App
-		if App?
-			@listenTo App.vent, 'item:activate', =>
-				@props.setUiState({ isInfoBoxActive: true })
 
 	componentDidUpdate: ->
 		App = @props.App
@@ -164,6 +156,5 @@ Comp.Projects.Show.Tilemap.InfoBox = React.createClass
 		html = ""
 		infoBoxVar.forEach (variable) =>
 			html += "<h1>#{variable.get('display_title')}</h1>#{variable.getFormattedField(activeItem)}"
-		console.log('setting content indeed')
 		activeItem.set('info_box_content', html)
 		activeItem.setHtmlToc('info_box_content')

@@ -10,6 +10,7 @@ var express = require('express'),
 	json2csv = require('nice-json2csv');
 
 // Basic configuration.
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Use Prerender if in production.

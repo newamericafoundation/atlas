@@ -47,5 +47,5 @@
 
 		# Destroys view, including map base and overlay.
 		destroy: ->
-			Map.overlayView.destroy() if (Map.overlayView? and Map.overlayView.destroy?)
-			Map.mapView.destroy() if (Map.mapView? and Map.mapView.destroy?)
+			Map.overlayView.destroy() if Map.overlayView?
+			Map.rootView.destroy() if Map.rootView?

@@ -4,8 +4,6 @@
 	class Map.OverlayBaseView extends Marionette.Object
 
         initialize: () ->
-            @listenTo App.vent, 'key:click display:mode:change', @updateAnimated
-            @listenTo App.vent, 'value:mouseover value:mouseout value:click search:term:change', @update
             App.reqres.setHandler 'item:map:position', (item) => @getItemMapPosition(item)
             @
 
@@ -21,11 +19,10 @@
             else
                 App.commands.execute 'set:header:strip:color', 'none'
 
-
         # Return pixel coordinates of a map display item's centroid.
         getItemMapPosition: (item) ->
             identityPath = d3.geo.path().projection (d) -> return d
-            feature = @_getFeatureByModel item
+            feature = @getFeatureByModel item
             longLatArrayCentroid = identityPath.centroid(feature)
             latLong = L.latLng longLatArrayCentroid[1], longLatArrayCentroid[0]
             map = Map.map
@@ -63,8 +60,12 @@
                 Map.map.ignoreNextClick = false
                 return
             d3.event.stopPropagation() if d3.event.stopPropagation?
-            message = if feature._model? then feature._model else feature.id
-            App.vent.trigger 'item:activate', message
+            model = feature._model
+            project = Map.props.project
+            items = project.get('data').items
+            items.setActive model
+            Map.props.setUiState({ isInfoBoxActive: true })
+            # App.commands.execute 'update:tilemap'
             Map.map.ignoreNextClick = false
             @activeFeature = feature
 
@@ -78,12 +79,13 @@
                 App.vent.trigger 'item:deactivate'
 
         # Returns feature corresponding to model.
-        _getFeatureByModel: (model) ->
+        getFeatureByModel: (model) ->
             for feature in @collection.features
                 return feature if (feature._model is model)
 
         # Returns display state of a feature.
         getFeatureDisplayState: (feature) ->
+            return unless Map.props.uiState?
             display = Map.props.uiState.display
             filter = Map.props.project.get('data').filter
             searchTerm = App.reqres.request 'search:term'

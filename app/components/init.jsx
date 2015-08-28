@@ -5,6 +5,7 @@ Comp.Mixins = {};
 
 Comp.Icons = {};
 
+Comp.Projects = {};
 
 // Render a help text segment that displays when help is activated.
 // Parent needs to be relatively positioned for this to work.

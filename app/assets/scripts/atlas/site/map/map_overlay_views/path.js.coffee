@@ -77,7 +77,7 @@
 
         # Apply transform and classes on paths.
         update: () ->
-            # App.commands.execute('reset:patterns')
+            console.log('updating paths')
             path = @getPath()
             geoJson = @collection
             @g.selectAll('path')

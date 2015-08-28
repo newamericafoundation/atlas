@@ -1379,6 +1379,67 @@ var _ = window._,
 
 exports.Model = base.Model.extend({
 
+    fields: [{
+        id: 'title',
+        formComponentName: 'Text',
+        formComponentProps: {
+            id: 'title',
+            labelText: 'Project Title',
+            hint: '',
+            placeholder: 'Enter Project Title'
+        }
+    }, {
+        id: 'author',
+        formComponentName: 'Text',
+        formComponentProps: {
+            id: 'author',
+            labelText: 'Author',
+            hint: '',
+            placeholder: 'Enter Author'
+        }
+    }, {
+        id: 'project_section_ids',
+        name: 'Project Sections',
+        formComponentName: 'MultipleSelect',
+        foreignModelName: 'ProjectSection',
+        formComponentProps: {
+            id: 'project_section_ids',
+            labelText: 'Project Sections',
+            hint: ''
+        }
+    }, {
+        id: 'project_template_id',
+        formComponentName: 'SingleSelect',
+        formComponentProps: {
+            id: 'project_template_id',
+            labelText: 'Project Template',
+            hint: 'Determines how data is displayed, e.g. Explainer'
+        },
+        foreignModelName: 'ProjectTemplate'
+    }, {
+        id: 'tags',
+        formComponentName: 'SelectizeText',
+        formComponentProps: {
+            id: 'tags',
+            labelText: 'Tags'
+        }
+    }, {
+        id: 'body_text',
+        formComponentName: 'CKeditorInput',
+        formComponentProps: {
+            labelText: 'Body Text'
+        }
+    }, {
+        id: 'data',
+        formComponentName: 'SpreadsheetFile',
+        formComponentProps: {
+            id: 'data',
+            labelText: 'Data file',
+            hint: '',
+            worksheets: ['data', 'variables']
+        }
+    }],
+
     urlRoot: '/api/v1/projects',
 
     /** API queries that need to be handled custom. For every key, there is a this.is_#{key} method that filters a model. */

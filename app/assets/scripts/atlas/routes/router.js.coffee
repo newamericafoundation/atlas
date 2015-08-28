@@ -11,6 +11,7 @@
 			'menu': 'projects_index'
 			'show': 'projects_show'
 			# 'dashboard': 'dashboard_index'
+			'projects/new': 'projects_new'
 			':atlas_url': 'projects_show'
 			'*notFound': 'welcome_index'
 
@@ -69,6 +70,14 @@
 				theme: 'atlas'
 				headerTitle: 'Atlas'
 				routableComponentName: 'Projects.Show'
+
+		projects_new: ->
+			@_initiateNavigation 'projects_new'
+			@renderReactLayout
+				route: 'projects_new'
+				theme: 'atlas'
+				headerTitle: 'Atlas'
+				routableComponentName: 'Projects.New'
 
 		dashboard_index: () ->
 			@_initiateNavigation 'dashboard_index'

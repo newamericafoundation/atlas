@@ -33,21 +33,6 @@ Comp.Projects.Show.Tilemap.Filter = class extends React.Component {
 		return height;
 	}
 
-	componentDidMount() {
-		this.props.cacheHeight(this.getHeight());
-		var App = this.props.App;
-		if (App == null) { return; }
-		_.extend(this, Backbone.Events);
-		this.listenTo(App.vent, 'key:click value:click', () => {
-			this.forceUpdate();
-		});
-
-	}
-
-	componentWillUnmount() {
-		if (this.stopListening != null) { this.stopListening(); }
-	}
-
 	componentDidUpdate() {
 		this.props.cacheHeight(this.getHeight());
 	}
@@ -98,7 +83,7 @@ Comp.Projects.Show.Tilemap.FilterKey = class extends React.Component {
 		var App = this.props.App;
 		this.props.filterKey.clickToggle();
 		if (App == null) { return; }
-		App.vent.trigger('key:click');
+		App.commands.execute('update:tilemap');
 	}
 
 }
@@ -133,8 +118,8 @@ Comp.Projects.Show.Tilemap.FilterValue = class extends React.Component {
 		App = this.props.App;
 		modelIndex = this.getFilterValueIndex();
 		this.props.filterValue.parent.parent.state.valueHoverIndex = modelIndex;
-		App.vent.trigger('value:mouseover', modelIndex);
-		cls = this.getColorClass()
+		App.commands.execute('update:tilemap');
+		cls = this.getColorClass();
 		App.commands.execute('set:header:strip:color', { className: cls });
 	}
 
@@ -142,7 +127,7 @@ Comp.Projects.Show.Tilemap.FilterValue = class extends React.Component {
 		var App;
 		App = this.props.App;
 		this.props.filterValue.parent.parent.state.valueHoverIndex = -1;
-		App.vent.trigger('value:mouseover');
+		App.commands.execute('update:tilemap');
 		App.commands.execute('set:header:strip:color', 'none');
 	}
 
@@ -155,7 +140,7 @@ Comp.Projects.Show.Tilemap.FilterValue = class extends React.Component {
 		this.props.filterValue.toggle();
 		App = this.props.App;
 		if (App == null) { return; }
-		App.vent.trigger('value:click');
+		App.commands.execute('update:tilemap');
 	}
 
 }
