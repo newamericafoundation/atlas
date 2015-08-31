@@ -7,10 +7,8 @@
 
 		routes:
 			'welcome': 'welcome_index'
-			'about': 'about_index'
 			'menu': 'projects_index'
 			'show': 'projects_show'
-			# 'dashboard': 'dashboard_index'
 			'projects/new': 'projects_new'
 			':atlas_url': 'projects_show'
 			'*notFound': 'welcome_index'
@@ -19,12 +17,6 @@
 			el = $('#site')[0]
 			opt.App = App
 			c = React.createElement(Comp.Layout, opt)
-			React.render(c, el)
-
-		renderReactCustomLayout: (opt = {}) ->
-			el = $('#site')[0]
-			opt.App = App
-			c = React.createElement(Comp.Dashboard, opt)
 			React.render(c, el)
 
 		# Shorthand for Backbone history navigation.
@@ -43,13 +35,6 @@
 				theme: 'none'
 				headerTitle: 'New America'
 				routableComponentName: 'Welcome'
-
-		about_index: (param) ->
-			@_initiateNavigation 'about_index'
-			@renderReactLayout
-				route: 'about_index'
-				headerTitle: 'Atlas'
-				routableComponentName: 'About'
 
 		projects_index: (param) ->
 			@_initiateNavigation 'projects_index', param
@@ -78,14 +63,6 @@
 				theme: 'atlas'
 				headerTitle: 'Atlas'
 				routableComponentName: 'Projects.New'
-
-		dashboard_index: () ->
-			@_initiateNavigation 'dashboard_index'
-			@renderReactCustomLayout
-				route: 'dashboard_index'
-				theme: 'naf'
-				isInternal: true
-				headerTitle: 'My New America'
 
 		# Get atlas url value, defaulting to previously accessed atlas url or a hard-coded one.
 		_getAtlasUrl: (atlas_url) ->

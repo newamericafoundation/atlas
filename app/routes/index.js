@@ -25,31 +25,10 @@ resources.forEach(function(resource) {
 	router.use(url, require('.' + url));
 });
 
-var welcome_index = function(req, res) {
-	var factory, html,
-		options = fingerprintManifest;
-	options.bodyClass = 'atl-route__welcome_index';
-	res.render('index.jade', options);
-};
-
-var projects_show = function(req, res) {
-	var options = fingerprintManifest,
-		url = req.url;
-	options.bodyClass = 'atl-route__projects_show';
-	res.render('index.jade', options);
-};
-
-var projects_index = function(req, res) {
-	var options = fingerprintManifest;
-	res.render('index.jade', options);
-};
-
-// Main routes.
-router.get('/', welcome_index);
-router.get('/welcome', welcome_index);
-router.get('/menu', projects_index);
-router.get('/*', projects_show);
-
+// Main routes - routing done by client.
+router.get([ '/', 'welcome', '/menu', '*' ], (req, res) => {
+	res.render('index.jade', fingerprintManifest);
+});
 
 // Print route that takes a title and html as post parameter, assemble a 
 //   corresponding simple html page and calls window.print automatically.

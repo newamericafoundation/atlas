@@ -40,6 +40,7 @@ Comp.Projects.Show.Tilemap.SettingsBar = class extends React.Component {
 
 	// If content is overflowing, set global collapsed state.
 	checkOverflow() {
+		console.log('checking overflow');
 		var totalHeight, isCollapsed,
 			App = this.props.App;
 		if (App == null) { return; }

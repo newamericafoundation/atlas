@@ -4,14 +4,14 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
 <g>
-	<rect x="6.5" y="6.5" fill="#231F20" width="24.8" height="24.8"/>
-	<rect x="37.6" y="6.5" fill="#231F20" width="24.8" height="24.8"/>
-	<rect x="68.7" y="6.5" fill="#231F20" width="24.8" height="24.8"/>
-	<rect x="6.5" y="37.6" fill="#231F20" width="24.8" height="24.8"/>
-	<rect x="37.6" y="37.6" fill="#231F20" width="24.8" height="24.8"/>
-	<rect x="68.7" y="37.6" fill="#231F20" width="24.8" height="24.8"/>
-	<rect x="6.5" y="68.7" fill="#231F20" width="24.8" height="24.8"/>
-	<rect x="37.6" y="68.7" fill="#231F20" width="24.8" height="24.8"/>
-	<rect x="68.7" y="68.7" fill="#231F20" width="24.8" height="24.8"/>
+	<rect x="6.5" y="6.5" fill="#202020" width="24.8" height="24.8"/>
+	<rect x="37.6" y="6.5" fill="#202020" width="24.8" height="24.8"/>
+	<rect x="68.7" y="6.5" fill="#202020" width="24.8" height="24.8"/>
+	<rect x="6.5" y="37.6" fill="#202020" width="24.8" height="24.8"/>
+	<rect x="37.6" y="37.6" fill="#202020" width="24.8" height="24.8"/>
+	<rect x="68.7" y="37.6" fill="#202020" width="24.8" height="24.8"/>
+	<rect x="6.5" y="68.7" fill="#202020" width="24.8" height="24.8"/>
+	<rect x="37.6" y="68.7" fill="#202020" width="24.8" height="24.8"/>
+	<rect x="68.7" y="68.7" fill="#202020" width="24.8" height="24.8"/>
 </g>
 </svg>

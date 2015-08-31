@@ -1,3 +1,5 @@
+(function() {
+
 Comp.Projects.Show.Tilemap.Filter = class extends React.Component {
 
 	constructor(props) {
@@ -38,21 +40,19 @@ Comp.Projects.Show.Tilemap.Filter = class extends React.Component {
 	}
 
 	renderKeys() {
-		var keys = this.props.filter.children,
-			Cmp = Comp.Projects.Show.Tilemap.FilterKey;
+		var keys = this.props.filter.children;
 		return keys.map((key, i) => {
 			return (
-				<Cmp App={this.props.App} filterKey={key} />
+				<FilterKey App={this.props.App} filterKey={key} />
 			);
 		});
 	}
 
 	renderValues() {
-		var values = this.props.filter.getActiveChild().children,
-			Cmp = Comp.Projects.Show.Tilemap.FilterValue;
+		var values = this.props.filter.getActiveChild().children;
 		return values.map((value, i) => {
 			return (
-				<Cmp App={this.props.App} filterValue={value} />
+				<FilterValue App={this.props.App} filterValue={value} />
 			);
 		});
 	}
@@ -60,7 +60,7 @@ Comp.Projects.Show.Tilemap.Filter = class extends React.Component {
 }
 
 
-Comp.Projects.Show.Tilemap.FilterKey = class extends React.Component {
+class FilterKey extends React.Component {
 
 	render() {
 		return (
@@ -89,7 +89,7 @@ Comp.Projects.Show.Tilemap.FilterKey = class extends React.Component {
 }
 
 
-Comp.Projects.Show.Tilemap.FilterValue = class extends React.Component {
+class FilterValue extends React.Component {
 
 	render() {
 		var IconComp = Comp.Icons.Hex;
@@ -144,3 +144,5 @@ Comp.Projects.Show.Tilemap.FilterValue = class extends React.Component {
 	}
 
 }
+
+}());

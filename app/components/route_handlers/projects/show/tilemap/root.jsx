@@ -34,6 +34,10 @@ Comp.Projects.Show.Tilemap = class extends React.Component {
 		return this.props.project.get('data').items.active;
 	}
 
+	componentWillUpdate() {
+		// console.log('updating Tilemap');
+	}
+
 	componentWillMount() {
 		var App = this.props.App;
 		if (App == null) { return; }

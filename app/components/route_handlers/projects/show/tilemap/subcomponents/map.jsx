@@ -28,7 +28,12 @@ Comp.Projects.Show.Tilemap.Map = class extends React.Component {
 		App.Map.stop();
 	}
 
+	componentWillUpdate() {
+		// console.log('Updating Tilemap.Map');
+	}
+
 	componentDidUpdate() {
+		
 		var App = this.props.App;
 		if (App == null) { return; }
 		if (App.Map.overlayView) {

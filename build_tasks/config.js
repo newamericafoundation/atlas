@@ -57,13 +57,13 @@ module.exports = {
 		    // view and controller code
 		    component: [
 		        './app/components/init.jsx',
+		        './app/components/routes.jsx',
 		        './app/components/general/**/*',
 		        './app/components/form/root.jsx',
 		        './app/components/form/subcomponents/**/*',
-		        './app/components/route_handlers/about/**/*.cjsx',
 		        './app/components/route_handlers/welcome/**/*',
 		        './app/components/route_handlers/projects/index/root.cjsx',
-		        './app/components/route_handlers/projects/index/subcomponents/**/*.cjsx',
+		        './app/components/route_handlers/projects/index/subcomponents/**/*',
 		        './app/components/route_handlers/projects/new/root.jsx',
 		        './app/components/route_handlers/projects/show/root.jsx',
 		        './app/components/route_handlers/projects/show/tilemap/root.jsx',

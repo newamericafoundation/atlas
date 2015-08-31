@@ -38,6 +38,7 @@
 
         # Callback.
         onFeatureMouseOut: (feature) ->
+            # console.log('mousing out')
             project = Map.props.project
             items = project.get('data').items
             items.setHovered -1
@@ -46,6 +47,7 @@
 
         # Callback.
         onFeatureMouseOver: (feature) ->
+            # console.log('mousing over')
             @bringFeatureToFront feature if @bringFeatureToFront?
             project = Map.props.project
             items = project.get('data').items

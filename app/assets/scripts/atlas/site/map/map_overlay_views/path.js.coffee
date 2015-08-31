@@ -14,7 +14,6 @@
             @svg = d3.select(Map.map.getPanes().overlayPane)
                 .append('svg')
                 .attr('class', 'deethree')
-            # @appendPatternDefs()
             @g = @svg.append('g')
                 .attr('class', 'leaflet-zoom-hide')
 
@@ -77,7 +76,7 @@
 
         # Apply transform and classes on paths.
         update: () ->
-            console.log('updating paths')
+            # console.log('updating paths')
             path = @getPath()
             geoJson = @collection
             @g.selectAll('path')

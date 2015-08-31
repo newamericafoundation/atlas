@@ -14,6 +14,7 @@ var app = express(),
 	env = app.get('env'),
 	port = process.env.PORT || 8081;
 
+// Configure passport. Always run before initializing passport on the app instance.
 require('./config/passport_config.js');
 
 // Basic configuration.
@@ -40,6 +41,8 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
+
+// Initialize passport.
 app.use(passport.initialize());
 app.use(passport.session({
     resave: false,

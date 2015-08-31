@@ -60,6 +60,7 @@ Comp.Mixins.BackboneEvents = {
 	}
 
 };
+"use strict";
 Comp.Header = React.createClass({
   mixins: [Comp.Mixins.BackboneEvents],
   displayName: 'Header',
@@ -2905,16 +2906,6 @@ Comp.Form.Text = (function (_React$Component) {
 
 	return _class;
 })(React.Component);
-Comp.About = React.createClass({
-  render: function() {
-    return React.createElement("div", {
-      "className": "about"
-    }, React.createElement("h1", {
-      "class": "title"
-    }, "About Atlas"));
-  }
-});
-
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3050,227 +3041,330 @@ Comp.Projects.Index = React.createClass({
     }))));
   },
   componentDidMount: function() {
-    this._fetchProjects();
-    this._fetchProjectSections();
-    this._fetchProjectTemplates();
-    return this._updateOnFilterChange();
+    this.fetchProjects();
+    this.fetchProjectSections();
+    this.fetchProjectTemplates();
+    return this.updateOnFilterChange();
   },
-  _updateOnFilterChange: function() {
+  updateOnFilterChange: function() {
     var App;
     App = this.props.App;
-    if (App != null) {
-      return this.listenTo(App.vent, 'project:filter:change', this.forceUpdate);
+    if (App == null) {
+      return;
     }
+    return this.listenTo(App.vent, 'project:filter:change', this.forceUpdate);
   },
-  _fetchProjects: function() {
+  fetchProjects: function() {
     var App, projects;
     App = this.props.App;
-    if (App != null) {
-      projects = App.reqres.request("project:entities", {
-        cache: true
-      });
-      if ((projects.length != null) && projects.length > 0) {
-        App.dataCache.projects = projects;
-        this.forceUpdate();
-      }
-      return projects.on('reset', (function(_this) {
-        return function() {
-          App.dataCache.projects = projects;
-          return _this.forceUpdate();
-        };
-      })(this));
+    if (App == null) {
+      return;
     }
+    projects = App.reqres.request("project:entities", {
+      cache: true
+    });
+    if ((projects.length != null) && projects.length > 0) {
+      App.dataCache.projects = projects;
+    }
+    return projects.on('reset', (function(_this) {
+      return function() {
+        App.dataCache.projects = projects;
+        return _this.forceUpdate();
+      };
+    })(this));
   },
-  _fetchProjectSections: function() {
+  fetchProjectSections: function() {
     var App, projectSections;
     App = this.props.App;
-    if (App != null) {
-      projectSections = App.reqres.request("project:section:entities", {
-        cache: true
-      });
-      App.dataCache.projectSections = projectSections;
-      return this.forceUpdate();
+    if (App == null) {
+      return;
     }
+    projectSections = App.reqres.request("project:section:entities", {
+      cache: true
+    });
+    App.dataCache.projectSections = projectSections;
+    return this.forceUpdate();
   },
-  _fetchProjectTemplates: function() {
+  fetchProjectTemplates: function() {
     var App, projectTemplates;
     App = this.props.App;
-    if (App != null) {
-      projectTemplates = App.reqres.request("project:template:entities", {
-        cache: true
-      });
-      App.dataCache.projectTemplates = projectTemplates;
-      return this.forceUpdate();
-    }
-  }
-});
-
-Comp.Projects.Index.ProjectSections = React.createClass({
-  displayName: 'Projects.Index.ProjectSections',
-  render: function() {
-    return React.createElement("ul", {
-      "className": "atl__project-section-filter"
-    }, this._renderList());
-  },
-  _renderList: function() {
-    if (this.props.projectSections == null) {
+    if (App == null) {
       return;
     }
-    return this.props.projectSections.map((function(_this) {
-      return function(item, i) {
-        return React.createElement(Comp.Projects.Index.ProjectSections.Item, {
-          "App": _this.props.App,
-          "projectSection": item,
-          "key": i
-        });
-      };
-    })(this));
+    projectTemplates = App.reqres.request("project:template:entities", {
+      cache: true
+    });
+    App.dataCache.projectTemplates = projectTemplates;
+    return this.forceUpdate();
   }
 });
 
-Comp.Projects.Index.ProjectSections.Item = React.createClass({
-  displayName: 'Projects.Index.ProjectSections.Item',
-  render: function() {
-    var projectSection;
-    projectSection = this.props.projectSection;
-    return React.createElement("li", {
-      "className": "toggle-button toggle-button--black " + this.getModifierClass(),
-      "onClick": this.toggleActiveState
-    }, React.createElement(Comp.Icons.Hex, {
-      "className": 'toggle-button__icon'
-    }), React.createElement("div", {
-      "className": "toggle-button__text"
-    }, React.createElement("p", null, projectSection.get('name'))));
-  },
-  getModifierClass: function() {
-    if (this.props.projectSection.get('_isActive') === false) {
-      return 'toggle-button--inactive';
-    }
-    return '';
-  },
-  toggleActiveState: function() {
-    var App;
-    this.props.projectSection.toggleActiveState();
-    App = this.props.App;
-    if (App != null) {
-      return App.vent.trigger('project:filter:change');
-    }
-  }
-});
+"use strict";
 
-Comp.Projects.Index.ProjectTemplates = React.createClass({
-  displayName: 'Projects.Index.ProjectTemplates',
-  render: function() {
-    return React.createElement("ul", {
-      "className": "atl__project-template-filter"
-    }, this._renderList());
-  },
-  _renderList: function() {
-    if (this.props.projectTemplates == null) {
-      return;
-    }
-    return this.props.projectTemplates.map((function(_this) {
-      return function(item, i) {
-        return React.createElement(Comp.Projects.Index.ProjectTemplates.Item, {
-          "App": _this.props.App,
-          "projectTemplate": item,
-          "key": i
-        });
-      };
-    })(this));
-  }
-});
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-Comp.Projects.Index.ProjectTemplates.Item = React.createClass({
-  displayName: 'Projects.Index.ProjectTemplates.Item',
-  render: function() {
-    var projectTemplate;
-    projectTemplate = this.props.projectTemplate;
-    return React.createElement("li", {
-      "className": "icon-button " + this._getModifierClasses(),
-      "onClick": this.toggleActiveState
-    }, React.createElement("div", {
-      "className": "icon-button__icon bg-img-" + (this._getIcon()) + "--black"
-    }), React.createElement("p", {
-      "className": "icon-button__text"
-    }, projectTemplate.get('display_name')));
-  },
-  _getModifierClasses: function() {
-    var classes, projectTemplate;
-    classes = [];
-    projectTemplate = this.props.projectTemplate;
-    if (projectTemplate.get('id') === '2') {
-      classes.push('hidden');
-    }
-    if (projectTemplate.get('_isActive')) {
-      classes.push('icon-button--active');
-    }
-    if (classes.length === 0) {
-      return '';
-    }
-    return classes.join(' ');
-  },
-  _getIcon: function() {
-    var templateName;
-    templateName = this.props.projectTemplate.get('name');
-    switch (templateName) {
-      case 'Tilemap':
-        return 'map';
-      case 'Explainer':
-        return 'dictionary';
-      case 'Polling':
-        return 'graph';
-    }
-  },
-  toggleActiveState: function() {
-    var App;
-    this.props.projectTemplate.toggleActiveState();
-    App = this.props.App;
-    if (App != null) {
-      return App.vent.trigger('project:filter:change');
-    }
-  }
-});
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+(function () {
+
+	Comp.Projects.Index.ProjectSections = (function (_React$Component) {
+		_inherits(_class, _React$Component);
+
+		function _class() {
+			_classCallCheck(this, _class);
+
+			_get(Object.getPrototypeOf(_class.prototype), "constructor", this).apply(this, arguments);
+		}
+
+		_createClass(_class, [{
+			key: "render",
+			value: function render() {
+				return React.createElement(
+					"ul",
+					{ className: "atl__project-section-filter" },
+					this.renderList()
+				);
+			}
+		}, {
+			key: "renderList",
+			value: function renderList() {
+				var _this = this;
+
+				if (this.props.projectSections == null) {
+					return;
+				}
+				return this.props.projectSections.map(function (item, i) {
+					return React.createElement(ProjectSectionsItem, { App: _this.props.App, projectSection: item, key: i });
+				});
+			}
+		}]);
+
+		return _class;
+	})(React.Component);
+
+	var ProjectSectionsItem = (function (_React$Component2) {
+		_inherits(ProjectSectionsItem, _React$Component2);
+
+		function ProjectSectionsItem() {
+			_classCallCheck(this, ProjectSectionsItem);
+
+			_get(Object.getPrototypeOf(ProjectSectionsItem.prototype), "constructor", this).apply(this, arguments);
+		}
+
+		_createClass(ProjectSectionsItem, [{
+			key: "render",
+			value: function render() {
+				var projectSection = this.props.projectSection;
+				return React.createElement(
+					"li",
+					{ className: "toggle-button toggle-button--black " + this.getModifierClass(), onClick: this.toggleActiveState.bind(this) },
+					React.createElement(Comp.Icons.Hex, { className: 'toggle-button__icon' }),
+					React.createElement(
+						"div",
+						{ className: "toggle-button__text" },
+						React.createElement(
+							"p",
+							null,
+							projectSection.get('name')
+						)
+					)
+				);
+			}
+		}, {
+			key: "getModifierClass",
+			value: function getModifierClass() {
+				if (!this.props.projectSection.get('_isActive')) {
+					return 'toggle-button--inactive';
+				}
+				return '';
+			}
+		}, {
+			key: "toggleActiveState",
+			value: function toggleActiveState() {
+				var App;
+				this.props.projectSection.toggleActiveState();
+				App = this.props.App;
+				if (App != null) {
+					App.vent.trigger('project:filter:change');
+				}
+			}
+		}]);
+
+		return ProjectSectionsItem;
+	})(React.Component);
+})();
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+(function () {
+
+	Comp.Projects.Index.ProjectTemplates = (function (_React$Component) {
+		_inherits(_class, _React$Component);
+
+		function _class() {
+			_classCallCheck(this, _class);
+
+			_get(Object.getPrototypeOf(_class.prototype), "constructor", this).apply(this, arguments);
+		}
+
+		_createClass(_class, [{
+			key: "render",
+			value: function render() {
+				return React.createElement(
+					"ul",
+					{ className: "atl__project-template-filter" },
+					this.renderList()
+				);
+			}
+		}, {
+			key: "renderList",
+			value: function renderList() {
+				var _this = this;
+
+				if (this.props.projectTemplates == null) {
+					return;
+				}
+				return this.props.projectTemplates.map(function (item, i) {
+					return React.createElement(ProjectTemplateItem, { App: _this.props.App, projectTemplate: item, key: i });
+				});
+			}
+		}]);
+
+		return _class;
+	})(React.Component);
+
+	var ProjectTemplateItem = (function (_React$Component2) {
+		_inherits(ProjectTemplateItem, _React$Component2);
+
+		function ProjectTemplateItem() {
+			_classCallCheck(this, ProjectTemplateItem);
+
+			_get(Object.getPrototypeOf(ProjectTemplateItem.prototype), "constructor", this).apply(this, arguments);
+		}
+
+		_createClass(ProjectTemplateItem, [{
+			key: "render",
+			value: function render() {
+				var projectTemplate = this.props.projectTemplate;
+				return React.createElement(
+					"li",
+					{ className: "icon-button " + this.getModifierClasses(), onClick: this.toggleActiveState.bind(this) },
+					React.createElement("div", { className: "icon-button__icon bg-img-" + this.getIcon() + "--black" }),
+					React.createElement(
+						"p",
+						{ className: "icon-button__text" },
+						projectTemplate.get('display_name')
+					)
+				);
+			}
+		}, {
+			key: "getModifierClasses",
+			value: function getModifierClasses() {
+				var classes, projectTemplate;
+				classes = [];
+				projectTemplate = this.props.projectTemplate;
+				if (projectTemplate.get('id') === '2') {
+					classes.push('hidden');
+				}
+				if (projectTemplate.get('_isActive')) {
+					classes.push('icon-button--active');
+				}
+				if (classes.length === 0) {
+					return '';
+				}
+				return classes.join(' ');
+			}
+		}, {
+			key: "getIcon",
+			value: function getIcon() {
+				var templateName = this.props.projectTemplate.get('name'),
+				    dictionary = {
+					'Tilemap': 'map',
+					'Explainer': 'dictionary',
+					'Polling': 'graph'
+				};
+				return dictionary[templateName];
+			}
+		}, {
+			key: "toggleActiveState",
+			value: function toggleActiveState() {
+				var App;
+				this.props.projectTemplate.toggleActiveState();
+				App = this.props.App;
+				if (App == null) {
+					return;
+				};
+				App.vent.trigger('project:filter:change');
+			}
+		}]);
+
+		return ProjectTemplateItem;
+	})(React.Component);
+})();
 var modulo = function(a, b) { return (+a % (b = +b) + b) % b; };
 
 Comp.Projects.Index.Projects = React.createClass({
   displayName: 'Projects.Index.Projects',
   mixins: [Comp.Mixins.BackboneEvents],
+  getInitialState: function() {
+    return {
+      shouldDisplayImage: false,
+      hasDisplayedImage: false
+    };
+  },
   render: function() {
+    console.log(this.state);
     return React.createElement("div", {
       "className": "atl__projects"
-    }, this._renderList());
+    }, this.renderList());
   },
-  _renderList: function() {
+  renderList: function() {
     if (this.props.projects == null) {
       return;
     }
     return this.props.projects.map((function(_this) {
       return function(project, i) {
-        return React.createElement(Comp.Projects.Index.Projects.Project, {
+        return React.createElement(Comp.Projects.Index.Projects.Project, React.__spread({}, _this.props, {
           "key": i,
-          "App": _this.props.App,
           "project": project,
-          "projects": _this.props.projects,
-          "projectSections": _this.props.projectSections,
-          "projectTemplates": _this.props.projectTemplates
-        });
+          "shouldDisplayImage": _this.state.shouldDisplayImage
+        }));
       };
     })(this));
   },
   componentDidUpdate: function() {
     var projects;
     projects = this.props.projects;
-    if (projects != null) {
-      return this._injectProjectImages();
+    if (projects == null) {
+      return;
     }
+    return this.ensureProjectImages();
   },
-  _injectProjectImages: function() {
+  ensureProjectImages: function() {
     var projects;
     projects = this.props.projects;
-    if (projects.imagesAlreadyInjected) {
+    if (projects == null) {
       return;
+    }
+    if (this.state.hasDisplayedImage) {
+      return;
+    }
+    if (projects.hasImages) {
+      return this.setState({
+        shouldDisplayImage: true,
+        hasDisplayedImage: true
+      });
     }
     return $.ajax({
       url: 'api/v1/projects/image',
@@ -3289,8 +3383,11 @@ Comp.Projects.Index.Projects = React.createClass({
               project.set('image_credit', datum.image_credit);
             }
           }
-          projects.imagesAlreadyInjected = true;
-          return _this.forceUpdate();
+          projects.hasImages = true;
+          return _this.setState({
+            shouldDisplayImage: true,
+            hasDisplayedImage: true
+          });
         };
       })(this)
     });
@@ -3301,6 +3398,9 @@ Comp.Projects.Index.Projects.Project = React.createClass({
   displayName: 'Projects.Index.Projects.Item',
   render: function() {
     var project;
+    if (!this.isVisible()) {
+      return React.createElement("div", null);
+    }
     project = this.props.project;
     return React.createElement("a", {
       "className": "atl__project " + this.getModifierClasses(),
@@ -3337,7 +3437,7 @@ Comp.Projects.Index.Projects.Project = React.createClass({
   getBackgroundStyle: function() {
     var project;
     project = this.props.project;
-    if (project == null) {
+    if (!((project != null) && this.props.shouldDisplayImage)) {
       return;
     }
     return {
@@ -3366,15 +3466,12 @@ Comp.Projects.Index.Projects.Project = React.createClass({
     if (project.get('is_section_overview') === 'Yes') {
       classes.push('atl__project--overview');
     }
-    if (!this.test()) {
-      classes.push('atl__project--hidden');
-    }
     if (classes.length === 0) {
       return '';
     }
     return classes.join(' ');
   },
-  test: function() {
+  isVisible: function() {
     var project, projectSections, projectTemplates;
     project = this.props.project;
     projectSections = this.props.projectSections;
@@ -3424,11 +3521,12 @@ Comp.Projects.Index.Projects.Project = React.createClass({
     App = this.props.App;
     project = this.props.project;
     projects = this.props.projects;
-    if ((App != null) && (project != null) && (projects != null)) {
-      index = projects.indexOf(project);
-      color = App.CSS.Colors.toRgba(modulo(index, 15), 0.8);
-      return color;
+    if (!((App != null) && (project != null) && (projects != null))) {
+      return;
     }
+    index = projects.indexOf(project);
+    color = App.CSS.Colors.toRgba(modulo(index, 15), 0.8);
+    return color;
   }
 });
 
@@ -3759,6 +3857,11 @@ Comp.Projects.Show.Tilemap = (function (_React$Component) {
 			return this.props.project.get('data').items.active;
 		}
 	}, {
+		key: 'componentWillUpdate',
+		value: function componentWillUpdate() {
+			// console.log('updating Tilemap');
+		}
+	}, {
 		key: 'componentWillMount',
 		value: function componentWillMount() {
 			var _this = this;
@@ -3851,216 +3954,217 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-Comp.Projects.Show.Tilemap.Filter = (function (_React$Component) {
-	_inherits(_class, _React$Component);
+(function () {
 
-	function _class(props) {
-		_classCallCheck(this, _class);
+	Comp.Projects.Show.Tilemap.Filter = (function (_React$Component) {
+		_inherits(_class, _React$Component);
 
-		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
-		this.maxHeight = 0;
-	}
+		function _class(props) {
+			_classCallCheck(this, _class);
 
-	_createClass(_class, [{
-		key: 'render',
-		value: function render() {
-			var HelpComp = Comp.Help;
-			return React.createElement(
-				'div',
-				{ className: 'atl__filter', ref: 'root' },
-				React.createElement(
+			_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
+			this.maxHeight = 0;
+		}
+
+		_createClass(_class, [{
+			key: 'render',
+			value: function render() {
+				var HelpComp = Comp.Help;
+				return React.createElement(
 					'div',
-					{ className: 'atl__filter__keys' },
+					{ className: 'atl__filter', ref: 'root' },
 					React.createElement(
-						'ul',
-						null,
-						this.renderKeys()
+						'div',
+						{ className: 'atl__filter__keys' },
+						React.createElement(
+							'ul',
+							null,
+							this.renderKeys()
+						),
+						React.createElement(HelpComp, { position: 'right', text: 'Select the variable you want to filter by.', id: 'filter-keys' })
 					),
-					React.createElement(HelpComp, { position: 'right', text: 'Select the variable you want to filter by.', id: 'filter-keys' })
-				),
-				React.createElement(
-					'div',
-					{ className: 'atl__filter__values' },
 					React.createElement(
-						'ul',
-						null,
-						this.renderValues()
-					),
-					React.createElement(HelpComp, { position: 'right', text: 'Select the values you want to filter out. Corresponding map colors are indicated.', id: 'filter-values' })
-				)
-			);
-		}
-	}, {
-		key: 'getHeight',
-		value: function getHeight() {
-			var $el = $(React.findDOMNode(this.refs.root));
-			var height = $el.height();
-			if (height > this.maxHeight) {
-				this.maxHeight = height;
-			} else {
-				height = this.maxHeight;
+						'div',
+						{ className: 'atl__filter__values' },
+						React.createElement(
+							'ul',
+							null,
+							this.renderValues()
+						),
+						React.createElement(HelpComp, { position: 'right', text: 'Select the values you want to filter out. Corresponding map colors are indicated.', id: 'filter-values' })
+					)
+				);
 			}
-			return height;
-		}
-	}, {
-		key: 'componentDidUpdate',
-		value: function componentDidUpdate() {
-			this.props.cacheHeight(this.getHeight());
-		}
-	}, {
-		key: 'renderKeys',
-		value: function renderKeys() {
-			var _this = this;
-
-			var keys = this.props.filter.children,
-			    Cmp = Comp.Projects.Show.Tilemap.FilterKey;
-			return keys.map(function (key, i) {
-				return React.createElement(Cmp, { App: _this.props.App, filterKey: key });
-			});
-		}
-	}, {
-		key: 'renderValues',
-		value: function renderValues() {
-			var _this2 = this;
-
-			var values = this.props.filter.getActiveChild().children,
-			    Cmp = Comp.Projects.Show.Tilemap.FilterValue;
-			return values.map(function (value, i) {
-				return React.createElement(Cmp, { App: _this2.props.App, filterValue: value });
-			});
-		}
-	}]);
-
-	return _class;
-})(React.Component);
-
-Comp.Projects.Show.Tilemap.FilterKey = (function (_React$Component2) {
-	_inherits(_class2, _React$Component2);
-
-	function _class2() {
-		_classCallCheck(this, _class2);
-
-		_get(Object.getPrototypeOf(_class2.prototype), 'constructor', this).apply(this, arguments);
-	}
-
-	_createClass(_class2, [{
-		key: 'render',
-		value: function render() {
-			return React.createElement(
-				'li',
-				{ className: 'button ' + this.getModifierClass(), onClick: this.toggle.bind(this) },
-				React.createElement(
-					'p',
-					null,
-					this.props.filterKey.get('display_title')
-				)
-			);
-		}
-	}, {
-		key: 'getModifierClass',
-		value: function getModifierClass() {
-			if (this.props.filterKey.isActive()) {
-				return 'button--active';
+		}, {
+			key: 'getHeight',
+			value: function getHeight() {
+				var $el = $(React.findDOMNode(this.refs.root));
+				var height = $el.height();
+				if (height > this.maxHeight) {
+					this.maxHeight = height;
+				} else {
+					height = this.maxHeight;
+				}
+				return height;
 			}
-			return '';
-		}
-	}, {
-		key: 'toggle',
-		value: function toggle() {
-			var App = this.props.App;
-			this.props.filterKey.clickToggle();
-			if (App == null) {
-				return;
+		}, {
+			key: 'componentDidUpdate',
+			value: function componentDidUpdate() {
+				this.props.cacheHeight(this.getHeight());
 			}
-			App.commands.execute('update:tilemap');
+		}, {
+			key: 'renderKeys',
+			value: function renderKeys() {
+				var _this = this;
+
+				var keys = this.props.filter.children;
+				return keys.map(function (key, i) {
+					return React.createElement(FilterKey, { App: _this.props.App, filterKey: key });
+				});
+			}
+		}, {
+			key: 'renderValues',
+			value: function renderValues() {
+				var _this2 = this;
+
+				var values = this.props.filter.getActiveChild().children;
+				return values.map(function (value, i) {
+					return React.createElement(FilterValue, { App: _this2.props.App, filterValue: value });
+				});
+			}
+		}]);
+
+		return _class;
+	})(React.Component);
+
+	var FilterKey = (function (_React$Component2) {
+		_inherits(FilterKey, _React$Component2);
+
+		function FilterKey() {
+			_classCallCheck(this, FilterKey);
+
+			_get(Object.getPrototypeOf(FilterKey.prototype), 'constructor', this).apply(this, arguments);
 		}
-	}]);
 
-	return _class2;
-})(React.Component);
-
-Comp.Projects.Show.Tilemap.FilterValue = (function (_React$Component3) {
-	_inherits(_class3, _React$Component3);
-
-	function _class3() {
-		_classCallCheck(this, _class3);
-
-		_get(Object.getPrototypeOf(_class3.prototype), 'constructor', this).apply(this, arguments);
-	}
-
-	_createClass(_class3, [{
-		key: 'render',
-		value: function render() {
-			var IconComp = Comp.Icons.Hex;
-			return React.createElement(
-				'li',
-				{ className: 'toggle-button ' + this.getModifierClass(), onClick: this.toggle.bind(this), onMouseEnter: this.setHovered.bind(this), onMouseLeave: this.clearHovered.bind(this) },
-				React.createElement(IconComp, { className: 'toggle-button__icon', colorClassName: this.getColorClass() }),
-				React.createElement(
-					'div',
-					{ className: 'toggle-button__text' },
+		_createClass(FilterKey, [{
+			key: 'render',
+			value: function render() {
+				return React.createElement(
+					'li',
+					{ className: 'button ' + this.getModifierClass(), onClick: this.toggle.bind(this) },
 					React.createElement(
 						'p',
 						null,
-						this.props.filterValue.get('value')
+						this.props.filterKey.get('display_title')
 					)
-				)
-			);
-		}
-	}, {
-		key: 'getModifierClass',
-		value: function getModifierClass() {
-			var siblingsIncludingSelf = this.props.filterValue.parent.children;
-			if (!this.props.filterValue.isActive()) {
-				return 'toggle-button--inactive';
+				);
 			}
-			return '';
-		}
-	}, {
-		key: 'getColorClass',
-		value: function getColorClass() {
-			return 'bg-c-' + this.props.filterValue.getFriendlySiblingIndex(15);
-		}
-	}, {
-		key: 'setHovered',
-		value: function setHovered() {
-			var App, modelIndex, cls;
-			App = this.props.App;
-			modelIndex = this.getFilterValueIndex();
-			this.props.filterValue.parent.parent.state.valueHoverIndex = modelIndex;
-			App.commands.execute('update:tilemap');
-			cls = this.getColorClass();
-			App.commands.execute('set:header:strip:color', { className: cls });
-		}
-	}, {
-		key: 'clearHovered',
-		value: function clearHovered() {
-			var App;
-			App = this.props.App;
-			this.props.filterValue.parent.parent.state.valueHoverIndex = -1;
-			App.commands.execute('update:tilemap');
-			App.commands.execute('set:header:strip:color', 'none');
-		}
-	}, {
-		key: 'getFilterValueIndex',
-		value: function getFilterValueIndex() {
-			return this.props.filterValue.parent.children.indexOf(this.props.filterValue);
-		}
-	}, {
-		key: 'toggle',
-		value: function toggle() {
-			var App;
-			this.props.filterValue.toggle();
-			App = this.props.App;
-			if (App == null) {
-				return;
+		}, {
+			key: 'getModifierClass',
+			value: function getModifierClass() {
+				if (this.props.filterKey.isActive()) {
+					return 'button--active';
+				}
+				return '';
 			}
-			App.commands.execute('update:tilemap');
-		}
-	}]);
+		}, {
+			key: 'toggle',
+			value: function toggle() {
+				var App = this.props.App;
+				this.props.filterKey.clickToggle();
+				if (App == null) {
+					return;
+				}
+				App.commands.execute('update:tilemap');
+			}
+		}]);
 
-	return _class3;
-})(React.Component);
+		return FilterKey;
+	})(React.Component);
+
+	var FilterValue = (function (_React$Component3) {
+		_inherits(FilterValue, _React$Component3);
+
+		function FilterValue() {
+			_classCallCheck(this, FilterValue);
+
+			_get(Object.getPrototypeOf(FilterValue.prototype), 'constructor', this).apply(this, arguments);
+		}
+
+		_createClass(FilterValue, [{
+			key: 'render',
+			value: function render() {
+				var IconComp = Comp.Icons.Hex;
+				return React.createElement(
+					'li',
+					{ className: 'toggle-button ' + this.getModifierClass(), onClick: this.toggle.bind(this), onMouseEnter: this.setHovered.bind(this), onMouseLeave: this.clearHovered.bind(this) },
+					React.createElement(IconComp, { className: 'toggle-button__icon', colorClassName: this.getColorClass() }),
+					React.createElement(
+						'div',
+						{ className: 'toggle-button__text' },
+						React.createElement(
+							'p',
+							null,
+							this.props.filterValue.get('value')
+						)
+					)
+				);
+			}
+		}, {
+			key: 'getModifierClass',
+			value: function getModifierClass() {
+				var siblingsIncludingSelf = this.props.filterValue.parent.children;
+				if (!this.props.filterValue.isActive()) {
+					return 'toggle-button--inactive';
+				}
+				return '';
+			}
+		}, {
+			key: 'getColorClass',
+			value: function getColorClass() {
+				return 'bg-c-' + this.props.filterValue.getFriendlySiblingIndex(15);
+			}
+		}, {
+			key: 'setHovered',
+			value: function setHovered() {
+				var App, modelIndex, cls;
+				App = this.props.App;
+				modelIndex = this.getFilterValueIndex();
+				this.props.filterValue.parent.parent.state.valueHoverIndex = modelIndex;
+				App.commands.execute('update:tilemap');
+				cls = this.getColorClass();
+				App.commands.execute('set:header:strip:color', { className: cls });
+			}
+		}, {
+			key: 'clearHovered',
+			value: function clearHovered() {
+				var App;
+				App = this.props.App;
+				this.props.filterValue.parent.parent.state.valueHoverIndex = -1;
+				App.commands.execute('update:tilemap');
+				App.commands.execute('set:header:strip:color', 'none');
+			}
+		}, {
+			key: 'getFilterValueIndex',
+			value: function getFilterValueIndex() {
+				return this.props.filterValue.parent.children.indexOf(this.props.filterValue);
+			}
+		}, {
+			key: 'toggle',
+			value: function toggle() {
+				var App;
+				this.props.filterValue.toggle();
+				App = this.props.App;
+				if (App == null) {
+					return;
+				}
+				App.commands.execute('update:tilemap');
+			}
+		}]);
+
+		return FilterValue;
+	})(React.Component);
+})();
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -4174,225 +4278,303 @@ Comp.Projects.Show.Tilemap.Headline = (function (_React$Component) {
 
 	return _class;
 })(React.Component);
-Comp.Projects.Show.Tilemap.InfoBox = React.createClass({
-  getInitialState: function() {
-    return {
-      transitionEventNamespace: 0
-    };
-  },
-  render: function() {
-    var content;
-    content = this.getContent();
-    return React.createElement("div", {
-      "className": "atl__info-box",
-      "ref": 'main'
-    }, React.createElement("a", {
-      "href": "#",
-      "className": "bg-img-no--black atl__info-box__close",
-      "onClick": this.close
-    }), React.createElement("div", {
-      "className": "atl__title-bar atl__title-bar--image bg-c-off-white"
-    }, React.createElement("div", {
-      "className": "atl__title-bar__background"
-    }), React.createElement("div", {
-      "className": "atl__title-bar__content"
-    }, React.createElement("h1", {
-      "className": 'title'
-    }, this.getTitle()), React.createElement("ul", null, this.renderWebsite()))), React.createElement("div", {
-      "className": "atl__content-bar bg-c-off-white"
-    }, React.createElement("div", {
-      "className": "atl-grid"
-    }, React.createElement("div", {
-      "className": "atl-grid__1-3"
-    }, React.createElement("div", {
-      "className": "atl__page-nav"
-    }, React.createElement("div", {
-      "className": "atl__toc"
-    }, React.createElement("p", null, "Page Contents"), React.createElement("div", {
-      "id": "atl__toc__list"
-    }, this.renderTocList())), React.createElement("div", {
-      "id": "atl__related"
-    }))), React.createElement("div", {
-      "className": "atl-grid__2-3"
-    }, React.createElement("div", {
-      "className": 'static-content',
-      "dangerouslySetInnerHTML": {
-        __html: content.body
-      }
-    })), React.createElement("div", {
-      "className": "atl-grid__3-3"
-    }))));
-  },
-  shouldComponentUpdate: function(nextProps) {
-    return this.props.activeItem !== nextProps.activeItem;
-  },
-  componentDidUpdate: function() {
-    var App;
-    App = this.props.App;
-    if (App != null) {
-      return this.setImage();
-    }
-  },
-  getTitle: function() {
-    var activeItem, project;
-    project = this.props.project;
-    activeItem = project.get('data').items.active;
-    if (activeItem != null) {
-      return activeItem.get('name');
-    }
-    return project.get('title');
-  },
-  getBodyHtml: function() {
-    var activeItem, project;
-    project = this.props.project;
-    activeItem = project.get('data').items.active;
-    if (activeItem != null) {
-      return '<p>Active Data Html</p>';
-    }
-    return project.get('body_text');
-  },
-  close: function(e) {
-    var $el, App, transitionEventName;
-    e.preventDefault();
-    transitionEventName = this.getTransitionEventName();
-    $el = $(React.findDOMNode(this.refs.main));
-    $el.on(transitionEventName, (function(_this) {
-      return function(e) {
-        App.vent.trigger('item:deactivate');
-        return $(_this).off(transitionEventName);
-      };
-    })(this));
-    this.props.setUiState({
-      isInfoBoxActive: false
-    });
-    return App = this.props.App;
-  },
-  getTransitionEventName: function() {
-    var eventName, events;
-    events = ['webkitTransitionEnd', 'otransitionend', 'oTransitionEnd', 'msTransitionEnd', 'transitionend'];
-    this.setState({
-      transitionEventNamespace: this.state.transitionEventNamespace + 1
-    });
-    eventName = events.map((function(_this) {
-      return function(event) {
-        return "event." + _this.state.transitionEventNamespace;
-      };
-    })(this)).join(' ');
-    return eventName;
-  },
-  setImage: function() {
-    var $el, App, activeItem, imageName, img, project;
-    $el = $('.atl__title-bar__background');
-    $el.css('background-color', 'rgba(50, 50, 50, 0.1)');
-    $el.css('background-image', '');
-    project = this.props.project;
-    App = this.props.App;
-    activeItem = project.get('data').items.active;
-    if (activeItem == null) {
-      return;
-    }
-    imageName = activeItem.getImageName();
-    if (imageName != null) {
-      img = App.reqres.request('image:entity', {
-        name: imageName
-      });
-      return img.on('sync', (function(_this) {
-        return function() {
-          var backgroundImageCss;
-          backgroundImageCss = img.getBackgroundImageCss();
-          if (backgroundImageCss != null) {
-            $el.css('background-color', 'initial');
-            return $el.css('background-image', backgroundImageCss);
-          }
-        };
-      })(this));
-    }
-  },
-  renderWebsite: function() {
-    return React.createElement("li", null, React.createElement("a", {
-      "className": "icon-button",
-      "href": "<%= website %>",
-      "target": "_blank"
-    }, React.createElement("div", {
-      "className": "icon-button__icon bg-img-link--black"
-    }), React.createElement("div", {
-      "className": "icon-button__text"
-    }, "Website")));
-  },
-  getContent: function() {
-    var activeItem, body, cntnt, project, toc;
-    body = '';
-    toc = '';
-    project = this.props.project;
-    activeItem = this.props.activeItem;
-    if (activeItem != null) {
-      this.ensureActiveItemContent();
-      body = activeItem.get('info_box_content');
-      toc = activeItem.get('info_box_content_toc');
-    } else {
-      body = project.get('body_text');
-      toc = project.get('body_text_toc');
-    }
-    return cntnt = {
-      body: body,
-      toc: toc
-    };
-  },
-  renderTocList: function() {
-    var renderedList, tocItems;
-    tocItems = this.getContent().toc;
-    if (!((tocItems != null) && (tocItems.map != null) && tocItems.length > 0)) {
-      return;
-    }
-    return renderedList = tocItems.map((function(_this) {
-      return function(item, i) {
-        return React.createElement("li", {
-          "className": 'toc-' + item.tagName,
-          "key": 'toc-' + i
-        }, React.createElement("a", {
-          "href": "#toc-" + item.id,
-          "onClick": _this.triggerScrollAfterDelay.bind(_this)
-        }, item.content));
-      };
-    })(this));
-  },
-  triggerScrollAfterDelay: function() {
-    var App, fn;
-    App = this.props.App;
-    if (App == null) {
-      return;
-    }
-    fn = function() {
-      return App.vent.trigger('scroll');
-    };
-    return setTimeout(fn, 75);
-  },
-  ensureActiveItemContent: function() {
-    var App, activeItem, html, infoBoxVar, project, variables;
-    project = this.props.project;
-    App = this.props.App;
-    activeItem = this.props.activeItem;
-    if ((activeItem == null) || (activeItem.get('info_box_content') != null)) {
-      return;
-    }
-    variables = project.get('data').variables;
-    infoBoxVar = variables.filter(function(variable) {
-      return variable.get('infobox_order') != null;
-    });
-    infoBoxVar.sort(function(a, b) {
-      return a.get('infobox_order') > b.get('infobox_order');
-    });
-    html = "";
-    infoBoxVar.forEach((function(_this) {
-      return function(variable) {
-        return html += "<h1>" + (variable.get('display_title')) + "</h1>" + (variable.getFormattedField(activeItem));
-      };
-    })(this));
-    activeItem.set('info_box_content', html);
-    return activeItem.setHtmlToc('info_box_content');
-  }
-});
+"use strict";
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Projects.Show.Tilemap.InfoBox = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class(props) {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), "constructor", this).call(this, props);
+		this.state = {
+			transitionEventNamespace: 0
+		};
+	}
+
+	_createClass(_class, [{
+		key: "render",
+		value: function render() {
+			var content = this.getContent();
+			return React.createElement(
+				"div",
+				{ className: "atl__info-box", ref: "main" },
+				React.createElement("a", { href: "#", className: "bg-img-no--black atl__info-box__close", onClick: this.close.bind(this) }),
+				React.createElement(
+					"div",
+					{ className: "atl__title-bar atl__title-bar--image bg-c-off-white" },
+					React.createElement("div", { className: "atl__title-bar__background" }),
+					React.createElement(
+						"div",
+						{ className: "atl__title-bar__content" },
+						React.createElement(
+							"h1",
+							{ className: "title" },
+							this.getTitle()
+						),
+						React.createElement(
+							"ul",
+							null,
+							this.renderWebsite()
+						)
+					)
+				),
+				React.createElement(
+					"div",
+					{ className: "atl__content-bar bg-c-off-white" },
+					React.createElement(
+						"div",
+						{ className: "atl-grid" },
+						React.createElement(
+							"div",
+							{ className: "atl-grid__1-3" },
+							React.createElement(
+								"div",
+								{ className: "atl__page-nav" },
+								React.createElement(
+									"div",
+									{ className: "atl__toc" },
+									React.createElement(
+										"p",
+										null,
+										"Page Contents"
+									),
+									React.createElement(
+										"div",
+										{ id: "atl__toc__list" },
+										this.renderTocList()
+									)
+								),
+								React.createElement("div", { id: "atl__related" })
+							)
+						),
+						React.createElement(
+							"div",
+							{ className: "atl-grid__2-3" },
+							React.createElement("div", { className: "static-content", dangerouslySetInnerHTML: { __html: content.body } })
+						),
+						React.createElement("div", { className: "atl-grid__3-3" })
+					)
+				)
+			);
+		}
+	}, {
+		key: "shouldComponentUpdate",
+		value: function shouldComponentUpdate(nextProps) {
+			return this.props.activeItem !== nextProps.activeItem;
+		}
+	}, {
+		key: "componentDidUpdate",
+		value: function componentDidUpdate() {
+			var App;
+			App = this.props.App;
+			if (App != null) {
+				return this.setImage();
+			}
+		}
+	}, {
+		key: "getTitle",
+		value: function getTitle() {
+			var activeItem, project;
+			project = this.props.project;
+			activeItem = project.get('data').items.active;
+			if (activeItem != null) {
+				return activeItem.get('name');
+			}
+			return project.get('title');
+		}
+	}, {
+		key: "getBodyHtml",
+		value: function getBodyHtml() {
+			var activeItem, project;
+			project = this.props.project;
+			activeItem = project.get('data').items.active;
+			if (activeItem != null) {
+				return '<p>Active Data Html</p>';
+			}
+			return project.get('body_text');
+		}
+	}, {
+		key: "close",
+		value: function close(e) {
+			var $el, App, transitionEventName;
+			e.preventDefault();
+			transitionEventName = this.getTransitionEventName();
+			$el = $(React.findDOMNode(this.refs.main));
+			$el.on(transitionEventName, function () {
+				App.vent.trigger('item:deactivate');
+				$el.off(transitionEventName);
+			});
+			this.props.setUiState({
+				isInfoBoxActive: false
+			});
+			return App = this.props.App;
+		}
+
+		// Get a list of transition event names.
+		// Each event is namespaced with an incremental id so that the same events are not reattached over and over again.
+	}, {
+		key: "getTransitionEventName",
+		value: function getTransitionEventName() {
+			var _this2 = this;
+
+			var eventName, events;
+			events = ['webkitTransitionEnd', 'otransitionend', 'oTransitionEnd', 'msTransitionEnd', 'transitionend'];
+			this.setState({
+				transitionEventNamespace: this.state.transitionEventNamespace + 1
+			});
+			eventName = events.map(function (evnt) {
+				return evnt + "." + _this2.state.transitionEventNamespace;
+			}).join(' ');
+			return eventName;
+		}
+	}, {
+		key: "setImage",
+		value: function setImage() {
+			var $el, App, activeItem, imageName, img, project;
+			$el = $('.atl__title-bar__background');
+			$el.css('background-color', 'rgba(50, 50, 50, 0.1)');
+			$el.css('background-image', '');
+			project = this.props.project;
+			App = this.props.App;
+			activeItem = project.get('data').items.active;
+			if (activeItem == null) {
+				return;
+			}
+			imageName = activeItem.getImageName();
+			if (imageName != null) {
+				img = App.reqres.request('image:entity', {
+					name: imageName
+				});
+				return img.on('sync', (function (_this) {
+					return function () {
+						var backgroundImageCss;
+						backgroundImageCss = img.getBackgroundImageCss();
+						if (backgroundImageCss != null) {
+							$el.css('background-color', 'initial');
+							return $el.css('background-image', backgroundImageCss);
+						}
+					};
+					// @_appendImageAttribution(img.getAttributionHtml())
+				})(this));
+			}
+		}
+	}, {
+		key: "renderWebsite",
+		value: function renderWebsite() {
+			return React.createElement(
+				"li",
+				null,
+				React.createElement(
+					"a",
+					{ className: "icon-button", href: "#", target: "_blank" },
+					React.createElement("div", { className: "icon-button__icon bg-img-link--black" }),
+					React.createElement(
+						"div",
+						{ className: "icon-button__text" },
+						"Website"
+					)
+				)
+			);
+		}
+	}, {
+		key: "getContent",
+		value: function getContent() {
+			var activeItem, body, cntnt, project, toc;
+			body = '';
+			toc = '';
+			project = this.props.project;
+			activeItem = this.props.activeItem;
+			if (activeItem != null) {
+				this.ensureActiveItemContent();
+				body = activeItem.get('info_box_content');
+				toc = activeItem.get('info_box_content_toc');
+			} else {
+				body = project.get('body_text');
+				toc = project.get('body_text_toc');
+			}
+			return cntnt = {
+				body: body,
+				toc: toc
+			};
+		}
+	}, {
+		key: "renderTocList",
+		value: function renderTocList() {
+			var _this3 = this;
+
+			var renderedList, tocItems;
+			tocItems = this.getContent().toc;
+			if (!(tocItems != null && tocItems.map != null && tocItems.length > 0)) {
+				return;
+			}
+			return renderedList = tocItems.map(function (item, i) {
+				return React.createElement(
+					"li",
+					{ className: 'toc-' + item.tagName, key: 'toc-' + i },
+					React.createElement(
+						"a",
+						{ href: "#toc-" + item.id, onClick: _this3.triggerScrollAfterDelay.bind(_this3) },
+						item.content
+					)
+				);
+			});
+		}
+
+		// When a table of contents item is clicked, the sticky scroll layout code is not invoked.
+		//   To fix this, an extra scroll event is triggered after every click
+		//   to make sure the new scroll position is reached.
+	}, {
+		key: "triggerScrollAfterDelay",
+		value: function triggerScrollAfterDelay() {
+			var App, fn;
+			App = this.props.App;
+			if (App == null) {
+				return;
+			}
+			fn = function () {
+				return App.vent.trigger('scroll');
+			};
+			return setTimeout(fn, 75);
+		}
+	}, {
+		key: "ensureActiveItemContent",
+		value: function ensureActiveItemContent() {
+			var App, activeItem, html, infoBoxVar, project, variables;
+			project = this.props.project;
+			App = this.props.App;
+			activeItem = this.props.activeItem;
+			if (activeItem == null || activeItem.get('info_box_content') != null) {
+				return;
+			}
+			variables = project.get('data').variables;
+			infoBoxVar = variables.filter(function (variable) {
+				return variable.get('infobox_order') != null;
+			});
+			infoBoxVar.sort(function (a, b) {
+				return a.get('infobox_order') > b.get('infobox_order');
+			});
+			html = "";
+			infoBoxVar.forEach((function (_this) {
+				return function (variable) {
+					return html += "<h1>" + variable.get('display_title') + "</h1>" + variable.getFormattedField(activeItem);
+				};
+			})(this));
+			activeItem.set('info_box_content', html);
+			return activeItem.setHtmlToc('info_box_content');
+		}
+	}]);
+
+	return _class;
+})(React.Component);
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -4489,8 +4671,14 @@ Comp.Projects.Show.Tilemap.Map = (function (_React$Component) {
 			App.Map.stop();
 		}
 	}, {
+		key: "componentWillUpdate",
+		value: function componentWillUpdate() {
+			// console.log('Updating Tilemap.Map');
+		}
+	}, {
 		key: "componentDidUpdate",
 		value: function componentDidUpdate() {
+
 			var App = this.props.App;
 			if (App == null) {
 				return;
@@ -4756,6 +4944,7 @@ Comp.Projects.Show.Tilemap.SettingsBar = (function (_React$Component) {
 	}, {
 		key: 'checkOverflow',
 		value: function checkOverflow() {
+			console.log('checking overflow');
 			var totalHeight,
 			    isCollapsed,
 			    App = this.props.App;

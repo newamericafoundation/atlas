@@ -5,6 +5,55 @@ Policy analysis tool for New America's Education Policy Program.
 Url: http://atlas.newamerica.org/welcome
 Related Url: http://build.atlas.newamerica.org/
 
+Atlas is currently deployed on Node version 0.12.2 (see .ebextensions/00_general.config for corresponding setting).
+
+## Development Environment
+
+Once the repository is downloaded, run the following two commands to install dependencies locally:
+
+	npm install
+	bower install
+
+Next, create a folder called ``secrets`` directly outside the project folder, so that they are siblings (this prevents accidental commits to the repository). Make sure the folder contains an ``atlas.json`` file containing the secret environment variables. Currently, these are the following:
+
+	GOOGLE_CLIENT_ID
+	GOOGLE_CLIENT_SECRET
+	PRERENDER_TOKEN
+	PRODUCTION_DB_URL
+
+Run development environment by typing:
+
+	gulp dev
+
+Then navigate to ``localhost:8081``. This command automatically reads in the secret environment variables from ``./../secrets/atlas.json`` so the app will work in development mode. It will also watch for changes in development scripts and styles automatically (see build logic in the ``gulpfile``).
+
+### Development Database
+
+The development database defaults to localhost:27017 as set in ``./url_config.json``. When Atlas is run locally, this is set automatically.
+
+## Testing Environment
+
+Client- and server-side specs are run with the following commands:
+
+	gulp spec
+	gulp spec-server
+
+There is no separate test database.
+
+## Production Environment
+
+Atlas can be deployed by simply typing:
+
+	gulp deploy
+
+This will automatically compile production assets (minified for css, minified + gzipped for js), commit the changes with a standard commit message and deploy the production server.
+
+The ``.ebextensions`` folder supplies the configuration settings that ensure Atlas can be correctly load balanced and connected to the database. An important part of this is deploying within a VPC, if the database instance was deployed inside a VPC also. This will ensure that MongoDB ports can be opened between the database instance and all Elastic Beanstalk instances, as they launch and close on demand.
+
+## Production Database
+
+The production database is set in ``./url_config.json``. Atlas connects to this database automatically in production mode, distinguishing between dev and production databases by reading environment variables. The environment is set to production in an eb extension (see below).
+
 ## App Structure and Basics
 
 Main entry point: ``./app.js``.
@@ -30,48 +79,6 @@ To allow code-sharing between server and client, models and components are writt
 #### ``./app/assets/scripts/atlas``
 
 Holds main client-side scripts. All single-page application code is contained within this folder, structured in ``Marionette.js`` modules except for the ``/components`` directory. This component holds React components that are currently replacing Backbone Views.
-
-## Development Environment
-
-Atlas is currently deployed on Node version 0.12.2 (see .ebextensions/00_general.config for corresponding setting).
-
-	npm install
-	bower install
-
-Run development environment by simply typing:
-
-	gulp dev
-
-Then navigate to ``localhost:8081``.
-
-This will automatically watch for changes in development scripts and styles (see file types in gulpfile).
-
-### Development Database
-
-The development database defaults to localhost:27017 as set in ./atlas_config.json. When Atlas is run locally, this is set automatically.
-
-## Testing Environment
-
-Client- and server-side specs are run with the following commands:
-
-	gulp spec
-	gulp spec-server
-
-There is not separate test database.
-
-## Production Environment
-
-Atlas can be deployed by simply typing:
-
-	gulp deploy
-
-This will automatically compile production assets (minified for css, minified + gzipped for js), commit the changes with a standard commit message and deploy the production server.
-
-The ``.ebextensions`` folder supplies the configuration settings that ensure Atlas can be correctly load balanced and connected to the database. An important part of this is deploying within a VPC, if the database instance was deployed in VPC also. This will ensure that MongoDB ports can be opened between the database instance and all Elastic Beanstalk instances, as they launch on demand.
-
-## Production Database
-
-The production database is set in ./atlas_config.json. Atlas connects to this database automatically in production mode, distinguishing between dev and production databases by reading environment variables. The environment is set to production in an eb extension (see below).
 
 ## Lessons learned
 

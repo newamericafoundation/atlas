@@ -46038,7 +46038,7 @@ ChartistHtml.ChartManager.prototype = {
 		}
 
 		chart.on('draw', function(context) {
-			console.log(context);
+			// console.log(context);
 		});
 
 		chart.on('created', function() {

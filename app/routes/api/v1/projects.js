@@ -28,7 +28,6 @@ router.get('/', function(req, res) {
 		fields;
 
 	if (!req.isAuthenticated()) {
-		console.log('setting query params to yes');
 		queryParams.is_live = "Yes";
 	}
 
@@ -123,7 +122,9 @@ router.post('/print', function(req, res) {
 		return (typeof variable !== "undefined") && (variable != "null");
 	};
 
-	queryParams.is_live = "Yes";
+	if (!req.isAuthenticated()) {
+		queryParams.is_live = "Yes";
+	}
 
 	return dbConnector.then(function(db) {
 

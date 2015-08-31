@@ -8962,7 +8962,6 @@ var slider = $.widget( "ui.slider", $.ui.mouse, {
       },
       routes: {
         'welcome': 'welcome_index',
-        'about': 'about_index',
         'menu': 'projects_index',
         'show': 'projects_show',
         'projects/new': 'projects_new',
@@ -8977,16 +8976,6 @@ var slider = $.widget( "ui.slider", $.ui.mouse, {
         el = $('#site')[0];
         opt.App = App;
         c = React.createElement(Comp.Layout, opt);
-        return React.render(c, el);
-      },
-      renderReactCustomLayout: function(opt) {
-        var c, el;
-        if (opt == null) {
-          opt = {};
-        }
-        el = $('#site')[0];
-        opt.App = App;
-        c = React.createElement(Comp.Dashboard, opt);
         return React.render(c, el);
       },
       navigate: function(url, options) {
@@ -9010,14 +8999,6 @@ var slider = $.widget( "ui.slider", $.ui.mouse, {
           theme: 'none',
           headerTitle: 'New America',
           routableComponentName: 'Welcome'
-        });
-      },
-      about_index: function(param) {
-        this._initiateNavigation('about_index');
-        return this.renderReactLayout({
-          route: 'about_index',
-          headerTitle: 'Atlas',
-          routableComponentName: 'About'
         });
       },
       projects_index: function(param) {
@@ -9051,15 +9032,6 @@ var slider = $.widget( "ui.slider", $.ui.mouse, {
           theme: 'atlas',
           headerTitle: 'Atlas',
           routableComponentName: 'Projects.New'
-        });
-      },
-      dashboard_index: function() {
-        this._initiateNavigation('dashboard_index');
-        return this.renderReactCustomLayout({
-          route: 'dashboard_index',
-          theme: 'naf',
-          isInternal: true,
-          headerTitle: 'My New America'
         });
       },
       _getAtlasUrl: function(atlas_url) {
@@ -14622,7 +14594,6 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
 
       PathOverlayView.prototype.update = function() {
         var geoJson, path;
-        console.log('updating paths');
         path = this.getPath();
         geoJson = this.collection;
         this.g.selectAll('path').attr({
