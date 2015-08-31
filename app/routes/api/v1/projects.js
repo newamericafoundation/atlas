@@ -27,7 +27,10 @@ router.get('/', function(req, res) {
 		specialQueryParams = complexQuery.specialQuery,
 		fields;
 
-	queryParams.is_live = "Yes";
+	if (!req.isAuthenticated()) {
+		console.log('setting query params to yes');
+		queryParams.is_live = "Yes";
+	}
 
 	fields = { encoded_image: 0 };
 
@@ -90,8 +93,10 @@ router.get('/image', function(req, res) {
 
 	var queryParams = req.query || {},
 		fields = { encoded_image: 1, image_credit: 1, atlas_url: 1 };
-		
-	queryParams.is_live = "Yes";
+	
+	if (!req.isAuthenticated()) {
+		queryParams.is_live = "Yes";
+	}
 
 	return dbConnector.then(function(db) {
 

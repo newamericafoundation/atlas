@@ -34,6 +34,30 @@ exports.Model = base.Model.extend({
         },
 
         {
+            id: 'is_section_overview',
+            formComponentName: 'Radio',
+            formComponentProps: {
+                id: 'is_section_overview',
+                labelText: 'Is section overview.',
+                hint: 'Each section has one overview project - check if this is one of them:',
+                options: [ 'Yes', 'No' ],
+                defaultOption: 'Yes'
+            }
+        },
+
+        {
+            id: 'is_live',
+            formComponentName: 'Radio',
+            formComponentProps: {
+                id: 'is_live',
+                labelText: 'Is live.',
+                hint: 'Please specify whether this project is viewable on the live site. Changes take effect immediately.',
+                options: [ 'Yes', 'No' ],
+                defaultOption: 'Yes'
+            }
+        },
+
+        {
             id: 'project_section_ids',
             name: 'Project Sections',
             formComponentName: 'MultipleSelect',
@@ -61,14 +85,16 @@ exports.Model = base.Model.extend({
             formComponentName: 'SelectizeText',
             formComponentProps: {
                 id: 'tags',
-                labelText: 'Tags'
+                labelText: 'Tags',
+                hint: 'Tags'
             }
         },
 
         {
             id: 'body_text',
-            formComponentName: 'CKeditorInput',
+            formComponentName: 'CKEditor',
             formComponentProps: {
+                id: 'body_text',
                 labelText: 'Body Text'
             }
         },
@@ -81,6 +107,26 @@ exports.Model = base.Model.extend({
                 labelText: 'Data file',
                 hint: '',
                 worksheets: [ 'data', 'variables' ]
+            }
+        },
+
+        {
+            id: 'image',
+            formComponentName: 'ImageFile',
+            formComponentProps: {
+                id: 'image',
+                labelText: 'Image File',
+                hint: ''
+            }
+        },
+
+        {
+            id: 'image_credit',
+            formComponentName: 'Text',
+            formComponentProps: {
+                id: 'image_credit',
+                labelText: 'Image Credit',
+                hint: "Single URL or Markdown, e.g. 'Image supplied by [Image Corporation](http://www.imgcrp.com)':"
             }
         }
 
@@ -133,6 +179,14 @@ exports.Model = base.Model.extend({
         resp = this._removeSpaces(resp, 'template_name');
         resp = this._processStaticHtml(resp, 'body_text');
         return resp;
+    },
+
+    getImageUrl: function() {
+        var encodedImage = this.get('encoded_image');
+        if (encodedImage == null) { return; }
+        encodedImage = encodedImage.replace(/(\r\n|\n|\r)/gm, '');
+        if (encodedImage.indexOf('base64') > -1) { return "url(" + encodedImage + ")"; }
+        return "url('data:image/png;base64," + encodedImage + "')";
     },
 
     /** 

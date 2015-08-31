@@ -10,7 +10,7 @@ Comp.Form = class extends React.Component {
 	setData(newDatum) {
 		var data = this.state.data;
 		data[newDatum.id] = newDatum.value;
-		console.log(data);
+		// console.log(data);
 		this.setState({ data: data });
 	}
 
@@ -32,7 +32,11 @@ Comp.Form = class extends React.Component {
 				<FormComp {...props} sendData={this.setData.bind(this)} />
 			);
 		});
-		return <input />
+		return (<input />);
+	}
+
+	componentDidUpdate() {
+		console.log(this.state.data);
 	}
 
 }

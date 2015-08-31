@@ -1,5 +1,6 @@
 var gulp = require('gulp'),
     gulpIf = require('gulp-if'),
+    copy = require('gulp-copy'),
     concat = require('gulp-concat'),
     del = require('del'),
     util = require('gulp-util'),
@@ -38,11 +39,18 @@ gulp.task('bundle-models', () => {
 });
 
 // One-time task to copy asynchronously loaded library scripts from bower_components to ./public.
-gulp.task('js-copy-vendor', () => {
-    return gulp.src(config.source.js.vendorAsync)
+gulp.task('js-copy-async-vendor-single-script', () => {
+    return gulp.src(config.source.js.vendorAsyncSingleScript)
         .pipe(copy('public/assets/vendor', { prefix: 2 }))
         .pipe(gzip())
         .pipe(gulp.dest('public/assets/vendor'));
+});
+
+// One-time task to copy vendor folders to ./public. These scripts require other scripts of their own
+//   so the entire directory is needed.
+gulp.task('js-copy-async-vendor-folder', () => {
+    return gulp.src(config.source.js.vendorAsyncFolder)
+        .pipe(copy('public/assets/vendor', { prefix: 1 }));
 });
 
 // Gzip json.

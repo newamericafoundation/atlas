@@ -1,13 +1,23 @@
 var express = require('express'),
-	router = express.Router(),
-	resources = [ 'projects', 'project_sections', 'project_templates', 'core_data', 'images', 'researchers' ],
 	fingerprintManifest = require('./fingerprint-manifest'),
-	json2csv = require('nice-json2csv'),
-	multer = require('multer');
+	json2csv = require('nice-json2csv');
 
-var upload = multer({ dest: 'uploads/' });
+var router = express.Router();
+var resources = [ 'projects', 'project_sections', 'project_templates', 'core_data', 'images' ];
 
 router.use(json2csv.expressDecorator);
+
+router.get('/login', (req, res) => {
+	res.render('login');
+});
+
+router.get('/logout', (req, res) => {
+    req.logout();
+    res.redirect('/');
+});
+
+// Authentication routes.
+router.use('/auth', require('./auth.js'));
 
 // Use subroutes for data api, requiring resource-specific subrouters.
 resources.forEach(function(resource) {
@@ -40,20 +50,9 @@ router.get('/welcome', welcome_index);
 router.get('/menu', projects_index);
 router.get('/*', projects_show);
 
-var dataUpload = upload.fields([
-	{
-		name: 'data',
-		maxCount: 1
-	}
-]);
 
-router.post('/post-test', upload.single('data'), (req, res) => {
-	console.dir(req.body);
-	console.dir(req.files);
-	res.json({ 'message': 'success' })
-});
-
-// Special print route that takes a title and html as post parameter.
+// Print route that takes a title and html as post parameter, assemble a 
+//   corresponding simple html page and calls window.print automatically.
 router.post('/print', function(req, res) {
 	req.body = req.body || {};
 	req.body.title = req.body.title || 'Title';

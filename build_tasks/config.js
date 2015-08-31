@@ -9,9 +9,13 @@ module.exports = {
     	js: {
 
     		// Vendor scripts that are lazy-loaded when needed, then kept on the window.
-			vendorAsync: [
+			vendorAsyncSingleScript: [
 		        './bower_components/d3/d3.min.js', 
 		        './bower_components/mapbox.js/mapbox.js'
+		    ],
+
+		    vendorAsyncFolder: [
+		    	'./bower_components/ckeditor/**/*'
 		    ],
 
 		    // bower scripts
@@ -29,13 +33,17 @@ module.exports = {
 		        './bower_components/chartist/dist/chartist.js',
 		        './bower_components/chartist-html/build/chartist-html.js',
 		        './bower_components/moment/moment.js',
-
+		        './bower_components/jszip/dist/jszip.js',
+		        './bower_components/js-xlsx/dist/xlsx.js',
 		        './bower_components/numeral/numeral.js'
 		    ],
 
 		    // main application code
 		    source: [
-		    	'./app/assets/scripts/vendor/**/*.js',
+		    	// all vendor code not available through bower are stored here
+		    	'./app/assets/scripts/vendor/chroma.js',
+		    	'./app/assets/scripts/vendor/jquery-ui.js',
+		    	'./app/assets/scripts/vendor/faisalman-simple-excel-js-3a2b9be/src/simple-excel.js',
 		        './app/assets/scripts/config/**/*.js.coffee',
 		        './app/assets/scripts/atlas/atlas.js.coffee',
 		        './app/assets/scripts/atlas/routes/**/*',

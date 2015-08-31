@@ -70,9 +70,8 @@ Comp.Projects.Index.Projects.Project = React.createClass
 
 	getBackgroundStyle: ->
 		project = @props.project
-		return unless project? and project.get('encoded_image')?
-		url = "url('data:image/png;base64,#{project.get('encoded_image').replace(/(\r\n|\n|\r)/gm, '')}')"
-		return { 'backgroundImage': url }
+		return unless project?
+		return { 'backgroundImage': project.getImageUrl() }
 
 
 	getInitials: ->

@@ -1,13 +1,20 @@
 require('babel/register');
 
 var express = require('express'),
-	bodyParser = require('body-parser'), 
-	app = express(),
+	passport = require('passport'),
+	cookieParser = require('cookie-parser'),
+    bodyParser = require('body-parser'),
+    methodOverride = require('method-override'),
+    session = require('express-session'),
 	router = require('./app/routes/index'),
 	fs = require('fs'),
-	port = process.env.PORT || 8081,
-	env = app.get('env'),
 	json2csv = require('nice-json2csv');
+
+var app = express(),
+	env = app.get('env'),
+	port = process.env.PORT || 8081;
+
+require('./config/passport_config.js');
 
 // Basic configuration.
 app.use(bodyParser.json());
@@ -22,38 +29,22 @@ if (env === 'production') {
 app.set('views', __dirname + '/app/views');
 app.set('view engine', 'jade');
 
-/*
- * Removes query string from url.
- * @param {string} url - E.g. assets/scripts/app.js?a=b
- * @returns {string} url - Result: assets/scripts/app.js
- */
-var removeQueryString = function(url) {
-	if (url.indexOf('?') > -1) {
-		url = url.slice(0, url.indexOf('?'));
-	}
-	return url;
-}; 
-
-// Serve gzipped javascript if available
-//   This must be declared before static routes are configured.
-app.get([ '*.js' ], function(req, res, next) {
-	var url, gzipUrl;
-	url = req.url;
-	url = removeQueryString(url);
-	gzipUrl = 'public' + url + '.gz';
-	// check if file exists
-	fs.readFile(gzipUrl, function(err) {
-		// if not, continue with unmodified response
-		if (err) { return next(); }
-		// change response url and encoding for gzipped files
-		req.url = url + '.gz';
-		res.set('Content-Encoding', 'gzip');
-		console.log('Found and served gzip version for: ' + req.url);
-		next();
-	});
-});
-
+// GZip serving middleware must be declared before static folder declaration. 
+app.get([ '*.js' ], require('./app/middleware/serve_gzip.js'));
 app.use(express.static('public'));
+
+app.use(cookieParser());
+app.use(methodOverride());
+app.use(session({ 
+    secret: 'Super_Big_Secret',
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session({
+    resave: false,
+    saveUninitialized: false
+}));
 
 // Use router (see ./app/routes directory).
 app.use(router);

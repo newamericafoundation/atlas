@@ -8424,6 +8424,377 @@ var slider = $.widget( "ui.slider", $.ui.mouse, {
 
 
 }));
+// SimpleExcel.js v0.1.3
+// Client-side script to easily parse / convert / write any Microsoft Excel XLSX / XML / CSV / TSV / HTML / JSON / etc formats
+// https://github.com/faisalman/simple-excel-js
+// 
+// Copyright © 2013-2014 Faisal Salman <fyzlman@gmail.com>
+// Dual licensed under GPLv2 & MIT
+
+(function (window, undefined) {
+
+    'use strict';
+
+    ///////////////////////
+    // Constants & Helpers
+    ///////////////////////
+
+    var Char = {
+        COMMA           : ',',
+        RETURN          : '\r',
+        NEWLINE         : '\n',
+        SEMICOLON       : ';',
+        TAB             : '\t'
+    };
+    
+    var DataType = {
+        CURRENCY    : 'CURRENCY',
+        DATETIME    : 'DATETIME',
+        FORMULA     : 'FORMULA',
+        LOGICAL     : 'LOGICAL',
+        NUMBER      : 'NUMBER',
+        TEXT        : 'TEXT'
+    };
+
+    var Exception = {    
+        CELL_NOT_FOUND              : 'CELL_NOT_FOUND',
+        COLUMN_NOT_FOUND            : 'COLUMN_NOT_FOUND',
+        ROW_NOT_FOUND               : 'ROW_NOT_FOUND',
+        ERROR_READING_FILE          : 'ERROR_READING_FILE',
+        ERROR_WRITING_FILE          : 'ERROR_WRITING_FILE',
+        FILE_NOT_FOUND              : 'FILE_NOT_FOUND',
+        //FILE_EXTENSION_MISMATCH     : 'FILE_EXTENSION_MISMATCH',
+        FILETYPE_NOT_SUPPORTED      : 'FILETYPE_NOT_SUPPORTED',
+        INVALID_DOCUMENT_FORMAT     : 'INVALID_DOCUMENT_FORMAT',
+        INVALID_DOCUMENT_NAMESPACE  : 'INVALID_DOCUMENT_NAMESPACE',
+        MALFORMED_JSON              : 'MALFORMED_JSON',
+        UNIMPLEMENTED_METHOD        : 'UNIMPLEMENTED_METHOD',
+        UNKNOWN_ERROR               : 'UNKNOWN_ERROR',
+        UNSUPPORTED_BROWSER         : 'UNSUPPORTED_BROWSER'
+    };
+
+    var Format = {        
+        CSV     : 'csv',
+        HTML    : 'html',
+        JSON    : 'json',
+        TSV     : 'tsv',
+        XLS     : 'xls',
+        XLSX    : 'xlsx',
+        XML     : 'xml'
+    };
+
+    var MIMEType = {
+        CSV     : 'text/csv',
+        HTML    : 'text/html',
+        JSON    : 'application/json',
+        TSV     : 'text/tab-separated-values',
+        XLS     : 'application/vnd.ms-excel',
+        XLSX    : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        XML     : 'text/xml',
+        XML2003 : 'application/xml'
+    };
+
+    var Regex = {
+        FILENAME    : /.*\./g,
+        LINEBREAK   : /\r\n/g
+    };
+
+    var Utils = {
+        getFiletype : function (filename) {
+            return filename.replace(Regex.FILENAME, '');
+        },
+        isEqual     : function (str1, str2, ignoreCase) {
+            return ignoreCase ? str1.toLowerCase() == str2.toLowerCase() : str1 == str2;
+        },
+        isSupportedBrowser : function () {
+            return !![].forEach 
+                && !!window.FileReader;
+        },
+        overrideProperties : function (old, fresh) {
+            for (var i in old) {
+                if (old.hasOwnProperty(i)) {
+                    old[i] = fresh.hasOwnProperty(i) ? fresh[i] : old[i];
+                }
+            }
+            return old;
+        }
+    };
+    
+    /////////////////////////////
+    // Spreadsheet Constructors
+    ////////////////////////////
+
+    var Cell = function (value, dataType) {
+        var defaults = {
+            value    : value || '',
+            dataType : dataType || DataType.TEXT
+        };
+        if (typeof value == typeof {}) {
+            defaults = Utils.overrideProperties(defaults, value);
+        }
+        this.value = defaults.value;
+        this.dataType = defaults.dataType;
+        this.toString = function () {
+            return value.toString();
+        }
+    };
+        
+    var Records = function () {};
+    Records.prototype = new Array();
+    Records.prototype.getCell = function (colNum, rowNum) {
+        return this[rowNum - 1][colNum - 1];
+    };
+    Records.prototype.getColumn = function (colNum) {        
+        var col = [];
+        this.forEach(function (el, i) {
+            col.push(el[colNum - 1]);
+        });
+        return col;
+    };
+    Records.prototype.getRow = function (rowNum) {
+        return this[rowNum - 1];
+    };
+    
+    var Sheet = function () {
+        this.records = new Records();
+    };
+    Sheet.prototype.getCell = function (colNum, rowNum) {
+        return this.records.getCell(colNum, rowNum);
+    };
+    Sheet.prototype.getColumn = function (colNum) {
+        return this.records.getColumn(colNum);
+    };
+    Sheet.prototype.getRow = function (rowNum) {
+        return this.records.getRow(rowNum);
+    };
+    Sheet.prototype.insertRecord = function (array) {
+        this.records.push(array);
+        return this;
+    };
+    Sheet.prototype.removeRecord = function (index) {
+        this.records.splice(index - 1, 1);
+        return this;
+    };
+    Sheet.prototype.setRecords = function (records) {
+        this.records = records;
+        return this;
+    };
+    
+    /////////////
+    // Parsers
+    ////////////
+
+    // Base Class
+    var BaseParser = function () {};
+    BaseParser.prototype = {
+        _filetype   : '',
+        _sheet      : [],
+        getSheet    : function (number) {
+            var number = number || 1;
+            return this._sheet[number - 1].records;
+        },
+        loadFile    : function (file, callback) {
+            var self = this;
+            //var filetype = Utils.getFiletype(file.name);
+            //if (Utils.isEqual(filetype, self._filetype, true)) {
+                var reader = new FileReader();
+                reader.onload = function () {
+                    self.loadString(this.result, 0);
+                    callback.apply(self);
+                };
+                reader.readAsText(file);
+            //} else {
+                //throw Exception.FILE_EXTENSION_MISMATCH;
+            //}
+            return self;
+        },
+        loadString  : function (string, sheetnum) {
+            throw Exception.UNIMPLEMENTED_METHOD;
+        }
+    };
+
+    // CSV
+    var CSVParser = function () {};
+    CSVParser.prototype = new BaseParser();
+    CSVParser.prototype._delimiter = Char.COMMA;
+    CSVParser.prototype._filetype = Format.CSV;
+    CSVParser.prototype.loadString = function (str, sheetnum) {
+        // TODO: implement real CSV parser
+        var self = this;
+        var sheetnum = sheetnum || 0;
+        self._sheet[sheetnum] = new Sheet();
+        str.replace(Regex.LINEBREAK, Char.NEWLINE).split(Char.NEWLINE).forEach(function (el, i) {
+            var row = [];
+            el.split(self._delimiter).forEach(function (el) {
+                row.push(new Cell(el));
+            });
+            self._sheet[sheetnum].insertRecord(row);
+        });
+        return self;
+    };
+    CSVParser.prototype.setDelimiter = function (separator) {
+        this._delimiter = separator;
+        return this;
+    };
+    
+    // HTML
+    var HTMLParser = function () {};
+    HTMLParser.prototype = new BaseParser();
+    HTMLParser.prototype._filetype = Format.HTML;
+    HTMLParser.prototype.loadString = function (str, sheetnum) {
+        var self = this;
+        var sheetnum = sheetnum || 0;
+        var domParser = new DOMParser();
+        var domTree = domParser.parseFromString(str, MIMEType.HTML);
+        var sheets = domTree.getElementsByTagName('table');
+        [].forEach.call(sheets, function (el, i) {
+            self._sheet[sheetnum] = new Sheet();
+            var rows = el.getElementsByTagName('tr');
+            [].forEach.call(rows, function (el, i) {
+                var cells = el.getElementsByTagName('td');
+                var row = [];
+                [].forEach.call(cells, function (el, i) {
+                    row.push(new Cell(el.innerHTML));
+                });
+                self._sheet[sheetnum].insertRecord(row);
+            });
+            sheetnum++;
+        });
+        return self;
+    };
+
+    // TSV
+    var TSVParser = function () {};
+    TSVParser.prototype = new CSVParser();
+    TSVParser.prototype._delimiter = Char.TAB;
+    TSVParser.prototype._filetype = Format.TSV;
+
+    // XML
+    var XMLParser = function () {};
+    XMLParser.prototype = new BaseParser();
+    XMLParser.prototype._filetype = Format.XML;
+    XMLParser.prototype.loadString = function (str, sheetnum) {
+        var self = this;
+        var sheetnum = sheetnum || 0;
+        var domParser = new DOMParser();
+        var domTree = domParser.parseFromString(str, MIMEType.XML);
+        var sheets = domTree.getElementsByTagName('Worksheet');
+        [].forEach.call(sheets, function (el, i) {
+            self._sheet[sheetnum] = new Sheet();
+            var rows = el.getElementsByTagName('Row');
+            [].forEach.call(rows, function (el, i) {
+                var cells = el.getElementsByTagName('Data');
+                var row = [];
+                [].forEach.call(cells, function (el, i) {
+                    row.push(new Cell(el.innerHTML));
+                });
+                self._sheet[sheetnum].insertRecord(row);
+            });
+            sheetnum++;
+        }); 
+        return self;
+    };
+
+    // Export var
+    var Parser = {
+        CSV : CSVParser,
+        HTML: HTMLParser,
+        TSV : TSVParser,
+        XML : XMLParser
+    };
+
+    /////////////
+    // Writers
+    ////////////
+
+    // Base Class
+    var BaseWriter = function () {};
+    BaseWriter.prototype = {
+        _filetype   : '',
+        _mimetype   : '',
+        _sheet      : [],
+        getSheet    : function (number) {
+            var number = number || 1;
+            return this._sheet[number - 1].records;
+        },
+        getString   : function () {
+            throw Exception.UNIMPLEMENTED_METHOD;
+        },
+        insertSheet : function (data) {
+            if (!!data.records) {
+                this._sheet.push(data);
+            } else {
+                var sheet = new Sheet();
+                sheet.setRecords(data);
+                this._sheet.push(sheet);
+            }
+            return this;
+        },
+        removeSheet : function (index) {
+            this._sheet.splice(index - 1, 1);
+            return this;
+        },
+        saveFile    : function () {
+            // TODO: find a reliable way to save as local file
+            window.open('data:' + this._mimetype + ';base64,' + window.btoa(this.getString()));            
+            return this;
+        }
+    };
+
+    // CSV
+    var CSVWriter = function () {};
+    CSVWriter.prototype = new BaseWriter();
+    CSVWriter.prototype._delimiter = Char.COMMA;
+    CSVWriter.prototype._filetype = Format.CSV;
+    CSVWriter.prototype._mimetype = MIMEType.CSV;
+    CSVWriter.prototype.getString = function () {
+        // TODO: implement real CSV writer
+        var self = this;
+        var string = '';
+        this.getSheet(1).forEach(function (el, i) {
+            el.forEach(function (el) {
+                string += el + self._delimiter;
+            });
+            string += '\r\n';
+        });
+        return string;
+    };
+    CSVWriter.prototype.setDelimiter = function (separator) {
+        this._delimiter = separator;
+        return this;
+    };
+
+    // TSV
+    var TSVWriter = function () {};
+    TSVWriter.prototype = new CSVWriter();
+    TSVWriter.prototype._delimiter = Char.TAB;
+    TSVWriter.prototype._filetype = Format.TSV;
+    TSVWriter.prototype._mimetype = MIMEType.TSV;
+    
+    // Export var
+    var Writer = {
+        CSV : CSVWriter,
+        TSV : TSVWriter
+    };
+
+    /////////////
+    // Exports
+    ////////////
+
+    var SimpleExcel = {
+        Cell                : Cell,
+        DataType            : DataType,
+        Exception           : Exception,
+        isSupportedBrowser  : Utils.isSupportedBrowser(),
+        Parser              : Parser,
+        Sheet               : Sheet,
+        Writer              : Writer
+    };
+
+    window.SimpleExcel = SimpleExcel;
+
+})(this);
+
 (function() {
   if (typeof ChartistHtml !== "undefined" && ChartistHtml !== null) {
     ChartistHtml.config.baseClass = "atlas-chart";
@@ -8453,6 +8824,7 @@ var slider = $.widget( "ui.slider", $.ui.mouse, {
     }
     return $.ajax({
       url: path,
+      contentType: 'text/javascript; charset=utf-8',
       dataType: 'script',
       success: next
     });
@@ -9408,6 +9780,8 @@ var slider = $.widget( "ui.slider", $.ui.mouse, {
 }).call(this);
 
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+// Do not bundle researcher.
+
 'use strict';
 
 var base = require('./base.js'),
@@ -9419,7 +9793,6 @@ var base = require('./base.js'),
     project = require('./project.js'),
     projectSection = require('./project_section.js'),
     projectTemplate = require('./project_template.js'),
-    researcher = require('./researcher.js'),
     richGeoFeature = require('./rich_geo_feature.js'),
     variable = require('./variable.js');
 
@@ -9452,9 +9825,6 @@ window.Atlas.module('Models', function (Models) {
 	Models.ProjectTemplate = projectTemplate.Model;
 	Models.ProjectTemplates = projectTemplate.Collection;
 
-	Models.Researcher = researcher.Model;
-	Models.Researchers = researcher.Collection;
-
 	Models.RichGeoFeature = richGeoFeature.Model;
 	Models.RichGeoFeatures = richGeoFeature.Collection;
 
@@ -9462,7 +9832,7 @@ window.Atlas.module('Models', function (Models) {
 	Models.Variables = variable.Collection;
 });
 
-},{"./base.js":2,"./base_filter.js":4,"./filter.js":5,"./image.js":6,"./item.js":7,"./project.js":8,"./project_section.js":9,"./project_template.js":10,"./researcher.js":11,"./rich_geo_feature.js":12,"./variable.js":13}],2:[function(require,module,exports){
+},{"./base.js":2,"./base_filter.js":4,"./filter.js":5,"./image.js":6,"./item.js":7,"./project.js":8,"./project_section.js":9,"./project_template.js":10,"./rich_geo_feature.js":11,"./variable.js":12}],2:[function(require,module,exports){
 'use strict';
 
 var Backbone = window.Backbone,
@@ -10293,7 +10663,7 @@ exports.FilterTree = LocalBaseModel.extend({
 
 });
 
-},{"./../utilities/formatters.js":14,"./base.js":2,"./base_composite.js":3}],6:[function(require,module,exports){
+},{"./../utilities/formatters.js":13,"./base.js":2,"./base_composite.js":3}],6:[function(require,module,exports){
 'use strict';
 
 var _ = window._,
@@ -10303,6 +10673,8 @@ var _ = window._,
 exports.Model = base.Model.extend({
 
 	urlRoot: '/api/v1/images',
+
+	fields: [],
 
 	/** 
   * Fetches image model url by name key
@@ -10775,7 +11147,7 @@ exports.Collection = base.Collection.extend({
 
 });
 
-},{"./../../db/seeds/states.json":17,"./base.js":2,"./rich_geo_feature.js":12}],8:[function(require,module,exports){
+},{"./../../db/seeds/states.json":16,"./base.js":2,"./rich_geo_feature.js":11}],8:[function(require,module,exports){
 'use strict';
 
 var _ = window._,
@@ -10807,6 +11179,26 @@ exports.Model = base.Model.extend({
             placeholder: 'Enter Author'
         }
     }, {
+        id: 'is_section_overview',
+        formComponentName: 'Radio',
+        formComponentProps: {
+            id: 'is_section_overview',
+            labelText: 'Is section overview.',
+            hint: 'Each section has one overview project - check if this is one of them:',
+            options: ['Yes', 'No'],
+            defaultOption: 'Yes'
+        }
+    }, {
+        id: 'is_live',
+        formComponentName: 'Radio',
+        formComponentProps: {
+            id: 'is_live',
+            labelText: 'Is live.',
+            hint: 'Please specify whether this project is viewable on the live site. Changes take effect immediately.',
+            options: ['Yes', 'No'],
+            defaultOption: 'Yes'
+        }
+    }, {
         id: 'project_section_ids',
         name: 'Project Sections',
         formComponentName: 'MultipleSelect',
@@ -10830,12 +11222,14 @@ exports.Model = base.Model.extend({
         formComponentName: 'SelectizeText',
         formComponentProps: {
             id: 'tags',
-            labelText: 'Tags'
+            labelText: 'Tags',
+            hint: 'Tags'
         }
     }, {
         id: 'body_text',
-        formComponentName: 'CKeditorInput',
+        formComponentName: 'CKEditor',
         formComponentProps: {
+            id: 'body_text',
             labelText: 'Body Text'
         }
     }, {
@@ -10846,6 +11240,22 @@ exports.Model = base.Model.extend({
             labelText: 'Data file',
             hint: '',
             worksheets: ['data', 'variables']
+        }
+    }, {
+        id: 'image',
+        formComponentName: 'ImageFile',
+        formComponentProps: {
+            id: 'image',
+            labelText: 'Image File',
+            hint: ''
+        }
+    }, {
+        id: 'image_credit',
+        formComponentName: 'Text',
+        formComponentProps: {
+            id: 'image_credit',
+            labelText: 'Image Credit',
+            hint: "Single URL or Markdown, e.g. 'Image supplied by [Image Corporation](http://www.imgcrp.com)':"
         }
     }],
 
@@ -10896,6 +11306,18 @@ exports.Model = base.Model.extend({
         resp = this._removeSpaces(resp, 'template_name');
         resp = this._processStaticHtml(resp, 'body_text');
         return resp;
+    },
+
+    getImageUrl: function getImageUrl() {
+        var encodedImage = this.get('encoded_image');
+        if (encodedImage == null) {
+            return;
+        }
+        encodedImage = encodedImage.replace(/(\r\n|\n|\r)/gm, '');
+        if (encodedImage.indexOf('base64') > -1) {
+            return "url(" + encodedImage + ")";
+        }
+        return "url('data:image/png;base64," + encodedImage + "')";
     },
 
     /** 
@@ -11137,7 +11559,7 @@ exports.Collection = base.Collection.extend({
 
 });
 
-},{"./../utilities/formatters.js":14,"./base.js":2,"./filter.js":5,"./item.js":7,"./variable.js":13}],9:[function(require,module,exports){
+},{"./../utilities/formatters.js":13,"./base.js":2,"./filter.js":5,"./item.js":7,"./variable.js":12}],9:[function(require,module,exports){
 'use strict';
 
 var _ = window._,
@@ -11159,7 +11581,7 @@ exports.Collection = baseFilter.Collection.extend({
 	}
 });
 
-},{"./../../db/seeds/project_sections.json":15,"./base_filter":4}],10:[function(require,module,exports){
+},{"./../../db/seeds/project_sections.json":14,"./base_filter":4}],10:[function(require,module,exports){
 'use strict';
 
 var _ = window._,
@@ -11182,19 +11604,7 @@ exports.Collection = baseFilter.Collection.extend({
 	}
 });
 
-},{"./../../db/seeds/project_templates.json":16,"./base_filter.js":4}],11:[function(require,module,exports){
-'use strict';
-
-var _ = window._,
-    Backbone = window.Backbone,
-    base = require('./base.js');
-
-exports.Model = base.Model.extend();
-exports.Collection = base.Collection.extend({
-	model: exports.Model
-});
-
-},{"./base.js":2}],12:[function(require,module,exports){
+},{"./../../db/seeds/project_templates.json":15,"./base_filter.js":4}],11:[function(require,module,exports){
 'use strict';
 
 var _ = window._,
@@ -11222,7 +11632,7 @@ exports.Collection = Backbone.Collection.extend({
 
 });
 
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 var _ = window._,
@@ -11330,7 +11740,7 @@ exports.Collection = base.Collection.extend({
 
 });
 
-},{"./../utilities/formatters.js":14,"./base.js":2}],14:[function(require,module,exports){
+},{"./../utilities/formatters.js":13,"./base.js":2}],13:[function(require,module,exports){
 'use strict';
 
 var numeral = require('numeral'),
@@ -11410,7 +11820,7 @@ var formatters = {
 
 module.exports = formatters;
 
-},{"marked":18,"numeral":19}],15:[function(require,module,exports){
+},{"marked":17,"numeral":18}],14:[function(require,module,exports){
 module.exports=[
 	{ "id": "0", "name": "Early Education" },
 	{ "id": "1", "name": "PreK-12 Education" },
@@ -11420,14 +11830,14 @@ module.exports=[
 	{ "id": "5", "name": "Workforce Development" },
 	{ "id": "6", "name": "Federal Education Budget" }
 ]
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 module.exports=[
 	{ "id": "0", "order": 0, "display_name": "Analysis Tools", "name": "Tilemap" },
 	{ "id": "1", "order": 3, "display_name": "Explainers", "name": "Explainer" },
 	{ "id": "2", "order": 1, "display_name": "Policy Briefs", "name": "Policy Brief" },
 	{ "id": "3", "order": 2, "display_name": "Polling", "name": "Polling" }
 ]
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 module.exports=[
   {
     "id": 1,
@@ -11651,7 +12061,7 @@ module.exports=[
     "code": "WY"
   }
 ]
-},{}],18:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 (function (global){
 /**
  * marked - a markdown parser
@@ -12940,7 +13350,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
 }());
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],19:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 /*!
  * numeral.js
  * version : 1.5.3

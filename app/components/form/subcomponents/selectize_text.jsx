@@ -3,8 +3,15 @@ Comp.Form.SelectizeText = class extends React.Component {
 	render() {
 		return (
 			<div className='form__wrapper'>
-				<label>{ this.props.labelText }</label>
-				<input ref='input' type='text' name={this.props.id} placeholder={this.props.placeholder} />
+				<label for={this.props.id}>{ this.props.labelText }</label>
+				<p className='form__hint'>{ this.props.hint }</p>
+				<input 
+					ref='input' 
+					type='text' 
+					name={this.props.id} 
+					id={this.props.id} 
+					placeholder={this.props.placeholder} 
+				/>
 			</div>
 		);
 	}

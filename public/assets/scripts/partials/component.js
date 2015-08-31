@@ -2426,7 +2426,7 @@ Comp.Form = (function (_React$Component) {
 		value: function setData(newDatum) {
 			var data = this.state.data;
 			data[newDatum.id] = newDatum.value;
-			console.log(data);
+			// console.log(data);
 			this.setState({ data: data });
 		}
 	}, {
@@ -2451,6 +2451,246 @@ Comp.Form = (function (_React$Component) {
 				return React.createElement(FormComp, _extends({}, props, { sendData: _this.setData.bind(_this) }));
 			});
 			return React.createElement('input', null);
+		}
+	}, {
+		key: 'componentDidUpdate',
+		value: function componentDidUpdate() {
+			console.log(this.state.data);
+		}
+	}]);
+
+	return _class;
+})(React.Component);
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Form.CKEditor = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class(props) {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
+		this.editorBasePath = '/assets/vendor/ckeditor';
+		// this.editorBasePath = '//cdn.ckeditor.com/4.5.3/standard';
+	}
+
+	_createClass(_class, [{
+		key: 'render',
+		value: function render() {
+			return React.createElement(
+				'div',
+				{ className: 'form__wrapper' },
+				React.createElement(
+					'label',
+					{ 'for': this.props.id },
+					this.props.labelText
+				),
+				React.createElement(
+					'p',
+					{ className: 'form__hint' },
+					this.props.hint
+				),
+				React.createElement('textarea', {
+					onChange: this.sendData.bind(this),
+					name: this.props.id,
+					id: this.props.id,
+					placeholder: this.props.placeholder
+				})
+			);
+		}
+	}, {
+		key: 'configureEditor',
+		value: function configureEditor() {
+			window.CKEDITOR_BASEPATH = this.editorBasePath;
+			CKEDITOR.config.basePath = this.editorBasePath;
+			CKEDITOR.config.allowedContent = true;
+			CKEDITOR.config.format_tags = 'p;h1;h2;h3;h4';
+			CKEDITOR.config.format_h4 = { element: 'h4', attributes: { 'class': 'Notes under tables' } };
+			CKEDITOR.config.extraPlugins = 'timestamp';
+			CKEDITOR.config.toolbar = [['Source', '-', 'Undo', 'Redo', 'Cut', 'Copy', 'Paste', '-', 'Find', 'Replace', 'Timestamp'], ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'Link', 'Unlink', '-', 'Format', '-', 'TextColor', 'BGColor']];
+			CKEDITOR.config.height = '500px';
+		}
+	}, {
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			var _this = this;
+
+			$().ensureScript('CKEDITOR', this.editorBasePath + '/ckeditor.js', function () {
+				_this.configureEditor();
+				CKEDITOR.replace(_this.props.id);
+			});
+		}
+	}, {
+		key: 'sendData',
+		value: function sendData(e) {
+			this.props.sendData({
+				id: this.props.id,
+				value: e.target.value
+			});
+		}
+	}]);
+
+	return _class;
+})(React.Component);
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Form.ImageFile = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class() {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).apply(this, arguments);
+	}
+
+	_createClass(_class, [{
+		key: 'render',
+		value: function render() {
+			return React.createElement(
+				'div',
+				{ className: 'form__wrapper' },
+				React.createElement(
+					'label',
+					null,
+					this.props.labelText
+				),
+				React.createElement(
+					'p',
+					{ className: 'form__hint' },
+					this.props.hint
+				),
+				React.createElement('input', {
+					ref: 'input',
+					onChange: this.sendData.bind(this),
+					type: 'file',
+					name: this.props.id,
+					id: this.props.id,
+					placeholder: this.props.placeholder
+				})
+			);
+		}
+	}, {
+		key: 'sendData',
+		value: function sendData(e) {
+			var _this = this;
+
+			var file = e.target.files[0];
+			var reader = new FileReader();
+
+			reader.onload = function () {
+				var b64 = reader.result;
+				console.log('setting image');
+				_this.props.sendData({
+					id: _this.props.id,
+					value: b64
+				});
+			};
+
+			reader.readAsDataURL(file);
+		}
+	}]);
+
+	return _class;
+})(React.Component);
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Form.Radio = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class(props) {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
+		// When the form is first displayed, the first item should be checked.
+		//   after there is form interaction, checked state should not be manipulted by React.
+		this.shouldSetDefaultOption = false;
+	}
+
+	_createClass(_class, [{
+		key: 'render',
+		value: function render() {
+			return React.createElement(
+				'div',
+				{ className: 'form__wrapper' },
+				React.createElement(
+					'label',
+					{ 'for': this.props.id },
+					this.props.labelText
+				),
+				React.createElement(
+					'p',
+					{ className: 'form__hint' },
+					this.props.hint
+				),
+				this.renderOptions()
+			);
+		}
+	}, {
+		key: 'renderOptions',
+		value: function renderOptions() {
+			var _this = this;
+
+			return this.props.options.map(function (option, i) {
+				var isChecked = _this.shouldSetDefaultOption ? undefined : i === 0;
+				return React.createElement(
+					'div',
+					{ className: 'form__radio' },
+					React.createElement('input', {
+						type: 'radio',
+						name: _this.props.id,
+						id: _this.props.id + '-opt-' + i,
+						checked: isChecked,
+						onChange: _this.sendData.bind(_this),
+						value: option
+					}),
+					React.createElement(
+						'p',
+						null,
+						option
+					)
+				);
+			});
+		}
+	}, {
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			this.props.sendData({
+				id: this.props.id,
+				value: this.props.options[0]
+			});
+		}
+	}, {
+		key: 'sendData',
+		value: function sendData(e) {
+			this.shouldSetDefaultOption = true;
+			this.props.sendData({
+				id: this.props.id,
+				value: e.target.value
+			});
 		}
 	}]);
 
@@ -2483,10 +2723,21 @@ Comp.Form.SelectizeText = (function (_React$Component) {
 				{ className: 'form__wrapper' },
 				React.createElement(
 					'label',
-					null,
+					{ 'for': this.props.id },
 					this.props.labelText
 				),
-				React.createElement('input', { ref: 'input', type: 'text', name: this.props.id, placeholder: this.props.placeholder })
+				React.createElement(
+					'p',
+					{ className: 'form__hint' },
+					this.props.hint
+				),
+				React.createElement('input', {
+					ref: 'input',
+					type: 'text',
+					name: this.props.id,
+					id: this.props.id,
+					placeholder: this.props.placeholder
+				})
 			);
 		}
 	}, {
@@ -2546,8 +2797,13 @@ Comp.Form.SpreadsheetFile = (function (_React$Component) {
 				{ className: 'form__wrapper' },
 				React.createElement(
 					'label',
-					null,
+					{ 'for': this.props.id },
 					this.props.labelText
+				),
+				React.createElement(
+					'p',
+					{ className: 'form__hint' },
+					this.props.hint
 				),
 				React.createElement('input', {
 					ref: 'input',
@@ -2560,12 +2816,34 @@ Comp.Form.SpreadsheetFile = (function (_React$Component) {
 			);
 		}
 	}, {
+		key: 'parseWorkBook',
+		value: function parseWorkBook(workbook) {
+			var obj = {};
+			console.log(workbook);
+			for (var sheetName in workbook.Sheets) {
+				var sheet = workbook.Sheets[sheetName];
+				obj[sheetName] = XLSX.utils.sheet_to_json(sheet, { raw: true });
+			}
+			return obj;
+		}
+	}, {
 		key: 'sendData',
 		value: function sendData(e) {
-			this.props.sendData({
-				id: this.props.id,
-				value: e.target.value
-			});
+			var _this = this;
+
+			var file = e.target.files[0];
+			var reader = new FileReader();
+
+			reader.onload = function () {
+				var bstr = reader.result;
+				var workbook = XLSX.read(bstr, { type: 'binary' });
+				_this.props.sendData({
+					id: _this.props.id,
+					value: _this.parseWorkBook(workbook)
+				});
+			};
+
+			reader.readAsBinaryString(file);
 		}
 	}]);
 
@@ -2598,10 +2876,21 @@ Comp.Form.Text = (function (_React$Component) {
 				{ className: 'form__wrapper' },
 				React.createElement(
 					'label',
-					null,
+					{ 'for': this.props.id },
 					this.props.labelText
 				),
-				React.createElement('input', { type: 'text', onChange: this.sendData.bind(this), name: this.props.id, placeholder: this.props.placeholder })
+				React.createElement(
+					'p',
+					{ className: 'form__hint' },
+					this.props.hint
+				),
+				React.createElement('input', {
+					type: 'text',
+					onChange: this.sendData.bind(this),
+					name: this.props.id,
+					id: this.props.id,
+					placeholder: this.props.placeholder
+				})
 			);
 		}
 	}, {
@@ -3046,14 +3335,13 @@ Comp.Projects.Index.Projects.Project = React.createClass({
     }, React.createElement("p", null, 'Image Credit'), React.createElement("div", null, 'Shutterstock')));
   },
   getBackgroundStyle: function() {
-    var project, url;
+    var project;
     project = this.props.project;
-    if (!((project != null) && (project.get('encoded_image') != null))) {
+    if (project == null) {
       return;
     }
-    url = "url('data:image/png;base64," + (project.get('encoded_image').replace(/(\r\n|\n|\r)/gm, '')) + "')";
     return {
-      'backgroundImage': url
+      'backgroundImage': project.getImageUrl()
     };
   },
   getInitials: function() {

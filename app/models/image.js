@@ -5,6 +5,12 @@ var _ = require('underscore'),
 exports.Model = base.Model.extend({
 	
 	urlRoot: '/api/v1/images',
+
+	fields: [
+
+		
+
+	],
 	
 	/** 
 	 * Fetches image model url by name key

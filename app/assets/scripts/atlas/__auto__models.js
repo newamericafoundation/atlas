@@ -1,4 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+// Do not bundle researcher.
+
 'use strict';
 
 var base = require('./base.js'),
@@ -10,7 +12,6 @@ var base = require('./base.js'),
     project = require('./project.js'),
     projectSection = require('./project_section.js'),
     projectTemplate = require('./project_template.js'),
-    researcher = require('./researcher.js'),
     richGeoFeature = require('./rich_geo_feature.js'),
     variable = require('./variable.js');
 
@@ -43,9 +44,6 @@ window.Atlas.module('Models', function (Models) {
 	Models.ProjectTemplate = projectTemplate.Model;
 	Models.ProjectTemplates = projectTemplate.Collection;
 
-	Models.Researcher = researcher.Model;
-	Models.Researchers = researcher.Collection;
-
 	Models.RichGeoFeature = richGeoFeature.Model;
 	Models.RichGeoFeatures = richGeoFeature.Collection;
 
@@ -53,7 +51,7 @@ window.Atlas.module('Models', function (Models) {
 	Models.Variables = variable.Collection;
 });
 
-},{"./base.js":2,"./base_filter.js":4,"./filter.js":5,"./image.js":6,"./item.js":7,"./project.js":8,"./project_section.js":9,"./project_template.js":10,"./researcher.js":11,"./rich_geo_feature.js":12,"./variable.js":13}],2:[function(require,module,exports){
+},{"./base.js":2,"./base_filter.js":4,"./filter.js":5,"./image.js":6,"./item.js":7,"./project.js":8,"./project_section.js":9,"./project_template.js":10,"./rich_geo_feature.js":11,"./variable.js":12}],2:[function(require,module,exports){
 'use strict';
 
 var Backbone = window.Backbone,
@@ -884,7 +882,7 @@ exports.FilterTree = LocalBaseModel.extend({
 
 });
 
-},{"./../utilities/formatters.js":14,"./base.js":2,"./base_composite.js":3}],6:[function(require,module,exports){
+},{"./../utilities/formatters.js":13,"./base.js":2,"./base_composite.js":3}],6:[function(require,module,exports){
 'use strict';
 
 var _ = window._,
@@ -894,6 +892,8 @@ var _ = window._,
 exports.Model = base.Model.extend({
 
 	urlRoot: '/api/v1/images',
+
+	fields: [],
 
 	/** 
   * Fetches image model url by name key
@@ -1366,7 +1366,7 @@ exports.Collection = base.Collection.extend({
 
 });
 
-},{"./../../db/seeds/states.json":17,"./base.js":2,"./rich_geo_feature.js":12}],8:[function(require,module,exports){
+},{"./../../db/seeds/states.json":16,"./base.js":2,"./rich_geo_feature.js":11}],8:[function(require,module,exports){
 'use strict';
 
 var _ = window._,
@@ -1398,6 +1398,26 @@ exports.Model = base.Model.extend({
             placeholder: 'Enter Author'
         }
     }, {
+        id: 'is_section_overview',
+        formComponentName: 'Radio',
+        formComponentProps: {
+            id: 'is_section_overview',
+            labelText: 'Is section overview.',
+            hint: 'Each section has one overview project - check if this is one of them:',
+            options: ['Yes', 'No'],
+            defaultOption: 'Yes'
+        }
+    }, {
+        id: 'is_live',
+        formComponentName: 'Radio',
+        formComponentProps: {
+            id: 'is_live',
+            labelText: 'Is live.',
+            hint: 'Please specify whether this project is viewable on the live site. Changes take effect immediately.',
+            options: ['Yes', 'No'],
+            defaultOption: 'Yes'
+        }
+    }, {
         id: 'project_section_ids',
         name: 'Project Sections',
         formComponentName: 'MultipleSelect',
@@ -1421,12 +1441,14 @@ exports.Model = base.Model.extend({
         formComponentName: 'SelectizeText',
         formComponentProps: {
             id: 'tags',
-            labelText: 'Tags'
+            labelText: 'Tags',
+            hint: 'Tags'
         }
     }, {
         id: 'body_text',
-        formComponentName: 'CKeditorInput',
+        formComponentName: 'CKEditor',
         formComponentProps: {
+            id: 'body_text',
             labelText: 'Body Text'
         }
     }, {
@@ -1437,6 +1459,22 @@ exports.Model = base.Model.extend({
             labelText: 'Data file',
             hint: '',
             worksheets: ['data', 'variables']
+        }
+    }, {
+        id: 'image',
+        formComponentName: 'ImageFile',
+        formComponentProps: {
+            id: 'image',
+            labelText: 'Image File',
+            hint: ''
+        }
+    }, {
+        id: 'image_credit',
+        formComponentName: 'Text',
+        formComponentProps: {
+            id: 'image_credit',
+            labelText: 'Image Credit',
+            hint: "Single URL or Markdown, e.g. 'Image supplied by [Image Corporation](http://www.imgcrp.com)':"
         }
     }],
 
@@ -1487,6 +1525,18 @@ exports.Model = base.Model.extend({
         resp = this._removeSpaces(resp, 'template_name');
         resp = this._processStaticHtml(resp, 'body_text');
         return resp;
+    },
+
+    getImageUrl: function getImageUrl() {
+        var encodedImage = this.get('encoded_image');
+        if (encodedImage == null) {
+            return;
+        }
+        encodedImage = encodedImage.replace(/(\r\n|\n|\r)/gm, '');
+        if (encodedImage.indexOf('base64') > -1) {
+            return "url(" + encodedImage + ")";
+        }
+        return "url('data:image/png;base64," + encodedImage + "')";
     },
 
     /** 
@@ -1728,7 +1778,7 @@ exports.Collection = base.Collection.extend({
 
 });
 
-},{"./../utilities/formatters.js":14,"./base.js":2,"./filter.js":5,"./item.js":7,"./variable.js":13}],9:[function(require,module,exports){
+},{"./../utilities/formatters.js":13,"./base.js":2,"./filter.js":5,"./item.js":7,"./variable.js":12}],9:[function(require,module,exports){
 'use strict';
 
 var _ = window._,
@@ -1750,7 +1800,7 @@ exports.Collection = baseFilter.Collection.extend({
 	}
 });
 
-},{"./../../db/seeds/project_sections.json":15,"./base_filter":4}],10:[function(require,module,exports){
+},{"./../../db/seeds/project_sections.json":14,"./base_filter":4}],10:[function(require,module,exports){
 'use strict';
 
 var _ = window._,
@@ -1773,19 +1823,7 @@ exports.Collection = baseFilter.Collection.extend({
 	}
 });
 
-},{"./../../db/seeds/project_templates.json":16,"./base_filter.js":4}],11:[function(require,module,exports){
-'use strict';
-
-var _ = window._,
-    Backbone = window.Backbone,
-    base = require('./base.js');
-
-exports.Model = base.Model.extend();
-exports.Collection = base.Collection.extend({
-	model: exports.Model
-});
-
-},{"./base.js":2}],12:[function(require,module,exports){
+},{"./../../db/seeds/project_templates.json":15,"./base_filter.js":4}],11:[function(require,module,exports){
 'use strict';
 
 var _ = window._,
@@ -1813,7 +1851,7 @@ exports.Collection = Backbone.Collection.extend({
 
 });
 
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 var _ = window._,
@@ -1921,7 +1959,7 @@ exports.Collection = base.Collection.extend({
 
 });
 
-},{"./../utilities/formatters.js":14,"./base.js":2}],14:[function(require,module,exports){
+},{"./../utilities/formatters.js":13,"./base.js":2}],13:[function(require,module,exports){
 'use strict';
 
 var numeral = require('numeral'),
@@ -2001,7 +2039,7 @@ var formatters = {
 
 module.exports = formatters;
 
-},{"marked":18,"numeral":19}],15:[function(require,module,exports){
+},{"marked":17,"numeral":18}],14:[function(require,module,exports){
 module.exports=[
 	{ "id": "0", "name": "Early Education" },
 	{ "id": "1", "name": "PreK-12 Education" },
@@ -2011,14 +2049,14 @@ module.exports=[
 	{ "id": "5", "name": "Workforce Development" },
 	{ "id": "6", "name": "Federal Education Budget" }
 ]
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 module.exports=[
 	{ "id": "0", "order": 0, "display_name": "Analysis Tools", "name": "Tilemap" },
 	{ "id": "1", "order": 3, "display_name": "Explainers", "name": "Explainer" },
 	{ "id": "2", "order": 1, "display_name": "Policy Briefs", "name": "Policy Brief" },
 	{ "id": "3", "order": 2, "display_name": "Polling", "name": "Polling" }
 ]
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 module.exports=[
   {
     "id": 1,
@@ -2242,7 +2280,7 @@ module.exports=[
     "code": "WY"
   }
 ]
-},{}],18:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 (function (global){
 /**
  * marked - a markdown parser
@@ -3531,7 +3569,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
 }());
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],19:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 /*!
  * numeral.js
  * version : 1.5.3

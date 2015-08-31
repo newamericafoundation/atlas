@@ -33,6 +33,7 @@
     "react": "~0.13.3",
     "underscore": "~1.8.3",
     "ckeditor": "~4.5.3",
-    "react-router": "~0.13.3"
+    "react-router": "~0.13.3",
+    "js-xlsx": "~0.8.0"
   }
 }

@@ -6,5 +6,6 @@ $.fn.ensureScript = (globalName, path, next) ->
 	return next() if window[globalName]?
 	$.ajax
 		url: path
+		contentType: 'text/javascript; charset=utf-8'
 		dataType: 'script'
 		success: next

@@ -3,6 +3,7 @@ import nodemon from 'gulp-nodemon';
 import liveReload from 'gulp-livereload';
 import notify from 'gulp-notify';
 import path from 'path';
+import secretEnv from './../../secrets/atlas.json';
 
 var devTasks = [
 
@@ -57,6 +58,7 @@ gulp.task('dev', () => {
     liveReload.listen();
     nodemon({
         script: './app.js',
+        env: secretEnv,
         ext: 'js jade scss coffee cjsx jsx',
         ignore: [ 'node_modules/**/*', 'bower_components/**/*', 'spec/**/*', 'db/**/*' ],
         tasks: buildTaskList
