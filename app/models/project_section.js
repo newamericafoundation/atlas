@@ -8,11 +8,21 @@ exports.Model = baseFilter.Model.extend({
 });
 
 exports.Collection = baseFilter.Collection.extend({
+
+	dbCollection: 'project_sections',
+
+	dbSeed: seed,
+
 	model: exports.Model,
+
 	url: '/api/v1/project_sections',
+
 	hasSingleActiveChild: false,
+
 	initializeActiveStatesOnReset: true,
+
 	initialize: function() {
 		this.reset(seed);
 	}
+
 });

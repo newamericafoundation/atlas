@@ -1,6 +1,10 @@
-var Backbone = require('backbone'),
-	_ = require('underscore'),
-	$ = require('jquery');
+import * as Backbone from 'backbone';
+import * as _ from 'underscore';
+import $ from 'jquery';
+
+// var Backbone = require('backbone'),
+// 	_ = require('underscore'),
+// 	$ = require('jquery');
 
 var Model = Backbone.Model.extend({
 
@@ -233,6 +237,67 @@ var Model = Backbone.Model.extend({
 var Collection = Backbone.Collection.extend({
 	
 	model: Model,
+
+	buildQueryString: function(query) {
+
+		var queryString = '?';
+
+		if (query == null) { return ''; }
+
+		for (let key in query) {
+			let value = query[key];
+			queryString += `${key}=${value}&`
+		}
+
+		queryString = queryString.slice(0, -1);
+
+		return queryString;
+
+	},
+
+	// Fetch instances on the client.
+	// TODO: customize to include a req object.
+	getClientFetchPromise: function(query) {
+
+		var isQueried = (query != null);
+
+		return new Promise((resolve, reject) => {
+
+			if (!isQueried) {
+
+				// Small, seeded collections are resolved immediately.
+				if (this.dbSeed) {
+					this.reset(this.dbSeed);
+					return resolve(this);
+				}
+
+				// Cached collections are resolved immediately.
+				if (this.dbCache) {
+					this.reset(this.dbCache);
+					return resolve(this);
+				}
+
+			}
+
+			var url = this.apiUrl + this.buildQueryString(query);
+
+			$.ajax({
+				url: url,
+				type: 'get',
+				success: (data) => {
+					// Set database cache.
+					if (!isQueried) { this.dbCache = data; }
+					this.reset(data);
+					resolve(this);
+				},
+				error: (err) => {
+					reject(err);
+				}
+			});
+
+		});
+
+	},
 
 	/**
 	 * Recognize and process server response by applying the corresponding model's parse method.

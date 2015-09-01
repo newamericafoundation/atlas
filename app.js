@@ -8,7 +8,8 @@ var express = require('express'),
     session = require('express-session'),
 	router = require('./app/routes/index'),
 	fs = require('fs'),
-	json2csv = require('nice-json2csv');
+	json2csv = require('nice-json2csv'),
+	project = require('./app/models/project.js');
 
 var app = express(),
 	env = app.get('env'),

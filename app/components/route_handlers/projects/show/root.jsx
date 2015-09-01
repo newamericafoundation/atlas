@@ -35,9 +35,8 @@ Comp.Projects.Show = class extends React.Component {
 	}
 
 	getClassName() {
-		var cls, project, data, App;
 
-		App = this.props.App;
+		var cls, project, data;
 
 		cls = "atl";
 		project = this.state.project;
@@ -45,12 +44,6 @@ Comp.Projects.Show = class extends React.Component {
 		
 		cls += ` atl--${this.state.ui.display}-display`;
 
-		// isCollapsed as a ui state is stored both on the Marionette object and the component state.
-		// this is because of infinite update loop problems on the Settings Bar component
-		// that checks if their contents are overflowing (check can only happen after a dom update,
-		// which triggers a recursive update loop).
-		// TODO: better solution.
-		//var isCollapsedByDimension = (App && App.uiState.isCollapsed);
 		var isCollapsedByDimension = (this.state.ui.isCollapsed);
 		if ((this.state.ui.isCollapsedMaster) || (!this.state.ui.isCollapsedMaster && isCollapsedByDimension)) {
 			cls += ' atl--collapsed';
@@ -67,7 +60,8 @@ Comp.Projects.Show = class extends React.Component {
 			cls += ' atl__info-box--narrow' ;
 		}
 		
-		return cls
+		return cls;
+
 	}
 
 	// Pick and render template-specific project.
@@ -77,10 +71,21 @@ Comp.Projects.Show = class extends React.Component {
 			TilemapComp = Comp.Projects.Show.Tilemap;
 		if (this.state.project == null) { return <LoadingComp />; }
 		if (this._isModelStatic()) {
-			return <ExplainerComp App={this.props.App} uiState={ this.state.ui } setUiState={ this.setUiState.bind(this) } project={ this.state.project } related={ this.state.related } />
+			return <ExplainerComp 
+				App={this.props.App} 
+				uiState={ this.state.ui } 
+				setUiState={ this.setUiState.bind(this) } 
+				project={ this.state.project } 
+				related={ this.state.related } 
+			/>
 		}
 		if (this._isModelTilemap()) {
-			return <TilemapComp App={this.props.App} uiState={ this.state.ui } setUiState={ this.setUiState.bind(this) } project={ this.state.project } />
+			return <TilemapComp 
+				App={this.props.App} 
+				uiState={ this.state.ui } 
+				setUiState={ this.setUiState.bind(this) } 
+				project={ this.state.project } 
+			/>
 		}
 		return <LoadingComp />;
 	}
@@ -99,23 +104,27 @@ Comp.Projects.Show = class extends React.Component {
 
 	// Send separate network request fetching related projects.
 	fetchRelatedProjects() {
-		var App = this.props.App,
-			project = this.state.project;
-		if (App == null || project == null) { return; }
-		var id = project.get('id');
-		var related = App.reqres.request('project:entities', { queryString: "related_to=#{id}", cache: false });
-		related.on('reset', () => {
-			this.setState({ related: related });
+
+		var	project = this.state.project;
+
+		var coll = new M.project.Collection();
+		var promise = coll.getClientFetchPromise({ related_to: project.get('id') });
+		promise.then((coll) => {
+			this.setState({ related: coll });
 		});
+
 	}
 
 	// Send network request to get project data.
 	fetchProject() {
-		var App = this.props.App;
-		if (App == null) { return; }
-		var project = App.reqres.request('project:entity', { atlas_url: App.currentAtlasUrl });
-		project.on('sync', () => {
-			// Only 
+
+		var atlas_url = this.props.atlas_url || this.props.params.atlas_url;
+
+		var coll = new M.project.Collection();
+		var promise = coll.getClientFetchPromise({ atlas_url: atlas_url });
+		promise.then((coll) => {
+			console.log(coll);
+			var project = coll.models[0];
 			if (project.exists()) {
 				project.prepOnClient();
 				this.setState({ project: project });
@@ -124,6 +133,7 @@ Comp.Projects.Show = class extends React.Component {
 				Backbone.history.navigate('welcome', { trigger: true });
 			}
 		});
+
 	}
 
 	componentDidMount() {

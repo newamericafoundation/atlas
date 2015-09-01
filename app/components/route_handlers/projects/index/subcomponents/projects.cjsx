@@ -2,8 +2,6 @@ Comp.Projects.Index.Projects = React.createClass
 	
 	displayName: 'Projects.Index.Projects'
 
-	mixins: [ Comp.Mixins.BackboneEvents ]
-
 	getInitialState: ->
 		{
 			shouldDisplayImage: false,
@@ -11,7 +9,6 @@ Comp.Projects.Index.Projects = React.createClass
 		}
 
 	render: ->
-		console.log @state
 		return (
 			<div className="atl__projects">
 				{ this.renderList() }
@@ -61,8 +58,6 @@ Comp.Projects.Index.Projects = React.createClass
 
 Comp.Projects.Index.Projects.Project = React.createClass
 	
-	displayName: 'Projects.Index.Projects.Item'
-
 	render: ->
 		return <div/> if not this.isVisible()
 		project = this.props.project

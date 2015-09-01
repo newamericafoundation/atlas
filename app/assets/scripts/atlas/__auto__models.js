@@ -51,12 +51,40 @@ window.Atlas.module('Models', function (Models) {
 	Models.Variables = variable.Collection;
 });
 
+window.M = {
+	base: base,
+	project: project,
+	projectSection: projectSection,
+	projectTemplate: projectTemplate,
+	item: item,
+	variable: variable,
+	image: image,
+	coreDatum: coreDatum,
+	filter: filter
+};
+
 },{"./base.js":2,"./base_filter.js":4,"./filter.js":5,"./image.js":6,"./item.js":7,"./project.js":8,"./project_section.js":9,"./project_template.js":10,"./rich_geo_feature.js":11,"./variable.js":12}],2:[function(require,module,exports){
 'use strict';
 
-var Backbone = window.Backbone,
-    _ = window._,
-    $ = window.$;
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _backbone = (window.Backbone);
+
+var Backbone = _interopRequireWildcard(_backbone);
+
+var _underscore = (window._);
+
+var _ = _interopRequireWildcard(_underscore);
+
+var _jquery = (window.$);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+// var Backbone = require('backbone'),
+// 	_ = require('underscore'),
+// 	$ = require('jquery');
 
 var Model = Backbone.Model.extend({
 
@@ -74,7 +102,7 @@ var Model = Backbone.Model.extend({
   * Custom get function, accommodating a suffix, e.g. status_2012.
   * @param {string} field - Same as in Backbone.
   * @param {string} suffix - Custom suffix.
-  
+  * @returns {} value
   */
 	get: function get(field, suffix) {
 		var getFnc = Backbone.Model.prototype.get;
@@ -220,9 +248,9 @@ var Model = Backbone.Model.extend({
 	_processStaticHtml: function _processStaticHtml(resp, key) {
 		var $html, html, newHtml;
 		html = resp[key];
-		$html = $(html);
+		$html = (0, _jquery2['default'])(html);
 		$html.find('a').attr('target', '_blank');
-		newHtml = $('<div></div>').append($html.clone()).html();
+		newHtml = (0, _jquery2['default'])('<div></div>').append($html.clone()).html();
 		resp[key] = newHtml;
 		return resp;
 	},
@@ -236,9 +264,9 @@ var Model = Backbone.Model.extend({
 		var $html, md, newHtml;
 		md = this.get(key);
 		if (md != null) {
-			$html = $(marked(md));
+			$html = (0, _jquery2['default'])(marked(md));
 			$html.find('a').attr('target', '_blank');
-			newHtml = $('<div></div>').append($html.clone()).html();
+			newHtml = (0, _jquery2['default'])('<div></div>').append($html.clone()).html();
 			return newHtml;
 		}
 	},
@@ -259,11 +287,11 @@ var Model = Backbone.Model.extend({
 
 		arr = [];
 
-		$containedHtml = $('<div></div>').append($(html));
+		$containedHtml = (0, _jquery2['default'])('<div></div>').append((0, _jquery2['default'])(html));
 
 		$containedHtml.children().each(function () {
 
-			var $el = $(this),
+			var $el = (0, _jquery2['default'])(this),
 			    tagName = $el.prop('tagName'),
 			    content = $el.html(),
 			    tocId = content.replace(/[^a-z0-9]/ig, ' ').replace(/\s+/g, '-').toLowerCase();
@@ -274,7 +302,7 @@ var Model = Backbone.Model.extend({
 			tagName = tagName.toLowerCase();
 
 			if (['h1', 'h2'].indexOf(tagName) > -1) {
-				$('<span id="toc-' + tocId + '"></span>').insertBefore($el);
+				(0, _jquery2['default'])('<span id="toc-' + tocId + '"></span>').insertBefore($el);
 				arr.push({
 					id: tocId,
 					tagName: tagName,
@@ -292,6 +320,68 @@ var Model = Backbone.Model.extend({
 var Collection = Backbone.Collection.extend({
 
 	model: Model,
+
+	buildQueryString: function buildQueryString(query) {
+
+		var queryString = '?';
+
+		if (query == null) {
+			return '';
+		}
+
+		for (var key in query) {
+			var value = query[key];
+			queryString += key + '=' + value + '&';
+		}
+
+		queryString = queryString.slice(0, -1);
+
+		return queryString;
+	},
+
+	// Fetch instances on the client.
+	// TODO: customize to include a req object.
+	getClientFetchPromise: function getClientFetchPromise(query) {
+		var _this = this;
+
+		var isQueried = query != null;
+
+		return new Promise(function (resolve, reject) {
+
+			if (!isQueried) {
+
+				// Small, seeded collections are resolved immediately.
+				if (_this.dbSeed) {
+					_this.reset(_this.dbSeed);
+					return resolve(_this);
+				}
+
+				// Cached collections are resolved immediately.
+				if (_this.dbCache) {
+					_this.reset(_this.dbCache);
+					return resolve(_this);
+				}
+			}
+
+			var url = _this.apiUrl + _this.buildQueryString(query);
+
+			_jquery2['default'].ajax({
+				url: url,
+				type: 'get',
+				success: function success(data) {
+					// Set database cache.
+					if (!isQueried) {
+						_this.dbCache = data;
+					}
+					_this.reset(data);
+					resolve(_this);
+				},
+				error: function error(err) {
+					reject(err);
+				}
+			});
+		});
+	},
 
 	/**
   * Recognize and process server response by applying the corresponding model's parse method.
@@ -324,9 +414,9 @@ module.exports = {
 
 'use strict';
 
-var Backbone = window.Backbone,
-    _ = window._,
-    $ = window.$;
+var Backbone = (window.Backbone),
+    _ = (window._),
+    $ = (window.$);
 
 exports.Model = Backbone.Model.extend({
 
@@ -458,8 +548,8 @@ exports.Model = Backbone.Model.extend({
 },{}],4:[function(require,module,exports){
 'use strict';
 
-var _ = window._,
-    Backbone = window.Backbone,
+var _ = (window._),
+    Backbone = (window.Backbone),
     base = require('./base.js');
 
 exports.Model = base.Model.extend({
@@ -592,8 +682,8 @@ exports.Collection = base.Collection.extend({
 },{"./base.js":2}],5:[function(require,module,exports){
 'use strict';
 
-var _ = window._,
-    Backbone = window.Backbone,
+var _ = (window._),
+    Backbone = (window.Backbone),
     base = require('./base.js'),
     formatters = require('./../utilities/formatters.js'),
     baseComposite = require('./base_composite.js');
@@ -891,23 +981,13 @@ exports.FilterTree = LocalBaseModel.extend({
 },{"./../utilities/formatters.js":13,"./base.js":2,"./base_composite.js":3}],6:[function(require,module,exports){
 'use strict';
 
-var _ = window._,
-    Backbone = window.Backbone,
+var _ = (window._),
+    Backbone = (window.Backbone),
     base = require('./base.js');
 
 exports.Model = base.Model.extend({
 
-	urlRoot: '/api/v1/images',
-
 	fields: [],
-
-	/** 
-  * Fetches image model url by name key
-  * @returns {string} - Url plus name
-  */
-	url: function url() {
-		return this.urlRoot + ("?name=" + this.get('name'));
-	},
 
 	/**
   * Recognize and process server response.
@@ -920,8 +1000,8 @@ exports.Model = base.Model.extend({
 		return resp;
 	},
 
-	/** Gets encoded url to use in CSS background-image. */
-	getBackgroundImageCss: function getBackgroundImageCss() {
+	/** Gets encoded url to use as a CSS background-image. */
+	getUrl: function getUrl() {
 		var encoded;
 		encoded = this.get('encoded');
 		if (encoded != null) {
@@ -936,15 +1016,18 @@ exports.Model = base.Model.extend({
 });
 
 exports.Collection = base.Collection.extend({
+
 	model: exports.Model,
-	url: '/api/v1/images'
+
+	apiUrl: '/api/v1/images'
+
 });
 
 },{"./base.js":2}],7:[function(require,module,exports){
 'use strict';
 
-var _ = window._,
-    Backbone = window.Backbone,
+var _ = (window._),
+    Backbone = (window.Backbone),
     base = require('./base.js'),
     rgf = require('./rich_geo_feature.js'),
     states = require('./../../db/seeds/states.json');
@@ -1375,8 +1458,8 @@ exports.Collection = base.Collection.extend({
 },{"./../../db/seeds/states.json":16,"./base.js":2,"./rich_geo_feature.js":11}],8:[function(require,module,exports){
 'use strict';
 
-var _ = window._,
-    Backbone = window.Backbone,
+var _ = (window._),
+    Backbone = (window.Backbone),
     formatters = require('./../utilities/formatters.js'),
     base = require('./base.js'),
     filter = require('./filter.js'),
@@ -1700,27 +1783,11 @@ exports.Model = base.Model.extend({
 
 exports.Collection = base.Collection.extend({
 
-    /**
-     * Initializes collection
-     */
-    // initialize: function() {
-    //     return this.on('reset', this.filter);
-    // },
+    dbCollection: 'projects',
+
+    apiUrl: '/api/v1/projects',
 
     model: exports.Model,
-
-    /**
-     * Creates new URL using base API path and query.
-     * @returns {string} base - Modified root URL.
-     */
-    url: function url() {
-        var base;
-        base = '/api/v1/projects';
-        if (this.queryString != null) {
-            return base + "?" + this.queryString;
-        }
-        return base;
-    },
 
     /**
      * Used to compare two models when sorting.
@@ -1787,8 +1854,8 @@ exports.Collection = base.Collection.extend({
 },{"./../utilities/formatters.js":13,"./base.js":2,"./filter.js":5,"./item.js":7,"./variable.js":12}],9:[function(require,module,exports){
 'use strict';
 
-var _ = window._,
-    Backbone = window.Backbone,
+var _ = (window._),
+    Backbone = (window.Backbone),
     baseFilter = require('./base_filter'),
     seed = require('./../../db/seeds/project_sections.json');
 
@@ -1797,20 +1864,30 @@ exports.Model = baseFilter.Model.extend({
 });
 
 exports.Collection = baseFilter.Collection.extend({
+
+	dbCollection: 'project_sections',
+
+	dbSeed: seed,
+
 	model: exports.Model,
+
 	url: '/api/v1/project_sections',
+
 	hasSingleActiveChild: false,
+
 	initializeActiveStatesOnReset: true,
+
 	initialize: function initialize() {
 		this.reset(seed);
 	}
+
 });
 
 },{"./../../db/seeds/project_sections.json":14,"./base_filter":4}],10:[function(require,module,exports){
 'use strict';
 
-var _ = window._,
-    Backbone = window.Backbone,
+var _ = (window._),
+    Backbone = (window.Backbone),
     baseFilter = require('./base_filter.js'),
     seed = require('./../../db/seeds/project_templates.json');
 
@@ -1819,21 +1896,32 @@ exports.Model = baseFilter.Model.extend({
 });
 
 exports.Collection = baseFilter.Collection.extend({
+
+	dbCollection: 'project_templates',
+
+	dbSeed: seed,
+
 	model: exports.Model,
+
 	url: '/api/v1/project_templates',
+
 	hasSingleActiveChild: true,
+
 	initializeActiveStatesOnReset: true,
+
 	comparator: 'order',
+
 	initialize: function initialize() {
 		this.reset(seed);
 	}
+
 });
 
 },{"./../../db/seeds/project_templates.json":15,"./base_filter.js":4}],11:[function(require,module,exports){
 'use strict';
 
-var _ = window._,
-    Backbone = window.Backbone;
+var _ = (window._),
+    Backbone = (window.Backbone);
 
 exports.Model = Backbone.Model.extend({});
 
@@ -1860,11 +1948,11 @@ exports.Collection = Backbone.Collection.extend({
 },{}],12:[function(require,module,exports){
 'use strict';
 
-var _ = window._,
-    Backbone = window.Backbone,
+var _ = (window._),
+    Backbone = (window.Backbone),
     base = require('./base.js'),
     formatters = require('./../utilities/formatters.js'),
-    $ = window.$;
+    $ = (window.$);
 
 exports.Model = base.Model.extend({
 
@@ -1970,7 +2058,7 @@ exports.Collection = base.Collection.extend({
 
 var numeral = require('numeral'),
     marked = require('marked'),
-    $ = window.$;
+    $ = (window.$);
 
 var formatters = {
 

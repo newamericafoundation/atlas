@@ -55,6 +55,7 @@
 				theme: 'atlas'
 				headerTitle: 'Atlas'
 				routableComponentName: 'Projects.Show'
+				atlas_url: atlas_url
 
 		projects_new: ->
 			@_initiateNavigation 'projects_new'

@@ -11,11 +11,8 @@
 
 	&__main {
 
-		// width: calc(100% - #{$side-bar-width});
 		height: 100%;
 		padding-top: 6px;
-
-		// &__site-name, &__cursive-prefix { display: inline-block; }
 
 		&__site-name, &__cursive-prefix, &__title { display: inline-block; float: left; } 
 
@@ -97,6 +94,7 @@
 		width: auto;
 
 		.atl-route--welcome_index & { left: auto; right: 30px; }
+
 		@include bp-w-sm {
 			left: auto;
 			right: 45px;

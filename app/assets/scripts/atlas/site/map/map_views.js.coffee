@@ -25,7 +25,9 @@
 			@map.setView [37.6, -95.665], zoomLevel 
 			@map.scrollWheelZoom.disable()
 			# add control convenience methods
+
 			_.extend @map, Map.control
+
 			@map.ignoreNextClick = false
 			# do not register a map item click event if it is fired due to a map drag end
 			@map.on 'dragend', (e) =>

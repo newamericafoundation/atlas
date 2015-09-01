@@ -14,7 +14,11 @@ Comp.Projects.Index.ProjectTemplates = class extends React.Component {
 		if (this.props.projectTemplates == null) { return; }
 		return this.props.projectTemplates.map((item, i) => {
 			return (
-				<ProjectTemplateItem App={this.props.App} projectTemplate={item} key={i} />
+				<ProjectTemplateItem 
+					{...this.props} 
+					projectTemplate={item} 
+					key={i} 
+				/>
 			);
 		});
 	}
@@ -57,11 +61,8 @@ class ProjectTemplateItem extends React.Component {
 	}
 
 	toggleActiveState() {
-		var App;
 		this.props.projectTemplate.toggleActiveState();
-		App = this.props.App;
-		if (App == null) { return };
-		App.vent.trigger('project:filter:change')
+		this.props.updateProjectsIndex();
 	}
 
 }

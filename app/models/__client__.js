@@ -48,3 +48,15 @@ window.Atlas.module('Models', function(Models) {
 	Models.Variables = variable.Collection;
 	
 });
+
+window.M = {
+	base: base,
+	project: project,
+	projectSection: projectSection,
+	projectTemplate: projectTemplate,
+	item: item,
+	variable: variable,
+	image: image,
+	coreDatum: coreDatum,
+	filter: filter
+};

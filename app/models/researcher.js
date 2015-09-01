@@ -6,6 +6,8 @@ import dbConnector from './../../db/connector.js';
 
 class Model extends Backbone.Model {
 
+	get dbCollection() { return 'atlas_researchers'; }
+
 	constructor(options) {
 		super(options);
 	}
@@ -103,6 +105,8 @@ class Model extends Backbone.Model {
 }
 
 class Collection extends Backbone.Collection {
+
+	get dbCollection() { return 'atlas_researchers'; }
 
 	constructor(options) {
 		super(options);

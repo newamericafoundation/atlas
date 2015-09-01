@@ -11,9 +11,12 @@ Comp.Projects.Show.Tilemap.InfoBox = class extends React.Component {
 		var content = this.getContent();
 		return (
 			<div className="atl__info-box" ref='main'>
+
 				<a href="#" className="bg-img-no--black atl__info-box__close" onClick={ this.close.bind(this) }></a>
+
 				<div className="atl__title-bar atl__title-bar--image bg-c-off-white">
-					<div className="atl__title-bar__background"></div>
+
+					<div className="atl__title-bar__background" ref='title-bar-background' />
 					<div className="atl__title-bar__content">
 						<h1 className='title'>{ this.getTitle() }</h1>
 						<ul>
@@ -21,6 +24,7 @@ Comp.Projects.Show.Tilemap.InfoBox = class extends React.Component {
 						</ul>
 					</div>
 				</div>
+
 				<div className="atl__content-bar bg-c-off-white">
 					<div className="atl-grid">
 						<div className="atl-grid__1-3">
@@ -46,16 +50,12 @@ Comp.Projects.Show.Tilemap.InfoBox = class extends React.Component {
 
 	}
 
-	shouldComponentUpdate(nextProps) {
-		return this.props.activeItem !== nextProps.activeItem;
+	shouldComponentUpdate(nextProps, nextState) {
+		return (this.props.activeItem !== nextProps.activeItem);
 	}
 
 	componentDidUpdate() {
-		var App;
-		App = this.props.App;
-		if (App != null) {
-			return this.setImage();
-		}
+		return this.setImage();
 	}
 
 	getTitle() {
@@ -109,30 +109,33 @@ Comp.Projects.Show.Tilemap.InfoBox = class extends React.Component {
 	}
 
 	setImage() {
-		var $el, App, activeItem, imageName, img, project;
-		$el = $('.atl__title-bar__background');
+		var activeItem, imageName, project,
+			coll, promise;
+
+		var $el = $(React.findDOMNode(this.refs['title-bar-background']));
+
 		$el.css('background-color', 'rgba(50, 50, 50, 0.1)');
 		$el.css('background-image', '');
+
 		project = this.props.project;
-		App = this.props.App;
+		if (project == null) { return; }
 		activeItem = project.get('data').items.active;
 		if (activeItem == null) { return; }
+
 		imageName = activeItem.getImageName();
+
 		if (imageName != null) {
-			img = App.reqres.request('image:entity', {
-				name: imageName
+			coll = new M.image.Collection();
+			promise = coll.getClientFetchPromise({ name: imageName });
+			promise.then((coll) => {
+				var img = coll.models[0];
+				if (img != null) {
+					console.log(img.getUrl())
+					$el.css('background-color', 'initial');
+					$el.css('background-image', img.getUrl());
+					// @_appendImageAttribution(img.getAttributionHtml())
+				}
 			});
-			return img.on('sync', (function(_this) {
-				return function() {
-					var backgroundImageCss;
-					backgroundImageCss = img.getBackgroundImageCss();
-					if (backgroundImageCss != null) {
-						$el.css('background-color', 'initial');
-						return $el.css('background-image', backgroundImageCss);
-					}
-				};
-				// @_appendImageAttribution(img.getAttributionHtml())
-			})(this));
 		}
 	}
 
@@ -145,7 +148,6 @@ Comp.Projects.Show.Tilemap.InfoBox = class extends React.Component {
 				</a>
 			</li>
 		);
-
 	}
 
 	getContent() {

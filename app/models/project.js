@@ -341,27 +341,11 @@ exports.Model = base.Model.extend({
 
 exports.Collection = base.Collection.extend({
 
-    /**
-     * Initializes collection
-     */
-    // initialize: function() {
-    //     return this.on('reset', this.filter);
-    // },
-    
-    model: exports.Model,
+    dbCollection: 'projects',
 
-    /**
-     * Creates new URL using base API path and query.
-     * @returns {string} base - Modified root URL.
-     */
-    url: function() {
-        var base;
-        base = '/api/v1/projects';
-        if (this.queryString != null) {
-            return base + "?" + this.queryString;
-        }
-        return base;
-    },
+    apiUrl: '/api/v1/projects',
+
+    model: exports.Model,
 
     /**
      * Used to compare two models when sorting.

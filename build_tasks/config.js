@@ -43,20 +43,17 @@ module.exports = {
 		    	// all vendor code not available through bower are stored here
 		    	'./app/assets/scripts/vendor/chroma.js',
 		    	'./app/assets/scripts/vendor/jquery-ui.js',
-		        './app/assets/scripts/config/**/*.js.coffee',
+		        './app/assets/scripts/config/**/*',
 		        './app/assets/scripts/atlas/atlas.js.coffee',
 		        './app/assets/scripts/atlas/routes/**/*',
-		        './app/assets/scripts/atlas/base/**/*.js.coffee',
 		        './app/assets/scripts/atlas/util/**/*.js.coffee',
 		        './app/assets/scripts/atlas/__auto__models.js',
-		        './app/assets/scripts/atlas/entities/**/*.js.coffee',
 		        './app/assets/scripts/atlas/site/map/**/*.js.coffee'
 		    ],
 
 		    // view and controller code
 		    component: [
 		        './app/components/init.jsx',
-		        './app/components/routes.jsx',
 		        './app/components/general/**/*',
 		        './app/components/form/root.jsx',
 		        './app/components/form/subcomponents/**/*',
@@ -68,7 +65,8 @@ module.exports = {
 		        './app/components/route_handlers/projects/show/tilemap/root.jsx',
 		        './app/components/route_handlers/projects/show/tilemap/subcomponents/**/*',
 		        './app/components/route_handlers/projects/show/explainer/root.cjsx',
-		        './app/components/route_handlers/projects/show/explainer/subcomponents/**/*'
+		        './app/components/route_handlers/projects/show/explainer/subcomponents/**/*',
+		        './app/components/routes.jsx'
 		    ]
 
     	}

@@ -14,4 +14,4 @@ Comp.BackboneLayout = React.createClass
 		Component = Comp
 		for compNameKey in compNameKeys
 			Component = Component[compNameKey]
-		<Component App={this.props.App} />
+		<Component {...this.props} />

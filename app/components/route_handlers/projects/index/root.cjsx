@@ -4,6 +4,11 @@ Comp.Projects.Index = React.createClass
 
 	mixins: [ Comp.Mixins.BackboneEvents ]
 
+	getInitialState: ->
+		{
+
+		}
+
 	render: ->
 		return (
 			<div className="atl fill-parent">
@@ -12,47 +17,47 @@ Comp.Projects.Index = React.createClass
 					<div className="atl__main">
 						<div className="atl__nav bg-c-off-white">
 							<h1 className="title title--compact">Explore Atlas</h1>
-							<Comp.Projects.Index.ProjectTemplates App={@props.App} projectTemplates={@props.App.dataCache.projectTemplates} />
-							<Comp.Projects.Index.ProjectSections App={@props.App} projectSections={@props.App.dataCache.projectSections} />
+							<Comp.Projects.Index.ProjectTemplates 
+								App={this.props.App}
+								projectTemplates={this.state.projectTemplates}
+								updateProjectsIndex={this.forceUpdate.bind(this)}
+							/>
+							<Comp.Projects.Index.ProjectSections 
+								App={this.props.App} 
+								projectSections={this.state.projectSections}
+								updateProjectsIndex={this.forceUpdate.bind(this)}
+							/>
 						</div>
-						<Comp.Projects.Index.Projects App={@props.App} projects={@props.App.dataCache.projects} projectTemplates={@props.App.dataCache.projectTemplates} projectSections={@props.App.dataCache.projectSections} />
+						<Comp.Projects.Index.Projects 
+							App={this.props.App} 
+							projects={this.state.projects} 
+							projectTemplates={this.state.projectTemplates} 
+							projectSections={this.state.projectSections}
+							updateProjectsIndex={this.forceUpdate.bind(this)}
+						/>
 					</div>
 				</div>
 			</div>
-		)
+		)		
 
 	componentDidMount: ->
-		@fetchProjects()
-		@fetchProjectSections()
-		@fetchProjectTemplates()
-		@updateOnFilterChange()
-
-	updateOnFilterChange: ->
-		App = @props.App
-		return unless App?
-		@listenTo App.vent, 'project:filter:change', @forceUpdate
+		this.fetchProjects()
+		this.fetchProjectSections()
+		this.fetchProjectTemplates()
 
 	fetchProjects: ->
-		App = @props.App
-		return unless App?
-		projects = App.reqres.request "project:entities", { cache: true }
-		if projects.length? and projects.length > 0
-			App.dataCache.projects = projects
-			# @forceUpdate()
-		projects.on 'reset', =>
-			App.dataCache.projects = projects
-			@forceUpdate()
+		coll = new M.project.Collection()
+		coll.getClientFetchPromise().then (coll) =>
+			@setState { projects: coll }
 
 	fetchProjectSections: ->
-		App = @props.App
-		return unless App?
-		projectSections = App.reqres.request "project:section:entities", { cache: true }
-		App.dataCache.projectSections = projectSections
-		@forceUpdate()
+		coll = new M.projectSection.Collection()
+		coll.getClientFetchPromise().then (coll) =>
+			coll.initializeActiveStates();
+			@setState { projectSections: coll }
 
 	fetchProjectTemplates: ->
-		App = @props.App
-		return unless App?
-		projectTemplates = App.reqres.request "project:template:entities", { cache: true }
-		App.dataCache.projectTemplates = projectTemplates
-		@forceUpdate()
+		coll = new M.projectTemplate.Collection()
+		coll.getClientFetchPromise().then (coll) =>
+			coll.initializeActiveStates();
+			@setState { projectTemplates: coll }

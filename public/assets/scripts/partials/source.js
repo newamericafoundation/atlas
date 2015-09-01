@@ -8424,377 +8424,6 @@ var slider = $.widget( "ui.slider", $.ui.mouse, {
 
 
 }));
-// SimpleExcel.js v0.1.3
-// Client-side script to easily parse / convert / write any Microsoft Excel XLSX / XML / CSV / TSV / HTML / JSON / etc formats
-// https://github.com/faisalman/simple-excel-js
-// 
-// Copyright © 2013-2014 Faisal Salman <fyzlman@gmail.com>
-// Dual licensed under GPLv2 & MIT
-
-(function (window, undefined) {
-
-    'use strict';
-
-    ///////////////////////
-    // Constants & Helpers
-    ///////////////////////
-
-    var Char = {
-        COMMA           : ',',
-        RETURN          : '\r',
-        NEWLINE         : '\n',
-        SEMICOLON       : ';',
-        TAB             : '\t'
-    };
-    
-    var DataType = {
-        CURRENCY    : 'CURRENCY',
-        DATETIME    : 'DATETIME',
-        FORMULA     : 'FORMULA',
-        LOGICAL     : 'LOGICAL',
-        NUMBER      : 'NUMBER',
-        TEXT        : 'TEXT'
-    };
-
-    var Exception = {    
-        CELL_NOT_FOUND              : 'CELL_NOT_FOUND',
-        COLUMN_NOT_FOUND            : 'COLUMN_NOT_FOUND',
-        ROW_NOT_FOUND               : 'ROW_NOT_FOUND',
-        ERROR_READING_FILE          : 'ERROR_READING_FILE',
-        ERROR_WRITING_FILE          : 'ERROR_WRITING_FILE',
-        FILE_NOT_FOUND              : 'FILE_NOT_FOUND',
-        //FILE_EXTENSION_MISMATCH     : 'FILE_EXTENSION_MISMATCH',
-        FILETYPE_NOT_SUPPORTED      : 'FILETYPE_NOT_SUPPORTED',
-        INVALID_DOCUMENT_FORMAT     : 'INVALID_DOCUMENT_FORMAT',
-        INVALID_DOCUMENT_NAMESPACE  : 'INVALID_DOCUMENT_NAMESPACE',
-        MALFORMED_JSON              : 'MALFORMED_JSON',
-        UNIMPLEMENTED_METHOD        : 'UNIMPLEMENTED_METHOD',
-        UNKNOWN_ERROR               : 'UNKNOWN_ERROR',
-        UNSUPPORTED_BROWSER         : 'UNSUPPORTED_BROWSER'
-    };
-
-    var Format = {        
-        CSV     : 'csv',
-        HTML    : 'html',
-        JSON    : 'json',
-        TSV     : 'tsv',
-        XLS     : 'xls',
-        XLSX    : 'xlsx',
-        XML     : 'xml'
-    };
-
-    var MIMEType = {
-        CSV     : 'text/csv',
-        HTML    : 'text/html',
-        JSON    : 'application/json',
-        TSV     : 'text/tab-separated-values',
-        XLS     : 'application/vnd.ms-excel',
-        XLSX    : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        XML     : 'text/xml',
-        XML2003 : 'application/xml'
-    };
-
-    var Regex = {
-        FILENAME    : /.*\./g,
-        LINEBREAK   : /\r\n/g
-    };
-
-    var Utils = {
-        getFiletype : function (filename) {
-            return filename.replace(Regex.FILENAME, '');
-        },
-        isEqual     : function (str1, str2, ignoreCase) {
-            return ignoreCase ? str1.toLowerCase() == str2.toLowerCase() : str1 == str2;
-        },
-        isSupportedBrowser : function () {
-            return !![].forEach 
-                && !!window.FileReader;
-        },
-        overrideProperties : function (old, fresh) {
-            for (var i in old) {
-                if (old.hasOwnProperty(i)) {
-                    old[i] = fresh.hasOwnProperty(i) ? fresh[i] : old[i];
-                }
-            }
-            return old;
-        }
-    };
-    
-    /////////////////////////////
-    // Spreadsheet Constructors
-    ////////////////////////////
-
-    var Cell = function (value, dataType) {
-        var defaults = {
-            value    : value || '',
-            dataType : dataType || DataType.TEXT
-        };
-        if (typeof value == typeof {}) {
-            defaults = Utils.overrideProperties(defaults, value);
-        }
-        this.value = defaults.value;
-        this.dataType = defaults.dataType;
-        this.toString = function () {
-            return value.toString();
-        }
-    };
-        
-    var Records = function () {};
-    Records.prototype = new Array();
-    Records.prototype.getCell = function (colNum, rowNum) {
-        return this[rowNum - 1][colNum - 1];
-    };
-    Records.prototype.getColumn = function (colNum) {        
-        var col = [];
-        this.forEach(function (el, i) {
-            col.push(el[colNum - 1]);
-        });
-        return col;
-    };
-    Records.prototype.getRow = function (rowNum) {
-        return this[rowNum - 1];
-    };
-    
-    var Sheet = function () {
-        this.records = new Records();
-    };
-    Sheet.prototype.getCell = function (colNum, rowNum) {
-        return this.records.getCell(colNum, rowNum);
-    };
-    Sheet.prototype.getColumn = function (colNum) {
-        return this.records.getColumn(colNum);
-    };
-    Sheet.prototype.getRow = function (rowNum) {
-        return this.records.getRow(rowNum);
-    };
-    Sheet.prototype.insertRecord = function (array) {
-        this.records.push(array);
-        return this;
-    };
-    Sheet.prototype.removeRecord = function (index) {
-        this.records.splice(index - 1, 1);
-        return this;
-    };
-    Sheet.prototype.setRecords = function (records) {
-        this.records = records;
-        return this;
-    };
-    
-    /////////////
-    // Parsers
-    ////////////
-
-    // Base Class
-    var BaseParser = function () {};
-    BaseParser.prototype = {
-        _filetype   : '',
-        _sheet      : [],
-        getSheet    : function (number) {
-            var number = number || 1;
-            return this._sheet[number - 1].records;
-        },
-        loadFile    : function (file, callback) {
-            var self = this;
-            //var filetype = Utils.getFiletype(file.name);
-            //if (Utils.isEqual(filetype, self._filetype, true)) {
-                var reader = new FileReader();
-                reader.onload = function () {
-                    self.loadString(this.result, 0);
-                    callback.apply(self);
-                };
-                reader.readAsText(file);
-            //} else {
-                //throw Exception.FILE_EXTENSION_MISMATCH;
-            //}
-            return self;
-        },
-        loadString  : function (string, sheetnum) {
-            throw Exception.UNIMPLEMENTED_METHOD;
-        }
-    };
-
-    // CSV
-    var CSVParser = function () {};
-    CSVParser.prototype = new BaseParser();
-    CSVParser.prototype._delimiter = Char.COMMA;
-    CSVParser.prototype._filetype = Format.CSV;
-    CSVParser.prototype.loadString = function (str, sheetnum) {
-        // TODO: implement real CSV parser
-        var self = this;
-        var sheetnum = sheetnum || 0;
-        self._sheet[sheetnum] = new Sheet();
-        str.replace(Regex.LINEBREAK, Char.NEWLINE).split(Char.NEWLINE).forEach(function (el, i) {
-            var row = [];
-            el.split(self._delimiter).forEach(function (el) {
-                row.push(new Cell(el));
-            });
-            self._sheet[sheetnum].insertRecord(row);
-        });
-        return self;
-    };
-    CSVParser.prototype.setDelimiter = function (separator) {
-        this._delimiter = separator;
-        return this;
-    };
-    
-    // HTML
-    var HTMLParser = function () {};
-    HTMLParser.prototype = new BaseParser();
-    HTMLParser.prototype._filetype = Format.HTML;
-    HTMLParser.prototype.loadString = function (str, sheetnum) {
-        var self = this;
-        var sheetnum = sheetnum || 0;
-        var domParser = new DOMParser();
-        var domTree = domParser.parseFromString(str, MIMEType.HTML);
-        var sheets = domTree.getElementsByTagName('table');
-        [].forEach.call(sheets, function (el, i) {
-            self._sheet[sheetnum] = new Sheet();
-            var rows = el.getElementsByTagName('tr');
-            [].forEach.call(rows, function (el, i) {
-                var cells = el.getElementsByTagName('td');
-                var row = [];
-                [].forEach.call(cells, function (el, i) {
-                    row.push(new Cell(el.innerHTML));
-                });
-                self._sheet[sheetnum].insertRecord(row);
-            });
-            sheetnum++;
-        });
-        return self;
-    };
-
-    // TSV
-    var TSVParser = function () {};
-    TSVParser.prototype = new CSVParser();
-    TSVParser.prototype._delimiter = Char.TAB;
-    TSVParser.prototype._filetype = Format.TSV;
-
-    // XML
-    var XMLParser = function () {};
-    XMLParser.prototype = new BaseParser();
-    XMLParser.prototype._filetype = Format.XML;
-    XMLParser.prototype.loadString = function (str, sheetnum) {
-        var self = this;
-        var sheetnum = sheetnum || 0;
-        var domParser = new DOMParser();
-        var domTree = domParser.parseFromString(str, MIMEType.XML);
-        var sheets = domTree.getElementsByTagName('Worksheet');
-        [].forEach.call(sheets, function (el, i) {
-            self._sheet[sheetnum] = new Sheet();
-            var rows = el.getElementsByTagName('Row');
-            [].forEach.call(rows, function (el, i) {
-                var cells = el.getElementsByTagName('Data');
-                var row = [];
-                [].forEach.call(cells, function (el, i) {
-                    row.push(new Cell(el.innerHTML));
-                });
-                self._sheet[sheetnum].insertRecord(row);
-            });
-            sheetnum++;
-        }); 
-        return self;
-    };
-
-    // Export var
-    var Parser = {
-        CSV : CSVParser,
-        HTML: HTMLParser,
-        TSV : TSVParser,
-        XML : XMLParser
-    };
-
-    /////////////
-    // Writers
-    ////////////
-
-    // Base Class
-    var BaseWriter = function () {};
-    BaseWriter.prototype = {
-        _filetype   : '',
-        _mimetype   : '',
-        _sheet      : [],
-        getSheet    : function (number) {
-            var number = number || 1;
-            return this._sheet[number - 1].records;
-        },
-        getString   : function () {
-            throw Exception.UNIMPLEMENTED_METHOD;
-        },
-        insertSheet : function (data) {
-            if (!!data.records) {
-                this._sheet.push(data);
-            } else {
-                var sheet = new Sheet();
-                sheet.setRecords(data);
-                this._sheet.push(sheet);
-            }
-            return this;
-        },
-        removeSheet : function (index) {
-            this._sheet.splice(index - 1, 1);
-            return this;
-        },
-        saveFile    : function () {
-            // TODO: find a reliable way to save as local file
-            window.open('data:' + this._mimetype + ';base64,' + window.btoa(this.getString()));            
-            return this;
-        }
-    };
-
-    // CSV
-    var CSVWriter = function () {};
-    CSVWriter.prototype = new BaseWriter();
-    CSVWriter.prototype._delimiter = Char.COMMA;
-    CSVWriter.prototype._filetype = Format.CSV;
-    CSVWriter.prototype._mimetype = MIMEType.CSV;
-    CSVWriter.prototype.getString = function () {
-        // TODO: implement real CSV writer
-        var self = this;
-        var string = '';
-        this.getSheet(1).forEach(function (el, i) {
-            el.forEach(function (el) {
-                string += el + self._delimiter;
-            });
-            string += '\r\n';
-        });
-        return string;
-    };
-    CSVWriter.prototype.setDelimiter = function (separator) {
-        this._delimiter = separator;
-        return this;
-    };
-
-    // TSV
-    var TSVWriter = function () {};
-    TSVWriter.prototype = new CSVWriter();
-    TSVWriter.prototype._delimiter = Char.TAB;
-    TSVWriter.prototype._filetype = Format.TSV;
-    TSVWriter.prototype._mimetype = MIMEType.TSV;
-    
-    // Export var
-    var Writer = {
-        CSV : CSVWriter,
-        TSV : TSVWriter
-    };
-
-    /////////////
-    // Exports
-    ////////////
-
-    var SimpleExcel = {
-        Cell                : Cell,
-        DataType            : DataType,
-        Exception           : Exception,
-        isSupportedBrowser  : Utils.isSupportedBrowser(),
-        Parser              : Parser,
-        Sheet               : Sheet,
-        Writer              : Writer
-    };
-
-    window.SimpleExcel = SimpleExcel;
-
-})(this);
-
 (function() {
   if (typeof ChartistHtml !== "undefined" && ChartistHtml !== null) {
     ChartistHtml.config.baseClass = "atlas-chart";
@@ -8861,13 +8490,181 @@ var slider = $.widget( "ui.slider", $.ui.mouse, {
 
 }).call(this);
 
+if (!Function.prototype.bind) {
+  Function.prototype.bind = function(oThis) {
+    if (typeof this !== 'function') {
+      // closest thing possible to the ECMAScript 5
+      // internal IsCallable function
+      throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
+    }
+
+    var aArgs   = Array.prototype.slice.call(arguments, 1),
+        fToBind = this,
+        fNOP    = function() {},
+        fBound  = function() {
+          return fToBind.apply(this instanceof fNOP
+                 ? this
+                 : oThis,
+                 aArgs.concat(Array.prototype.slice.call(arguments)));
+        };
+
+    fNOP.prototype = this.prototype;
+    fBound.prototype = new fNOP();
+
+    return fBound;
+  };
+}
+// Production steps of ECMA-262, Edition 5, 15.4.4.18
+// Reference: http://es5.github.io/#x15.4.4.18
+if (!Array.prototype.forEach) {
+
+  Array.prototype.forEach = function(callback, thisArg) {
+
+    var T, k;
+
+    if (this == null) {
+      throw new TypeError(' this is null or not defined');
+    }
+
+    // 1. Let O be the result of calling ToObject passing the |this| value as the argument.
+    var O = Object(this);
+
+    // 2. Let lenValue be the result of calling the Get internal method of O with the argument "length".
+    // 3. Let len be ToUint32(lenValue).
+    var len = O.length >>> 0;
+
+    // 4. If IsCallable(callback) is false, throw a TypeError exception.
+    // See: http://es5.github.com/#x9.11
+    if (typeof callback !== "function") {
+      throw new TypeError(callback + ' is not a function');
+    }
+
+    // 5. If thisArg was supplied, let T be thisArg; else let T be undefined.
+    if (arguments.length > 1) {
+      T = thisArg;
+    }
+
+    // 6. Let k be 0
+    k = 0;
+
+    // 7. Repeat, while k < len
+    while (k < len) {
+
+      var kValue;
+
+      // a. Let Pk be ToString(k).
+      //   This is implicit for LHS operands of the in operator
+      // b. Let kPresent be the result of calling the HasProperty internal method of O with argument Pk.
+      //   This step can be combined with c
+      // c. If kPresent is true, then
+      if (k in O) {
+
+        // i. Let kValue be the result of calling the Get internal method of O with argument Pk.
+        kValue = O[k];
+
+        // ii. Call the Call internal method of callback with T as the this value and
+        // argument list containing kValue, k, and O.
+        callback.call(T, kValue, k, O);
+      }
+      // d. Increase k by 1.
+      k++;
+    }
+    // 8. return undefined
+  };
+}
+// Production steps of ECMA-262, Edition 5, 15.4.4.19
+// Reference: http://es5.github.io/#x15.4.4.19
+if (!Array.prototype.map) {
+
+  Array.prototype.map = function(callback, thisArg) {
+
+    var T, A, k;
+
+    if (this == null) {
+      throw new TypeError(' this is null or not defined');
+    }
+
+    // 1. Let O be the result of calling ToObject passing the |this| 
+    //    value as the argument.
+    var O = Object(this);
+
+    // 2. Let lenValue be the result of calling the Get internal 
+    //    method of O with the argument "length".
+    // 3. Let len be ToUint32(lenValue).
+    var len = O.length >>> 0;
+
+    // 4. If IsCallable(callback) is false, throw a TypeError exception.
+    // See: http://es5.github.com/#x9.11
+    if (typeof callback !== 'function') {
+      throw new TypeError(callback + ' is not a function');
+    }
+
+    // 5. If thisArg was supplied, let T be thisArg; else let T be undefined.
+    if (arguments.length > 1) {
+      T = thisArg;
+    }
+
+    // 6. Let A be a new array created as if by the expression new Array(len) 
+    //    where Array is the standard built-in constructor with that name and 
+    //    len is the value of len.
+    A = new Array(len);
+
+    // 7. Let k be 0
+    k = 0;
+
+    // 8. Repeat, while k < len
+    while (k < len) {
+
+      var kValue, mappedValue;
+
+      // a. Let Pk be ToString(k).
+      //   This is implicit for LHS operands of the in operator
+      // b. Let kPresent be the result of calling the HasProperty internal 
+      //    method of O with argument Pk.
+      //   This step can be combined with c
+      // c. If kPresent is true, then
+      if (k in O) {
+
+        // i. Let kValue be the result of calling the Get internal 
+        //    method of O with argument Pk.
+        kValue = O[k];
+
+        // ii. Let mappedValue be the result of calling the Call internal 
+        //     method of callback with T as the this value and argument 
+        //     list containing kValue, k, and O.
+        mappedValue = callback.call(T, kValue, k, O);
+
+        // iii. Call the DefineOwnProperty internal method of A with arguments
+        // Pk, Property Descriptor
+        // { Value: mappedValue,
+        //   Writable: true,
+        //   Enumerable: true,
+        //   Configurable: true },
+        // and false.
+
+        // In browsers that support Object.defineProperty, use the following:
+        // Object.defineProperty(A, k, {
+        //   value: mappedValue,
+        //   writable: true,
+        //   enumerable: true,
+        //   configurable: true
+        // });
+
+        // For best browser support, use the following:
+        A[k] = mappedValue;
+      }
+      // d. Increase k by 1.
+      k++;
+    }
+
+    // 9. return A
+    return A;
+  };
+}
 (function() {
   this.Atlas = (function(Backbone, Marionette) {
     var App;
     App = new Marionette.Application();
-    App.uiState = {
-      isCollapsed: false
-    };
     App.on('start', function() {
       var router;
       console.log('Hi, Mom!');
@@ -8876,7 +8673,6 @@ var slider = $.widget( "ui.slider", $.ui.mouse, {
       $(document).on('mousewheel', function(e) {
         return App.vent.trigger('scroll');
       });
-      App.dataCache = {};
       if (Backbone.history) {
         return Backbone.history.start({
           pushState: true
@@ -9022,7 +8818,8 @@ var slider = $.widget( "ui.slider", $.ui.mouse, {
           route: 'projects_show',
           theme: 'atlas',
           headerTitle: 'Atlas',
-          routableComponentName: 'Projects.Show'
+          routableComponentName: 'Projects.Show',
+          atlas_url: atlas_url
         });
       },
       projects_new: function() {
@@ -9055,86 +8852,6 @@ var slider = $.widget( "ui.slider", $.ui.mouse, {
         return App.commands.execute('set:header:strip:color');
       }
     });
-  });
-
-}).call(this);
-
-(function() {
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  this.Atlas.module('Base', function(Base, App, Backbone, Marionette, $, _) {
-    return Base.EntityManager = (function(superClass) {
-      extend(EntityManager, superClass);
-
-      function EntityManager(options) {
-        if (options != null) {
-          this.entitiesConstructor = options.entitiesConstructor;
-          this.entityConstructor = options.entityConstructor;
-        }
-        this.entityCache = [];
-      }
-
-      EntityManager.prototype.getEntities = function(options) {
-        var Constr, cache, caching, coll;
-        caching = (options != null) && options.cache;
-        if (caching) {
-          cache = this.entitiesCache;
-          if (cache != null) {
-            return cache;
-          }
-        }
-        Constr = this.entitiesConstructor;
-        coll = new Constr();
-        if ((options != null) && (options.queryString != null)) {
-          coll.queryString = options.queryString;
-        }
-        coll.fetch({
-          reset: true
-        });
-        if (caching) {
-          this.entitiesCache = coll;
-        }
-        return coll;
-      };
-
-      EntityManager.prototype.getEntity = function(query, options) {
-        var Constr, cachedEntity, caching, model;
-        caching = (options != null) && options.cache;
-        if (caching) {
-          cachedEntity = this._getCachedEntity(query);
-          if (cachedEntity != null) {
-            return cachedEntity;
-          }
-        }
-        Constr = this.entityConstructor;
-        model = new Constr(query);
-        model.fetch({
-          reset: true
-        });
-        if (caching) {
-          this.entityCache.push({
-            query: query,
-            entity: model
-          });
-        }
-        return model;
-      };
-
-      EntityManager.prototype._getCachedEntity = function(query) {
-        var cachedItem, i, len, ref;
-        ref = this.entityCache;
-        for (i = 0, len = ref.length; i < len; i++) {
-          cachedItem = ref[i];
-          if (_.isEqual(cachedItem.query, query)) {
-            return cachedItem.entity;
-          }
-        }
-      };
-
-      return EntityManager;
-
-    })(Marionette.Object);
   });
 
 }).call(this);
@@ -9804,12 +9521,40 @@ window.Atlas.module('Models', function (Models) {
 	Models.Variables = variable.Collection;
 });
 
+window.M = {
+	base: base,
+	project: project,
+	projectSection: projectSection,
+	projectTemplate: projectTemplate,
+	item: item,
+	variable: variable,
+	image: image,
+	coreDatum: coreDatum,
+	filter: filter
+};
+
 },{"./base.js":2,"./base_filter.js":4,"./filter.js":5,"./image.js":6,"./item.js":7,"./project.js":8,"./project_section.js":9,"./project_template.js":10,"./rich_geo_feature.js":11,"./variable.js":12}],2:[function(require,module,exports){
 'use strict';
 
-var Backbone = window.Backbone,
-    _ = window._,
-    $ = window.$;
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _backbone = (window.Backbone);
+
+var Backbone = _interopRequireWildcard(_backbone);
+
+var _underscore = (window._);
+
+var _ = _interopRequireWildcard(_underscore);
+
+var _jquery = (window.$);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+// var Backbone = require('backbone'),
+// 	_ = require('underscore'),
+// 	$ = require('jquery');
 
 var Model = Backbone.Model.extend({
 
@@ -9827,7 +9572,7 @@ var Model = Backbone.Model.extend({
   * Custom get function, accommodating a suffix, e.g. status_2012.
   * @param {string} field - Same as in Backbone.
   * @param {string} suffix - Custom suffix.
-  
+  * @returns {} value
   */
 	get: function get(field, suffix) {
 		var getFnc = Backbone.Model.prototype.get;
@@ -9973,9 +9718,9 @@ var Model = Backbone.Model.extend({
 	_processStaticHtml: function _processStaticHtml(resp, key) {
 		var $html, html, newHtml;
 		html = resp[key];
-		$html = $(html);
+		$html = (0, _jquery2['default'])(html);
 		$html.find('a').attr('target', '_blank');
-		newHtml = $('<div></div>').append($html.clone()).html();
+		newHtml = (0, _jquery2['default'])('<div></div>').append($html.clone()).html();
 		resp[key] = newHtml;
 		return resp;
 	},
@@ -9989,9 +9734,9 @@ var Model = Backbone.Model.extend({
 		var $html, md, newHtml;
 		md = this.get(key);
 		if (md != null) {
-			$html = $(marked(md));
+			$html = (0, _jquery2['default'])(marked(md));
 			$html.find('a').attr('target', '_blank');
-			newHtml = $('<div></div>').append($html.clone()).html();
+			newHtml = (0, _jquery2['default'])('<div></div>').append($html.clone()).html();
 			return newHtml;
 		}
 	},
@@ -10012,11 +9757,11 @@ var Model = Backbone.Model.extend({
 
 		arr = [];
 
-		$containedHtml = $('<div></div>').append($(html));
+		$containedHtml = (0, _jquery2['default'])('<div></div>').append((0, _jquery2['default'])(html));
 
 		$containedHtml.children().each(function () {
 
-			var $el = $(this),
+			var $el = (0, _jquery2['default'])(this),
 			    tagName = $el.prop('tagName'),
 			    content = $el.html(),
 			    tocId = content.replace(/[^a-z0-9]/ig, ' ').replace(/\s+/g, '-').toLowerCase();
@@ -10027,7 +9772,7 @@ var Model = Backbone.Model.extend({
 			tagName = tagName.toLowerCase();
 
 			if (['h1', 'h2'].indexOf(tagName) > -1) {
-				$('<span id="toc-' + tocId + '"></span>').insertBefore($el);
+				(0, _jquery2['default'])('<span id="toc-' + tocId + '"></span>').insertBefore($el);
 				arr.push({
 					id: tocId,
 					tagName: tagName,
@@ -10045,6 +9790,68 @@ var Model = Backbone.Model.extend({
 var Collection = Backbone.Collection.extend({
 
 	model: Model,
+
+	buildQueryString: function buildQueryString(query) {
+
+		var queryString = '?';
+
+		if (query == null) {
+			return '';
+		}
+
+		for (var key in query) {
+			var value = query[key];
+			queryString += key + '=' + value + '&';
+		}
+
+		queryString = queryString.slice(0, -1);
+
+		return queryString;
+	},
+
+	// Fetch instances on the client.
+	// TODO: customize to include a req object.
+	getClientFetchPromise: function getClientFetchPromise(query) {
+		var _this = this;
+
+		var isQueried = query != null;
+
+		return new Promise(function (resolve, reject) {
+
+			if (!isQueried) {
+
+				// Small, seeded collections are resolved immediately.
+				if (_this.dbSeed) {
+					_this.reset(_this.dbSeed);
+					return resolve(_this);
+				}
+
+				// Cached collections are resolved immediately.
+				if (_this.dbCache) {
+					_this.reset(_this.dbCache);
+					return resolve(_this);
+				}
+			}
+
+			var url = _this.apiUrl + _this.buildQueryString(query);
+
+			_jquery2['default'].ajax({
+				url: url,
+				type: 'get',
+				success: function success(data) {
+					// Set database cache.
+					if (!isQueried) {
+						_this.dbCache = data;
+					}
+					_this.reset(data);
+					resolve(_this);
+				},
+				error: function error(err) {
+					reject(err);
+				}
+			});
+		});
+	},
 
 	/**
   * Recognize and process server response by applying the corresponding model's parse method.
@@ -10077,9 +9884,9 @@ module.exports = {
 
 'use strict';
 
-var Backbone = window.Backbone,
-    _ = window._,
-    $ = window.$;
+var Backbone = (window.Backbone),
+    _ = (window._),
+    $ = (window.$);
 
 exports.Model = Backbone.Model.extend({
 
@@ -10211,8 +10018,8 @@ exports.Model = Backbone.Model.extend({
 },{}],4:[function(require,module,exports){
 'use strict';
 
-var _ = window._,
-    Backbone = window.Backbone,
+var _ = (window._),
+    Backbone = (window.Backbone),
     base = require('./base.js');
 
 exports.Model = base.Model.extend({
@@ -10345,8 +10152,8 @@ exports.Collection = base.Collection.extend({
 },{"./base.js":2}],5:[function(require,module,exports){
 'use strict';
 
-var _ = window._,
-    Backbone = window.Backbone,
+var _ = (window._),
+    Backbone = (window.Backbone),
     base = require('./base.js'),
     formatters = require('./../utilities/formatters.js'),
     baseComposite = require('./base_composite.js');
@@ -10644,23 +10451,13 @@ exports.FilterTree = LocalBaseModel.extend({
 },{"./../utilities/formatters.js":13,"./base.js":2,"./base_composite.js":3}],6:[function(require,module,exports){
 'use strict';
 
-var _ = window._,
-    Backbone = window.Backbone,
+var _ = (window._),
+    Backbone = (window.Backbone),
     base = require('./base.js');
 
 exports.Model = base.Model.extend({
 
-	urlRoot: '/api/v1/images',
-
 	fields: [],
-
-	/** 
-  * Fetches image model url by name key
-  * @returns {string} - Url plus name
-  */
-	url: function url() {
-		return this.urlRoot + ("?name=" + this.get('name'));
-	},
 
 	/**
   * Recognize and process server response.
@@ -10673,8 +10470,8 @@ exports.Model = base.Model.extend({
 		return resp;
 	},
 
-	/** Gets encoded url to use in CSS background-image. */
-	getBackgroundImageCss: function getBackgroundImageCss() {
+	/** Gets encoded url to use as a CSS background-image. */
+	getUrl: function getUrl() {
 		var encoded;
 		encoded = this.get('encoded');
 		if (encoded != null) {
@@ -10689,15 +10486,18 @@ exports.Model = base.Model.extend({
 });
 
 exports.Collection = base.Collection.extend({
+
 	model: exports.Model,
-	url: '/api/v1/images'
+
+	apiUrl: '/api/v1/images'
+
 });
 
 },{"./base.js":2}],7:[function(require,module,exports){
 'use strict';
 
-var _ = window._,
-    Backbone = window.Backbone,
+var _ = (window._),
+    Backbone = (window.Backbone),
     base = require('./base.js'),
     rgf = require('./rich_geo_feature.js'),
     states = require('./../../db/seeds/states.json');
@@ -11128,8 +10928,8 @@ exports.Collection = base.Collection.extend({
 },{"./../../db/seeds/states.json":16,"./base.js":2,"./rich_geo_feature.js":11}],8:[function(require,module,exports){
 'use strict';
 
-var _ = window._,
-    Backbone = window.Backbone,
+var _ = (window._),
+    Backbone = (window.Backbone),
     formatters = require('./../utilities/formatters.js'),
     base = require('./base.js'),
     filter = require('./filter.js'),
@@ -11453,27 +11253,11 @@ exports.Model = base.Model.extend({
 
 exports.Collection = base.Collection.extend({
 
-    /**
-     * Initializes collection
-     */
-    // initialize: function() {
-    //     return this.on('reset', this.filter);
-    // },
+    dbCollection: 'projects',
+
+    apiUrl: '/api/v1/projects',
 
     model: exports.Model,
-
-    /**
-     * Creates new URL using base API path and query.
-     * @returns {string} base - Modified root URL.
-     */
-    url: function url() {
-        var base;
-        base = '/api/v1/projects';
-        if (this.queryString != null) {
-            return base + "?" + this.queryString;
-        }
-        return base;
-    },
 
     /**
      * Used to compare two models when sorting.
@@ -11540,8 +11324,8 @@ exports.Collection = base.Collection.extend({
 },{"./../utilities/formatters.js":13,"./base.js":2,"./filter.js":5,"./item.js":7,"./variable.js":12}],9:[function(require,module,exports){
 'use strict';
 
-var _ = window._,
-    Backbone = window.Backbone,
+var _ = (window._),
+    Backbone = (window.Backbone),
     baseFilter = require('./base_filter'),
     seed = require('./../../db/seeds/project_sections.json');
 
@@ -11550,20 +11334,30 @@ exports.Model = baseFilter.Model.extend({
 });
 
 exports.Collection = baseFilter.Collection.extend({
+
+	dbCollection: 'project_sections',
+
+	dbSeed: seed,
+
 	model: exports.Model,
+
 	url: '/api/v1/project_sections',
+
 	hasSingleActiveChild: false,
+
 	initializeActiveStatesOnReset: true,
+
 	initialize: function initialize() {
 		this.reset(seed);
 	}
+
 });
 
 },{"./../../db/seeds/project_sections.json":14,"./base_filter":4}],10:[function(require,module,exports){
 'use strict';
 
-var _ = window._,
-    Backbone = window.Backbone,
+var _ = (window._),
+    Backbone = (window.Backbone),
     baseFilter = require('./base_filter.js'),
     seed = require('./../../db/seeds/project_templates.json');
 
@@ -11572,21 +11366,32 @@ exports.Model = baseFilter.Model.extend({
 });
 
 exports.Collection = baseFilter.Collection.extend({
+
+	dbCollection: 'project_templates',
+
+	dbSeed: seed,
+
 	model: exports.Model,
+
 	url: '/api/v1/project_templates',
+
 	hasSingleActiveChild: true,
+
 	initializeActiveStatesOnReset: true,
+
 	comparator: 'order',
+
 	initialize: function initialize() {
 		this.reset(seed);
 	}
+
 });
 
 },{"./../../db/seeds/project_templates.json":15,"./base_filter.js":4}],11:[function(require,module,exports){
 'use strict';
 
-var _ = window._,
-    Backbone = window.Backbone;
+var _ = (window._),
+    Backbone = (window.Backbone);
 
 exports.Model = Backbone.Model.extend({});
 
@@ -11613,11 +11418,11 @@ exports.Collection = Backbone.Collection.extend({
 },{}],12:[function(require,module,exports){
 'use strict';
 
-var _ = window._,
-    Backbone = window.Backbone,
+var _ = (window._),
+    Backbone = (window.Backbone),
     base = require('./base.js'),
     formatters = require('./../utilities/formatters.js'),
-    $ = window.$;
+    $ = (window.$);
 
 exports.Model = base.Model.extend({
 
@@ -11723,7 +11528,7 @@ exports.Collection = base.Collection.extend({
 
 var numeral = require('numeral'),
     marked = require('marked'),
-    $ = window.$;
+    $ = (window.$);
 
 var formatters = {
 
@@ -14010,95 +13815,6 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
 }).call(this);
 
 },{}]},{},[1]);
-
-(function() {
-  this.Atlas.module('Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    var entityManager;
-    entityManager = new App.Base.EntityManager({
-      entityConstructor: App.Models.CoreDatum,
-      entitiesConstructor: App.Models.CoreData
-    });
-    App.reqres.setHandler('core:datum:entities', function() {
-      return entityManager.getEntities({
-        cache: true
-      });
-    });
-    return App.reqres.setHandler('core:datum:entity', function(query) {
-      return entityManager.getEntity(query);
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    var entityManager;
-    entityManager = new App.Base.EntityManager({
-      entityConstructor: App.Models.Image,
-      entitiesConstructor: App.Models.Images
-    });
-    App.reqres.setHandler('image:entities', function(options) {
-      return entityManager.getEntities(options);
-    });
-    return App.reqres.setHandler('image:entity', function(query) {
-      return entityManager.getEntity(query);
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    var entityManager;
-    entityManager = new App.Base.EntityManager({
-      entityConstructor: App.Models.Project,
-      entitiesConstructor: App.Models.Projects
-    });
-    App.reqres.setHandler('project:entities', function(options) {
-      return entityManager.getEntities(options);
-    });
-    return App.reqres.setHandler('project:entity', function(query) {
-      return entityManager.getEntity(query);
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    var coll, entityManager;
-    entityManager = new App.Base.EntityManager({
-      entitiesConstructor: App.Models.ProjectSections
-    });
-    coll = new App.Models.ProjectSections();
-    coll.initializeActiveStates();
-    entityManager.entitiesCache = coll;
-    return App.reqres.setHandler('project:section:entities', function() {
-      return entityManager.getEntities({
-        cache: true
-      });
-    });
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Entities', function(Entities, App, Backbone, Marionette, $, _) {
-    var coll, entityManager;
-    entityManager = new App.Base.EntityManager({
-      entitiesConstructor: App.Models.ProjectTemplates
-    });
-    coll = new App.Models.ProjectTemplates();
-    coll.initializeActiveStates();
-    entityManager.entitiesCache = coll;
-    return App.reqres.setHandler('project:template:entities', function() {
-      return entityManager.getEntities({
-        cache: true
-      });
-    });
-  });
-
-}).call(this);
 
 (function() {
   this.Atlas.module('Map', function(Map, App, Backbone, Marionette, $, _) {

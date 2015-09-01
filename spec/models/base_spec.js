@@ -4,6 +4,19 @@ var assert = require('assert'),
 	$ = require('jquery'),
 	base = require('./../../app/models/base.js');
 
+describe('base.Collection', function() {
+
+	describe('buildQueryString', function() {
+
+		it('', function() {
+			var coll = new base.Collection();
+			assert.equal(coll.buildQueryString({ a: 'b' }), '?a=b');
+		});
+
+	});
+
+});
+
 
 describe('base.Model', function() {
 

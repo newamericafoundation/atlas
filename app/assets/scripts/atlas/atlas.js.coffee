@@ -2,10 +2,6 @@
 
 	App = new Marionette.Application()
 
-	App.uiState = {
-		isCollapsed: false
-	}
-
 	App.on 'start', ->
 
 		console.log 'Hi, Mom!'
@@ -15,8 +11,6 @@
 
 		$(document).on 'mousewheel', (e) ->
 			App.vent.trigger 'scroll'
-
-		App.dataCache = {}
 
 		Backbone.history.start({ pushState: true }) if Backbone.history
 

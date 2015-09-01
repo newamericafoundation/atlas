@@ -8,12 +8,23 @@ exports.Model = baseFilter.Model.extend({
 });
 
 exports.Collection = baseFilter.Collection.extend({
+
+	dbCollection: 'project_templates',
+
+	dbSeed: seed,
+
 	model: exports.Model,
+
 	url: '/api/v1/project_templates',
+
 	hasSingleActiveChild: true,
+
 	initializeActiveStatesOnReset: true,
+
 	comparator: 'order',
+
 	initialize: function() {
 		this.reset(seed);
 	}
+
 });

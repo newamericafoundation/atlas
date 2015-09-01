@@ -25,14 +25,15 @@ gulp.task('bundle-models', () => {
     var globalShim = browserifyGlobalShim.configure({
         'jquery': '$',
         'underscore': '_',
-        'backbone': 'Backbone'
+        'backbone': 'Backbone',
+        'mongodb': 'mongodb'
     });
     var b = browserify({ 
         entries: [ './app/models/__client__.js' ],
         noParse: [ 'jquery' ].map(require.resolve)
     });
-    b.transform(globalShim);
     b.transform(babelify);
+    b.transform(globalShim);
     return b.bundle()
         .pipe(source('__auto__models.js'))
         .pipe(gulp.dest('./app/assets/scripts/atlas'));
@@ -102,8 +103,8 @@ gulp.task('js-clean-build', (next) => {
 gulp.task('js-build', [ 'js-clean-build', 'js-build-source', 'js-build-component' ], () => {
     return gulp.src([ 
             'public/assets/scripts/partials/vendor.js', 
-            'public/assets/scripts/partials/component.js', 
-            'public/assets/scripts/partials/source.js'
+            'public/assets/scripts/partials/source.js',
+            'public/assets/scripts/partials/component.js'
         ])
         .pipe(concat('app.js'))
         .pipe(config.production ? util.noop() : gulp.dest('public/assets/scripts/build'))

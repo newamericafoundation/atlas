@@ -14,7 +14,11 @@ Comp.Projects.Index.ProjectSections = class extends React.Component {
 		if (this.props.projectSections == null) { return; }
 		return this.props.projectSections.map((item, i) => {
 			return (
-				<ProjectSectionsItem App={this.props.App} projectSection={item} key={i} />
+				<ProjectSectionsItem 
+					{...this.props} 
+					projectSection={item} 
+					key={i}
+				/>
 			);
 		});
 
@@ -47,10 +51,7 @@ class ProjectSectionsItem extends React.Component {
 	toggleActiveState() {
 		var App;
 		this.props.projectSection.toggleActiveState();
-		App = this.props.App;
-		if (App != null) {
-			App.vent.trigger('project:filter:change');
-		}
+		this.props.updateProjectsIndex();
 	}
 
 }

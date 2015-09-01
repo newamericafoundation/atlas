@@ -4,21 +4,11 @@ var _ = require('underscore'),
 
 exports.Model = base.Model.extend({
 	
-	urlRoot: '/api/v1/images',
-
 	fields: [
 
 		
 
 	],
-	
-	/** 
-	 * Fetches image model url by name key
-	 * @returns {string} - Url plus name
-	 */
-	url: function() {
-		return this.urlRoot + ("?name=" + (this.get('name')));
-	},
 
 	/**
 	 * Recognize and process server response.
@@ -31,8 +21,8 @@ exports.Model = base.Model.extend({
 		return resp;
 	},
 
-	/** Gets encoded url to use in CSS background-image. */
-	getBackgroundImageCss: function() {
+	/** Gets encoded url to use as a CSS background-image. */
+	getUrl: function() {
 		var encoded;
 		encoded = this.get('encoded');
 		if (encoded != null) {
@@ -47,6 +37,9 @@ exports.Model = base.Model.extend({
 });
 
 exports.Collection = base.Collection.extend({
+
 	model: exports.Model,
-	url: '/api/v1/images'
+
+	apiUrl: '/api/v1/images'
+
 });
