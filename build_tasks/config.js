@@ -28,7 +28,7 @@ module.exports = {
 		        './bower_components/backbone/backbone.js',
 		        './bower_components/marionette/lib/backbone.marionette.js',
 		        './bower_components/react/react.js',
-		        './bower_components/react-router/umd/ReactRouter.js',
+		        './bower_components/react-router/build/umd/ReactRouter.js',
 		        './bower_components/topojson/topojson.js',
 		        './bower_components/chartist/dist/chartist.js',
 		        './bower_components/chartist-html/build/chartist-html.js',
@@ -43,7 +43,6 @@ module.exports = {
 		    	// all vendor code not available through bower are stored here
 		    	'./app/assets/scripts/vendor/chroma.js',
 		    	'./app/assets/scripts/vendor/jquery-ui.js',
-		    	'./app/assets/scripts/vendor/faisalman-simple-excel-js-3a2b9be/src/simple-excel.js',
 		        './app/assets/scripts/config/**/*.js.coffee',
 		        './app/assets/scripts/atlas/atlas.js.coffee',
 		        './app/assets/scripts/atlas/routes/**/*',

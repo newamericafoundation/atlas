@@ -16,7 +16,7 @@
 		renderReactLayout: (opt = {}) ->
 			el = $('#site')[0]
 			opt.App = App
-			c = React.createElement(Comp.Layout, opt)
+			c = React.createElement(Comp.BackboneLayout, opt)
 			React.render(c, el)
 
 		# Shorthand for Backbone history navigation.

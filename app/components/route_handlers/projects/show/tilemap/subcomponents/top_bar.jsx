@@ -1,19 +1,30 @@
+(function() {
+
+}());
+
 Comp.Projects.Show.Tilemap.TopBar = class extends React.Component {
 
 	render() {
-		var IconsComp = Comp.Projects.Show.Tilemap.TopBarIcons,
-			SliderComp = Comp.Slider;
+		var IconsComp = Comp.Projects.Show.Tilemap.TopBarIcons;
 		return (
 			<div className="atl__top-bar">
 				<div className="atl__top-bar__content">
 					<IconsComp {...this.props} />
-					<div className="atl__top-bar__timeline">
-						<SliderComp {...this.props} values={[ '2003', '2004', '2005', '2006' ]} />
-					</div>
+					{ this.renderTimeline() }
 					<div className="atl__top-bar__summary">
 						<div>{ this.getName() }</div>
 					</div>
 				</div>
+			</div>
+		);
+	}
+
+	renderTimeline() {
+		return;
+		var SliderComp = Comp.Slider;
+		return (
+			<div className="atl__top-bar__timeline">
+				<SliderComp {...this.props} values={[ '2003', '2004', '2005', '2006' ]} />
 			</div>
 		);
 	}

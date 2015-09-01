@@ -1,21 +1,17 @@
-Comp.Layout = React.createClass
+Comp.BackboneLayout = React.createClass
 	
-	mixins: [ Comp.Mixins.BackboneEvents ]
-
-	displayName: 'Layout'
-
 	render: ->
 		<div className="wrapper">
-			<Comp.Setup App={@props.App} />
-			<Comp.Header App={@props.App} headerTitle={@props.headerTitle} theme={@props.theme} />
-			{ @getRoutable() }
+			<Comp.Setup App={this.props.App} />
+			<Comp.Header App={this.props.App} headerTitle={this.props.headerTitle} theme={this.props.theme} />
+			{ this.getRoutable() }
 		</div>
 
 	getRoutable: ->
 		# Travel down component tree to find routable component.
-		return unless @props.routableComponentName?
-		compNameKeys = @props.routableComponentName.split('.')
+		return unless this.props.routableComponentName?
+		compNameKeys = this.props.routableComponentName.split('.')
 		Component = Comp
 		for compNameKey in compNameKeys
 			Component = Component[compNameKey]
-		<Component App={@props.App} />
+		<Component App={this.props.App} />

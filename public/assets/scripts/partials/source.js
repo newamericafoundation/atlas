@@ -8975,7 +8975,7 @@ var slider = $.widget( "ui.slider", $.ui.mouse, {
         }
         el = $('#site')[0];
         opt.App = App;
-        c = React.createElement(Comp.Layout, opt);
+        c = React.createElement(Comp.BackboneLayout, opt);
         return React.render(c, el);
       },
       navigate: function(url, options) {
@@ -9823,6 +9823,12 @@ var Model = Backbone.Model.extend({
 		return data;
 	},
 
+	/*
+  * Custom get function, accommodating a suffix, e.g. status_2012.
+  * @param {string} field - Same as in Backbone.
+  * @param {string} suffix - Custom suffix.
+  
+  */
 	get: function get(field, suffix) {
 		var getFnc = Backbone.Model.prototype.get;
 		if (suffix == null) {

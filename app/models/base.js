@@ -14,6 +14,12 @@ var Model = Backbone.Model.extend({
 		return data;
 	},
 
+	/*
+	 * Custom get function, accommodating a suffix, e.g. status_2012.
+	 * @param {string} field - Same as in Backbone.
+	 * @param {string} suffix - Custom suffix.
+	 * @returns {} value
+	 */
 	get: function(field, suffix) {
 		var getFnc = Backbone.Model.prototype.get;
 		if (suffix == null) { return getFnc.apply(this, [ field ]); }

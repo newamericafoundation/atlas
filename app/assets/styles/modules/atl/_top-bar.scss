@@ -63,6 +63,8 @@
 		float: right;
 		display: table;
 		div {
+			width: 200px;
+			overflow-x: ellipsis;
 			display: table-cell;
 			vertical-align: middle;
 			padding-right: 20px;
