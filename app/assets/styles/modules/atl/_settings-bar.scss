@@ -1,11 +1,10 @@
 .atl__settings-bar {
 
-	z-index: 8;
+	z-index: 6;
 
 	width: 100%;
 	position: absolute;
 	overflow: visible;
-	padding: 20px 0;
 
 	top: 0;
 
@@ -14,11 +13,14 @@
 
 	@mixin expanded {
 		background-color: rgba(27,27,27,0.83);
+		padding: 20px 0;
 	}
 
 	@mixin collapsed {
 		background: none;
 		height: auto;
+		top: 80px;
+		padding: 20px 0;
 	}
 
 	input {

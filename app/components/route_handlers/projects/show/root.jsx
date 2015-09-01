@@ -17,9 +17,8 @@ Comp.Projects.Show = class extends React.Component {
 
 	// This is a method passed down to all deep children so they can modify the state of the ui.
 	setUiState(uiStateChanges) {
-		var key,
-			currentUiState = this.state.ui;
-		for (key in uiStateChanges) {
+		var currentUiState = this.state.ui;
+		for (let key in uiStateChanges) {
 			currentUiState[key] = uiStateChanges[key];
 		}
 		this.forceUpdate();
@@ -105,13 +104,17 @@ Comp.Projects.Show = class extends React.Component {
 	// Send separate network request fetching related projects.
 	fetchRelatedProjects() {
 
-		var	project = this.state.project;
+		var project;
 
-		var coll = new M.project.Collection();
-		var promise = coll.getClientFetchPromise({ related_to: project.get('id') });
-		promise.then((coll) => {
-			this.setState({ related: coll });
-		});
+		project = this.state.project;
+
+		new M.project.Collection()
+			.getClientFetchPromise({ 
+				related_to: project.get('id') 
+			})
+			.then((coll) => {
+				this.setState({ related: coll });
+			});
 
 	}
 
@@ -120,19 +123,20 @@ Comp.Projects.Show = class extends React.Component {
 
 		var atlas_url = this.props.atlas_url || this.props.params.atlas_url;
 
-		var coll = new M.project.Collection();
-		var promise = coll.getClientFetchPromise({ atlas_url: atlas_url });
-		promise.then((coll) => {
-			console.log(coll);
-			var project = coll.models[0];
-			if (project.exists()) {
-				project.prepOnClient();
-				this.setState({ project: project });
-				this.fetchRelatedProjects();
-			} else {
-				Backbone.history.navigate('welcome', { trigger: true });
-			}
-		});
+		new M.project.Collection()
+			.getClientFetchPromise({ 
+				atlas_url: atlas_url 
+			})
+			.then((coll) => {
+				var project = coll.models[0];
+				if (project.exists()) {
+					project.prepOnClient();
+					this.setState({ project: project });
+					this.fetchRelatedProjects();
+				} else {
+					Backbone.history.navigate('welcome', { trigger: true });
+				}
+			});
 
 	}
 

@@ -193,11 +193,14 @@ var Model = Backbone.Model.extend({
 	/**
 	 * Set table of contents for html data under a given key.
 	 * @param {string} key
+	 * @param {string} saveKey - Key under which the modified html snippet is placed.
 	 * @returns {object} this
 	 */
-	setHtmlToc: function(key) {
+	setHtmlToc: function(key, saveKey) {
 
 		var html, $containedHtml, arr;
+
+		saveKey = saveKey || key;
 
 		html = this.get(key);
 		if (html == null) { return; }
@@ -227,8 +230,8 @@ var Model = Backbone.Model.extend({
 
 		});
 
-		this.set(key, $containedHtml.html());
-		this.set(key + '_toc', arr);
+		this.set(saveKey, $containedHtml.html());
+		this.set(saveKey + '_toc', arr);
 
 	}
 

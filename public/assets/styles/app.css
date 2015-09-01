@@ -5499,24 +5499,28 @@ label {
       display: block; } }
 
 .atl__settings-bar {
-  z-index: 8;
+  z-index: 6;
   width: 100%;
   position: absolute;
   overflow: visible;
-  padding: 20px 0;
   top: 0;
   opacity: 1;
   transition: 0.2s;
   background: none;
-  height: auto; }
+  height: auto;
+  top: 80px;
+  padding: 20px 0; }
   .atl__settings-bar input {
     color: #fffaef; }
   .atl--collapsed .atl__settings-bar {
     background: none;
-    height: auto; }
+    height: auto;
+    top: 80px;
+    padding: 20px 0; }
   @media only screen and (min-width: 800px) {
     .atl__settings-bar {
       background-color: rgba(27, 27, 27, 0.83);
+      padding: 20px 0;
       padding: 20px 0;
       width: 360px;
       top: 0;
@@ -5613,7 +5617,12 @@ label {
   top: 0;
   width: 100%;
   height: 75px;
-  padding-left: 360px; }
+  padding-left: 0; }
+  @media only screen and (min-width: 800px) {
+    .atl__top-bar {
+      padding-left: 360px; } }
+  .atl--collapsed .atl__top-bar {
+    padding-left: 0; }
   .atl__top-bar__content {
     position: relative;
     width: 100%;
@@ -5647,11 +5656,13 @@ label {
         width: 45px;
         height: 25px; }
   .atl__top-bar__summary {
+    width: 200px;
     float: right;
+    overflow-x: hidden;
     display: table; }
     .atl__top-bar__summary div {
       width: 200px;
-      overflow-x: ellipsis;
+      white-space: nowrap;
       display: table-cell;
       vertical-align: middle;
       padding-right: 20px;

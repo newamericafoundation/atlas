@@ -1,15 +1,12 @@
 (function() {
 
-}());
-
 Comp.Projects.Show.Tilemap.TopBar = class extends React.Component {
 
 	render() {
-		var IconsComp = Comp.Projects.Show.Tilemap.TopBarIcons;
 		return (
 			<div className="atl__top-bar">
 				<div className="atl__top-bar__content">
-					<IconsComp {...this.props} />
+					<TopBarIcons {...this.props} />
 					{ this.renderTimeline() }
 					<div className="atl__top-bar__summary">
 						<div>{ this.getName() }</div>
@@ -52,7 +49,7 @@ Comp.Projects.Show.Tilemap.TopBar = class extends React.Component {
 }
 
 
-Comp.Projects.Show.Tilemap.TopBarIcons = class extends React.Component {
+class TopBarIcons extends React.Component {
 
 	render() {
 		return (
@@ -68,15 +65,7 @@ Comp.Projects.Show.Tilemap.TopBarIcons = class extends React.Component {
 		return [
 			{
 				id: 'map',
-				reactIconName: 'List'
-			},
-			{
-				id: 'list',
-				reactIconName: 'List'
-			},
-			{
-				id: 'graph',
-				reactIconName: 'Graph'
+				reactIconName: 'UsMap'
 			},
 			{
 				id: 'info',
@@ -86,17 +75,16 @@ Comp.Projects.Show.Tilemap.TopBarIcons = class extends React.Component {
 	}
 
 	renderIcons() {
-		var IconComp = Comp.Projects.Show.Tilemap.TopBarIcon;
 		return this.getIconData().map((icon) => {
 			return (
-				<IconComp {...this.props} icon={icon} />
+				<TopBarIcon {...this.props} icon={icon} />
 			);
 		});
 	}
 
 }
 
-Comp.Projects.Show.Tilemap.TopBarIcon = class extends React.Component {
+class TopBarIcon extends React.Component {
 
 	render() {
 		var Icon = Comp.Icons[this.props.icon.reactIconName];
@@ -123,3 +111,5 @@ Comp.Projects.Show.Tilemap.TopBarIcon = class extends React.Component {
 	}
 
 }
+
+}());

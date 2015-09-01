@@ -73554,6 +73554,177 @@ var slider = $.widget( "ui.slider", $.ui.mouse, {
 
 }).call(this);
 
+if (!Function.prototype.bind) {
+  Function.prototype.bind = function(oThis) {
+    if (typeof this !== 'function') {
+      // closest thing possible to the ECMAScript 5
+      // internal IsCallable function
+      throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
+    }
+
+    var aArgs   = Array.prototype.slice.call(arguments, 1),
+        fToBind = this,
+        fNOP    = function() {},
+        fBound  = function() {
+          return fToBind.apply(this instanceof fNOP
+                 ? this
+                 : oThis,
+                 aArgs.concat(Array.prototype.slice.call(arguments)));
+        };
+
+    fNOP.prototype = this.prototype;
+    fBound.prototype = new fNOP();
+
+    return fBound;
+  };
+}
+// Production steps of ECMA-262, Edition 5, 15.4.4.18
+// Reference: http://es5.github.io/#x15.4.4.18
+if (!Array.prototype.forEach) {
+
+  Array.prototype.forEach = function(callback, thisArg) {
+
+    var T, k;
+
+    if (this == null) {
+      throw new TypeError(' this is null or not defined');
+    }
+
+    // 1. Let O be the result of calling ToObject passing the |this| value as the argument.
+    var O = Object(this);
+
+    // 2. Let lenValue be the result of calling the Get internal method of O with the argument "length".
+    // 3. Let len be ToUint32(lenValue).
+    var len = O.length >>> 0;
+
+    // 4. If IsCallable(callback) is false, throw a TypeError exception.
+    // See: http://es5.github.com/#x9.11
+    if (typeof callback !== "function") {
+      throw new TypeError(callback + ' is not a function');
+    }
+
+    // 5. If thisArg was supplied, let T be thisArg; else let T be undefined.
+    if (arguments.length > 1) {
+      T = thisArg;
+    }
+
+    // 6. Let k be 0
+    k = 0;
+
+    // 7. Repeat, while k < len
+    while (k < len) {
+
+      var kValue;
+
+      // a. Let Pk be ToString(k).
+      //   This is implicit for LHS operands of the in operator
+      // b. Let kPresent be the result of calling the HasProperty internal method of O with argument Pk.
+      //   This step can be combined with c
+      // c. If kPresent is true, then
+      if (k in O) {
+
+        // i. Let kValue be the result of calling the Get internal method of O with argument Pk.
+        kValue = O[k];
+
+        // ii. Call the Call internal method of callback with T as the this value and
+        // argument list containing kValue, k, and O.
+        callback.call(T, kValue, k, O);
+      }
+      // d. Increase k by 1.
+      k++;
+    }
+    // 8. return undefined
+  };
+}
+// Production steps of ECMA-262, Edition 5, 15.4.4.19
+// Reference: http://es5.github.io/#x15.4.4.19
+if (!Array.prototype.map) {
+
+  Array.prototype.map = function(callback, thisArg) {
+
+    var T, A, k;
+
+    if (this == null) {
+      throw new TypeError(' this is null or not defined');
+    }
+
+    // 1. Let O be the result of calling ToObject passing the |this| 
+    //    value as the argument.
+    var O = Object(this);
+
+    // 2. Let lenValue be the result of calling the Get internal 
+    //    method of O with the argument "length".
+    // 3. Let len be ToUint32(lenValue).
+    var len = O.length >>> 0;
+
+    // 4. If IsCallable(callback) is false, throw a TypeError exception.
+    // See: http://es5.github.com/#x9.11
+    if (typeof callback !== 'function') {
+      throw new TypeError(callback + ' is not a function');
+    }
+
+    // 5. If thisArg was supplied, let T be thisArg; else let T be undefined.
+    if (arguments.length > 1) {
+      T = thisArg;
+    }
+
+    // 6. Let A be a new array created as if by the expression new Array(len) 
+    //    where Array is the standard built-in constructor with that name and 
+    //    len is the value of len.
+    A = new Array(len);
+
+    // 7. Let k be 0
+    k = 0;
+
+    // 8. Repeat, while k < len
+    while (k < len) {
+
+      var kValue, mappedValue;
+
+      // a. Let Pk be ToString(k).
+      //   This is implicit for LHS operands of the in operator
+      // b. Let kPresent be the result of calling the HasProperty internal 
+      //    method of O with argument Pk.
+      //   This step can be combined with c
+      // c. If kPresent is true, then
+      if (k in O) {
+
+        // i. Let kValue be the result of calling the Get internal 
+        //    method of O with argument Pk.
+        kValue = O[k];
+
+        // ii. Let mappedValue be the result of calling the Call internal 
+        //     method of callback with T as the this value and argument 
+        //     list containing kValue, k, and O.
+        mappedValue = callback.call(T, kValue, k, O);
+
+        // iii. Call the DefineOwnProperty internal method of A with arguments
+        // Pk, Property Descriptor
+        // { Value: mappedValue,
+        //   Writable: true,
+        //   Enumerable: true,
+        //   Configurable: true },
+        // and false.
+
+        // In browsers that support Object.defineProperty, use the following:
+        // Object.defineProperty(A, k, {
+        //   value: mappedValue,
+        //   writable: true,
+        //   enumerable: true,
+        //   configurable: true
+        // });
+
+        // For best browser support, use the following:
+        A[k] = mappedValue;
+      }
+      // d. Increase k by 1.
+      k++;
+    }
+
+    // 9. return A
+    return A;
+  };
+}
 (function() {
   this.Atlas = (function(Backbone, Marionette) {
     var App;
@@ -73563,9 +73734,14 @@ var slider = $.widget( "ui.slider", $.ui.mouse, {
       console.log('Hi, Mom!');
       router = new App.Router.Router();
       App.router = router;
-      return $(document).on('mousewheel', function(e) {
+      $(document).on('mousewheel', function(e) {
         return App.vent.trigger('scroll');
       });
+      if (Backbone.history) {
+        return Backbone.history.start({
+          pushState: true
+        });
+      }
     });
     return App;
   })(Backbone, Marionette);
@@ -80385,7 +80561,7 @@ Comp.Icons.Clipboard = (function (_React$Component8) {
 	return _class8;
 })(React.Component);
 
-Comp.Icons.Comment = (function (_React$Component9) {
+Comp.Icons.Clock = (function (_React$Component9) {
 	_inherits(_class9, _React$Component9);
 
 	function _class9() {
@@ -80403,10 +80579,8 @@ Comp.Icons.Comment = (function (_React$Component9) {
 				React.createElement(
 					"g",
 					null,
-					React.createElement("path", { d: "M50,8.2C24.6,8.2,3.9,24.9,3.9,45.4c0,13.1,8.6,25.2,22.4,31.9c-2.2,2.9-5.1,5.2-8.6,6.9 c-1.6,0.8-2.5,2.6-2.1,4.3c0.3,1.8,1.8,3.1,3.6,3.2c1.1,0.1,2.3,0.1,3.4,0.1c10.1,0,19.2-3.3,25.7-9.3c0.6,0,1.2,0,1.8,0 c25.4,0,46.1-16.7,46.1-37.2C96.1,24.9,75.4,8.2,50,8.2z M50,74.7c-1,0-2.1-0.1-3.1-0.1c-1.2,0-2.3,0.4-3.1,1.2 c-3.1,3.2-7.1,5.5-11.7,6.8c0.9-1.1,1.7-2.2,2.4-3.4c0.3-0.5,0.5-1,0.8-1.5l0.2-0.5c0.5-1,0.6-2.2,0.1-3.2c-0.4-1-1.2-1.9-2.3-2.3 c-13.1-4.9-21.6-15.2-21.6-26.3c0-16.1,17.1-29.3,38.2-29.3c21.1,0,38.2,13.1,38.2,29.3S71.1,74.7,50,74.7z" }),
-					React.createElement("path", { d: "M32.3,41c-3.2,0-5.8,2.6-5.8,5.8c0,3.2,2.6,5.8,5.8,5.8c3.2,0,5.8-2.6,5.8-5.8C38,43.6,35.4,41,32.3,41z" }),
-					React.createElement("path", { d: "M50,41c-3.2,0-5.8,2.6-5.8,5.8c0,3.2,2.6,5.8,5.8,5.8c3.2,0,5.8-2.6,5.8-5.8C55.8,43.6,53.2,41,50,41z" }),
-					React.createElement("path", { d: "M67.7,41c-3.2,0-5.8,2.6-5.8,5.8c0,3.2,2.6,5.8,5.8,5.8c3.2,0,5.8-2.6,5.8-5.8C73.5,43.6,70.9,41,67.7,41z" })
+					React.createElement("path", { d: "M50,16c-2.3,0-4,1.9-4,4.1v28.2L34.6,59.6c-1.6,1.6-1.7,4.2,0,5.9c0.8,0.8,1.9,1.2,2.9,1.2 c1.1,0,2.1-0.4,2.9-1.2l12-12c0.1-0.1,0.1-0.2,0.1-0.3c0.9-0.8,1.4-1.9,1.4-3.2V20.1C54,17.8,52.3,16,50,16z" }),
+					React.createElement("path", { d: "M98,50C98,50,98,50,98,50C98,23.3,76.7,1.7,50,1.7C23.4,1.7,2,23.3,2,50c0,0,0,0,0,0v0c0,0,0,0,0,0 c0,26.7,21.4,48.3,48,48.3C76.7,98.3,98,76.7,98,50C98,50,98,50,98,50L98,50z M71.8,83.6l-1.1-2c-0.6-1-1.9-1.3-2.8-0.7 c-1,0.6-1.3,1.8-0.8,2.8l1.1,2c-4.4,2.3-9.3,3.7-14.4,4.2c-0.6-1.5-2.1-2.5-3.8-2.5c-1.7,0-3.2,1-3.8,2.5c-5.1-0.5-10-2-14.4-4.2 l1.1-2c0.6-1,0.2-2.3-0.8-2.8c-1-0.6-2.3-0.2-2.8,0.8l-1.1,2c-4.7-3.1-8.7-7.1-11.8-11.8l2-1.1c1-0.6,1.3-1.8,0.8-2.8 c-0.6-1-1.8-1.3-2.8-0.8l-2,1.1c-2.3-4.4-3.7-9.3-4.2-14.4c1.5-0.6,2.5-2.1,2.5-3.8c0-1.7-1-3.2-2.5-3.8c0.5-5.1,2-10,4.2-14.4 l2,1.1c0.3,0.2,0.7,0.3,1,0.3c0.7,0,1.4-0.4,1.8-1c0.6-1,0.2-2.3-0.8-2.8l-2-1.1c3.1-4.7,7.1-8.7,11.8-11.8l1.1,2 c0.4,0.7,1.1,1,1.8,1c0.4,0,0.7-0.1,1-0.3c1-0.6,1.3-1.8,0.8-2.8l-1.1-2c4.4-2.3,9.2-3.7,14.4-4.2c0.6,1.5,2.1,2.5,3.8,2.5 c1.7,0,3.2-1,3.8-2.5c5.1,0.5,10,2,14.4,4.2l-1.1,2c-0.6,1-0.2,2.3,0.8,2.8c0.3,0.2,0.7,0.3,1,0.3c0.7,0,1.4-0.4,1.8-1l1.1-2 c4.7,3.1,8.7,7.1,11.8,11.8l-2,1.1c-1,0.6-1.3,1.8-0.8,2.8c0.4,0.7,1.1,1,1.8,1c0.4,0,0.7-0.1,1-0.3l2-1.1 c2.2,4.4,3.7,9.2,4.2,14.4c-1.5,0.6-2.5,2.1-2.5,3.8c0,1.7,1,3.2,2.5,3.8c-0.5,5.1-2,10-4.2,14.4l-2-1.1c-1-0.6-2.3-0.2-2.8,0.8 c-0.6,1-0.2,2.3,0.8,2.8l2,1.1C80.5,76.5,76.5,80.5,71.8,83.6z" })
 				)
 			);
 		}
@@ -80415,7 +80589,7 @@ Comp.Icons.Comment = (function (_React$Component9) {
 	return _class9;
 })(React.Component);
 
-Comp.Icons.Clock = (function (_React$Component10) {
+Comp.Icons.Comment = (function (_React$Component10) {
 	_inherits(_class10, _React$Component10);
 
 	function _class10() {
@@ -80433,8 +80607,10 @@ Comp.Icons.Clock = (function (_React$Component10) {
 				React.createElement(
 					"g",
 					null,
-					React.createElement("path", { d: "M50,16c-2.3,0-4,1.9-4,4.1v28.2L34.6,59.6c-1.6,1.6-1.7,4.2,0,5.9c0.8,0.8,1.9,1.2,2.9,1.2 c1.1,0,2.1-0.4,2.9-1.2l12-12c0.1-0.1,0.1-0.2,0.1-0.3c0.9-0.8,1.4-1.9,1.4-3.2V20.1C54,17.8,52.3,16,50,16z" }),
-					React.createElement("path", { d: "M98,50C98,50,98,50,98,50C98,23.3,76.7,1.7,50,1.7C23.4,1.7,2,23.3,2,50c0,0,0,0,0,0v0c0,0,0,0,0,0 c0,26.7,21.4,48.3,48,48.3C76.7,98.3,98,76.7,98,50C98,50,98,50,98,50L98,50z M71.8,83.6l-1.1-2c-0.6-1-1.9-1.3-2.8-0.7 c-1,0.6-1.3,1.8-0.8,2.8l1.1,2c-4.4,2.3-9.3,3.7-14.4,4.2c-0.6-1.5-2.1-2.5-3.8-2.5c-1.7,0-3.2,1-3.8,2.5c-5.1-0.5-10-2-14.4-4.2 l1.1-2c0.6-1,0.2-2.3-0.8-2.8c-1-0.6-2.3-0.2-2.8,0.8l-1.1,2c-4.7-3.1-8.7-7.1-11.8-11.8l2-1.1c1-0.6,1.3-1.8,0.8-2.8 c-0.6-1-1.8-1.3-2.8-0.8l-2,1.1c-2.3-4.4-3.7-9.3-4.2-14.4c1.5-0.6,2.5-2.1,2.5-3.8c0-1.7-1-3.2-2.5-3.8c0.5-5.1,2-10,4.2-14.4 l2,1.1c0.3,0.2,0.7,0.3,1,0.3c0.7,0,1.4-0.4,1.8-1c0.6-1,0.2-2.3-0.8-2.8l-2-1.1c3.1-4.7,7.1-8.7,11.8-11.8l1.1,2 c0.4,0.7,1.1,1,1.8,1c0.4,0,0.7-0.1,1-0.3c1-0.6,1.3-1.8,0.8-2.8l-1.1-2c4.4-2.3,9.2-3.7,14.4-4.2c0.6,1.5,2.1,2.5,3.8,2.5 c1.7,0,3.2-1,3.8-2.5c5.1,0.5,10,2,14.4,4.2l-1.1,2c-0.6,1-0.2,2.3,0.8,2.8c0.3,0.2,0.7,0.3,1,0.3c0.7,0,1.4-0.4,1.8-1l1.1-2 c4.7,3.1,8.7,7.1,11.8,11.8l-2,1.1c-1,0.6-1.3,1.8-0.8,2.8c0.4,0.7,1.1,1,1.8,1c0.4,0,0.7-0.1,1-0.3l2-1.1 c2.2,4.4,3.7,9.2,4.2,14.4c-1.5,0.6-2.5,2.1-2.5,3.8c0,1.7,1,3.2,2.5,3.8c-0.5,5.1-2,10-4.2,14.4l-2-1.1c-1-0.6-2.3-0.2-2.8,0.8 c-0.6,1-0.2,2.3,0.8,2.8l2,1.1C80.5,76.5,76.5,80.5,71.8,83.6z" })
+					React.createElement("path", { d: "M50,8.2C24.6,8.2,3.9,24.9,3.9,45.4c0,13.1,8.6,25.2,22.4,31.9c-2.2,2.9-5.1,5.2-8.6,6.9 c-1.6,0.8-2.5,2.6-2.1,4.3c0.3,1.8,1.8,3.1,3.6,3.2c1.1,0.1,2.3,0.1,3.4,0.1c10.1,0,19.2-3.3,25.7-9.3c0.6,0,1.2,0,1.8,0 c25.4,0,46.1-16.7,46.1-37.2C96.1,24.9,75.4,8.2,50,8.2z M50,74.7c-1,0-2.1-0.1-3.1-0.1c-1.2,0-2.3,0.4-3.1,1.2 c-3.1,3.2-7.1,5.5-11.7,6.8c0.9-1.1,1.7-2.2,2.4-3.4c0.3-0.5,0.5-1,0.8-1.5l0.2-0.5c0.5-1,0.6-2.2,0.1-3.2c-0.4-1-1.2-1.9-2.3-2.3 c-13.1-4.9-21.6-15.2-21.6-26.3c0-16.1,17.1-29.3,38.2-29.3c21.1,0,38.2,13.1,38.2,29.3S71.1,74.7,50,74.7z" }),
+					React.createElement("path", { d: "M32.3,41c-3.2,0-5.8,2.6-5.8,5.8c0,3.2,2.6,5.8,5.8,5.8c3.2,0,5.8-2.6,5.8-5.8C38,43.6,35.4,41,32.3,41z" }),
+					React.createElement("path", { d: "M50,41c-3.2,0-5.8,2.6-5.8,5.8c0,3.2,2.6,5.8,5.8,5.8c3.2,0,5.8-2.6,5.8-5.8C55.8,43.6,53.2,41,50,41z" }),
+					React.createElement("path", { d: "M67.7,41c-3.2,0-5.8,2.6-5.8,5.8c0,3.2,2.6,5.8,5.8,5.8c3.2,0,5.8-2.6,5.8-5.8C73.5,43.6,70.9,41,67.7,41z" })
 				)
 			);
 		}
@@ -80550,7 +80726,7 @@ Comp.Icons.Dictionary = (function (_React$Component14) {
 			return React.createElement(
 				"svg",
 				{ viewBox: "0 0 100 100" },
-				React.createElement("path", { d: "M88.9,0H61.1C56.6,0,52.7,2.5,50,5.7C47.4,2.5,43.6,0,38.9,0H11.1C5,0,0,5,0,11.1v68.5 c0,6.1,5,11.1,11.1,11.1H37c5.3,0,9.2,4.2,9.3,5.6v0c0,2,1.7,3.7,3.7,3.7c2,0,3.7-1.6,3.7-3.6c0,0,0-0.1,0-0.1 c0-1.3,4.1-5.6,9.3-5.6h25.9c6.1,0,11.1-5,11.1-11.1V11.1C100,5,95,0,88.9,0z M37,83.3H11.1c-2,0-3.7-1.7-3.7-3.7V11.1 c0-2,1.7-3.7,3.7-3.7h27.8c4.5,0,9.2,5.5,9.2,7.6c0,1.4,0.1,1.8,0.1,2.9v69.2C45.2,84.9,41.3,83.3,37,83.3z M92.6,79.6 c0,2-1.7,3.7-3.7,3.7H63c-4.2,0-8.1,1.6-11.1,3.9V18c0-0.9,0-1.8,0-3.2c0-2.1,5.1-7.4,9.2-7.4h27.8c2,0,3.7,1.7,3.7,3.7V79.6z" })
+				React.createElement("path", { d: "M88,5.3H56.1c-2.2,0-4.3,0.6-6.1,1.8c-1.8-1.2-3.9-1.8-6.1-1.8H12c-6.2,0-11.2,5-11.2,11.2v60.8 c0,6.2,5,11.2,11.2,11.2h31.9c0.4,0,0.9,0.7,0.9,0.9c0,2.8,2.3,5.1,5.1,5.1c2.8,0,5.1-2.3,5.1-5.1c0-0.3,0.5-1,0.9-1H88 c6.2,0,11.2-5,11.2-11.2V16.5C99.2,10.3,94.2,5.3,88,5.3z M44.9,78.4c-0.3,0-0.6,0-0.9,0H12c-0.5,0-0.9-0.4-0.9-0.9V16.5 c0-0.5,0.4-0.9,0.9-0.9h31.9c0.5,0,0.9,0.4,0.9,0.9V78.4z M89,77.4c0,0.5-0.4,0.9-0.9,0.9H56.1c-0.3,0-0.6,0-0.9,0V16.5 c0-0.5,0.4-0.9,0.9-0.9H88c0.5,0,0.9,0.4,0.9,0.9V77.4z" })
 			);
 		}
 	}]);
@@ -80626,7 +80802,7 @@ Comp.Icons.Drive = (function (_React$Component17) {
 					React.createElement("polygon", { points: "1.6,65.7 15.3,90.8 48.4,33.7 34.4,9.1 \t" }),
 					React.createElement("polygon", { points: "83.6,92.4 98.4,67 32.7,67.2 29.9,71.9 18,92.5 \t" }),
 					React.createElement("polygon", { points: "32.2,66.5 32.2,66.5 32.2,66.5 \t" }),
-					React.createElement("polygon", { points: "86.2,63.9 91,63.9 91,63.9 98.4,63.8 65.4,7.6 37.2,7.5 51.9,33.4 51.9,33.4 69.3,63.9 \t" }),
+					React.createElement("polygon", { points: "86.2,63.9 91,63.9 91,63.9 98.4,63.8 65.4,7.6 37.2,7.5 51.9,33.4 51.9,33.4  69.3,63.9 \t" }),
 					React.createElement("polygon", { points: "51.2,33.7 51.2,33.7 51.2,33.7 \t" }),
 					React.createElement("rect", { x: "68.8", y: "64.7", width: "0", height: "0" }),
 					React.createElement("polygon", { points: "91,64.6 91,64.6 91,64.6 \t" })
@@ -80781,7 +80957,7 @@ Comp.Icons.Expand = (function (_React$Component23) {
 	return _class23;
 })(React.Component);
 
-Comp.Icons.Filter = (function (_React$Component24) {
+Comp.Icons.Facebook = (function (_React$Component24) {
 	_inherits(_class24, _React$Component24);
 
 	function _class24() {
@@ -80796,7 +80972,7 @@ Comp.Icons.Filter = (function (_React$Component24) {
 			return React.createElement(
 				"svg",
 				{ viewBox: "0 0 100 100" },
-				React.createElement("path", { d: "M50,21.2c-0.8,0-1.6,0-2.4,0c-12-0.3-22.4-2.4-29-4.1c-4.2-1.1-4.2-3.5-0.1-4.7c6.8-1.8,17.8-4,31.5-4 c14,0,24.8,2.2,31.5,4c4.2,1.1,4.1,3.6-0.1,4.7c-6.6,1.7-17,3.9-29,4.1C51.6,21.2,50.8,21.2,50,21.2 M6,14C6,14.2,6,14.5,6,14.8 c0,0.6,0.1,1.1,0.2,1.6c0.2,0.7,0.5,1.4,1,2.1l29.1,40.3c1.6,2.2,3.3,6.1,3.3,8.8v27.6c0,3.4,2.1,4.3,4.6,2.1l14-11.9 c1.3-1.1,2.3-3.3,2.3-5V67.6c0-2.7,1.6-6.7,3.2-8.8l29-40.3c0.5-0.7,0.8-1.4,1-2.2c0.1-0.5,0.2-1,0.2-1.5c0-0.3,0-0.6-0.1-0.9 C92.2,1.8,54.4,1.5,50,1.5C45.6,1.5,7.6,1.8,6,14" })
+				React.createElement("path", { d: "M57.4,98V54.2h14.7l2.2-17.1H57.4V26.3c0-4.9,1.4-8.3,8.5-8.3l9,0V2.7C73.4,2.5,68,2,61.8,2 c-13,0-21.9,7.9-21.9,22.5v12.6H25.1v17.1h14.7V98L57.4,98L57.4,98z" })
 			);
 		}
 	}]);
@@ -80804,7 +80980,7 @@ Comp.Icons.Filter = (function (_React$Component24) {
 	return _class24;
 })(React.Component);
 
-Comp.Icons.Food = (function (_React$Component25) {
+Comp.Icons.Filter = (function (_React$Component25) {
 	_inherits(_class25, _React$Component25);
 
 	function _class25() {
@@ -80819,7 +80995,7 @@ Comp.Icons.Food = (function (_React$Component25) {
 			return React.createElement(
 				"svg",
 				{ viewBox: "0 0 100 100" },
-				React.createElement("path", { d: "M96.1,96.2c-0.7,0.8-1.6,1.4-2.5,1.7c-0.5,0.1-1,0.2-1.5,0.2c-1.5,0-3.1-0.6-4.3-1.9L38.9,46.4 c-0.2,0.1-0.4,0.1-0.6,0.2c-1.5,0.4-3.2,0.7-4.9,0.7c-6.9,0-14.8-3.4-19.7-8.4C6,31,1.2,14.1,7.9,6.3c1.5-1.8,3.5-2.9,5.7-3.6 C15.1,2.2,16.7,2,18.4,2c6.9,0,14.8,3.5,19.7,8.4c6.2,6.3,10.5,18.3,8.6,26.9L95.5,87C98,89.6,98.3,93.7,96.1,96.2z M60.9,45.4 c4.8,2.2,10.9,1.1,15-3.2l18-19l0,0L94,23c1.1-1.2,1.2-3.2,0.1-4.5c-1.1-1.2-2.9-1.3-4.1-0.1l-0.1,0.1l0,0L72.2,37.3 c-1.1,1.1-2.6,1.3-3.6,0.2c-1-1.2-0.8-2.8,0.3-3.9c0,0,0,0,0,0l17.8-18.8c1.1-1.2,1.2-3.2,0.1-4.5C85.7,9,83.8,9,82.7,10.2l-0.1,0.1 l0,0L64.8,29c-1.1,1.1-2.6,1.4-3.6,0.2c-1-1.2-0.8-2.8,0.3-4L79.2,6.6h0l0.1-0.1c1.1-1.2,1.2-3.2,0.1-4.5c-1.1-1.3-2.9-1.3-4.1-0.1 L57.2,21c-4.3,4.3-6.5,10.1-5,15C53.5,40.2,56,43.2,60.9,45.4z M38.6,52.4l-34,35.9c-2.4,2.6-3,6.3-0.6,8.9c2.3,2.7,5.8,2.2,8.2-0.4 l34.5-36.4L38.6,52.4z" })
+				React.createElement("path", { d: "M50,21.2c-0.8,0-1.6,0-2.4,0c-12-0.3-22.4-2.4-29-4.1c-4.2-1.1-4.2-3.5-0.1-4.7c6.8-1.8,17.8-4,31.5-4 c14,0,24.8,2.2,31.5,4c4.2,1.1,4.1,3.6-0.1,4.7c-6.6,1.7-17,3.9-29,4.1C51.6,21.2,50.8,21.2,50,21.2 M6,14C6,14.2,6,14.5,6,14.8 c0,0.6,0.1,1.1,0.2,1.6c0.2,0.7,0.5,1.4,1,2.1l29.1,40.3c1.6,2.2,3.3,6.1,3.3,8.8v27.6c0,3.4,2.1,4.3,4.6,2.1l14-11.9 c1.3-1.1,2.3-3.3,2.3-5V67.6c0-2.7,1.6-6.7,3.2-8.8l29-40.3c0.5-0.7,0.8-1.4,1-2.2c0.1-0.5,0.2-1,0.2-1.5c0-0.3,0-0.6-0.1-0.9 C92.2,1.8,54.4,1.5,50,1.5C45.6,1.5,7.6,1.8,6,14" })
 			);
 		}
 	}]);
@@ -80827,7 +81003,7 @@ Comp.Icons.Food = (function (_React$Component25) {
 	return _class25;
 })(React.Component);
 
-Comp.Icons.Globe = (function (_React$Component26) {
+Comp.Icons.Food = (function (_React$Component26) {
 	_inherits(_class26, _React$Component26);
 
 	function _class26() {
@@ -80842,7 +81018,7 @@ Comp.Icons.Globe = (function (_React$Component26) {
 			return React.createElement(
 				"svg",
 				{ viewBox: "0 0 100 100" },
-				React.createElement("path", { d: "M50,2.6C23.9,2.6,2.6,23.9,2.6,50S23.9,97.4,50,97.4c26.1,0,47.4-21.3,47.4-47.4S76.1,2.6,50,2.6z M15,29 v0.3c0-0.1,0-0.1-0.1-0.2C15,29,15,29,15,29z M43.1,90.2c-2.1-2.3,1.1-8.1,0.5-10.6c-0.4-1.5-2.6-3.1-3.7-4.4 c-1.1-1.4-2.7-3-3.5-4.6c-1-2.1-0.5-2.9,0.4-4.5c0.7-1.2,0.6-2.3,1.1-3.5c0.2-0.4,1.8-2,1.6-2.4c0-0.1,0-0.1,0-0.2 c-1.2-0.1-2.3,0.1-3.2-0.6c-0.8-0.6-1-2.4-1.7-3.1c-1.8-1.6-4.7-0.7-6.7-2.1c-1.8-1.3-3.8-2.5-5-4.3c-1.1-1.7-1.5-6-3.6-6.4 c0,2.1-0.3,2.7,0.6,4.8c0.6,1.2,1.7,4.1-1,3.4c-0.1-2.1-0.1-3.8-0.6-5.7c-0.5-1.9-2-3.8-2.4-5.8c-0.4-1.9-0.2-3.9-0.2-5.8 c0-2-0.7-3.7-0.8-5.5c1.3-2.1,2.7-4.1,4.4-5.9c1.2-1.3,2.4-2.5,4-3.2c1.6-0.6,3.4-1.5,5.1-1.9c1.8-0.4,3.9-0.4,5.8-0.5 C34,16.2,32.6,15,35,15.2c1.4,0.1,1.8,1.5,3.4,0.8c-0.7-0.7-2.9-2.1-0.7-2.4c0-0.8,0-1.6,0.1-2.3c0.5-0.3,1-0.5,1.5-0.7 c2.5-0.7,5-1.1,7.6-1.3c0.4,0.1,0.7,0.2,1,0.3c0.2-0.1,0.4-0.3,0.6-0.4c0.5,0,0.9,0,1.4,0c5.7,0,11.1,1.2,16,3.3 c0.3,0.4,0.5,0.7,0.9,1c0.7,0.5,2.2,0.9,0.7,1.1c-0.5,0.1-0.9-0.2-1.2,0.2c-0.4,0.5,0.2,0.9-0.7,1.3c-0.8,0.4-1.9-0.4-2.3,0.6 c-0.4,0.9,0.4,2.1,0.1,3c-0.3,1.1-1.7,0.9-2.7,0.8c-2-0.1-4.2-1.5-5.4-3.1c-0.4-0.5-1.3-2-0.9-2.7c0.3-0.6,0.9-0.2,1.2-0.6 c0.3-0.4-0.2-1.1-0.6-1.3c-0.1,0.8-0.6,1-1.2,0.7c-0.9-0.5-0.4-1.5-0.9-2.2c-0.7-1.1-2.4-0.7-3.5-1.1c-0.6-0.2-1-0.4-1.5-0.6 c-0.4,0.2-0.7,0.5-1.1,0.6c-0.9,0.3-1.9,0.3-2.7,0.9c-2.3,1.8,0.4,1.8,1.7,2.1c1.7,0.4,2.6,2.1,4,2.6c1.9,0.8,2.7-0.3,2.4,2.6 c-1.1,0.3-2.1-0.2-2.7-1.1c0.5,0.8,0.8,1.8,0.7,2.9c-1.8,0.6-2.6-0.2-4.1-0.8c-1.2-0.5-2.7-0.3-3.8-1c-0.1-0.3-0.1-0.6,0-0.9 c1.3,0,2.7-0.1,2.1-1.8c-2.4-0.2-2.9,0.9-4.4,2.3c3.6,1.2,0.4,2.4-1.6,2.3c-1.7-0.1-4.3-0.4-5.3,1.7c-0.9,2,2.1,2.5,3.7,3 c1,0.3,1.4,0.1,2.1,0.9c0.7,0.8,0.3,1.8,1.4,2.4c0.5-0.9-0.4-1.9-0.2-2.4c0.5-1.2,1.2-0.5,2.4-1c-0.6-1.3-2.4-1.8-2-3.2 c0.4-1.5,2.5-1.5,3.8-1.4c2,0.1,2,1.1,3.4,1.6c2.2,0.7,2.2-0.8,3.7,1.6c1.6,2.5,3.2,3.7,5.3,5.6c3.8,3.5-3,3.4-3.8,0.8 c0.3-0.1,0.8-0.5,1-0.6c-1.4-0.6-4.5-0.6-6.2-0.2c-0.1,0.4-0.1,0.6,0,1c1.5,0.1,1.9,0.1,2.7,0.7c0.3,0.2-0.1,1,0.4,1.3 c0.3,0.2,1.6-0.1,2-0.1c0.4,2.3-4.9,1.4-6.1,2.2c0,0.5-0.3,0.9-0.3,1.4c-3-0.4-2.8,2.5-3.8,4.2c-0.7,1.3-2.3,2.2-3.2,3.4 c-0.4,0.6-1.2,1.1-1.1,1.9c0.1,1.4,1.7,0.7,1.7,1.9c0,2.5-3.3-0.1-3.8-1.4c-3-0.6-6.9-1-8,2.4c-0.5,1.4,0.1,3.4,1.8,3.6 c1.5,0.1,0.9-0.9,2-1.3c0.6-0.2,1.7,0,2.3,0c0.5,1.4,0.3,2.1,1,3.2c0.9,1.2,0.9,1,1.4,2.5c0.4,1.1,0.7,2.2,2,2.7 c1.3,0.4,2.9-0.5,3,1.4c2.4,0.1,4.4,0,6.3,1.5c1.4,1.1,2.1,2.4,3.8,2.9c2.7,0.9,3.5,0.6,4.2,3.4c0.3,1.3-0.7,1.7,1.2,2.1 c1.1,0.2,2.5-0.5,3.6-0.4c1.9,0.1,3.8,1.2,3.8,3.4c0,1.2-0.5,1.5-1,2.4c-0.6,1.1-0.7,2.6-1.4,3.7c-1.3,2.1-3.7,1.2-5.2,3.1 c-0.5,0.7-0.3,1.7-1.1,2.5c-0.6,0.5-2.3,0.6-2.8,1c-1,0.8-0.5,1.4-1.5,2.4c-0.6,0.6-2.2,0.3-2.9,0.6c-1.2,0.6-1.9,1.8-2.8,2.4 C45.3,90.6,44.2,90.4,43.1,90.2z M84,66.7c0.2-1.5,0.4-3,0.8-4.4c0.4-1.5,0.6-2.9,0.5-4.5c0-0.7,0-1.9-0.5-2.4 c-0.2-0.2-1.7-0.9-2-0.9c-0.9,0-1.8,1.4-2.7,1.6c-1.1,0.3-2-0.4-2.7-1.1c-0.9-1-1.9-1.6-2.8-2.6c-1.1-1.1-1.3-2.6-1.3-4.1 c0-1.5,0.2-2.6,0.6-4c0.2-0.6,0.4-1.2,0.5-1.9c0.3-1.3,0.4-0.6,1-1.3c0.6-0.7,0.9-1.9,1.4-2.8c0.5-0.9,1-1.6,1.7-2.2 c-1.7-0.7-1.7-3.6-1.1-5.2c0.8-0.1,3.3,0.3,2-1.5c-0.4-0.6-1.7-0.4-1-1.5c0.4-0.6,1.2-0.6,1.8-0.6c0.1-0.7,0.4-1,1-1.2l-0.2-0.1 c-0.6-0.5-1.4-1.2-1.9-1.8c-0.6-0.6-1-2.4-0.1-2.7c2.5,2.6,4.7,5.5,6.5,8.6c0.1,0.2,0.1,0.4,0.2,0.6c0.3,0.8,0.8,1.6,1.1,2.4 c0.2,0.4,0.4,0.7,0.6,1c0.6,1.5,1.2,2.9,1.6,4.5c0,0.1,0,0.3-0.1,0.4c-1.1-0.4-1.7-2.3-2.4-3.3c0,0.4,0,0.8-0.1,1.1 c-0.2,0-0.5-0.1-0.6-0.2c-0.3-0.6-0.7-1.2-1.1-1.8c0.1,0.2,0.1,0.4,0,0.6c-1.2,0-0.9-1.4-1.2-2.1c-0.3-0.9-1.2-1.4-2.1-0.7 c-0.6,0.5-0.6,1.6-1.1,2.2c-0.3,0.3-0.6,0.4-0.8,0.6c-0.3,0.3-0.6,0.3-0.4,0.9c1-0.3,1.8-0.4,3-0.3c0.8,0.1,2.2-0.1,2.7,0.3 c0.3,0.3,0.3,0.8,0.4,1.2c0.2,0.4,0.4,0.6,0.7,1c0.4,0.6,1,2.2,1.8,2.1c0-0.2,0.1-0.5,0-0.7c1.4,0.5,1.9,3,2.1,4.4 c0.3,2.6,0.5,5.5,0.5,8.3c-0.4,7-2.6,13.5-6.1,19.1C84.2,70.3,83.9,67.7,84,66.7z" })
+				React.createElement("path", { d: "M96.1,96.2c-0.7,0.8-1.6,1.4-2.5,1.7c-0.5,0.1-1,0.2-1.5,0.2c-1.5,0-3.1-0.6-4.3-1.9L38.9,46.4 c-0.2,0.1-0.4,0.1-0.6,0.2c-1.5,0.4-3.2,0.7-4.9,0.7c-6.9,0-14.8-3.4-19.7-8.4C6,31,1.2,14.1,7.9,6.3c1.5-1.8,3.5-2.9,5.7-3.6 C15.1,2.2,16.7,2,18.4,2c6.9,0,14.8,3.5,19.7,8.4c6.2,6.3,10.5,18.3,8.6,26.9L95.5,87C98,89.6,98.3,93.7,96.1,96.2z M60.9,45.4 c4.8,2.2,10.9,1.1,15-3.2l18-19l0,0L94,23c1.1-1.2,1.2-3.2,0.1-4.5c-1.1-1.2-2.9-1.3-4.1-0.1l-0.1,0.1l0,0L72.2,37.3 c-1.1,1.1-2.6,1.3-3.6,0.2c-1-1.2-0.8-2.8,0.3-3.9c0,0,0,0,0,0l17.8-18.8c1.1-1.2,1.2-3.2,0.1-4.5C85.7,9,83.8,9,82.7,10.2l-0.1,0.1 l0,0L64.8,29c-1.1,1.1-2.6,1.4-3.6,0.2c-1-1.2-0.8-2.8,0.3-4L79.2,6.6h0l0.1-0.1c1.1-1.2,1.2-3.2,0.1-4.5c-1.1-1.3-2.9-1.3-4.1-0.1 L57.2,21c-4.3,4.3-6.5,10.1-5,15C53.5,40.2,56,43.2,60.9,45.4z M38.6,52.4l-34,35.9c-2.4,2.6-3,6.3-0.6,8.9c2.3,2.7,5.8,2.2,8.2-0.4 l34.5-36.4L38.6,52.4z" })
 			);
 		}
 	}]);
@@ -80850,7 +81026,7 @@ Comp.Icons.Globe = (function (_React$Component26) {
 	return _class26;
 })(React.Component);
 
-Comp.Icons.Graph = (function (_React$Component27) {
+Comp.Icons.Globe = (function (_React$Component27) {
 	_inherits(_class27, _React$Component27);
 
 	function _class27() {
@@ -80865,10 +81041,7 @@ Comp.Icons.Graph = (function (_React$Component27) {
 			return React.createElement(
 				"svg",
 				{ viewBox: "0 0 100 100" },
-				React.createElement("path", { d: "M93.5,90H10V6.5c0-2.2-1.3-4-3.5-4C4.3,2.5,3,4.3,3,6.5v87C3,95.7,4.3,97,6.5,97h87c2.2,0,4-1.3,4-3.5 C97.5,91.3,95.7,90,93.5,90z" }),
-				React.createElement("path", { d: "M37,60.1c0-1.9-1.5-3.1-3.3-3.1H20.2c-1.9,0-3.2,1.2-3.2,3.1v18.8c0,1.9,1.3,3.1,3.2,3.1h13.5 c1.9,0,3.3-1.3,3.3-3.1V60.1z M23,63h8v13h-8V63z" }),
-				React.createElement("path", { d: "M90,11.6C90,9.7,88.5,8,86.6,8H73.1C71.3,8,70,9.7,70,11.6v67.3c0,1.9,1.3,3.1,3.1,3.1h13.5 c1.9,0,3.4-1.3,3.4-3.1V11.6z M77,15h7v61h-7V15z" }),
-				React.createElement("path", { d: "M63,36.3c0-1.9-1-3.3-2.9-3.3H46.7c-1.9,0-3.7,1.4-3.7,3.3v42.6c0,1.9,1.8,3.1,3.7,3.1h13.5 c1.9,0,2.9-1.3,2.9-3.1V36.3z M50,40h8v36h-8V40z" })
+				React.createElement("path", { d: "M50,2.6C23.9,2.6,2.6,23.9,2.6,50S23.9,97.4,50,97.4c26.1,0,47.4-21.3,47.4-47.4S76.1,2.6,50,2.6z M15,29 v0.3c0-0.1,0-0.1-0.1-0.2C15,29,15,29,15,29z M43.1,90.2c-2.1-2.3,1.1-8.1,0.5-10.6c-0.4-1.5-2.6-3.1-3.7-4.4 c-1.1-1.4-2.7-3-3.5-4.6c-1-2.1-0.5-2.9,0.4-4.5c0.7-1.2,0.6-2.3,1.1-3.5c0.2-0.4,1.8-2,1.6-2.4c0-0.1,0-0.1,0-0.2 c-1.2-0.1-2.3,0.1-3.2-0.6c-0.8-0.6-1-2.4-1.7-3.1c-1.8-1.6-4.7-0.7-6.7-2.1c-1.8-1.3-3.8-2.5-5-4.3c-1.1-1.7-1.5-6-3.6-6.4 c0,2.1-0.3,2.7,0.6,4.8c0.6,1.2,1.7,4.1-1,3.4c-0.1-2.1-0.1-3.8-0.6-5.7c-0.5-1.9-2-3.8-2.4-5.8c-0.4-1.9-0.2-3.9-0.2-5.8 c0-2-0.7-3.7-0.8-5.5c1.3-2.1,2.7-4.1,4.4-5.9c1.2-1.3,2.4-2.5,4-3.2c1.6-0.6,3.4-1.5,5.1-1.9c1.8-0.4,3.9-0.4,5.8-0.5 C34,16.2,32.6,15,35,15.2c1.4,0.1,1.8,1.5,3.4,0.8c-0.7-0.7-2.9-2.1-0.7-2.4c0-0.8,0-1.6,0.1-2.3c0.5-0.3,1-0.5,1.5-0.7 c2.5-0.7,5-1.1,7.6-1.3c0.4,0.1,0.7,0.2,1,0.3c0.2-0.1,0.4-0.3,0.6-0.4c0.5,0,0.9,0,1.4,0c5.7,0,11.1,1.2,16,3.3 c0.3,0.4,0.5,0.7,0.9,1c0.7,0.5,2.2,0.9,0.7,1.1c-0.5,0.1-0.9-0.2-1.2,0.2c-0.4,0.5,0.2,0.9-0.7,1.3c-0.8,0.4-1.9-0.4-2.3,0.6 c-0.4,0.9,0.4,2.1,0.1,3c-0.3,1.1-1.7,0.9-2.7,0.8c-2-0.1-4.2-1.5-5.4-3.1c-0.4-0.5-1.3-2-0.9-2.7c0.3-0.6,0.9-0.2,1.2-0.6 c0.3-0.4-0.2-1.1-0.6-1.3c-0.1,0.8-0.6,1-1.2,0.7c-0.9-0.5-0.4-1.5-0.9-2.2c-0.7-1.1-2.4-0.7-3.5-1.1c-0.6-0.2-1-0.4-1.5-0.6 c-0.4,0.2-0.7,0.5-1.1,0.6c-0.9,0.3-1.9,0.3-2.7,0.9c-2.3,1.8,0.4,1.8,1.7,2.1c1.7,0.4,2.6,2.1,4,2.6c1.9,0.8,2.7-0.3,2.4,2.6 c-1.1,0.3-2.1-0.2-2.7-1.1c0.5,0.8,0.8,1.8,0.7,2.9c-1.8,0.6-2.6-0.2-4.1-0.8c-1.2-0.5-2.7-0.3-3.8-1c-0.1-0.3-0.1-0.6,0-0.9 c1.3,0,2.7-0.1,2.1-1.8c-2.4-0.2-2.9,0.9-4.4,2.3c3.6,1.2,0.4,2.4-1.6,2.3c-1.7-0.1-4.3-0.4-5.3,1.7c-0.9,2,2.1,2.5,3.7,3 c1,0.3,1.4,0.1,2.1,0.9c0.7,0.8,0.3,1.8,1.4,2.4c0.5-0.9-0.4-1.9-0.2-2.4c0.5-1.2,1.2-0.5,2.4-1c-0.6-1.3-2.4-1.8-2-3.2 c0.4-1.5,2.5-1.5,3.8-1.4c2,0.1,2,1.1,3.4,1.6c2.2,0.7,2.2-0.8,3.7,1.6c1.6,2.5,3.2,3.7,5.3,5.6c3.8,3.5-3,3.4-3.8,0.8 c0.3-0.1,0.8-0.5,1-0.6c-1.4-0.6-4.5-0.6-6.2-0.2c-0.1,0.4-0.1,0.6,0,1c1.5,0.1,1.9,0.1,2.7,0.7c0.3,0.2-0.1,1,0.4,1.3 c0.3,0.2,1.6-0.1,2-0.1c0.4,2.3-4.9,1.4-6.1,2.2c0,0.5-0.3,0.9-0.3,1.4c-3-0.4-2.8,2.5-3.8,4.2c-0.7,1.3-2.3,2.2-3.2,3.4 c-0.4,0.6-1.2,1.1-1.1,1.9c0.1,1.4,1.7,0.7,1.7,1.9c0,2.5-3.3-0.1-3.8-1.4c-3-0.6-6.9-1-8,2.4c-0.5,1.4,0.1,3.4,1.8,3.6 c1.5,0.1,0.9-0.9,2-1.3c0.6-0.2,1.7,0,2.3,0c0.5,1.4,0.3,2.1,1,3.2c0.9,1.2,0.9,1,1.4,2.5c0.4,1.1,0.7,2.2,2,2.7 c1.3,0.4,2.9-0.5,3,1.4c2.4,0.1,4.4,0,6.3,1.5c1.4,1.1,2.1,2.4,3.8,2.9c2.7,0.9,3.5,0.6,4.2,3.4c0.3,1.3-0.7,1.7,1.2,2.1 c1.1,0.2,2.5-0.5,3.6-0.4c1.9,0.1,3.8,1.2,3.8,3.4c0,1.2-0.5,1.5-1,2.4c-0.6,1.1-0.7,2.6-1.4,3.7c-1.3,2.1-3.7,1.2-5.2,3.1 c-0.5,0.7-0.3,1.7-1.1,2.5c-0.6,0.5-2.3,0.6-2.8,1c-1,0.8-0.5,1.4-1.5,2.4c-0.6,0.6-2.2,0.3-2.9,0.6c-1.2,0.6-1.9,1.8-2.8,2.4 C45.3,90.6,44.2,90.4,43.1,90.2z M84,66.7c0.2-1.5,0.4-3,0.8-4.4c0.4-1.5,0.6-2.9,0.5-4.5c0-0.7,0-1.9-0.5-2.4 c-0.2-0.2-1.7-0.9-2-0.9c-0.9,0-1.8,1.4-2.7,1.6c-1.1,0.3-2-0.4-2.7-1.1c-0.9-1-1.9-1.6-2.8-2.6c-1.1-1.1-1.3-2.6-1.3-4.1 c0-1.5,0.2-2.6,0.6-4c0.2-0.6,0.4-1.2,0.5-1.9c0.3-1.3,0.4-0.6,1-1.3c0.6-0.7,0.9-1.9,1.4-2.8c0.5-0.9,1-1.6,1.7-2.2 c-1.7-0.7-1.7-3.6-1.1-5.2c0.8-0.1,3.3,0.3,2-1.5c-0.4-0.6-1.7-0.4-1-1.5c0.4-0.6,1.2-0.6,1.8-0.6c0.1-0.7,0.4-1,1-1.2l-0.2-0.1 c-0.6-0.5-1.4-1.2-1.9-1.8c-0.6-0.6-1-2.4-0.1-2.7c2.5,2.6,4.7,5.5,6.5,8.6c0.1,0.2,0.1,0.4,0.2,0.6c0.3,0.8,0.8,1.6,1.1,2.4 c0.2,0.4,0.4,0.7,0.6,1c0.6,1.5,1.2,2.9,1.6,4.5c0,0.1,0,0.3-0.1,0.4c-1.1-0.4-1.7-2.3-2.4-3.3c0,0.4,0,0.8-0.1,1.1 c-0.2,0-0.5-0.1-0.6-0.2c-0.3-0.6-0.7-1.2-1.1-1.8c0.1,0.2,0.1,0.4,0,0.6c-1.2,0-0.9-1.4-1.2-2.1c-0.3-0.9-1.2-1.4-2.1-0.7 c-0.6,0.5-0.6,1.6-1.1,2.2c-0.3,0.3-0.6,0.4-0.8,0.6c-0.3,0.3-0.6,0.3-0.4,0.9c1-0.3,1.8-0.4,3-0.3c0.8,0.1,2.2-0.1,2.7,0.3 c0.3,0.3,0.3,0.8,0.4,1.2c0.2,0.4,0.4,0.6,0.7,1c0.4,0.6,1,2.2,1.8,2.1c0-0.2,0.1-0.5,0-0.7c1.4,0.5,1.9,3,2.1,4.4 c0.3,2.6,0.5,5.5,0.5,8.3c-0.4,7-2.6,13.5-6.1,19.1C84.2,70.3,83.9,67.7,84,66.7z" })
 			);
 		}
 	}]);
@@ -80876,7 +81049,7 @@ Comp.Icons.Graph = (function (_React$Component27) {
 	return _class27;
 })(React.Component);
 
-Comp.Icons.Grid = (function (_React$Component28) {
+Comp.Icons.Graph = (function (_React$Component28) {
 	_inherits(_class28, _React$Component28);
 
 	function _class28() {
@@ -80886,6 +81059,32 @@ Comp.Icons.Grid = (function (_React$Component28) {
 	}
 
 	_createClass(_class28, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M93.5,90H10V6.5c0-2.2-1.3-4-3.5-4C4.3,2.5,3,4.3,3,6.5v87C3,95.7,4.3,97,6.5,97h87c2.2,0,4-1.3,4-3.5 C97.5,91.3,95.7,90,93.5,90z" }),
+				React.createElement("path", { d: "M37,60.1c0-1.9-1.5-3.1-3.3-3.1H20.2c-1.9,0-3.2,1.2-3.2,3.1v18.8c0,1.9,1.3,3.1,3.2,3.1h13.5 c1.9,0,3.3-1.3,3.3-3.1V60.1z M23,63h8v13h-8V63z" }),
+				React.createElement("path", { d: "M90,11.6C90,9.7,88.5,8,86.6,8H73.1C71.3,8,70,9.7,70,11.6v67.3c0,1.9,1.3,3.1,3.1,3.1h13.5 c1.9,0,3.4-1.3,3.4-3.1V11.6z M77,15h7v61h-7V15z" }),
+				React.createElement("path", { d: "M63,36.3c0-1.9-1-3.3-2.9-3.3H46.7c-1.9,0-3.7,1.4-3.7,3.3v42.6c0,1.9,1.8,3.1,3.7,3.1h13.5 c1.9,0,2.9-1.3,2.9-3.1V36.3z M50,40h8v36h-8V40z" })
+			);
+		}
+	}]);
+
+	return _class28;
+})(React.Component);
+
+Comp.Icons.Grid = (function (_React$Component29) {
+	_inherits(_class29, _React$Component29);
+
+	function _class29() {
+		_classCallCheck(this, _class29);
+
+		_get(Object.getPrototypeOf(_class29.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class29, [{
 		key: "render",
 		value: function render() {
 			return React.createElement(
@@ -80908,19 +81107,19 @@ Comp.Icons.Grid = (function (_React$Component28) {
 		}
 	}]);
 
-	return _class28;
+	return _class29;
 })(React.Component);
 
-Comp.Icons.Help = (function (_React$Component29) {
-	_inherits(_class29, _React$Component29);
+Comp.Icons.Help = (function (_React$Component30) {
+	_inherits(_class30, _React$Component30);
 
-	function _class29() {
-		_classCallCheck(this, _class29);
+	function _class30() {
+		_classCallCheck(this, _class30);
 
-		_get(Object.getPrototypeOf(_class29.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(_class30.prototype), "constructor", this).apply(this, arguments);
 	}
 
-	_createClass(_class29, [{
+	_createClass(_class30, [{
 		key: "render",
 		value: function render() {
 			return React.createElement(
@@ -80931,19 +81130,19 @@ Comp.Icons.Help = (function (_React$Component29) {
 		}
 	}]);
 
-	return _class29;
+	return _class30;
 })(React.Component);
 
-Comp.Icons.Home = (function (_React$Component30) {
-	_inherits(_class30, _React$Component30);
+Comp.Icons.Home = (function (_React$Component31) {
+	_inherits(_class31, _React$Component31);
 
-	function _class30() {
-		_classCallCheck(this, _class30);
+	function _class31() {
+		_classCallCheck(this, _class31);
 
-		_get(Object.getPrototypeOf(_class30.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(_class31.prototype), "constructor", this).apply(this, arguments);
 	}
 
-	_createClass(_class30, [{
+	_createClass(_class31, [{
 		key: "render",
 		value: function render() {
 			return React.createElement(
@@ -80961,19 +81160,19 @@ Comp.Icons.Home = (function (_React$Component30) {
 		}
 	}]);
 
-	return _class30;
+	return _class31;
 })(React.Component);
 
-Comp.Icons.Info = (function (_React$Component31) {
-	_inherits(_class31, _React$Component31);
+Comp.Icons.Info = (function (_React$Component32) {
+	_inherits(_class32, _React$Component32);
 
-	function _class31() {
-		_classCallCheck(this, _class31);
+	function _class32() {
+		_classCallCheck(this, _class32);
 
-		_get(Object.getPrototypeOf(_class31.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(_class32.prototype), "constructor", this).apply(this, arguments);
 	}
 
-	_createClass(_class31, [{
+	_createClass(_class32, [{
 		key: "render",
 		value: function render() {
 			return React.createElement(
@@ -80984,19 +81183,19 @@ Comp.Icons.Info = (function (_React$Component31) {
 		}
 	}]);
 
-	return _class31;
+	return _class32;
 })(React.Component);
 
-Comp.Icons.Jazz = (function (_React$Component32) {
-	_inherits(_class32, _React$Component32);
+Comp.Icons.Jazz = (function (_React$Component33) {
+	_inherits(_class33, _React$Component33);
 
-	function _class32() {
-		_classCallCheck(this, _class32);
+	function _class33() {
+		_classCallCheck(this, _class33);
 
-		_get(Object.getPrototypeOf(_class32.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(_class33.prototype), "constructor", this).apply(this, arguments);
 	}
 
-	_createClass(_class32, [{
+	_createClass(_class33, [{
 		key: "render",
 		value: function render() {
 			return React.createElement(
@@ -81013,19 +81212,19 @@ Comp.Icons.Jazz = (function (_React$Component32) {
 		}
 	}]);
 
-	return _class32;
+	return _class33;
 })(React.Component);
 
-Comp.Icons.Laptop = (function (_React$Component33) {
-	_inherits(_class33, _React$Component33);
+Comp.Icons.Laptop = (function (_React$Component34) {
+	_inherits(_class34, _React$Component34);
 
-	function _class33() {
-		_classCallCheck(this, _class33);
+	function _class34() {
+		_classCallCheck(this, _class34);
 
-		_get(Object.getPrototypeOf(_class33.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(_class34.prototype), "constructor", this).apply(this, arguments);
 	}
 
-	_createClass(_class33, [{
+	_createClass(_class34, [{
 		key: "render",
 		value: function render() {
 			return React.createElement(
@@ -81044,33 +81243,10 @@ Comp.Icons.Laptop = (function (_React$Component33) {
 		}
 	}]);
 
-	return _class33;
-})(React.Component);
-
-Comp.Icons.Left = (function (_React$Component34) {
-	_inherits(_class34, _React$Component34);
-
-	function _class34() {
-		_classCallCheck(this, _class34);
-
-		_get(Object.getPrototypeOf(_class34.prototype), "constructor", this).apply(this, arguments);
-	}
-
-	_createClass(_class34, [{
-		key: "render",
-		value: function render() {
-			return React.createElement(
-				"svg",
-				{ viewBox: "0 0 100 100" },
-				React.createElement("path", { d: "M5,54l32.8,32.8c2.6,2.6,6.5,2.8,9.1,0.2c2.6-2.6,2.4-6.5-0.2-9.1L24.8,56.2l66.1,0c3.6,0,6.6-2.9,6.6-6.5 c0-3.6-2.9-6.5-6.5-6.5l-66.1,0l21.8-21.8c2.6-2.6,2.8-6.5,0.2-9.1c-2.6-2.6-6.5-2.4-9.1,0.2l-33,33c0,0-2.3,2.2-2.3,4.2 C2.5,51.5,5,54,5,54L5,54z" })
-			);
-		}
-	}]);
-
 	return _class34;
 })(React.Component);
 
-Comp.Icons.Like = (function (_React$Component35) {
+Comp.Icons.Left = (function (_React$Component35) {
 	_inherits(_class35, _React$Component35);
 
 	function _class35() {
@@ -81085,7 +81261,7 @@ Comp.Icons.Like = (function (_React$Component35) {
 			return React.createElement(
 				"svg",
 				{ viewBox: "0 0 100 100" },
-				React.createElement("path", { d: "M21.4,97.5c-1.7,0-3.3-1.2-3.8-2.8L3.8,47.6c-0.3-1-0.2-2.1,0.3-3c0.5-0.9,1.3-1.6,2.3-1.9l23.6-7 c0.4-0.1,0.7-0.2,1.1-0.2c0.7,0,1.3,0.2,1.9,0.5c0.7,0.4,1.3,1,1.6,1.7l0,0c4.2-4.1,9.8-10.5,12.2-14.6l0,0c1.5-5.4,1-11.6,0.9-12.8 c-0.2-1.7,0.3-3.4,1.5-4.7c2.7-3,7.9-3.1,8.5-3.1c2,0,4,1,5.6,2.7c3.3,3.6,4.8,10,4.2,17.6c-0.1,0.9-0.2,1.8-0.3,2.8l0,0.3 c-0.1,0.6-0.2,1.2-0.3,1.9c-0.1,0.8-0.1,1.5-0.1,2.3v0c1.9,0.7,7,1.6,15.1,1.6l1.6,0c7.2,0,13.1,5.8,13.1,13c0,2.8-0.9,5.4-2.5,7.7 c0.2,0.9,0.2,1.8,0.2,2.7c-0.2,2.9-1.5,5.7-3.7,7.7l0,0.2c-0.2,3.7-2.3,7.2-5.6,9.2l0,0c-0.1,0.3-0.2,0.6-0.3,0.8 c-1.4,3.8-5.4,5.9-11.2,5.9c-1,0-2-0.1-3.2-0.2c-2.3-0.3-5.9-0.6-10-0.9l-6.2-0.5c-1.9-0.2-3.8-0.3-5.5-0.3c-0.8,0-1.5,0-2.2,0.1 l2.5,8.6c0.3,1,0.2,2.1-0.3,3c-0.5,0.9-1.3,1.6-2.3,1.9l-23.6,7C22.1,97.4,21.8,97.5,21.4,97.5z M12.4,49.3l11.6,39.4L40.1,84 l-2.4-8c-0.3-0.4-0.5-0.8-0.6-1.2l-8.5-28.7c-0.1-0.4-0.2-0.9-0.1-1.3l-0.1-0.4l-16.1,4.7L12.4,49.3z M48.4,69 c1.8,0,3.9,0.1,6.2,0.3l6.3,0.5c4.2,0.4,7.8,0.7,10.2,1c0.8,0.1,1.5,0.1,2.2,0.1c2.7,0,3.7-0.7,3.8-0.8l0,0c0.1-0.4,0.2-0.8,0.3-1.2 c0.2-1.5,1.2-2.8,2.6-3.3c1.5-0.5,2.5-1.8,2.6-3.3c0-0.3,0-0.5-0.1-0.9c-0.3-1.6,0.5-3.3,1.9-4.1c1.1-0.6,1.8-1.7,1.8-2.9 c0-0.6-0.1-1.1-0.3-1.7c-0.7-1.5-0.3-3.3,1-4.5c1.1-1,1.7-2.3,1.7-3.8c0-2.8-2.3-5.1-5.1-5.1c-0.2,0-0.8,0-1.7,0 c-11.6,0-18.6-1.4-21.3-4.2c-1.1-1.1-1.7-2.6-1.7-4.1c0-1.3,0.1-2.7,0.2-4.2c0.1-0.8,0.2-1.4,0.3-2l0.1-0.4c0.1-0.8,0.2-1.6,0.3-2.3 c0.6-7.1-1.3-11-2.3-11.8c-0.5,0-1.2,0.2-1.8,0.3v0c0.2,2.6,0.4,9.3-1.4,15.2c-0.1,0.2-0.2,0.5-0.3,0.7c-3,5.5-11,14.5-16.7,19.6 L44,69.2C45.4,69.1,46.9,69,48.4,69z" })
+				React.createElement("path", { d: "M5,54l32.8,32.8c2.6,2.6,6.5,2.8,9.1,0.2c2.6-2.6,2.4-6.5-0.2-9.1L24.8,56.2l66.1,0c3.6,0,6.6-2.9,6.6-6.5 c0-3.6-2.9-6.5-6.5-6.5l-66.1,0l21.8-21.8c2.6-2.6,2.8-6.5,0.2-9.1c-2.6-2.6-6.5-2.4-9.1,0.2l-33,33c0,0-2.3,2.2-2.3,4.2 C2.5,51.5,5,54,5,54L5,54z" })
 			);
 		}
 	}]);
@@ -81093,7 +81269,7 @@ Comp.Icons.Like = (function (_React$Component35) {
 	return _class35;
 })(React.Component);
 
-Comp.Icons.Link = (function (_React$Component36) {
+Comp.Icons.Like = (function (_React$Component36) {
 	_inherits(_class36, _React$Component36);
 
 	function _class36() {
@@ -81103,6 +81279,29 @@ Comp.Icons.Link = (function (_React$Component36) {
 	}
 
 	_createClass(_class36, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M21.4,97.5c-1.7,0-3.3-1.2-3.8-2.8L3.8,47.6c-0.3-1-0.2-2.1,0.3-3c0.5-0.9,1.3-1.6,2.3-1.9l23.6-7 c0.4-0.1,0.7-0.2,1.1-0.2c0.7,0,1.3,0.2,1.9,0.5c0.7,0.4,1.3,1,1.6,1.7l0,0c4.2-4.1,9.8-10.5,12.2-14.6l0,0c1.5-5.4,1-11.6,0.9-12.8 c-0.2-1.7,0.3-3.4,1.5-4.7c2.7-3,7.9-3.1,8.5-3.1c2,0,4,1,5.6,2.7c3.3,3.6,4.8,10,4.2,17.6c-0.1,0.9-0.2,1.8-0.3,2.8l0,0.3 c-0.1,0.6-0.2,1.2-0.3,1.9c-0.1,0.8-0.1,1.5-0.1,2.3v0c1.9,0.7,7,1.6,15.1,1.6l1.6,0c7.2,0,13.1,5.8,13.1,13c0,2.8-0.9,5.4-2.5,7.7 c0.2,0.9,0.2,1.8,0.2,2.7c-0.2,2.9-1.5,5.7-3.7,7.7l0,0.2c-0.2,3.7-2.3,7.2-5.6,9.2l0,0c-0.1,0.3-0.2,0.6-0.3,0.8 c-1.4,3.8-5.4,5.9-11.2,5.9c-1,0-2-0.1-3.2-0.2c-2.3-0.3-5.9-0.6-10-0.9l-6.2-0.5c-1.9-0.2-3.8-0.3-5.5-0.3c-0.8,0-1.5,0-2.2,0.1 l2.5,8.6c0.3,1,0.2,2.1-0.3,3c-0.5,0.9-1.3,1.6-2.3,1.9l-23.6,7C22.1,97.4,21.8,97.5,21.4,97.5z M12.4,49.3l11.6,39.4L40.1,84 l-2.4-8c-0.3-0.4-0.5-0.8-0.6-1.2l-8.5-28.7c-0.1-0.4-0.2-0.9-0.1-1.3l-0.1-0.4l-16.1,4.7L12.4,49.3z M48.4,69 c1.8,0,3.9,0.1,6.2,0.3l6.3,0.5c4.2,0.4,7.8,0.7,10.2,1c0.8,0.1,1.5,0.1,2.2,0.1c2.7,0,3.7-0.7,3.8-0.8l0,0c0.1-0.4,0.2-0.8,0.3-1.2 c0.2-1.5,1.2-2.8,2.6-3.3c1.5-0.5,2.5-1.8,2.6-3.3c0-0.3,0-0.5-0.1-0.9c-0.3-1.6,0.5-3.3,1.9-4.1c1.1-0.6,1.8-1.7,1.8-2.9 c0-0.6-0.1-1.1-0.3-1.7c-0.7-1.5-0.3-3.3,1-4.5c1.1-1,1.7-2.3,1.7-3.8c0-2.8-2.3-5.1-5.1-5.1c-0.2,0-0.8,0-1.7,0 c-11.6,0-18.6-1.4-21.3-4.2c-1.1-1.1-1.7-2.6-1.7-4.1c0-1.3,0.1-2.7,0.2-4.2c0.1-0.8,0.2-1.4,0.3-2l0.1-0.4c0.1-0.8,0.2-1.6,0.3-2.3 c0.6-7.1-1.3-11-2.3-11.8c-0.5,0-1.2,0.2-1.8,0.3v0c0.2,2.6,0.4,9.3-1.4,15.2c-0.1,0.2-0.2,0.5-0.3,0.7c-3,5.5-11,14.5-16.7,19.6 L44,69.2C45.4,69.1,46.9,69,48.4,69z" })
+			);
+		}
+	}]);
+
+	return _class36;
+})(React.Component);
+
+Comp.Icons.Link = (function (_React$Component37) {
+	_inherits(_class37, _React$Component37);
+
+	function _class37() {
+		_classCallCheck(this, _class37);
+
+		_get(Object.getPrototypeOf(_class37.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class37, [{
 		key: "render",
 		value: function render() {
 			return React.createElement(
@@ -81119,19 +81318,19 @@ Comp.Icons.Link = (function (_React$Component36) {
 		}
 	}]);
 
-	return _class36;
+	return _class37;
 })(React.Component);
 
-Comp.Icons.List = (function (_React$Component37) {
-	_inherits(_class37, _React$Component37);
+Comp.Icons.List = (function (_React$Component38) {
+	_inherits(_class38, _React$Component38);
 
-	function _class37() {
-		_classCallCheck(this, _class37);
+	function _class38() {
+		_classCallCheck(this, _class38);
 
-		_get(Object.getPrototypeOf(_class37.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(_class38.prototype), "constructor", this).apply(this, arguments);
 	}
 
-	_createClass(_class37, [{
+	_createClass(_class38, [{
 		key: "render",
 		value: function render() {
 			return React.createElement(
@@ -81163,33 +81362,10 @@ Comp.Icons.List = (function (_React$Component37) {
 		}
 	}]);
 
-	return _class37;
-})(React.Component);
-
-Comp.Icons.Map = (function (_React$Component38) {
-	_inherits(_class38, _React$Component38);
-
-	function _class38() {
-		_classCallCheck(this, _class38);
-
-		_get(Object.getPrototypeOf(_class38.prototype), "constructor", this).apply(this, arguments);
-	}
-
-	_createClass(_class38, [{
-		key: "render",
-		value: function render() {
-			return React.createElement(
-				"svg",
-				{ viewBox: "0 0 100 100" },
-				React.createElement("path", { "fill-rule": "evenodd", "clip-rule": "evenodd", d: "M29,12.4l-20.6-3l0,0c-0.2,0-0.3,0-0.5,0c-1,0-2,0.5-2.7,1.2 c-0.8,0.8-1.3,1.8-1.4,2.9c0,0.2,0,0.5,0,0.7v68.4c0,0.3,0,0.6,0.1,0.9c0.2,1.1,0.7,2.1,1.5,2.8c0.7,0.7,1.6,1.2,2.6,1.2 c0.2,0,0.4,0,0.6,0L29,83.8c0.3-0.1,0.6-0.1,0.9-0.2c0.3-0.1,0.6-0.2,0.8-0.3l0.2-0.1l0.2,0.1c0.3,0.1,0.5,0.2,0.8,0.3 c0.3,0.1,0.6,0.1,0.9,0.2l20.6,3.7c0.3,0,0.5,0.1,0.8,0c0.3,0,0.5-0.1,0.8-0.1l0.2,0l0.2,0c0.2,0.1,0.5,0.1,0.8,0.1 c0.3,0,0.5,0,0.8,0l4.4-0.8l-0.2-0.2c-3-3.3-6.1-6.8-8.9-10.1V78v0v0l0,0.1v0c0,0.3-0.2,0.7-0.4,0.9c-0.3,0.3-0.6,0.4-1,0.4h0h-0.1 l0,0l-15.4-1.6c-0.4,0-0.7-0.2-1-0.4c-0.3-0.2-0.4-0.6-0.4-1l0,0V54.7l7.9-13.9c0.3,0.1,0.6,0.1,0.9,0.1c0.5,0,0.9-0.1,1.3-0.3 c0.8-1.8,1.7-3.5,2.8-5.1l-0.4-0.1c-0.4-2.1-1.9-3.6-3.7-3.6c-2.1,0-3.8,2.1-3.8,4.6c0,0.6,0.1,1.1,0.2,1.6l-5.3,9.3V19.8l0,0 c0-0.4,0.2-0.7,0.4-1c0.2-0.2,0.6-0.4,1-0.4L50.8,17h0h0h0c0.4,0,0.7,0.1,1,0.4l0,0c0.2,0.2,0.4,0.6,0.4,0.9v0l0,0v0v0v11.2 c1.8-1.5,3.8-2.8,6-3.9v-7.2v0l0,0l0,0v0c0-0.4,0.2-0.7,0.4-0.9c0.3-0.3,0.6-0.4,1-0.4h0h0h0l15.4,1.4c0.4,0,0.7,0.2,1,0.4l0,0 c0.3,0.3,0.4,0.6,0.4,1v3.2c2.1,0.4,4.1,0.9,6,1.7v-7.5c0-1.3-0.5-2.3-1.3-3.1l0,0c-0.9-0.9-2.2-1.5-3.6-1.7L57,9.4 c-0.3,0-0.5,0-0.8,0l0,0c-0.3,0-0.5,0.1-0.8,0.2l-0.2,0.1l-0.2-0.1c-0.2-0.1-0.5-0.1-0.8-0.2h0c-0.3,0-0.5,0-0.8,0l-20.6,3 c-0.3,0-0.6,0.1-0.9,0.2c-0.3,0.1-0.6,0.2-0.8,0.3L30.9,13l-0.2-0.1c-0.3-0.1-0.5-0.2-0.8-0.3C29.6,12.5,29.3,12.5,29,12.4L29,12.4z M71.4,90.6C65.2,83.4,56.3,74.3,51,66.8c-3-4.2-4.5-9.2-4.5-14.3c0-13.8,11.2-24.9,24.9-24.9c13.8,0,24.9,11.2,24.9,24.9 c0,5.2-1.6,10.1-4.5,14.3C86.5,74.3,77.6,83.4,71.4,90.6L71.4,90.6z M71.4,34.1c10.1,0,18.4,8.2,18.4,18.4 c0,10.1-8.2,18.4-18.4,18.4c-10.1,0-18.4-8.2-18.4-18.4C53.1,42.3,61.3,34.1,71.4,34.1L71.4,34.1z M18.8,59.5 c-2.1,0-3.8,2.1-3.8,4.6c0,2.5,1.7,4.6,3.8,4.6c2.1,0,3.8-2.1,3.8-4.6c0-0.1,0-0.2,0-0.3l5.4-3.6v16.2v0v0c0,0.4-0.2,0.7-0.4,1 c-0.3,0.2-0.6,0.4-1,0.4l-15.4,1.6l0,0H11h0c-0.4,0-0.7-0.2-0.9-0.4l0,0c-0.2-0.2-0.4-0.6-0.4-0.9l0,0V78l0,0V18.5l0,0v-0.1v0 c0-0.4,0.2-0.7,0.4-0.9c0.2-0.3,0.6-0.4,1-0.4l0,0h0.1h0l15.4,1.4c0.4,0,0.7,0.2,1,0.4c0.3,0.2,0.4,0.6,0.4,1v0v0v35.8l-7,4.7 C20.4,59.8,19.6,59.5,18.8,59.5z" })
-			);
-		}
-	}]);
-
 	return _class38;
 })(React.Component);
 
-Comp.Icons.Minus = (function (_React$Component39) {
+Comp.Icons.Map = (function (_React$Component39) {
 	_inherits(_class39, _React$Component39);
 
 	function _class39() {
@@ -81204,7 +81380,7 @@ Comp.Icons.Minus = (function (_React$Component39) {
 			return React.createElement(
 				"svg",
 				{ viewBox: "0 0 100 100" },
-				React.createElement("path", { d: "M50,1C22.9,1,1,22.9,1,50c0,27.1,21.9,49,49,49c27.1,0,49-21.9,49-49C99,22.9,77.1,1,50,1z M74,50.7 c0,2.4-1.5,4.3-3.9,4.3H55.4H44.4H29.9c-2.4,0-4.9-1.8-4.9-4.3v-1.4c0-2.4,2.5-4.3,4.9-4.3h14.5h11.1h14.7c2.4,0,3.9,1.9,3.9,4.3 V50.7z" })
+				React.createElement("path", { "fill-rule": "evenodd", "clip-rule": "evenodd", d: "M29,12.4l-20.6-3l0,0c-0.2,0-0.3,0-0.5,0c-1,0-2,0.5-2.7,1.2 c-0.8,0.8-1.3,1.8-1.4,2.9c0,0.2,0,0.5,0,0.7v68.4c0,0.3,0,0.6,0.1,0.9c0.2,1.1,0.7,2.1,1.5,2.8c0.7,0.7,1.6,1.2,2.6,1.2 c0.2,0,0.4,0,0.6,0L29,83.8c0.3-0.1,0.6-0.1,0.9-0.2c0.3-0.1,0.6-0.2,0.8-0.3l0.2-0.1l0.2,0.1c0.3,0.1,0.5,0.2,0.8,0.3 c0.3,0.1,0.6,0.1,0.9,0.2l20.6,3.7c0.3,0,0.5,0.1,0.8,0c0.3,0,0.5-0.1,0.8-0.1l0.2,0l0.2,0c0.2,0.1,0.5,0.1,0.8,0.1 c0.3,0,0.5,0,0.8,0l4.4-0.8l-0.2-0.2c-3-3.3-6.1-6.8-8.9-10.1V78v0v0l0,0.1v0c0,0.3-0.2,0.7-0.4,0.9c-0.3,0.3-0.6,0.4-1,0.4h0h-0.1 l0,0l-15.4-1.6c-0.4,0-0.7-0.2-1-0.4c-0.3-0.2-0.4-0.6-0.4-1l0,0V54.7l7.9-13.9c0.3,0.1,0.6,0.1,0.9,0.1c0.5,0,0.9-0.1,1.3-0.3 c0.8-1.8,1.7-3.5,2.8-5.1l-0.4-0.1c-0.4-2.1-1.9-3.6-3.7-3.6c-2.1,0-3.8,2.1-3.8,4.6c0,0.6,0.1,1.1,0.2,1.6l-5.3,9.3V19.8l0,0 c0-0.4,0.2-0.7,0.4-1c0.2-0.2,0.6-0.4,1-0.4L50.8,17h0h0h0c0.4,0,0.7,0.1,1,0.4l0,0c0.2,0.2,0.4,0.6,0.4,0.9v0l0,0v0v0v11.2 c1.8-1.5,3.8-2.8,6-3.9v-7.2v0l0,0l0,0v0c0-0.4,0.2-0.7,0.4-0.9c0.3-0.3,0.6-0.4,1-0.4h0h0h0l15.4,1.4c0.4,0,0.7,0.2,1,0.4l0,0 c0.3,0.3,0.4,0.6,0.4,1v3.2c2.1,0.4,4.1,0.9,6,1.7v-7.5c0-1.3-0.5-2.3-1.3-3.1l0,0c-0.9-0.9-2.2-1.5-3.6-1.7L57,9.4 c-0.3,0-0.5,0-0.8,0l0,0c-0.3,0-0.5,0.1-0.8,0.2l-0.2,0.1l-0.2-0.1c-0.2-0.1-0.5-0.1-0.8-0.2h0c-0.3,0-0.5,0-0.8,0l-20.6,3 c-0.3,0-0.6,0.1-0.9,0.2c-0.3,0.1-0.6,0.2-0.8,0.3L30.9,13l-0.2-0.1c-0.3-0.1-0.5-0.2-0.8-0.3C29.6,12.5,29.3,12.5,29,12.4L29,12.4z M71.4,90.6C65.2,83.4,56.3,74.3,51,66.8c-3-4.2-4.5-9.2-4.5-14.3c0-13.8,11.2-24.9,24.9-24.9c13.8,0,24.9,11.2,24.9,24.9 c0,5.2-1.6,10.1-4.5,14.3C86.5,74.3,77.6,83.4,71.4,90.6L71.4,90.6z M71.4,34.1c10.1,0,18.4,8.2,18.4,18.4 c0,10.1-8.2,18.4-18.4,18.4c-10.1,0-18.4-8.2-18.4-18.4C53.1,42.3,61.3,34.1,71.4,34.1L71.4,34.1z M18.8,59.5 c-2.1,0-3.8,2.1-3.8,4.6c0,2.5,1.7,4.6,3.8,4.6c2.1,0,3.8-2.1,3.8-4.6c0-0.1,0-0.2,0-0.3l5.4-3.6v16.2v0v0c0,0.4-0.2,0.7-0.4,1 c-0.3,0.2-0.6,0.4-1,0.4l-15.4,1.6l0,0H11h0c-0.4,0-0.7-0.2-0.9-0.4l0,0c-0.2-0.2-0.4-0.6-0.4-0.9l0,0V78l0,0V18.5l0,0v-0.1v0 c0-0.4,0.2-0.7,0.4-0.9c0.2-0.3,0.6-0.4,1-0.4l0,0h0.1h0l15.4,1.4c0.4,0,0.7,0.2,1,0.4c0.3,0.2,0.4,0.6,0.4,1v0v0v35.8l-7,4.7 C20.4,59.8,19.6,59.5,18.8,59.5z" })
 			);
 		}
 	}]);
@@ -81212,7 +81388,7 @@ Comp.Icons.Minus = (function (_React$Component39) {
 	return _class39;
 })(React.Component);
 
-Comp.Icons.Naf = (function (_React$Component40) {
+Comp.Icons.Minus = (function (_React$Component40) {
 	_inherits(_class40, _React$Component40);
 
 	function _class40() {
@@ -81222,6 +81398,58 @@ Comp.Icons.Naf = (function (_React$Component40) {
 	}
 
 	_createClass(_class40, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M50,1C22.9,1,1,22.9,1,50c0,27.1,21.9,49,49,49c27.1,0,49-21.9,49-49C99,22.9,77.1,1,50,1z M74,50.7 c0,2.4-1.5,4.3-3.9,4.3H55.4H44.4H29.9c-2.4,0-4.9-1.8-4.9-4.3v-1.4c0-2.4,2.5-4.3,4.9-4.3h14.5h11.1h14.7c2.4,0,3.9,1.9,3.9,4.3 V50.7z" })
+			);
+		}
+	}]);
+
+	return _class40;
+})(React.Component);
+
+Comp.Icons.More = (function (_React$Component41) {
+	_inherits(_class41, _React$Component41);
+
+	function _class41() {
+		_classCallCheck(this, _class41);
+
+		_get(Object.getPrototypeOf(_class41.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class41, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement("path", { d: "M12.7,42.3c-4.3,0-7.8,3.5-7.8,7.8c0,4.3,3.5,7.8,7.8,7.8c4.3,0,7.8-3.5,7.8-7.8 C20.5,45.8,17,42.3,12.7,42.3 M12.7,61.7c-6.4,0-11.6-5.2-11.6-11.6c0-6.4,5.2-11.6,11.6-11.6c6.4,0,11.6,5.2,11.6,11.6 C24.3,56.5,19.1,61.7,12.7,61.7" }),
+					React.createElement("path", { d: "M50.7,42.1c-4.3,0-7.8,3.5-7.8,7.8c0,4.3,3.5,7.8,7.8,7.8c4.3,0,7.8-3.5,7.8-7.8 C58.6,45.6,55.1,42.1,50.7,42.1 M50.7,61.5c-6.4,0-11.6-5.2-11.6-11.6s5.2-11.6,11.6-11.6c6.4,0,11.6,5.2,11.6,11.6 S57.1,61.5,50.7,61.5" }),
+					React.createElement("path", { d: "M87.3,42.3c-4.3,0-7.8,3.5-7.8,7.8c0,4.3,3.5,7.8,7.8,7.8c4.3,0,7.8-3.5,7.8-7.8 C95.1,45.8,91.6,42.3,87.3,42.3 M87.3,61.7c-6.4,0-11.6-5.2-11.6-11.6c0-6.4,5.2-11.6,11.6-11.6c6.4,0,11.6,5.2,11.6,11.6 C98.9,56.5,93.7,61.7,87.3,61.7" })
+				)
+			);
+		}
+	}]);
+
+	return _class41;
+})(React.Component);
+
+Comp.Icons.Naf = (function (_React$Component42) {
+	_inherits(_class42, _React$Component42);
+
+	function _class42() {
+		_classCallCheck(this, _class42);
+
+		_get(Object.getPrototypeOf(_class42.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class42, [{
 		key: "render",
 		value: function render() {
 			return React.createElement(
@@ -81239,19 +81467,19 @@ Comp.Icons.Naf = (function (_React$Component40) {
 		}
 	}]);
 
-	return _class40;
+	return _class42;
 })(React.Component);
 
-Comp.Icons.No = (function (_React$Component41) {
-	_inherits(_class41, _React$Component41);
+Comp.Icons.No = (function (_React$Component43) {
+	_inherits(_class43, _React$Component43);
 
-	function _class41() {
-		_classCallCheck(this, _class41);
+	function _class43() {
+		_classCallCheck(this, _class43);
 
-		_get(Object.getPrototypeOf(_class41.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(_class43.prototype), "constructor", this).apply(this, arguments);
 	}
 
-	_createClass(_class41, [{
+	_createClass(_class43, [{
 		key: "render",
 		value: function render() {
 			return React.createElement(
@@ -81262,19 +81490,19 @@ Comp.Icons.No = (function (_React$Component41) {
 		}
 	}]);
 
-	return _class41;
+	return _class43;
 })(React.Component);
 
-Comp.Icons.Page = (function (_React$Component42) {
-	_inherits(_class42, _React$Component42);
+Comp.Icons.Page = (function (_React$Component44) {
+	_inherits(_class44, _React$Component44);
 
-	function _class42() {
-		_classCallCheck(this, _class42);
+	function _class44() {
+		_classCallCheck(this, _class44);
 
-		_get(Object.getPrototypeOf(_class42.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(_class44.prototype), "constructor", this).apply(this, arguments);
 	}
 
-	_createClass(_class42, [{
+	_createClass(_class44, [{
 		key: "render",
 		value: function render() {
 			return React.createElement(
@@ -81294,56 +81522,10 @@ Comp.Icons.Page = (function (_React$Component42) {
 		}
 	}]);
 
-	return _class42;
-})(React.Component);
-
-Comp.Icons.Pages = (function (_React$Component43) {
-	_inherits(_class43, _React$Component43);
-
-	function _class43() {
-		_classCallCheck(this, _class43);
-
-		_get(Object.getPrototypeOf(_class43.prototype), "constructor", this).apply(this, arguments);
-	}
-
-	_createClass(_class43, [{
-		key: "render",
-		value: function render() {
-			return React.createElement(
-				"svg",
-				{ viewBox: "0 0 100 100" },
-				React.createElement("path", { d: "M80.2,9.6H19.7c-1.9,0-3.4,1.5-3.4,3.4v79.3c0,1.9,1.5,3.4,3.4,3.4h60.5c1.9,0,3.4-1.5,3.4-3.4V13 C83.6,11.1,82.1,9.6,80.2,9.6z M26.3,60.3h47.1v4.3H26.3V60.3z M57.7,50h15.7v4.3H57.7V50z M57.7,39.7h15.7v4.3H57.7V39.7z M57.7,29.4h15.7v4.3H57.7V29.4z M63.6,83.6H26.1v-4.3h37.5V83.6z M73.9,74H26.1v-4.3h47.7V74z M38.9,56.4 c-6.7,0-12.2-5.6-12.2-12.5V7c0-2.2,1.8-4,4-4h12.6c1.6,0,2.9,1.3,2.9,2.9v32.2c0,4.2-3.3,7.6-7.4,7.6s-7.4-3.4-7.4-7.6v-23h3.3v23 c0,2.4,1.9,4.3,4.1,4.3s4.1-1.9,4.1-4.3V6.2H30.7c-0.4,0-0.8,0.4-0.8,0.8v36.9c0,5.1,4,9.2,8.9,9.2s8.9-4.1,8.9-9.2V15.5H51v28.5 C51,50.8,45.6,56.4,38.9,56.4z" })
-			);
-		}
-	}]);
-
-	return _class43;
-})(React.Component);
-
-Comp.Icons.People = (function (_React$Component44) {
-	_inherits(_class44, _React$Component44);
-
-	function _class44() {
-		_classCallCheck(this, _class44);
-
-		_get(Object.getPrototypeOf(_class44.prototype), "constructor", this).apply(this, arguments);
-	}
-
-	_createClass(_class44, [{
-		key: "render",
-		value: function render() {
-			return React.createElement(
-				"svg",
-				{ viewBox: "0 0 100 100" },
-				React.createElement("path", { d: "M59.6,13.7c0-3.2,2.6-5.8,5.8-5.8c3.2,0,5.8,2.6,5.8,5.8c0,3.2-2.6,5.8-5.8,5.8 C62.2,19.5,59.6,16.9,59.6,13.7z M61.2,28.7l0.1,0.1c2.1-3,5.3-5.2,9.1-5.8c-0.2-0.8-0.4-1.6-0.4-2.5c-0.6-0.1-1.2-0.2-1.9-0.3 c-0.8,0.4-1.8,0.7-2.8,0.7c-1,0-2-0.2-2.8-0.7c-0.8,0.1-1.5,0.2-2.2,0.3c-0.1,2.7-1.2,5.1-3,6.9C58.8,27.8,60.1,28.2,61.2,28.7z M29.6,23c0.2-0.8,0.4-1.6,0.4-2.4c0.6-0.1,1.3-0.3,2.1-0.3c0.8,0.4,1.8,0.7,2.8,0.7c1,0,2-0.2,2.8-0.7c0.7,0.1,1.3,0.2,1.8,0.3 c0.1,2.7,1.2,5.2,3,7c-1.4,0.3-2.6,0.7-3.7,1.2l-0.2,0.1C36.6,25.8,33.3,23.6,29.6,23z M34.9,19.5c3.2,0,5.8-2.6,5.8-5.8 c0-3.2-2.6-5.8-5.8-5.8c-3.2,0-5.8,2.6-5.8,5.8C29.1,16.9,31.7,19.5,34.9,19.5z M71.5,79.4v7.4c-1.9,1.3-4.3,2.4-7.1,3.2v-8.8 L63,90.4c-3.8,1-8.2,1.6-12.9,1.6c-4.7,0-9.2-0.6-13-1.6l-1.5-9.3V90c-3-0.9-5.6-2.2-7.6-3.6v-7c0-7.4,2.5-14.2,16.4-15.6 c1.7,0.9,3.6,1.4,5.6,1.4c2,0,3.9-0.5,5.6-1.4C69.7,65.2,71.5,72,71.5,79.4z M50,39.2c-6.4,0-11.6,5.2-11.6,11.6 c0,6.4,5.2,11.6,11.6,11.6c6.4,0,11.6-5.2,11.6-11.6C61.6,44.4,56.4,39.2,50,39.2z M15.6,36.7c0-6.4,5.2-11.6,11.6-11.6 c6.4,0,11.6,5.2,11.6,11.6c0,6.4-5.2,11.6-11.6,11.6C20.8,48.3,15.6,43.1,15.6,36.7z M39.8,61.4c-2.8-2.7-4.5-6.4-4.5-10.6 c0-0.3,0-0.5,0-0.8c-0.8-0.1-1.6-0.2-2.5-0.3c-1.7,0.9-3.6,1.4-5.6,1.4c-2,0-3.9-0.5-5.6-1.4C7.7,51.1,5.2,57.9,5.2,65.3v7 c1.9,1.4,4.5,2.6,7.6,3.6v-8.8l1.5,9.3c3.2,0.8,6.8,1.4,10.6,1.5C25.4,68.8,30.3,63.4,39.8,61.4z M41.8,20.1c0-4.5,3.6-8.1,8.1-8.1 c4.5,0,8.1,3.6,8.1,8.1c0,4.5-3.6,8.1-8.1,8.1C45.5,28.2,41.8,24.6,41.8,20.1z M60.2,30.8c-1.6-0.8-3.6-1.3-6.3-1.6 c-1.2,0.6-2.5,1-3.9,1c-1.4,0-2.8-0.3-3.9-0.9c-2.6,0.3-4.6,0.8-6.2,1.5c0.8,1.8,1.3,3.8,1.3,5.9c0,1.4-0.2,2.7-0.6,4 c2.5-2.3,5.8-3.7,9.5-3.7c3.7,0,7,1.4,9.5,3.7c-0.4-1.3-0.6-2.6-0.6-3.9C58.9,34.6,59.4,32.6,60.2,30.8z M84.5,29.3 c9.7,1,11,5.8,11,10.9v5.2c-1.3,0.9-3,1.6-4.9,2.2v-6.2l-1.1,6.5c-1.3,0.3-2.7,0.6-4.2,0.8c-1.2-0.4-2.6-0.7-4.1-1 c3.3-2.5,5.5-6.6,5.5-11.1C86.7,34,85.9,31.4,84.5,29.3z M83.4,27.7c3-1.2,5.2-4.1,5.2-7.5c0-4.5-3.6-8.1-8.1-8.1 c-4.5,0-8.1,3.6-8.1,8.1c0,0.9,0.2,1.8,0.4,2.6C77,22.8,80.8,24.7,83.4,27.7z M13.3,36.7c0,4.5,2.2,8.5,5.5,11.1 c-1.5,0.2-2.9,0.6-4.1,1c-1.5-0.2-2.9-0.5-4.2-0.8l-1.1-6.5v6.2c-1.9-0.6-3.6-1.4-4.9-2.2v-5.2c0-5.2,1.2-9.9,11-10.9 C14.1,31.4,13.3,34,13.3,36.7z M27.2,22.8c0.3-0.8,0.4-1.7,0.4-2.6c0-4.5-3.6-8.1-8.1-8.1c-4.5,0-8.1,3.6-8.1,8.1 c0,3.4,2.1,6.4,5.2,7.5C19.2,24.7,23,22.8,27.2,22.8z M94.8,65.3v7c-1.9,1.4-4.5,2.6-7.6,3.6v-8.8l-1.5,9.3 c-3.3,0.9-7.1,1.4-11.1,1.6c-0.3-6.7-2.6-14-14.4-16.5c2.8-2.7,4.5-6.4,4.5-10.6c0-0.3,0-0.5,0-0.8c0.8-0.1,1.6-0.2,2.5-0.3 c1.7,0.9,3.6,1.4,5.6,1.4c2,0,3.9-0.5,5.6-1.4C92.3,51.1,94.8,57.9,94.8,65.3z M72.8,48.3c6.4,0,11.6-5.2,11.6-11.6 c0-6.4-5.2-11.6-11.6-11.6c-6.4,0-11.6,5.2-11.6,11.6C61.2,43.1,66.4,48.3,72.8,48.3z" })
-			);
-		}
-	}]);
-
 	return _class44;
 })(React.Component);
 
-Comp.Icons.Phone = (function (_React$Component45) {
+Comp.Icons.Pages = (function (_React$Component45) {
 	_inherits(_class45, _React$Component45);
 
 	function _class45() {
@@ -81358,7 +81540,7 @@ Comp.Icons.Phone = (function (_React$Component45) {
 			return React.createElement(
 				"svg",
 				{ viewBox: "0 0 100 100" },
-				React.createElement("path", { d: "M34.6,70L7.5,85.5c-0.2-0.4-0.5-0.7-0.7-1.1l-1.5-2.6c-0.3-0.5-0.4-1-0.3-1.5c0-0.9,0.5-1.7,1.3-2.2 l22.6-12.9c0.8-0.5,1.8-0.5,2.5,0c0.4,0.2,0.8,0.6,1.1,1l1.5,2.6C34.2,69.3,34.4,69.6,34.6,70z M66.2,36l2.4,1.8 c0.3,0.2,0.7,0.5,1,0.7l18.5-25.2c-0.3-0.3-0.7-0.5-1-0.8l-2.4-1.8c-0.4-0.3-0.9-0.5-1.4-0.5c-0.9,0-1.8,0.3-2.3,1.1l-15.3,21 C65.1,33,65,34,65.3,34.8C65.5,35.2,65.8,35.7,66.2,36z M95.4,31.9c-2.5,9.3-13.4,24.2-29,38.2C52.2,82.9,37.6,91.5,27.9,94.1 c-1.9,0.7-4,1-6.1,0.8c-0.5,0-1-0.1-1.4-0.2c-2-0.4-4.1-1.2-6-2.3C12.1,91,9.9,89,8.2,86.5l26.9-15.4c0.3,0.7,0.6,1.4,0.8,2.2 c3.3,3.4,14-1.1,24.2-10.2c10.2-9.1,15.8-19.4,12.7-23l0,0c-0.7-0.3-1.4-0.7-2.1-1.1l18.4-25c2.2,2,4,4.4,5.1,6.9 c0.9,1.9,1.4,3.9,1.6,5.8C96.1,28.2,95.9,29.9,95.4,31.9C95.4,31.9,95.4,31.9,95.4,31.9z M75.2,49.1c1.6-2.8,2.4-5.3,2.6-7.4 c-1-0.2-2-0.4-3-0.8c1.1,2.2,0.4,5.6-1.9,9.7c-2.5,4.5-6.6,9.4-11.6,13.9c-7.1,6.3-14.7,10.7-20,11.5c-0.6,0.1-1.1,0.1-1.6,0.1 c-1.3,0-2.4-0.3-3.3-0.8l0,0c0.2,1,0.4,2,0.4,3c0.1,0,0.2,0,0.3,0c0.6,0,1.1,0,1.8-0.1C45,77.3,53.8,72.3,61.9,65 C67.6,59.9,72.3,54.2,75.2,49.1z M34.1,51.1c-0.9,0-1.6-0.3-2.1-0.9c-1-1.1-1.2-2.9-1.1-3.8c0.3-5.3,3.2-10,7.8-12.6 c2.4-1.4,5.2-2.2,8-2.2c0.3,0,0.6,0,0.9,0c0.9,0,2.6,0.6,3.5,1.6c0.5,0.6,0.8,1.3,0.7,2.1c-0.1,0.4-0.3,0.8-0.6,1.1 c-0.8,0.6-2.1,0.7-2.4,0.7c-0.2,0-0.4,0-0.6,0c-0.5-0.1-0.9-0.1-1.4-0.1c-1.9,0-3.6,0.5-5.3,1.4c-3.5,2-5.5,6-5.2,10 c0,0.6-0.4,1.5-0.9,2.1C34.9,50.9,34.5,51.1,34.1,51.1L34.1,51.1z M20.7,51c-0.1,0-0.1,0-0.2,0l-0.1,0c-0.8-0.1-1.5-0.4-2.1-1.1 c-0.5-0.5-0.8-1.2-0.8-1.9l0,0l0-0.2c0-0.2,0-0.8,0.1-1.8c0.8-9.8,6.3-18.6,14.8-23.5c4.6-2.7,9.8-4.1,15.1-4.1c0.5,0,1,0,1.5,0 l1.7,0.1l0,0c0.4,0.1,1,0.4,1.4,0.9c0.6,0.6,0.9,1.5,0.9,2.3l0,0.2c0,0.7-0.3,1.3-0.8,1.7c-0.3,0.2-0.6,0.3-1,0.3 c-0.1,0-0.2,0-0.4,0l-1.8-0.1c-0.5,0-1.1-0.1-1.6-0.1c-4.4,0-8.7,1.2-12.5,3.4c-7.2,4.2-11.8,11.8-12.2,20.2l-0.1,1.6 c0.1,0.7-0.1,1.2-0.5,1.6C21.9,50.8,21.3,51,20.7,51z M7.1,50.8c-0.1,0-0.1,0-0.2,0c-0.8-0.1-1.5-0.4-2-1c-0.5-0.5-0.8-1.2-0.8-1.9 v0l0-0.1c0-0.1,0-0.6,0.1-1.8C5.4,31.5,13.5,18.4,26,11.1c6.8-4,14.5-6.1,22.3-6.1c0.7,0,1.4,0,2.1,0.1l1.6,0.1 c0.5,0.1,1,0.4,1.4,0.8c0.5,0.6,0.8,1.4,0.8,2.2c0,0.9-0.3,1.6-0.8,2c-0.3,0.2-0.6,0.3-0.9,0.3c-0.1,0-0.1,0-0.2,0l-1.5-0.1 c-0.8-0.1-1.7-0.1-2.5-0.1c-6.9,0-13.7,1.8-19.6,5.3c-11.1,6.5-18.3,18.1-19.2,31l-0.1,1.7c0,0.7-0.2,1.3-0.7,1.8 C8.3,50.6,7.7,50.8,7.1,50.8z" })
+				React.createElement("path", { d: "M80.2,9.6H19.7c-1.9,0-3.4,1.5-3.4,3.4v79.3c0,1.9,1.5,3.4,3.4,3.4h60.5c1.9,0,3.4-1.5,3.4-3.4V13 C83.6,11.1,82.1,9.6,80.2,9.6z M26.3,60.3h47.1v4.3H26.3V60.3z M57.7,50h15.7v4.3H57.7V50z M57.7,39.7h15.7v4.3H57.7V39.7z M57.7,29.4h15.7v4.3H57.7V29.4z M63.6,83.6H26.1v-4.3h37.5V83.6z M73.9,74H26.1v-4.3h47.7V74z M38.9,56.4 c-6.7,0-12.2-5.6-12.2-12.5V7c0-2.2,1.8-4,4-4h12.6c1.6,0,2.9,1.3,2.9,2.9v32.2c0,4.2-3.3,7.6-7.4,7.6s-7.4-3.4-7.4-7.6v-23h3.3v23 c0,2.4,1.9,4.3,4.1,4.3s4.1-1.9,4.1-4.3V6.2H30.7c-0.4,0-0.8,0.4-0.8,0.8v36.9c0,5.1,4,9.2,8.9,9.2s8.9-4.1,8.9-9.2V15.5H51v28.5 C51,50.8,45.6,56.4,38.9,56.4z" })
 			);
 		}
 	}]);
@@ -81366,7 +81548,7 @@ Comp.Icons.Phone = (function (_React$Component45) {
 	return _class45;
 })(React.Component);
 
-Comp.Icons.Plus = (function (_React$Component46) {
+Comp.Icons.People = (function (_React$Component46) {
 	_inherits(_class46, _React$Component46);
 
 	function _class46() {
@@ -81381,7 +81563,7 @@ Comp.Icons.Plus = (function (_React$Component46) {
 			return React.createElement(
 				"svg",
 				{ viewBox: "0 0 100 100" },
-				React.createElement("path", { d: "M50,1C22.9,1,1,22.9,1,50c0,27.1,21.9,49,49,49c27.1,0,49-21.9,49-49C99,22.9,77.1,1,50,1z M74,50.7 c0,2.4-1.5,4.3-3.9,4.3H55v15.1c0,2.4-1.6,4.9-4,4.9h-2.2c-2.4,0-3.8-2.5-3.8-4.9V55H29.9c-2.4,0-4.9-1.8-4.9-4.3v-1.4 c0-2.4,2.5-4.3,4.9-4.3H45V29.9c0-2.4,1.3-3.9,3.8-3.9H51c2.4,0,4,1.5,4,3.9V45h15.1c2.4,0,3.9,1.9,3.9,4.3V50.7z" })
+				React.createElement("path", { d: "M59.6,13.7c0-3.2,2.6-5.8,5.8-5.8c3.2,0,5.8,2.6,5.8,5.8c0,3.2-2.6,5.8-5.8,5.8 C62.2,19.5,59.6,16.9,59.6,13.7z M61.2,28.7l0.1,0.1c2.1-3,5.3-5.2,9.1-5.8c-0.2-0.8-0.4-1.6-0.4-2.5c-0.6-0.1-1.2-0.2-1.9-0.3 c-0.8,0.4-1.8,0.7-2.8,0.7c-1,0-2-0.2-2.8-0.7c-0.8,0.1-1.5,0.2-2.2,0.3c-0.1,2.7-1.2,5.1-3,6.9C58.8,27.8,60.1,28.2,61.2,28.7z M29.6,23c0.2-0.8,0.4-1.6,0.4-2.4c0.6-0.1,1.3-0.3,2.1-0.3c0.8,0.4,1.8,0.7,2.8,0.7c1,0,2-0.2,2.8-0.7c0.7,0.1,1.3,0.2,1.8,0.3 c0.1,2.7,1.2,5.2,3,7c-1.4,0.3-2.6,0.7-3.7,1.2l-0.2,0.1C36.6,25.8,33.3,23.6,29.6,23z M34.9,19.5c3.2,0,5.8-2.6,5.8-5.8 c0-3.2-2.6-5.8-5.8-5.8c-3.2,0-5.8,2.6-5.8,5.8C29.1,16.9,31.7,19.5,34.9,19.5z M71.5,79.4v7.4c-1.9,1.3-4.3,2.4-7.1,3.2v-8.8 L63,90.4c-3.8,1-8.2,1.6-12.9,1.6c-4.7,0-9.2-0.6-13-1.6l-1.5-9.3V90c-3-0.9-5.6-2.2-7.6-3.6v-7c0-7.4,2.5-14.2,16.4-15.6 c1.7,0.9,3.6,1.4,5.6,1.4c2,0,3.9-0.5,5.6-1.4C69.7,65.2,71.5,72,71.5,79.4z M50,39.2c-6.4,0-11.6,5.2-11.6,11.6 c0,6.4,5.2,11.6,11.6,11.6c6.4,0,11.6-5.2,11.6-11.6C61.6,44.4,56.4,39.2,50,39.2z M15.6,36.7c0-6.4,5.2-11.6,11.6-11.6 c6.4,0,11.6,5.2,11.6,11.6c0,6.4-5.2,11.6-11.6,11.6C20.8,48.3,15.6,43.1,15.6,36.7z M39.8,61.4c-2.8-2.7-4.5-6.4-4.5-10.6 c0-0.3,0-0.5,0-0.8c-0.8-0.1-1.6-0.2-2.5-0.3c-1.7,0.9-3.6,1.4-5.6,1.4c-2,0-3.9-0.5-5.6-1.4C7.7,51.1,5.2,57.9,5.2,65.3v7 c1.9,1.4,4.5,2.6,7.6,3.6v-8.8l1.5,9.3c3.2,0.8,6.8,1.4,10.6,1.5C25.4,68.8,30.3,63.4,39.8,61.4z M41.8,20.1c0-4.5,3.6-8.1,8.1-8.1 c4.5,0,8.1,3.6,8.1,8.1c0,4.5-3.6,8.1-8.1,8.1C45.5,28.2,41.8,24.6,41.8,20.1z M60.2,30.8c-1.6-0.8-3.6-1.3-6.3-1.6 c-1.2,0.6-2.5,1-3.9,1c-1.4,0-2.8-0.3-3.9-0.9c-2.6,0.3-4.6,0.8-6.2,1.5c0.8,1.8,1.3,3.8,1.3,5.9c0,1.4-0.2,2.7-0.6,4 c2.5-2.3,5.8-3.7,9.5-3.7c3.7,0,7,1.4,9.5,3.7c-0.4-1.3-0.6-2.6-0.6-3.9C58.9,34.6,59.4,32.6,60.2,30.8z M84.5,29.3 c9.7,1,11,5.8,11,10.9v5.2c-1.3,0.9-3,1.6-4.9,2.2v-6.2l-1.1,6.5c-1.3,0.3-2.7,0.6-4.2,0.8c-1.2-0.4-2.6-0.7-4.1-1 c3.3-2.5,5.5-6.6,5.5-11.1C86.7,34,85.9,31.4,84.5,29.3z M83.4,27.7c3-1.2,5.2-4.1,5.2-7.5c0-4.5-3.6-8.1-8.1-8.1 c-4.5,0-8.1,3.6-8.1,8.1c0,0.9,0.2,1.8,0.4,2.6C77,22.8,80.8,24.7,83.4,27.7z M13.3,36.7c0,4.5,2.2,8.5,5.5,11.1 c-1.5,0.2-2.9,0.6-4.1,1c-1.5-0.2-2.9-0.5-4.2-0.8l-1.1-6.5v6.2c-1.9-0.6-3.6-1.4-4.9-2.2v-5.2c0-5.2,1.2-9.9,11-10.9 C14.1,31.4,13.3,34,13.3,36.7z M27.2,22.8c0.3-0.8,0.4-1.7,0.4-2.6c0-4.5-3.6-8.1-8.1-8.1c-4.5,0-8.1,3.6-8.1,8.1 c0,3.4,2.1,6.4,5.2,7.5C19.2,24.7,23,22.8,27.2,22.8z M94.8,65.3v7c-1.9,1.4-4.5,2.6-7.6,3.6v-8.8l-1.5,9.3 c-3.3,0.9-7.1,1.4-11.1,1.6c-0.3-6.7-2.6-14-14.4-16.5c2.8-2.7,4.5-6.4,4.5-10.6c0-0.3,0-0.5,0-0.8c0.8-0.1,1.6-0.2,2.5-0.3 c1.7,0.9,3.6,1.4,5.6,1.4c2,0,3.9-0.5,5.6-1.4C92.3,51.1,94.8,57.9,94.8,65.3z M72.8,48.3c6.4,0,11.6-5.2,11.6-11.6 c0-6.4-5.2-11.6-11.6-11.6c-6.4,0-11.6,5.2-11.6,11.6C61.2,43.1,66.4,48.3,72.8,48.3z" })
 			);
 		}
 	}]);
@@ -81389,7 +81571,7 @@ Comp.Icons.Plus = (function (_React$Component46) {
 	return _class46;
 })(React.Component);
 
-Comp.Icons.Print = (function (_React$Component47) {
+Comp.Icons.Phone = (function (_React$Component47) {
 	_inherits(_class47, _React$Component47);
 
 	function _class47() {
@@ -81404,7 +81586,7 @@ Comp.Icons.Print = (function (_React$Component47) {
 			return React.createElement(
 				"svg",
 				{ viewBox: "0 0 100 100" },
-				React.createElement("path", { "fill-rule": "evenodd", "clip-rule": "evenodd", d: "M19.1,52.7v7.9h61.8v-7.8c0-0.6,0.3-1.2,0.8-1.6 c0.5-0.4,1.1-0.6,1.7-0.4c6.1,1.2,14,6.5,14,16.2c0,2.8,0,11.6,0,16.6c0,3.7-3,6.6-6.6,6.6H9.3c-3.6,0-6.6-3-6.6-6.6 c0-5,0-13.8,0-16.6c0-8.8,6.7-15.1,14-16.2c0.6-0.1,1.2,0.1,1.7,0.5C18.8,51.5,19.1,52.1,19.1,52.7L19.1,52.7z M76.9,56.6V31.8v-3.3 L58.2,9.8h-3.3H28.5c-2.9,0-5.3,2.4-5.3,5.3v41.5h7.1V17.7c0-0.4,0.4-0.8,0.8-0.8h23.9v5.2v2c0,4.2,3.5,7.7,7.7,7.7h7.2v24.8H76.9 L76.9,56.6z M63.3,17.8l-0.9-0.9h0L63.3,17.8L63.3,17.8z M19.1,84.3h61.8v-3.9H19.1V84.3z" })
+				React.createElement("path", { d: "M34.6,70L7.5,85.5c-0.2-0.4-0.5-0.7-0.7-1.1l-1.5-2.6c-0.3-0.5-0.4-1-0.3-1.5c0-0.9,0.5-1.7,1.3-2.2 l22.6-12.9c0.8-0.5,1.8-0.5,2.5,0c0.4,0.2,0.8,0.6,1.1,1l1.5,2.6C34.2,69.3,34.4,69.6,34.6,70z M66.2,36l2.4,1.8 c0.3,0.2,0.7,0.5,1,0.7l18.5-25.2c-0.3-0.3-0.7-0.5-1-0.8l-2.4-1.8c-0.4-0.3-0.9-0.5-1.4-0.5c-0.9,0-1.8,0.3-2.3,1.1l-15.3,21 C65.1,33,65,34,65.3,34.8C65.5,35.2,65.8,35.7,66.2,36z M95.4,31.9c-2.5,9.3-13.4,24.2-29,38.2C52.2,82.9,37.6,91.5,27.9,94.1 c-1.9,0.7-4,1-6.1,0.8c-0.5,0-1-0.1-1.4-0.2c-2-0.4-4.1-1.2-6-2.3C12.1,91,9.9,89,8.2,86.5l26.9-15.4c0.3,0.7,0.6,1.4,0.8,2.2 c3.3,3.4,14-1.1,24.2-10.2c10.2-9.1,15.8-19.4,12.7-23l0,0c-0.7-0.3-1.4-0.7-2.1-1.1l18.4-25c2.2,2,4,4.4,5.1,6.9 c0.9,1.9,1.4,3.9,1.6,5.8C96.1,28.2,95.9,29.9,95.4,31.9C95.4,31.9,95.4,31.9,95.4,31.9z M75.2,49.1c1.6-2.8,2.4-5.3,2.6-7.4 c-1-0.2-2-0.4-3-0.8c1.1,2.2,0.4,5.6-1.9,9.7c-2.5,4.5-6.6,9.4-11.6,13.9c-7.1,6.3-14.7,10.7-20,11.5c-0.6,0.1-1.1,0.1-1.6,0.1 c-1.3,0-2.4-0.3-3.3-0.8l0,0c0.2,1,0.4,2,0.4,3c0.1,0,0.2,0,0.3,0c0.6,0,1.1,0,1.8-0.1C45,77.3,53.8,72.3,61.9,65 C67.6,59.9,72.3,54.2,75.2,49.1z M34.1,51.1c-0.9,0-1.6-0.3-2.1-0.9c-1-1.1-1.2-2.9-1.1-3.8c0.3-5.3,3.2-10,7.8-12.6 c2.4-1.4,5.2-2.2,8-2.2c0.3,0,0.6,0,0.9,0c0.9,0,2.6,0.6,3.5,1.6c0.5,0.6,0.8,1.3,0.7,2.1c-0.1,0.4-0.3,0.8-0.6,1.1 c-0.8,0.6-2.1,0.7-2.4,0.7c-0.2,0-0.4,0-0.6,0c-0.5-0.1-0.9-0.1-1.4-0.1c-1.9,0-3.6,0.5-5.3,1.4c-3.5,2-5.5,6-5.2,10 c0,0.6-0.4,1.5-0.9,2.1C34.9,50.9,34.5,51.1,34.1,51.1L34.1,51.1z M20.7,51c-0.1,0-0.1,0-0.2,0l-0.1,0c-0.8-0.1-1.5-0.4-2.1-1.1 c-0.5-0.5-0.8-1.2-0.8-1.9l0,0l0-0.2c0-0.2,0-0.8,0.1-1.8c0.8-9.8,6.3-18.6,14.8-23.5c4.6-2.7,9.8-4.1,15.1-4.1c0.5,0,1,0,1.5,0 l1.7,0.1l0,0c0.4,0.1,1,0.4,1.4,0.9c0.6,0.6,0.9,1.5,0.9,2.3l0,0.2c0,0.7-0.3,1.3-0.8,1.7c-0.3,0.2-0.6,0.3-1,0.3 c-0.1,0-0.2,0-0.4,0l-1.8-0.1c-0.5,0-1.1-0.1-1.6-0.1c-4.4,0-8.7,1.2-12.5,3.4c-7.2,4.2-11.8,11.8-12.2,20.2l-0.1,1.6 c0.1,0.7-0.1,1.2-0.5,1.6C21.9,50.8,21.3,51,20.7,51z M7.1,50.8c-0.1,0-0.1,0-0.2,0c-0.8-0.1-1.5-0.4-2-1c-0.5-0.5-0.8-1.2-0.8-1.9 v0l0-0.1c0-0.1,0-0.6,0.1-1.8C5.4,31.5,13.5,18.4,26,11.1c6.8-4,14.5-6.1,22.3-6.1c0.7,0,1.4,0,2.1,0.1l1.6,0.1 c0.5,0.1,1,0.4,1.4,0.8c0.5,0.6,0.8,1.4,0.8,2.2c0,0.9-0.3,1.6-0.8,2c-0.3,0.2-0.6,0.3-0.9,0.3c-0.1,0-0.1,0-0.2,0l-1.5-0.1 c-0.8-0.1-1.7-0.1-2.5-0.1c-6.9,0-13.7,1.8-19.6,5.3c-11.1,6.5-18.3,18.1-19.2,31l-0.1,1.7c0,0.7-0.2,1.3-0.7,1.8 C8.3,50.6,7.7,50.8,7.1,50.8z" })
 			);
 		}
 	}]);
@@ -81412,7 +81594,7 @@ Comp.Icons.Print = (function (_React$Component47) {
 	return _class47;
 })(React.Component);
 
-Comp.Icons.ReportProblem = (function (_React$Component48) {
+Comp.Icons.Plus = (function (_React$Component48) {
 	_inherits(_class48, _React$Component48);
 
 	function _class48() {
@@ -81427,7 +81609,7 @@ Comp.Icons.ReportProblem = (function (_React$Component48) {
 			return React.createElement(
 				"svg",
 				{ viewBox: "0 0 100 100" },
-				React.createElement("path", { d: "M97.5,87.9L74.8,48.6L52.2,9.4c-0.2-0.5-0.6-0.9-1.1-1.2c-1.4-0.8-3.1-0.3-3.9,1L24.4,48.6l0,0l0,0L1.8,87.7 c-0.3,0.5-0.5,0.9-0.5,1.6c0,1.6,1.3,2.8,2.9,2.8h45.4H95v0.2c1,0,1-0.1,1.4-0.4C97.8,91,98.3,89.3,97.5,87.9z M53,79h-6v-8h6V79z M52.8,65h-6.5l-0.4-26h7.4L52.8,65z" })
+				React.createElement("path", { d: "M50,1C22.9,1,1,22.9,1,50c0,27.1,21.9,49,49,49c27.1,0,49-21.9,49-49C99,22.9,77.1,1,50,1z M74,50.7 c0,2.4-1.5,4.3-3.9,4.3H55v15.1c0,2.4-1.6,4.9-4,4.9h-2.2c-2.4,0-3.8-2.5-3.8-4.9V55H29.9c-2.4,0-4.9-1.8-4.9-4.3v-1.4 c0-2.4,2.5-4.3,4.9-4.3H45V29.9c0-2.4,1.3-3.9,3.8-3.9H51c2.4,0,4,1.5,4,3.9V45h15.1c2.4,0,3.9,1.9,3.9,4.3V50.7z" })
 			);
 		}
 	}]);
@@ -81435,7 +81617,7 @@ Comp.Icons.ReportProblem = (function (_React$Component48) {
 	return _class48;
 })(React.Component);
 
-Comp.Icons.Right = (function (_React$Component49) {
+Comp.Icons.Print = (function (_React$Component49) {
 	_inherits(_class49, _React$Component49);
 
 	function _class49() {
@@ -81450,7 +81632,7 @@ Comp.Icons.Right = (function (_React$Component49) {
 			return React.createElement(
 				"svg",
 				{ viewBox: "0 0 100 100" },
-				React.createElement("path", { d: "M95.2,45.2L62.4,12.4c-2.6-2.6-6.5-2.8-9.1-0.2c-2.6,2.6-2.4,6.5,0.2,9.1l21.8,21.8l-66.1,0 c-3.6,0-6.6,2.9-6.6,6.5c0,3.6,2.9,6.5,6.5,6.5l66.1,0L53.5,78c-2.6,2.6-2.8,6.5-0.2,9.1c2.6,2.6,6.5,2.4,9.1-0.2l33-33 c0,0,2.3-2.2,2.3-4.2C97.7,47.7,95.2,45.2,95.2,45.2L95.2,45.2z" })
+				React.createElement("path", { "fill-rule": "evenodd", "clip-rule": "evenodd", d: "M19.1,52.7v7.9h61.8v-7.8c0-0.6,0.3-1.2,0.8-1.6 c0.5-0.4,1.1-0.6,1.7-0.4c6.1,1.2,14,6.5,14,16.2c0,2.8,0,11.6,0,16.6c0,3.7-3,6.6-6.6,6.6H9.3c-3.6,0-6.6-3-6.6-6.6 c0-5,0-13.8,0-16.6c0-8.8,6.7-15.1,14-16.2c0.6-0.1,1.2,0.1,1.7,0.5C18.8,51.5,19.1,52.1,19.1,52.7L19.1,52.7z M76.9,56.6V31.8v-3.3 L58.2,9.8h-3.3H28.5c-2.9,0-5.3,2.4-5.3,5.3v41.5h7.1V17.7c0-0.4,0.4-0.8,0.8-0.8h23.9v5.2v2c0,4.2,3.5,7.7,7.7,7.7h7.2v24.8H76.9 L76.9,56.6z M63.3,17.8l-0.9-0.9h0L63.3,17.8L63.3,17.8z M19.1,84.3h61.8v-3.9H19.1V84.3z" })
 			);
 		}
 	}]);
@@ -81458,7 +81640,7 @@ Comp.Icons.Right = (function (_React$Component49) {
 	return _class49;
 })(React.Component);
 
-Comp.Icons.Salesforce = (function (_React$Component50) {
+Comp.Icons.ReportProblem = (function (_React$Component50) {
 	_inherits(_class50, _React$Component50);
 
 	function _class50() {
@@ -81468,6 +81650,52 @@ Comp.Icons.Salesforce = (function (_React$Component50) {
 	}
 
 	_createClass(_class50, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M97.5,87.9L74.8,48.6L52.2,9.4c-0.2-0.5-0.6-0.9-1.1-1.2c-1.4-0.8-3.1-0.3-3.9,1L24.4,48.6l0,0l0,0L1.8,87.7 c-0.3,0.5-0.5,0.9-0.5,1.6c0,1.6,1.3,2.8,2.9,2.8h45.4H95v0.2c1,0,1-0.1,1.4-0.4C97.8,91,98.3,89.3,97.5,87.9z M53,79h-6v-8h6V79z M52.8,65h-6.5l-0.4-26h7.4L52.8,65z" })
+			);
+		}
+	}]);
+
+	return _class50;
+})(React.Component);
+
+Comp.Icons.Right = (function (_React$Component51) {
+	_inherits(_class51, _React$Component51);
+
+	function _class51() {
+		_classCallCheck(this, _class51);
+
+		_get(Object.getPrototypeOf(_class51.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class51, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M95.2,45.2L62.4,12.4c-2.6-2.6-6.5-2.8-9.1-0.2c-2.6,2.6-2.4,6.5,0.2,9.1l21.8,21.8l-66.1,0 c-3.6,0-6.6,2.9-6.6,6.5c0,3.6,2.9,6.5,6.5,6.5l66.1,0L53.5,78c-2.6,2.6-2.8,6.5-0.2,9.1c2.6,2.6,6.5,2.4,9.1-0.2l33-33 c0,0,2.3-2.2,2.3-4.2C97.7,47.7,95.2,45.2,95.2,45.2L95.2,45.2z" })
+			);
+		}
+	}]);
+
+	return _class51;
+})(React.Component);
+
+Comp.Icons.Salesforce = (function (_React$Component52) {
+	_inherits(_class52, _React$Component52);
+
+	function _class52() {
+		_classCallCheck(this, _class52);
+
+		_get(Object.getPrototypeOf(_class52.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class52, [{
 		key: "render",
 		value: function render() {
 			return React.createElement(
@@ -81486,19 +81714,45 @@ Comp.Icons.Salesforce = (function (_React$Component50) {
 		}
 	}]);
 
-	return _class50;
+	return _class52;
 })(React.Component);
 
-Comp.Icons.Search = (function (_React$Component51) {
-	_inherits(_class51, _React$Component51);
+Comp.Icons.ScatterPlot = (function (_React$Component53) {
+	_inherits(_class53, _React$Component53);
 
-	function _class51() {
-		_classCallCheck(this, _class51);
+	function _class53() {
+		_classCallCheck(this, _class53);
 
-		_get(Object.getPrototypeOf(_class51.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(_class53.prototype), "constructor", this).apply(this, arguments);
 	}
 
-	_createClass(_class51, [{
+	_createClass(_class53, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M93.5,90.3H10V6.8c0-2.2-1.3-4-3.5-4C4.3,2.8,3,4.6,3,6.8v87c0,2.2,1.3,3.6,3.5,3.6h87c2.2,0,4-1.3,4-3.5 C97.5,91.6,95.7,90.3,93.5,90.3z" }),
+				React.createElement("circle", { cx: "47", cy: "40", r: "7.8" }),
+				React.createElement("circle", { cx: "77", cy: "26", r: "7.8" }),
+				React.createElement("circle", { cx: "25", cy: "75", r: "7.8" })
+			);
+		}
+	}]);
+
+	return _class53;
+})(React.Component);
+
+Comp.Icons.Search = (function (_React$Component54) {
+	_inherits(_class54, _React$Component54);
+
+	function _class54() {
+		_classCallCheck(this, _class54);
+
+		_get(Object.getPrototypeOf(_class54.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class54, [{
 		key: "render",
 		value: function render() {
 			return React.createElement(
@@ -81511,19 +81765,19 @@ Comp.Icons.Search = (function (_React$Component51) {
 		}
 	}]);
 
-	return _class51;
+	return _class54;
 })(React.Component);
 
-Comp.Icons.Settings = (function (_React$Component52) {
-	_inherits(_class52, _React$Component52);
+Comp.Icons.Settings = (function (_React$Component55) {
+	_inherits(_class55, _React$Component55);
 
-	function _class52() {
-		_classCallCheck(this, _class52);
+	function _class55() {
+		_classCallCheck(this, _class55);
 
-		_get(Object.getPrototypeOf(_class52.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(_class55.prototype), "constructor", this).apply(this, arguments);
 	}
 
-	_createClass(_class52, [{
+	_createClass(_class55, [{
 		key: "render",
 		value: function render() {
 			return React.createElement(
@@ -81539,19 +81793,19 @@ Comp.Icons.Settings = (function (_React$Component52) {
 		}
 	}]);
 
-	return _class52;
+	return _class55;
 })(React.Component);
 
-Comp.Icons.Share = (function (_React$Component53) {
-	_inherits(_class53, _React$Component53);
+Comp.Icons.Share = (function (_React$Component56) {
+	_inherits(_class56, _React$Component56);
 
-	function _class53() {
-		_classCallCheck(this, _class53);
+	function _class56() {
+		_classCallCheck(this, _class56);
 
-		_get(Object.getPrototypeOf(_class53.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(_class56.prototype), "constructor", this).apply(this, arguments);
 	}
 
-	_createClass(_class53, [{
+	_createClass(_class56, [{
 		key: "render",
 		value: function render() {
 			return React.createElement(
@@ -81598,19 +81852,19 @@ Comp.Icons.Share = (function (_React$Component53) {
 		}
 	}]);
 
-	return _class53;
+	return _class56;
 })(React.Component);
 
-Comp.Icons.Shipping = (function (_React$Component54) {
-	_inherits(_class54, _React$Component54);
+Comp.Icons.Shipping = (function (_React$Component57) {
+	_inherits(_class57, _React$Component57);
 
-	function _class54() {
-		_classCallCheck(this, _class54);
+	function _class57() {
+		_classCallCheck(this, _class57);
 
-		_get(Object.getPrototypeOf(_class54.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(_class57.prototype), "constructor", this).apply(this, arguments);
 	}
 
-	_createClass(_class54, [{
+	_createClass(_class57, [{
 		key: "render",
 		value: function render() {
 			return React.createElement(
@@ -81625,19 +81879,48 @@ Comp.Icons.Shipping = (function (_React$Component54) {
 		}
 	}]);
 
-	return _class54;
+	return _class57;
 })(React.Component);
 
-Comp.Icons.Trophy = (function (_React$Component55) {
-	_inherits(_class55, _React$Component55);
+Comp.Icons.Stack = (function (_React$Component58) {
+	_inherits(_class58, _React$Component58);
 
-	function _class55() {
-		_classCallCheck(this, _class55);
+	function _class58() {
+		_classCallCheck(this, _class58);
 
-		_get(Object.getPrototypeOf(_class55.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(_class58.prototype), "constructor", this).apply(this, arguments);
 	}
 
-	_createClass(_class55, [{
+	_createClass(_class58, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					null,
+					React.createElement("path", { d: "M94.9,44.5l-2.6-1.4L60.1,60.6c-5.5,3-14.6,3-20.2,0L7.7,43.1l-2.6,1.4c-5.5,3-5.5,7.9,0,10.9l34.9,18.9 c5.5,3,14.6,3,20.2,0l34.9-18.9C100.5,52.5,100.5,47.5,94.9,44.5" }),
+					React.createElement("path", { d: "M94.9,65.2l-2.6-1.4L60.1,81.2c-5.5,3-14.6,3-20.2,0L7.7,63.8l-2.6,1.4c-5.5,3-5.5,7.9,0,10.9L39.9,95 c5.5,3,14.6,3,20.2,0l34.9-18.9C100.5,73.1,100.5,68.2,94.9,65.2" }),
+					React.createElement("path", { d: "M60.1,53.7c-5.5,3-14.6,3-20.2,0L5.1,34.8c-5.5-3-5.5-7.9,0-10.9L39.9,5c5.5-3,14.6-3,20.2,0l34.9,18.9 c5.5,3,5.5,7.9,0,10.9L60.1,53.7z" })
+				)
+			);
+		}
+	}]);
+
+	return _class58;
+})(React.Component);
+
+Comp.Icons.Trophy = (function (_React$Component59) {
+	_inherits(_class59, _React$Component59);
+
+	function _class59() {
+		_classCallCheck(this, _class59);
+
+		_get(Object.getPrototypeOf(_class59.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class59, [{
 		key: "render",
 		value: function render() {
 			return React.createElement(
@@ -81648,19 +81931,42 @@ Comp.Icons.Trophy = (function (_React$Component55) {
 		}
 	}]);
 
-	return _class55;
+	return _class59;
 })(React.Component);
 
-Comp.Icons.Up = (function (_React$Component56) {
-	_inherits(_class56, _React$Component56);
+Comp.Icons.Twitter = (function (_React$Component60) {
+	_inherits(_class60, _React$Component60);
 
-	function _class56() {
-		_classCallCheck(this, _class56);
+	function _class60() {
+		_classCallCheck(this, _class60);
 
-		_get(Object.getPrototypeOf(_class56.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(_class60.prototype), "constructor", this).apply(this, arguments);
 	}
 
-	_createClass(_class56, [{
+	_createClass(_class60, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M97.7,20.4c-3.5,1.6-7.3,2.6-11.2,3.1c4-2.4,7.1-6.3,8.6-10.8c-3.8,2.2-8,3.9-12.4,4.8 c-3.6-3.8-8.7-6.2-14.3-6.2c-10.8,0-19.6,8.8-19.6,19.6c0,1.5,0.2,3,0.5,4.5C33,34.4,18.6,26.6,8.9,14.8c-1.7,2.9-2.7,6.3-2.7,9.8 c0,6.8,3.5,12.8,8.7,16.3c-3.2-0.1-6.2-1-8.9-2.4c0,0.1,0,0.2,0,0.2c0,9.5,6.8,17.4,15.7,19.2c-1.6,0.4-3.4,0.7-5.2,0.7 c-1.3,0-2.5-0.1-3.7-0.4c2.5,7.8,9.7,13.4,18.3,13.6c-6.7,5.3-15.1,8.4-24.3,8.4c-1.6,0-3.1-0.1-4.7-0.3c8.7,5.6,19,8.8,30,8.8 c36,0,55.7-29.8,55.7-55.7c0-0.8,0-1.7-0.1-2.5C91.8,27.8,95.1,24.3,97.7,20.4L97.7,20.4z" })
+			);
+		}
+	}]);
+
+	return _class60;
+})(React.Component);
+
+Comp.Icons.Up = (function (_React$Component61) {
+	_inherits(_class61, _React$Component61);
+
+	function _class61() {
+		_classCallCheck(this, _class61);
+
+		_get(Object.getPrototypeOf(_class61.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class61, [{
 		key: "render",
 		value: function render() {
 			return React.createElement(
@@ -81671,19 +81977,42 @@ Comp.Icons.Up = (function (_React$Component56) {
 		}
 	}]);
 
-	return _class56;
+	return _class61;
 })(React.Component);
 
-Comp.Icons.Weather = (function (_React$Component57) {
-	_inherits(_class57, _React$Component57);
+Comp.Icons.UsMap = (function (_React$Component62) {
+	_inherits(_class62, _React$Component62);
 
-	function _class57() {
-		_classCallCheck(this, _class57);
+	function _class62() {
+		_classCallCheck(this, _class62);
 
-		_get(Object.getPrototypeOf(_class57.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(_class62.prototype), "constructor", this).apply(this, arguments);
 	}
 
-	_createClass(_class57, [{
+	_createClass(_class62, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ viewBox: "0 0 100 100" },
+				React.createElement("path", { d: "M51.6,68.3c0,0.1,0.1,0.1,0.2,0.1c0-0.1,0-0.2,0-0.3C51.6,68.2,51.6,68.2,51.6,68.3 M59.2,67.2 c0.2,0.1,0.6,0.1,0.7-0.1C59.7,66.7,59.2,66.7,59.2,67.2 M82.8,54.8c0.1,0.1,0.3,0.1,0.5,0C83.3,54.5,82.8,54.6,82.8,54.8 M82.4,49.3c0.1-0.2,0-0.5-0.1-0.6C82.3,48.9,82.2,49.3,82.4,49.3 M67.3,31.4c-0.2,0-0.2,0.2-0.4,0.3c-0.3,0.1-0.5,0.1-0.8,0.1 c-0.2,0.1-0.2,0.3-0.3,0.4c-0.1,0.1-0.2,0.1-0.3,0.2c-0.1,0.1-0.1,0.3-0.3,0.3c-0.1,0-0.1-0.3-0.2-0.3c-0.2,0-0.4,0.1-0.5,0.1 c-0.3,0.4-0.4,0.9-0.7,1.3c0,0.6-0.7,0.6-0.6,1.2c0.2-0.1,0.3-0.3,0.4-0.5c0.1-0.1,0.3-0.1,0.4-0.3c0.1-0.1,0.1-0.3,0.1-0.5 c0.4-0.1,0.5-0.6,0.8-0.6c0.1,0.2-0.1,0.3-0.2,0.5c-0.1,0.1,0,0.2-0.1,0.4c-0.2,0.5-0.8,1.2-0.8,1.9c0,0.1,0.1,0.2,0,0.3 c0,0.2-0.2,0.2-0.2,0.4c-0.1,0.3,0,0.6-0.1,0.9c0,0.3-0.3,0.6-0.3,1c-0.1,0.5,0.2,0.9,0.2,1.3c0,0.1-0.1,0.2-0.1,0.4 c0,0.3,0,0.6,0,0.8c0,0.1,0.2,0.3,0.3,0.5c0.1,0.2,0.1,0.4,0.2,0.6c0.3,0.7,1.3,0,1.5-0.3c0.1-0.1,0.1-0.3,0.2-0.5 c0.1-0.2,0.2-0.3,0.3-0.5c0.1-0.4,0.2-1,0.2-1.5c0-0.3-0.2-0.5-0.3-0.8c-0.1-0.2-0.2-0.6-0.2-0.8c0-0.1,0.2-0.3,0.2-0.5 c0-0.2-0.1-0.4-0.1-0.6c0-0.2,0.3-0.4,0.3-0.6c0.1-0.3,0-0.6,0.1-0.8c0-0.1,0.2-0.2,0.2-0.3c0.1-0.2,0-0.3,0.2-0.4 c0.1,0,0.2-0.1,0.3-0.1c0.2-0.1,0.2-0.4,0.5-0.4c0.2,0.1-0.1,0.3,0.1,0.4c0.1-0.1,0-0.2,0-0.4c0-0.3,0.5-0.3,0.5-0.6 c0-0.1,0-0.3,0-0.3c0-0.3,0.3-0.4,0.4-0.7C68.2,31.7,67.7,31.3,67.3,31.4 M55.8,25.4c0.2,0,0.2-0.1,0.4-0.1c0.2,0,0.2,0.2,0.4,0.3 c0.1,0.1,0.2,0.1,0.3,0.2c0.2,0.2,0.2,0.3,0.6,0.3c0.2,0,0.5-0.4,0.7-0.4c0.2,0,0.3,0.3,0.4,0.3c0.2,0.1,0.6,0,0.9,0 c0.2,0,0.2,0.2,0.4,0.3c0.2,0,0.5,0,0.6,0.1c0,0.2-0.2,0.3-0.3,0.3c-0.4,0.2-0.9,0.3-1.3,0.5c-0.3,0.1-0.5,0.3-0.7,0.5 c-0.2,0.2-0.4,0.4-0.6,0.7c-0.2,0.2-0.4,0.4-0.6,0.6c-0.2,0.2-0.5,0.3-0.6,0.6c0.2,0.2,0.5,0,0.7-0.1c0.2-0.1,0.5-0.2,0.7-0.3 c0.3-0.2,0.7-0.6,1.2-0.4c0,0.4-0.3,0.6-0.5,0.8c0.2,0.4,0.6,0.3,1,0.1c0.2-0.1,0.3-0.3,0.5-0.4c0.2-0.1,0.4,0,0.6-0.1 c0.1,0,0.2-0.1,0.3-0.2c0.1-0.1,0.2-0.1,0.3-0.2c0.1-0.1,0.2-0.2,0.3-0.3c0.1-0.1,0.3-0.2,0.4-0.3c0.3-0.3,1-0.8,1.4-0.3 c-0.2,0.2-0.5,0.3-0.7,0.6c-0.2,0.2-0.3,0.4-0.3,0.7c0.4,0,0.8,0,1.1,0.2c0.3,0.2,0.4,0.7,0.7,0.9c0.3-0.2,0.6,0.1,1,0.1 c0.2,0,0.5-0.3,0.8-0.4c0.3-0.1,0.7,0,1.1-0.1c0.3,0,0.6-0.3,0.9-0.2c0.1,0.1-0.1,0.4,0,0.6c0.4,0.4,1,0,1.4,0c0.1,0.3,0,0.9,0.3,1 c0.5-0.1,1,0.1,0.8,0.5c-0.3,0.2-0.8-0.1-1.1-0.1c-0.1,0-0.2,0.1-0.3,0.1c-0.1,0-0.3-0.1-0.4,0c0,0.2,0.3,0.1,0.3,0.3 c0,0.3,0.2,0.3,0.4,0.4c0.1,0.1,0.1,0.2,0.2,0.3c0.1,0,0.2,0,0.3,0.1c0.1,0,0.2,0.1,0.2,0.1c0.2,0.1,0.4,0.1,0.5,0.2 c0.1,0.1,0.3,0.5,0.3,0.7c0,0.2-0.1,0.1-0.2,0.3c0.2,0.4,0.2,1,0.1,1.5c-0.1,0.3-0.4,0.5-0.4,0.8c-0.1,0.1-0.7,0.3-0.6,0.7 c0,0.1,0.1,0.2,0.3,0.2c0.4,0,0.3-0.4,0.5-0.6c0.1-0.1,0.7-0.5,0.9-0.4c0.6,0.1,0.6,1.6,0.7,2.2c0,0.1,0.1,0.3,0.1,0.5 c0,0.3-0.1,0.8-0.2,1c0,0.1-0.2,0.2-0.3,0.3c-0.2,0.2-0.4,0.4-0.7,0.5c-0.1,0.2,0,0.3-0.1,0.5c-0.1,0.3-0.4,0.4-0.4,0.6 c0,0.3,0.4,0.3,0.6,0.5c0.2,0,0.2-0.2,0.4-0.1c0.1,0.1,0.2,0.4,0.4,0.5c0.2,0,0.4-0.2,0.8-0.3c0.2,0,0.3,0,0.4,0 c0.2-0.1,0.6-0.4,0.9-0.6c0.5-0.3,1-0.4,1.5-0.6c0.1-0.1,0.2-0.2,0.3-0.3c0.1-0.1,0.3-0.1,0.4-0.2c0.3-0.1,0.5-0.3,0.7-0.5 c0.2-0.2,0.4-0.3,0.6-0.6c0.1-0.2,0.2-0.2,0.3-0.3c0-0.3-0.4-0.6-0.2-1.1c0.4-0.2,1.4-0.5,2.1-0.2c0.2,0.1,0.3,0.2,0.4,0.2 c0.1,0,0.2,0,0.4-0.1c0.3,0,0.6,0,0.7-0.1c0.2-0.1,0.3-0.3,0.5-0.4s0.5-0.1,0.5-0.3c0.1-0.3-0.1-0.4-0.2-0.6c0.1-0.2-0.1-0.4,0-0.6 c0-0.1,0.3-0.4,0.5-0.6c0.1-0.1,0.3-0.1,0.3-0.2c0.1-0.1,0.1-0.3,0.2-0.4c0.1-0.2,0.6-0.7,0.8-0.8c0.1-0.1,0.2-0.1,0.3-0.2 c0.1-0.1,0.2-0.2,0.3-0.2c0.4-0.1,0.9,0,1.4,0H89c0.4,0,1.1,0.1,1.4,0c0.2-0.1,0.2-0.5,0.4-0.6c0.3,0,0.5-0.1,0.8-0.2 c0.3-0.2,0.3-0.5,0.5-0.8c0.2-0.2,0.3-0.4,0.4-0.7c0-0.2,0-0.7,0.1-0.9c0.1-0.1,0.2-0.3,0.3-0.4c0.1-0.1,0-0.4,0.1-0.5 c0.1-0.2,0.2-0.4,0.3-0.6c0.1-0.2,0.2-0.4,0.3-0.5c0.2-0.3,0.5-1,0.8-0.9c0.3,0.1,0.2,0.4,0.3,0.6c0.6,0.1,0.7-0.3,1.2-0.3 c0.3,0,0.5,0.3,0.7,0.5c0.1,0.1,0.2,0.3,0.2,0.3c0.1,0.3,0,0.9,0,1.4c0,0.5,0,1,0,1.4c0,0.1-0.1,0.3,0,0.4c0.1,0.3,0.4,0.3,0.6,0.4 v0.8c0.1,0.2,0.3,0.1,0.5,0.3c0.1,0.1,0.1,0.3,0.2,0.4c0.1,0.2,0.2,0.2,0.2,0.4c0,0.2-0.3,0.5-0.5,0.6c-0.2,0.1-0.5,0.1-0.6,0.3 c-0.3-0.1-0.4,0.1-0.6,0.2c-0.2,0.1-0.3,0.1-0.4,0.2c-0.1,0.1-0.2,0.3-0.3,0.4c-0.2,0-0.4,0.1-0.5,0.2c-0.2-0.1-0.4,0.1-0.5,0 c-0.2,0.1-0.3,0.3-0.4,0.4c-0.4-0.1-0.6,0.4-0.9,0.4c-0.1,0-0.3,0-0.4,0c-0.1,0-0.2,0.1-0.3,0.2c-0.1,0.1-0.2,0.2-0.2,0.2 c-0.1,0.1-0.1,0.2-0.1,0.3c-0.1,0.1-0.2,0.2-0.3,0.3c0,0.1-0.1,0.2-0.1,0.3c-0.1,0.3-0.3,0.5-0.3,0.7c0,0.2,0.2,0.3,0.3,0.4 c0,0.3-0.5,0.3-0.5,0.6c0,0.1,0.3,0.3,0.4,0.4c0.2,0.3,0.2,0.9,0.5,1c0.2,0.1,0.4-0.1,0.5-0.2c0-0.3-0.2-0.3-0.2-0.5 c0.4-0.1,0.6,0.7,0.4,1.1c-0.3,0-0.7,0-0.9,0.2c0,0.2,0.1,0.2,0.1,0.4c-0.2,0.1-0.4,0.2-0.5,0.1c-0.2-0.1-0.2-0.3-0.3-0.4 c-0.6-0.1-1,0.4-1.6,0.5c-0.1,0-0.3,0-0.4,0c-0.1,0-0.2,0.1-0.3,0.1c-0.3,0-0.7,0-1,0c-0.2,0-0.3,0.1-0.5,0.2 c-0.2,0.1-0.4,0.1-0.4,0.3c0.1,0.2,0.3,0,0.5,0c0.2,0,0.4,0,0.7,0c0.2-0.1,0.4-0.4,0.6-0.4c0.2,0,0.4,0.3,0.6,0.3 c-0.1,0.2-0.4,0.3-0.6,0.4c-0.4,0.2-0.9,0.4-1.4,0.5c-0.4,0.1-0.9,0.2-1.4,0.3c0.1,0.4,0,0.7-0.1,1.1c-0.1,0.5-0.1,0.7-0.3,1.1 c-0.1,0.1-0.1,0.3-0.2,0.4c-0.1,0.2-0.4,0.3-0.5,0.4c-0.2,0.2-0.2,0.7-0.6,0.6c-0.1-0.1,0-0.3-0.1-0.5c-0.2-0.1-0.4-0.2-0.5-0.3 c-0.1,0.3,0,0.5,0.1,0.7c0.1,0.2,0.3,0.2,0.3,0.4c0.1,0.2,0.1,0.7,0,1c0,0.1-0.2,0.3-0.2,0.5c-0.1,0.2-0.2,0.3-0.2,0.4 c-0.1,0.2-0.3,0.2-0.3,0.4c-0.1,0.1-0.1,0.3-0.1,0.5c0,0.1-0.1,0.2-0.2,0.3c-0.1,0.2-0.2,0.8-0.5,0.7c-0.1,0-0.2-0.2-0.2-0.3 c-0.1-0.4,0.3-1,0.4-1.4c0-0.2-0.3-0.1-0.3-0.2c-0.1-0.3-0.1-0.6-0.4-0.7c-0.1,0.2,0.1,0.4-0.1,0.5c0,0.1,0.2,0.2,0.2,0.4 c0,0.1-0.1,0.3-0.1,0.5c0,0.2,0.1,0.4,0.1,0.5c0,0.2-0.1,0.3-0.2,0.4c0,0.2,0.1,0.3,0.2,0.5c0.1,0.1,0.3,0.1,0.4,0.2 c0.2,0.5,0.2,1.2,0.4,1.7c0.1,0.2,0.3,0.4,0.3,0.6c0,0.2-0.2,0.1-0.2,0.2c-0.1,0.2-0.2,0.4-0.4,0.5c-0.1,0.3-0.4,0.5-0.8,0.5 c-0.1,0.1-0.2,0.2-0.1,0.3c0.1,0.2,0.4,0.1,0.5,0.3c-0.1,0.3-0.4,0.5-0.6,0.8c-0.3-0.1-0.6-0.1-1,0c-0.4,0.2-0.9,0.6-1.1,0.9 C80,59,80,59.3,79.8,59.5c-0.5-0.1-1,0-1.3,0.2c-0.2,0.2-0.5,0.5-0.6,0.8c0,0.1,0,0.3-0.1,0.4c-0.1,0.2-0.3,0.4-0.5,0.5 c-0.3,0.3-0.5,0.6-0.8,0.8c-0.2,0.1-0.4,0.1-0.6,0.3c-0.1,0.1-0.1,0.2-0.2,0.3c-0.1,0.2-0.4,0.3-0.5,0.4c-0.1,0.1-0.1,0.3-0.2,0.4 c-0.1,0.2-0.3,0.3-0.3,0.4c-0.1,0.1,0,0.3-0.1,0.4c0,0.1-0.2,0.2-0.2,0.3c0,0.1,0,0.2,0,0.3c-0.1,0.1-0.2,0.2-0.2,0.3 c-0.1,0.3-0.1,0.7,0,1c0.1,0.7,0.3,1.5,0.5,2.2c0.2,0.5,0.4,1,0.7,1.4c0.1,0.2,0.2,0.3,0.3,0.4c0,0.2-0.1,0.4-0.1,0.6 c0,0.2,0.1,0.5,0.2,0.7c0.1,0.2,0.2,0.4,0.3,0.7c0.1,0.5,0.4,0.9,0.5,1.4c0.1,0.5-0.1,1-0.1,1.5c0,0.5,0,0.7-0.3,1 c0.2,0.5-0.1,0.9-0.4,1.1c-0.1-0.1-0.2-0.2-0.4-0.2c-0.2,0-0.5,0.1-0.6,0c-0.1-0.2-0.1-0.4-0.1-0.5c-0.1-0.5-0.4-0.8-0.9-0.9 c-0.2-0.2-0.1-0.7-0.3-0.9c-0.1-0.2-0.3-0.1-0.5-0.2c-0.3-0.7-0.6-1.4-0.9-2c0.1-0.3-0.2-0.5-0.2-0.8c-0.1-0.5,0.3-1,0.3-1.5 c0-0.4-0.1-0.6-0.3-1c-0.1-0.1-0.3,0-0.3-0.1c-0.1-0.1-0.2-0.2-0.3-0.3c-0.1-0.1-0.2-0.2-0.3-0.3c-0.2-0.3-0.4-0.7-0.6-0.8 c-0.2-0.1-0.4-0.3-0.6-0.3c-0.2,0-0.2,0.2-0.3,0.3c-0.4,0.1-0.7,0.6-1.2,0.6c-0.2,0-0.4-0.1-0.6-0.2c0-0.5-0.5-0.7-0.8-1 c-0.4-0.3-0.8-0.4-1.4-0.4c-0.3,0-0.6,0.1-0.8,0.2c-0.3,0.1-0.7,0.2-0.9,0.1c-0.2-0.1-0.2-0.3-0.3-0.4c-0.2,0-0.1,0.3-0.2,0.3 c-0.2,0-0.2-0.1-0.4-0.1c-0.1,0-0.2,0.1-0.4,0.1c-0.3,0-0.7-0.5-0.9,0c-0.2,0-0.3,0-0.3,0.1c0,0.2,0.2,0,0.3,0.1 c0,0.3,0,0.5-0.1,0.8c-0.1,0.3-0.4,0.3-0.4,0.5c0,0.2,0.2,0.2,0.5,0.3c0.1,0.2,0.3,0.2,0.3,0.4c0,0.3-0.3,0.4-0.6,0.3 c-0.2-0.1-0.1-0.3-0.3-0.4c-0.4-0.4-0.8,0-1.1,0.2c-0.2,0-0.5,0-0.6-0.1c-0.2,0.1-0.2,0.2-0.4,0.2c-0.2,0-0.2-0.1-0.4-0.3 c-0.2-0.1-0.3-0.1-0.4-0.2c-0.1-0.3-0.3-0.6-0.5-0.7c-0.1,0-0.1,0.2-0.3,0.3c-0.2,0-0.3-0.1-0.5-0.2c-0.1,0-0.3,0.1-0.4,0.1 c-0.6,0-0.9-0.4-1.4-0.5c-0.3,0-0.5,0-0.8,0c-0.1,0-0.3,0.1-0.4,0.2c-0.1,0-0.2,0-0.2,0c-0.2,0-0.3,0.1-0.5,0.2 c-0.1,0.1-0.3,0.1-0.5,0.2c-0.2,0.1-0.2,0.3-0.3,0.4c-0.1,0.1-0.3,0.2-0.4,0.3c-0.5,0.4-1.2,0.9-1.9,1.1c-0.2,0-0.1-0.1-0.3-0.1 c-0.2,0.1,0.1,0.2,0,0.3c-0.3,0.5-0.8,0.6-1.1,1c0,0.1-0.1,0.2-0.1,0.3c-0.2,0.3-0.6,1.1-0.6,1.7c0,0.1,0.1,0.3,0.1,0.4 c0,0.1,0,0.3,0,0.4c0,0.1,0.1,0.2,0.2,0.3c0,0.1,0.2,0.6,0.2,0.8c0,0.1-0.3,0.3-0.5,0.3c-0.2,0-0.4-0.3-0.5-0.3 c-0.2-0.1-0.5,0-0.8,0c-0.2,0-0.3-0.2-0.5-0.3c-0.1,0-0.2,0-0.3-0.1c-0.2-0.1-0.4-0.3-0.7-0.3c-0.2-0.2-0.2-0.5-0.3-0.7 c-0.1-0.2-0.3-0.4-0.3-0.6c0-0.1,0-0.2,0-0.3c0-0.1-0.1-0.1-0.1-0.2c0-0.1,0-0.3,0-0.4c-0.1-0.2-0.4-0.3-0.6-0.5 c-0.1-0.1-0.1-0.4-0.3-0.5c-0.1-0.2-0.3-0.3-0.4-0.4c-0.1-0.1-0.1-0.3-0.2-0.4c-0.1-0.3-0.2-0.5-0.3-0.8c-0.1-0.3-0.2-0.5-0.4-0.7 c-0.3-0.4-0.8-0.6-1.1-1c-0.5,0-0.9-0.1-1.3-0.2c-0.3,0.2-0.5,0.1-0.7,0.3c-0.2,0.2-0.2,0.6-0.3,0.9c-0.1,0.1-0.4,0.5-0.6,0.5 c-0.3,0.1-0.8-0.4-1.1-0.6c-0.1,0-0.3-0.1-0.3-0.1c-0.1-0.1-0.2-0.2-0.4-0.4c-0.3-0.3-0.4-0.3-0.6-0.7c0-0.1-0.1-0.2-0.2-0.3 c0-0.2,0-0.3,0-0.5c0-0.1-0.2-0.2-0.2-0.4c-0.1-0.1-0.1-0.3-0.2-0.4c-0.2-0.3-0.4-0.3-0.7-0.5c-0.3-0.2-0.6-0.7-0.9-1 c-0.2-0.1-0.4-0.2-0.5-0.3c-0.1-0.2-0.2-0.4-0.4-0.5c-0.3-0.2-1-0.1-1.4-0.1c-0.5,0-0.9,0-1.4,0c-0.1,0.2,0,0.6-0.1,0.8 c-0.3,0.2-0.7,0.1-1.1,0.1h-1.2c-0.8,0-1.6,0.1-2.4,0c-0.1,0-0.1,0-0.2,0c-0.5-0.1-1-0.4-1.5-0.6c-0.5-0.2-1-0.4-1.5-0.6 c-1.1-0.4-2.1-0.8-3-1.2c-0.1-0.1,0-0.3-0.1-0.4c-1.3,0.1-2.4,0.3-3.7,0.3c-0.4-0.2-0.3-0.6-0.4-1c-0.2-0.8-0.9-1.1-1.4-1.5 c-0.1-0.1-0.3,0.1-0.4,0c-0.2-0.1-0.1-0.4-0.3-0.6c-0.5-0.1-0.7,0-1-0.2c-0.3-0.2-0.4-0.5-0.6-0.6c-0.1,0-0.3,0-0.5,0 c-0.2,0-0.3-0.1-0.5-0.1c-0.1,0-0.3,0.1-0.5,0c-0.2,0-0.4-0.2-0.4-0.3c-0.1-0.3,0-0.7-0.1-1c-0.1-0.2-0.2-0.2-0.3-0.3 c-0.1-0.1,0-0.2,0-0.3C8.1,56.1,8,56,7.9,55.9c-0.3-0.3-0.4-0.5-0.7-0.8c-0.1-0.2-0.2-0.3-0.3-0.5c-0.2-0.2-0.6-0.5-0.5-0.9 c0-0.2,0.5-0.6,0.1-0.8c-0.1-0.1-0.2,0-0.3-0.1c-0.1-0.1-0.4-0.4-0.5-0.5c0-0.1,0-0.3-0.1-0.4c0-0.1-0.1-0.2-0.1-0.3 c0-0.2,0-0.4,0-0.5c-0.1-0.3-0.5-0.4-0.7-0.6c0-0.4-0.1-0.6-0.3-0.9c-0.1-0.1-0.2-0.2-0.3-0.3C4,49.1,4,49,3.8,48.8 c-0.1-0.2-0.3-0.3-0.3-0.4c0-0.1,0-0.3,0-0.4c0-0.2-0.2-0.5-0.2-0.7c0-0.1,0.1-0.3,0.1-0.5c0-0.4-0.3-0.8-0.5-1 c-0.2-0.3-0.5-0.4-0.5-0.9c0-0.4,0.4-0.8,0.4-1.1c0-0.2,0-0.4,0-0.5c0-0.4,0.2-0.7,0-1.1c0-0.1-0.1-0.2-0.2-0.3c0-0.1,0-0.3,0-0.4 c0-0.2-0.2-0.3-0.2-0.4c-0.1-0.2-0.1-0.4-0.1-0.6c0-0.1,0.1-0.3,0-0.5c0-0.2-0.2-0.4-0.2-0.6c0-0.1,0.1-0.4,0.2-0.6 c0-0.2,0-0.4,0.1-0.6c0-0.2,0.2-0.3,0.2-0.4c0.2-0.6,0.2-1.2,0.2-1.8c0-0.3,0.1-0.5,0.1-0.8c0-0.2,0-0.4,0-0.5 c0-0.3,0.1-0.6,0.2-0.9c0.1-0.6-0.1-1.3,0-1.9c0-0.1,0.1-0.2,0.1-0.3c0-0.3-0.2-0.4-0.2-0.7c0-0.3,0.1-0.6,0.1-0.9 c0-0.1-0.1-0.2-0.1-0.3c-0.1-0.3-0.1-0.7-0.2-1c-0.1-0.2-0.2-0.4-0.2-0.5c-0.1-0.3-0.1-0.6-0.2-0.8c-0.1-0.2-0.3-0.4-0.4-0.6 c-0.1-0.4-0.1-0.8,0-1.2c0.2-0.1,0.4,0.1,0.6,0.2c0.2,0.1,0.4,0.3,0.6,0.3c0.3,0.1,0.7,0,1,0.1c0.1,0,0.2-0.1,0.3-0.1 C4.7,26,4.8,26,5,26c0.2-0.1,0.2-0.4,0.2-0.6c-0.4-0.1-0.9-0.2-0.8-0.6c0.1-0.2,0.4-0.4,0.7-0.3c0.1-0.2-0.2-0.4-0.1-0.6 c0.1-0.2,0.5-0.2,0.7-0.2c1.8,0,3.7,0,5.5,0c2.4,0,4.9,0.1,7.1,0c0.5,0,0.9,0,1.4,0c2,0.1,4.1-0.1,6.2,0c0.9,0,1.7,0,2.5,0 c1.9,0.1,3.8,0,5.7,0c5.6,0,11.3,0,16.9,0c0.1-0.2,0-0.7,0.1-0.9c0.9-0.4,0.7,1,0.9,1.5c0.1,0,0.1,0.1,0.2,0.2 c0.3,0,0.5,0.1,0.7,0.2c0.1,0,0.3,0,0.4,0.1c0.2,0.1,0.3,0.2,0.4,0.2c0.2,0,0.4-0.2,0.6-0.3c0.1,0,0.4,0,0.5,0.1 c0.2,0,0.4,0.1,0.5,0.2c0,0,0,0.1,0.1,0.2C55.5,25.2,55.7,25.2,55.8,25.4" })
+			);
+		}
+	}]);
+
+	return _class62;
+})(React.Component);
+
+Comp.Icons.Weather = (function (_React$Component63) {
+	_inherits(_class63, _React$Component63);
+
+	function _class63() {
+		_classCallCheck(this, _class63);
+
+		_get(Object.getPrototypeOf(_class63.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class63, [{
 		key: "render",
 		value: function render() {
 			return React.createElement(
@@ -81707,19 +82036,19 @@ Comp.Icons.Weather = (function (_React$Component57) {
 		}
 	}]);
 
-	return _class57;
+	return _class63;
 })(React.Component);
 
-Comp.Icons.Web = (function (_React$Component58) {
-	_inherits(_class58, _React$Component58);
+Comp.Icons.Web = (function (_React$Component64) {
+	_inherits(_class64, _React$Component64);
 
-	function _class58() {
-		_classCallCheck(this, _class58);
+	function _class64() {
+		_classCallCheck(this, _class64);
 
-		_get(Object.getPrototypeOf(_class58.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(_class64.prototype), "constructor", this).apply(this, arguments);
 	}
 
-	_createClass(_class58, [{
+	_createClass(_class64, [{
 		key: "render",
 		value: function render() {
 			return React.createElement(
@@ -81735,19 +82064,19 @@ Comp.Icons.Web = (function (_React$Component58) {
 		}
 	}]);
 
-	return _class58;
+	return _class64;
 })(React.Component);
 
-Comp.Icons.Wifi = (function (_React$Component59) {
-	_inherits(_class59, _React$Component59);
+Comp.Icons.Wifi = (function (_React$Component65) {
+	_inherits(_class65, _React$Component65);
 
-	function _class59() {
-		_classCallCheck(this, _class59);
+	function _class65() {
+		_classCallCheck(this, _class65);
 
-		_get(Object.getPrototypeOf(_class59.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(_class65.prototype), "constructor", this).apply(this, arguments);
 	}
 
-	_createClass(_class59, [{
+	_createClass(_class65, [{
 		key: "render",
 		value: function render() {
 			return React.createElement(
@@ -81765,19 +82094,19 @@ Comp.Icons.Wifi = (function (_React$Component59) {
 		}
 	}]);
 
-	return _class59;
+	return _class65;
 })(React.Component);
 
-Comp.Icons.Yes = (function (_React$Component60) {
-	_inherits(_class60, _React$Component60);
+Comp.Icons.Yes = (function (_React$Component66) {
+	_inherits(_class66, _React$Component66);
 
-	function _class60() {
-		_classCallCheck(this, _class60);
+	function _class66() {
+		_classCallCheck(this, _class66);
 
-		_get(Object.getPrototypeOf(_class60.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(_class66.prototype), "constructor", this).apply(this, arguments);
 	}
 
-	_createClass(_class60, [{
+	_createClass(_class66, [{
 		key: "render",
 		value: function render() {
 			return React.createElement(
@@ -81788,7 +82117,7 @@ Comp.Icons.Yes = (function (_React$Component60) {
 		}
 	}]);
 
-	return _class60;
+	return _class66;
 })(React.Component);
 'use strict';
 
@@ -83146,8 +83475,10 @@ Comp.Projects.Show = (function (_React$Component) {
 		value: function fetchProject() {
 			var _this2 = this;
 
+			var atlas_url = this.props.atlas_url || this.props.params.atlas_url;
+
 			var coll = new M.project.Collection();
-			var promise = coll.getClientFetchPromise({ atlas_url: this.props.atlas_url });
+			var promise = coll.getClientFetchPromise({ atlas_url: atlas_url });
 			promise.then(function (coll) {
 				console.log(coll);
 				var project = coll.models[0];
@@ -84831,7 +85162,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== 'function' 
 			value: function render() {
 				return React.createElement(
 					'div',
-					{ className: 'wrapper' },
+					{ className: 'wrapper ' },
 					React.createElement(Setup, this.props),
 					React.createElement(Header, this.props),
 					React.createElement(RouteHandler, this.props)
@@ -84847,12 +85178,17 @@ function _inherits(subClass, superClass) { if (typeof superClass !== 'function' 
 		{ handler: Layout },
 		React.createElement(Route, { path: 'welcome', handler: Welcome }),
 		React.createElement(Route, { path: 'menu', handler: ProjectsIndex }),
-		React.createElement(Route, { path: ':atlas_url', handler: ProjectsShow })
+		React.createElement(Route, { path: ':atlas_url', handler: ProjectsShow, a: 'b' })
 	);
 
 	Comp.start = function () {
-		Router.run(routes, Router.HistoryLocation, function (Root) {
-			React.render(React.createElement(Root, null), $('#site')[0]);
+		Router.run(routes, Router.HistoryLocation, function (Root, state) {
+			// var routeModifierClass = {
+			// 	'/': 'atl-route--welcome',
+			// 	'/menu': 'atl-route--projects-index',
+			// 	'/welcome': 'atl-route--welcome'
+			// }[state.path] || 'atl-route--projects-show';
+			React.render(React.createElement(Root, { App: Atlas }), $('#site')[0]);
 		});
 	};
 })();

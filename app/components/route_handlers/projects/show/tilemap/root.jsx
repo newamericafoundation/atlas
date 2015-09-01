@@ -1,14 +1,15 @@
 Comp.Projects.Show.Tilemap = class extends React.Component {
 	
 	render() {
+		var T = Comp.Projects.Show.Tilemap;
 		return (
 			<div className='atl__main fill-parent'>
 				{ this.renderItems() }
-				<Comp.Projects.Show.Tilemap.Map {...this.props} />
-				<Comp.Projects.Show.Tilemap.TopBar {...this.props} />			
-				<Comp.Projects.Show.Tilemap.SettingsBar {...this.props} />
-				<Comp.Projects.Show.Tilemap.Popup {...this.props} />
-				<Comp.Projects.Show.Tilemap.InfoBox {...this.props} activeItem={ this.getActiveItem() } />
+				<T.Map {...this.props} />
+				<T.TopBar {...this.props} />			
+				<T.SettingsBar {...this.props} />
+				<T.Popup {...this.props} />
+				<T.InfoBox {...this.props} activeItem={ this.getActiveItem() } />
 				{ this.renderBaseLayer() }
 			</div>
 		);
@@ -16,10 +17,11 @@ Comp.Projects.Show.Tilemap = class extends React.Component {
 	}
 
 	renderItems() {
+		var T = Comp.Projects.Show.Tilemap;
 		if (this.props.uiState.itemsDisplayMode === 'map') {
-			return (<Comp.Projects.Show.Tilemap.Map {...this.props} />);
+			return (<T.Map {...this.props} />);
 		} else {
-			return (<Comp.Projects.Show.Tilemap.List {...this.props} />);
+			return (<T.List {...this.props} />);
 		}
 	}
 
@@ -32,10 +34,6 @@ Comp.Projects.Show.Tilemap = class extends React.Component {
 
 	getActiveItem() {
 		return this.props.project.get('data').items.active;
-	}
-
-	componentWillUpdate() {
-		// console.log('updating Tilemap');
 	}
 
 	componentWillMount() {
