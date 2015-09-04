@@ -47,8 +47,8 @@ module.exports = {
 		        './app/assets/scripts/atlas/atlas.js.coffee',
 		        './app/assets/scripts/atlas/routes/**/*',
 		        './app/assets/scripts/atlas/util/**/*.js.coffee',
-		        './app/assets/scripts/atlas/__auto__models.js',
-		        './app/assets/scripts/atlas/site/map/**/*.js.coffee'
+		        './app/assets/scripts/atlas/site/map/**/*.js.coffee',
+		        './app/assets/scripts/atlas/__auto__models.js'
 		    ],
 
 		    // view and controller code
@@ -58,7 +58,7 @@ module.exports = {
 		        './app/components/form/root.jsx',
 		        './app/components/form/subcomponents/**/*',
 		        './app/components/route_handlers/welcome/**/*',
-		        './app/components/route_handlers/projects/index/root.cjsx',
+		        './app/components/route_handlers/projects/index/root.jsx',
 		        './app/components/route_handlers/projects/index/subcomponents/**/*',
 		        './app/components/route_handlers/projects/new/root.jsx',
 		        './app/components/route_handlers/projects/show/root.jsx',

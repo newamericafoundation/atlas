@@ -130,7 +130,7 @@ Comp.Projects.Show.Tilemap.InfoBox = class extends React.Component {
 			promise.then((coll) => {
 				var img = coll.models[0];
 				if (img != null) {
-					console.log(img.getUrl())
+					// console.log(img.getUrl())
 					$el.css('background-color', 'initial');
 					$el.css('background-image', img.getUrl());
 					// @_appendImageAttribution(img.getAttributionHtml())

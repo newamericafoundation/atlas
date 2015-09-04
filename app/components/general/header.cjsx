@@ -11,7 +11,7 @@ Comp.Header = React.createClass
 			</div>
 			<div className="header__main">
 				<h1 className="header__main__cursive-prefix"></h1>
-				<h1 className="header__main__site-name">{ @getHeaderTitle() }</h1>
+				<h1 className="header__main__site-name">ATLAS</h1>
 				<p className="header__main__title"></p>
 			</div>
 			<Comp.Header.NavCircles App={ @props.App } />
@@ -19,6 +19,7 @@ Comp.Header = React.createClass
 		</div>
 
 	getBackgroundColorClass: ->
+		return 'bg-c-grey--base'
 		switch @props.theme
 			when 'atlas' then 'bg-c-grey--base'
 			when 'naf' then 'bg-c-naf-green'

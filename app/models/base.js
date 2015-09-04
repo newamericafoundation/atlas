@@ -2,10 +2,6 @@ import * as Backbone from 'backbone';
 import * as _ from 'underscore';
 import $ from 'jquery';
 
-// var Backbone = require('backbone'),
-// 	_ = require('underscore'),
-// 	$ = require('jquery');
-
 var Model = Backbone.Model.extend({
 
 	/** 

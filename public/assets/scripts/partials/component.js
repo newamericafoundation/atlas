@@ -79,7 +79,7 @@ Comp.Header = React.createClass({
       "className": "header__main__cursive-prefix"
     }), React.createElement("h1", {
       "className": "header__main__site-name"
-    }, this.getHeaderTitle()), React.createElement("p", {
+    }, "ATLAS"), React.createElement("p", {
       "className": "header__main__title"
     })), React.createElement(Comp.Header.NavCircles, {
       "App": this.props.App
@@ -89,6 +89,7 @@ Comp.Header = React.createClass({
     }));
   },
   getBackgroundColorClass: function() {
+    return 'bg-c-grey--base';
     switch (this.props.theme) {
       case 'atlas':
         return 'bg-c-grey--base';
@@ -192,33 +193,6 @@ Comp.Header.NavCircles = React.createClass({
     return {
       activeIndex: 0
     };
-  }
-});
-
-Comp.BackboneLayout = React.createClass({
-  render: function() {
-    return React.createElement("div", {
-      "className": "wrapper"
-    }, React.createElement(Comp.Setup, {
-      "App": this.props.App
-    }), React.createElement(Comp.Header, {
-      "App": this.props.App,
-      "headerTitle": this.props.headerTitle,
-      "theme": this.props.theme
-    }), this.getRoutable());
-  },
-  getRoutable: function() {
-    var Component, compNameKey, compNameKeys, i, len;
-    if (this.props.routableComponentName == null) {
-      return;
-    }
-    compNameKeys = this.props.routableComponentName.split('.');
-    Component = Comp;
-    for (i = 0, len = compNameKeys.length; i < len; i++) {
-      compNameKey = compNameKeys[i];
-      Component = Component[compNameKey];
-    }
-    return React.createElement(Component, React.__spread({}, this.props));
   }
 });
 
@@ -479,7 +453,7 @@ Comp.SideBar = React.createClass({
     cls = this.state['isActive'] ? 'atl__side-bar atl__side-bar--active' : 'atl__side-bar';
     return React.createElement("div", {
       "className": cls,
-      "onClick": this.toggle
+      "onClick": this.toggle.bind(this)
     }, React.createElement("div", {
       "className": "atl__side-bar__title"
     }, this.state['hoveredButtonTitle']), this.renderButtons());
@@ -591,13 +565,7 @@ Comp.SideBar = React.createClass({
       return atlas_url = project.get('atlas_url');
     }
   },
-  _projects: function() {
-    if (typeof Backbone !== "undefined" && Backbone !== null) {
-      return Backbone.history.navigate('menu', {
-        trigger: true
-      });
-    }
-  },
+  _projects: function() {},
   _edit: function() {
     var App, project, url;
     App = this.props.App;
@@ -616,14 +584,13 @@ Comp.SideBar = React.createClass({
     }
   },
   _help: function(e) {
-    if (typeof $ !== "undefined" && $ !== null) {
-      return $('.atl').toggleClass('atl--help');
+    if (typeof $ === "undefined" || $ === null) {
+      return;
     }
+    return $('.atl').toggleClass('atl--help');
   },
   _print: function() {
-    if (typeof window !== "undefined" && window !== null) {
-      return window.print();
-    }
+    return window.print();
   },
   _download: function() {
     return 'keep default action';
@@ -739,27 +706,52 @@ Comp.Slider = (function (_React$Component) {
 
     return _class;
 })(React.Component);
-Comp.Icons.Hex = React.createClass({
-  render: function() {
-    return React.createElement("svg", {
-      "className": this.props.className,
-      "viewBox": "0 0 100 100"
-    }, React.createElement("g", {
-      "className": "hexicon__hex " + this.props.colorClassName
-    }, React.createElement("path", {
-      "d": "M86.9,77.3L56,94.4c-3.3,1.9-8.7,1.9-12.1,0L13.1,77.3c-3.3-1.9-6-6.4-6-10.2V32.9c0-3.8,2.7-8.3,6-10.2 L44,5.6c3.3-1.9,8.7-1.9,12.1,0l30.9,17.2c3.3,1.9,6,6.4,6,10.2v34.1C93,70.8,90.3,75.4,86.9,77.3"
-    })), React.createElement("g", {
-      "className": "hexicon__yes"
-    }, React.createElement("polygon", {
-      "points": "70.3,31.9 44.3,57.8 30.1,43.6 22.5,51.2 36.7,65.4 36.7,65.4 44.3,73 77.9,39.5 	"
-    })), React.createElement("g", {
-      "className": "hexicon__no"
-    }, React.createElement("polygon", {
-      "points": "72,35.8 64.4,28.2 50.2,42.4 35.9,28.2 28.3,35.8 42.6,50 28.3,64.2 35.9,71.8 50.2,57.6 64.4,71.8 72,64.2 57.8,50"
-    })));
-  }
-});
+"use strict";
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Icons.Hex = (function (_React$Component) {
+	_inherits(_class, _React$Component);
+
+	function _class() {
+		_classCallCheck(this, _class);
+
+		_get(Object.getPrototypeOf(_class.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(_class, [{
+		key: "render",
+		value: function render() {
+			return React.createElement(
+				"svg",
+				{ className: this.props.className, viewBox: "0 0 100 100" },
+				React.createElement(
+					"g",
+					{ className: "hexicon__hex " + this.props.colorClassName },
+					React.createElement("path", { d: "M86.9,77.3L56,94.4c-3.3,1.9-8.7,1.9-12.1,0L13.1,77.3c-3.3-1.9-6-6.4-6-10.2V32.9c0-3.8,2.7-8.3,6-10.2 L44,5.6c3.3-1.9,8.7-1.9,12.1,0l30.9,17.2c3.3,1.9,6,6.4,6,10.2v34.1C93,70.8,90.3,75.4,86.9,77.3" })
+				),
+				React.createElement(
+					"g",
+					{ className: "hexicon__yes" },
+					React.createElement("polygon", { points: "70.3,31.9 44.3,57.8 30.1,43.6 22.5,51.2 36.7,65.4 36.7,65.4 44.3,73 77.9,39.5 \t" })
+				),
+				React.createElement(
+					"g",
+					{ className: "hexicon__no" },
+					React.createElement("polygon", { points: "72,35.8 64.4,28.2 50.2,42.4 35.9,28.2 28.3,35.8 42.6,50 28.3,64.2 35.9,71.8 50.2,57.6 64.4,71.8 72,64.2  57.8,50" })
+				)
+			);
+		}
+	}]);
+
+	return _class;
+})(React.Component);
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3064,178 +3056,212 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-Comp.Welcome = (function (_React$Component) {
+(function () {
+
+	var Link = ReactRouter.Link;
+
+	Comp.Welcome = (function (_React$Component) {
+		_inherits(_class, _React$Component);
+
+		function _class(props) {
+			_classCallCheck(this, _class);
+
+			_get(Object.getPrototypeOf(_class.prototype), "constructor", this).call(this, props);
+			this.state = {
+				hasImageLoaded: false
+			};
+		}
+
+		_createClass(_class, [{
+			key: "render",
+			value: function render() {
+				return React.createElement(
+					"div",
+					{ className: "welcome", style: this.getRootVisibilityStyle() },
+					React.createElement("div", { className: "welcome__terrain", style: this.getBackgroundImageStyle() }),
+					React.createElement(
+						"div",
+						{ className: "welcome__title" },
+						React.createElement(
+							"h1",
+							{ className: "welcome__title__name" },
+							"ATLAS"
+						),
+						React.createElement(
+							"h1",
+							{ className: "welcome__title__alias c-2-0" },
+							"=ANALYSIS"
+						)
+					),
+					React.createElement("div", { className: "welcome__strip bg-c-2-0" }),
+					React.createElement(
+						"div",
+						{ className: "welcome__subtitle" },
+						"A policy analysis tool from New America's Education Program"
+					),
+					React.createElement(
+						"div",
+						{ className: "welcome__main-nav" },
+						React.createElement(Link, { to: "/menu", onClick: this.navigate.bind(this), className: "bg-img-grid--off-white", id: "welcome__main-nav__button" }),
+						React.createElement(
+							"p",
+							{ className: "center" },
+							"View All Projects"
+						)
+					)
+				);
+			}
+		}, {
+			key: "getBackgroundImageStyle",
+			value: function getBackgroundImageStyle() {
+				return { 'background-image': 'url("/assets/images/iStock_000065438623_720.jpg")' };
+			}
+		}, {
+			key: "getRootVisibilityStyle",
+			value: function getRootVisibilityStyle() {
+				if (this.state.hasImageLoaded === false) {
+					return { display: 'none' };
+				}
+				return { display: 'block' };
+			}
+		}, {
+			key: "componentDidMount",
+			value: function componentDidMount() {
+				var _this = this;
+
+				$('<img>').attr({ src: "/assets/images/iStock_000065438623_720.jpg" }).load(function () {
+					_this.setState({ hasImageLoaded: true });
+				});
+			}
+		}, {
+			key: "navigate",
+			value: function navigate(e) {
+				App = this.props.App;
+				if (App == null) {
+					return;
+				}
+				e.preventDefault();
+				App.router.navigate('menu');
+			}
+		}]);
+
+		return _class;
+	})(React.Component);
+
+	Comp.Welcome.contextTypes = {
+		router: React.PropTypes.func
+	};
+})();
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Comp.Projects.Index = (function (_React$Component) {
 	_inherits(_class, _React$Component);
 
 	function _class(props) {
 		_classCallCheck(this, _class);
 
-		_get(Object.getPrototypeOf(_class.prototype), "constructor", this).call(this, props);
-		this.state = {
-			hasImageLoaded: false
-		};
+		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
+		this.state = {};
 	}
 
 	_createClass(_class, [{
-		key: "render",
+		key: 'render',
 		value: function render() {
 			return React.createElement(
-				"div",
-				{ className: "welcome", style: this.getRootVisibilityStyle() },
-				React.createElement("div", { className: "welcome__terrain", style: this.getBackgroundImageStyle() }),
+				'div',
+				{ className: 'atl fill-parent' },
+				React.createElement(Comp.SideBar, { buttons: [{ title: 'Submit Comment', method: 'comment', reactIconName: 'Comment', isToggleable: false }] }),
 				React.createElement(
-					"div",
-					{ className: "welcome__title" },
+					'div',
+					{ id: 'atl__main', className: '-id-atl__main fill-parent' },
 					React.createElement(
-						"h1",
-						{ className: "welcome__title__name" },
-						"ATLAS"
-					),
-					React.createElement(
-						"h1",
-						{ className: "welcome__title__alias c-2-0" },
-						"=ANALYSIS"
-					)
-				),
-				React.createElement("div", { className: "welcome__strip bg-c-2-0" }),
-				React.createElement(
-					"div",
-					{ className: "welcome__subtitle" },
-					"A policy analysis tool from New America's Education Program"
-				),
-				React.createElement(
-					"div",
-					{ className: "welcome__main-nav" },
-					React.createElement("a", { href: "/menu", onClick: this.navigate.bind(this), className: "bg-img-grid--off-white", id: "welcome__main-nav__button" }),
-					React.createElement(
-						"p",
-						{ className: "center" },
-						"View All Projects"
+						'div',
+						{ className: 'atl__main' },
+						React.createElement(
+							'div',
+							{ className: 'atl__nav bg-c-off-white' },
+							React.createElement(
+								'h1',
+								{ className: 'title title--compact' },
+								'Explore Atlas'
+							),
+							React.createElement(Comp.Projects.Index.ProjectTemplates, {
+								App: this.props.App,
+								projectTemplates: this.state.projectTemplates,
+								updateProjectsIndex: this.forceUpdate.bind(this)
+							}),
+							React.createElement(Comp.Projects.Index.ProjectSections, {
+								App: this.props.App,
+								projectSections: this.state.projectSections,
+								updateProjectsIndex: this.forceUpdate.bind(this)
+							})
+						),
+						React.createElement(Comp.Projects.Index.Projects, {
+							App: this.props.App,
+							projects: this.state.projects,
+							projectTemplates: this.state.projectTemplates,
+							projectSections: this.state.projectSections,
+							updateProjectsIndex: this.forceUpdate.bind(this)
+						})
 					)
 				)
 			);
 		}
 	}, {
-		key: "getBackgroundImageStyle",
-		value: function getBackgroundImageStyle() {
-			return { 'background-image': 'url("/assets/images/iStock_000065438623_720.jpg")' };
-		}
-	}, {
-		key: "getRootVisibilityStyle",
-		value: function getRootVisibilityStyle() {
-			if (this.state.hasImageLoaded === false) {
-				return { display: 'none' };
-			}
-			return { display: 'block' };
-		}
-	}, {
-		key: "componentDidMount",
+		key: 'componentDidMount',
 		value: function componentDidMount() {
+			this.fetchProjects();
+			this.fetchProjectSections();
+			this.fetchProjectTemplates();
+		}
+	}, {
+		key: 'fetchProjects',
+		value: function fetchProjects() {
 			var _this = this;
 
-			$('<img>').attr({ src: "/assets/images/iStock_000065438623_720.jpg" }).load(function () {
-				_this.setState({ hasImageLoaded: true });
+			var coll = new M.project.Collection();
+			coll.getClientFetchPromise().then(function (coll) {
+				_this.setState({ projects: coll });
 			});
 		}
 	}, {
-		key: "navigate",
-		value: function navigate(e) {
-			App = this.props.App;
-			if (App == null) {
-				return;
-			}
-			e.preventDefault();
-			App.router.navigate('menu');
+		key: 'fetchProjectSections',
+		value: function fetchProjectSections() {
+			var _this2 = this;
+
+			var coll = new M.projectSection.Collection();
+			coll.getClientFetchPromise().then(function (coll) {
+				coll.initializeActiveStates();
+				_this2.setState({ projectSections: coll });
+			});
+		}
+	}, {
+		key: 'fetchProjectTemplates',
+		value: function fetchProjectTemplates() {
+			var _this3 = this;
+
+			var coll = new M.projectTemplate.Collection();
+			coll.getClientFetchPromise().then(function (coll) {
+				coll.initializeActiveStates();
+				_this3.setState({ projectTemplates: coll });
+			});
 		}
 	}]);
 
 	return _class;
 })(React.Component);
-Comp.Projects.Index = React.createClass({
-  displayName: 'Projects.Index',
-  mixins: [Comp.Mixins.BackboneEvents],
-  getInitialState: function() {
-    return {};
-  },
-  render: function() {
-    return React.createElement("div", {
-      "className": "atl fill-parent"
-    }, React.createElement(Comp.SideBar, {
-      "buttons": [
-        {
-          title: 'Submit Comment',
-          method: 'comment',
-          reactIconName: 'Comment',
-          isToggleable: false
-        }
-      ]
-    }), React.createElement("div", {
-      "id": "atl__main",
-      "className": "-id-atl__main fill-parent"
-    }, React.createElement("div", {
-      "className": "atl__main"
-    }, React.createElement("div", {
-      "className": "atl__nav bg-c-off-white"
-    }, React.createElement("h1", {
-      "className": "title title--compact"
-    }, "Explore Atlas"), React.createElement(Comp.Projects.Index.ProjectTemplates, {
-      "App": this.props.App,
-      "projectTemplates": this.state.projectTemplates,
-      "updateProjectsIndex": this.forceUpdate.bind(this)
-    }), React.createElement(Comp.Projects.Index.ProjectSections, {
-      "App": this.props.App,
-      "projectSections": this.state.projectSections,
-      "updateProjectsIndex": this.forceUpdate.bind(this)
-    })), React.createElement(Comp.Projects.Index.Projects, {
-      "App": this.props.App,
-      "projects": this.state.projects,
-      "projectTemplates": this.state.projectTemplates,
-      "projectSections": this.state.projectSections,
-      "updateProjectsIndex": this.forceUpdate.bind(this)
-    }))));
-  },
-  componentDidMount: function() {
-    this.fetchProjects();
-    this.fetchProjectSections();
-    return this.fetchProjectTemplates();
-  },
-  fetchProjects: function() {
-    var coll;
-    coll = new M.project.Collection();
-    return coll.getClientFetchPromise().then((function(_this) {
-      return function(coll) {
-        return _this.setState({
-          projects: coll
-        });
-      };
-    })(this));
-  },
-  fetchProjectSections: function() {
-    var coll;
-    coll = new M.projectSection.Collection();
-    return coll.getClientFetchPromise().then((function(_this) {
-      return function(coll) {
-        coll.initializeActiveStates();
-        return _this.setState({
-          projectSections: coll
-        });
-      };
-    })(this));
-  },
-  fetchProjectTemplates: function() {
-    var coll;
-    coll = new M.projectTemplate.Collection();
-    return coll.getClientFetchPromise().then((function(_this) {
-      return function(coll) {
-        coll.initializeActiveStates();
-        return _this.setState({
-          projectTemplates: coll
-        });
-      };
-    })(this));
-  }
-});
 
+Comp.Projects.Index.contextTypes = {
+	router: React.PropTypes.func
+};
 "use strict";
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -3451,221 +3477,304 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 		return ProjectTemplateItem;
 	})(React.Component);
 })();
-var modulo = function(a, b) { return (+a % (b = +b) + b) % b; };
+'use strict';
 
-Comp.Projects.Index.Projects = React.createClass({
-  displayName: 'Projects.Index.Projects',
-  getInitialState: function() {
-    return {
-      shouldDisplayImage: false,
-      hasDisplayedImage: false
-    };
-  },
-  render: function() {
-    return React.createElement("div", {
-      "className": "atl__projects"
-    }, this.renderList());
-  },
-  renderList: function() {
-    if (this.props.projects == null) {
-      return;
-    }
-    return this.props.projects.map((function(_this) {
-      return function(project, i) {
-        return React.createElement(Comp.Projects.Index.Projects.Project, React.__spread({}, _this.props, {
-          "key": i,
-          "project": project,
-          "shouldDisplayImage": _this.state.shouldDisplayImage
-        }));
-      };
-    })(this));
-  },
-  componentDidUpdate: function() {
-    var projects;
-    projects = this.props.projects;
-    if (projects == null) {
-      return;
-    }
-    return this.ensureProjectImages();
-  },
-  ensureProjectImages: function() {
-    var projects;
-    projects = this.props.projects;
-    if (projects == null) {
-      return;
-    }
-    if (this.state.hasDisplayedImage) {
-      return;
-    }
-    if (projects.hasImages) {
-      return this.setState({
-        shouldDisplayImage: true,
-        hasDisplayedImage: true
-      });
-    }
-    return $.ajax({
-      url: 'api/v1/projects/image',
-      type: 'get',
-      success: (function(_this) {
-        return function(data) {
-          var dataWithImage, datum, j, len, project;
-          dataWithImage = [];
-          for (j = 0, len = data.length; j < len; j++) {
-            datum = data[j];
-            if (datum.encoded_image != null) {
-              project = projects.findWhere({
-                atlas_url: datum.atlas_url
-              });
-              project.set('encoded_image', datum.encoded_image);
-              project.set('image_credit', datum.image_credit);
-            }
-          }
-          projects.hasImages = true;
-          return _this.setState({
-            shouldDisplayImage: true,
-            hasDisplayedImage: true
-          });
-        };
-      })(this)
-    });
-  }
-});
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-Comp.Projects.Index.Projects.Project = React.createClass({
-  render: function() {
-    var project;
-    if (!this.isVisible()) {
-      return React.createElement("div", null);
-    }
-    project = this.props.project;
-    return React.createElement("a", {
-      "className": "atl__project " + this.getModifierClasses(),
-      "onMouseEnter": this.applyBackgroundColor,
-      "onMouseLeave": this.removeBackgroundColor,
-      "onClick": this.launch,
-      "href": project.get('atlas_url')
-    }, React.createElement("div", {
-      "className": "atl__project__background atl__project__background--unselected",
-      "style": this.getBackgroundStyle()
-    }, React.createElement("div", {
-      "className": "center--content"
-    }, React.createElement("p", {
-      "className": "atl__project__background__initials"
-    }, this.getInitials()))), React.createElement("div", {
-      "className": "atl__project__text",
-      "ref": "project-text"
-    }, React.createElement("div", {
-      "className": "center--content"
-    }, React.createElement("h1", null, project.get('title')))), this.renderAttribution());
-  },
-  renderAttribution: function() {
-    var project;
-    project = this.props.project;
-    if (!((project.get('image_credit') != null) && project.get('image_credit') !== '')) {
-      return;
-    }
-    return React.createElement("div", {
-      "className": "atl__attribution bg-img-info--black"
-    }, React.createElement("div", {
-      "className": "atl__attribution__link"
-    }, React.createElement("p", null, 'Image Credit'), React.createElement("div", null, 'Shutterstock')));
-  },
-  getBackgroundStyle: function() {
-    var project;
-    project = this.props.project;
-    if (!((project != null) && this.props.shouldDisplayImage)) {
-      return;
-    }
-    return {
-      'backgroundImage': project.getImageUrl()
-    };
-  },
-  getInitials: function() {
-    var initials, project, title;
-    project = this.props.project;
-    if (project.get('encoded_image') != null) {
-      return '';
-    }
-    title = project.get('title');
-    if (title != null) {
-      initials = title.substring(0, 1) + title.substring(1, 2).toLowerCase();
-    }
-    return initials;
-  },
-  getModifierClasses: function() {
-    var classes, project;
-    classes = [];
-    project = this.props.project;
-    if (project.get('project_template_id') === "1") {
-      classes.push('atl__project--explainer');
-    }
-    if (project.get('is_section_overview') === 'Yes') {
-      classes.push('atl__project--overview');
-    }
-    if (classes.length === 0) {
-      return '';
-    }
-    return classes.join(' ');
-  },
-  isVisible: function() {
-    var project, projectSections, projectTemplates;
-    project = this.props.project;
-    projectSections = this.props.projectSections;
-    projectTemplates = this.props.projectTemplates;
-    if (!((projectSections != null) && (projectTemplates != null))) {
-      return false;
-    }
-    return projectSections.test(project, 'project_section') && projectTemplates.test(project, 'project_template');
-  },
-  launch: function(e) {
-    var App, href;
-    e.preventDefault();
-    href = this.props.project.get('atlas_url');
-    App = this.props.App;
-    if (App != null) {
-      App.currentThemeColor = this.getColor().replace('0.8', '1.0');
-    }
-    if (typeof Backbone !== "undefined" && Backbone !== null) {
-      return Backbone.history.navigate(href, {
-        trigger: true
-      });
-    }
-  },
-  applyBackgroundColor: function() {
-    var $el, App, color;
-    color = this.getColor();
-    $el = $(React.findDOMNode(this.refs['project-text']));
-    $el.css('background-color', color);
-    App = this.props.App;
-    if (App != null) {
-      return App.commands.execute('set:header:strip:color', {
-        color: color
-      });
-    }
-  },
-  removeBackgroundColor: function() {
-    var $el, App;
-    $el = $(React.findDOMNode(this.refs['project-text']));
-    $el.css('background-color', '');
-    App = this.props.App;
-    if (App != null) {
-      return App.commands.execute('set:header:strip:color', 'none');
-    }
-  },
-  getColor: function() {
-    var App, color, index, project, projects;
-    App = this.props.App;
-    project = this.props.project;
-    projects = this.props.projects;
-    if (!((App != null) && (project != null) && (projects != null))) {
-      return;
-    }
-    index = projects.indexOf(project);
-    color = App.CSS.Colors.toRgba(modulo(index, 15), 0.8);
-    return color;
-  }
-});
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+(function () {
+
+	var Link = ReactRouter.Link;
+
+	Comp.Projects.Index.Projects = (function (_React$Component) {
+		_inherits(_class, _React$Component);
+
+		function _class(props) {
+			_classCallCheck(this, _class);
+
+			_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
+			this.state = {
+				shouldDisplayImage: false,
+				hasDisplayedImage: false
+			};
+		}
+
+		_createClass(_class, [{
+			key: 'render',
+			value: function render() {
+				return React.createElement(
+					'div',
+					{ className: 'atl__projects' },
+					this.renderList()
+				);
+			}
+		}, {
+			key: 'renderList',
+			value: function renderList() {
+				var _this = this;
+
+				var projects = this.props.projects;
+				if (projects == null) {
+					return;
+				}
+				return projects.map(function (project, i) {
+					return React.createElement(Project, _extends({}, _this.props, {
+						key: i,
+						project: project,
+						shouldDisplayImage: _this.state.shouldDisplayImage
+					}));
+				});
+			}
+		}, {
+			key: 'componentDidUpdate',
+			value: function componentDidUpdate() {
+				var projects = this.props.projects;
+				if (projects == null) {
+					return;
+				}
+				this.ensureProjectImages();
+			}
+		}, {
+			key: 'ensureProjectImages',
+			value: function ensureProjectImages() {
+				var _this2 = this;
+
+				var projects = this.props.projects;
+				if (projects == null) {
+					return;
+				}
+				if (this.state.hasDisplayedImage) {
+					return;
+				}
+				if (projects.hasImages) {
+					return this.setState({ shouldDisplayImage: true, hasDisplayedImage: true });
+				}
+
+				$.ajax({
+					url: 'api/v1/projects/image',
+					type: 'get',
+					success: function success(data) {
+						// filter projects that don't have an image.
+						var dataWithImage = [];
+						data.forEach(function (datum) {
+							var project;
+							if (datum.encoded_image != null) {
+								project = projects.findWhere({ atlas_url: datum.atlas_url });
+								project.set('encoded_image', datum.encoded_image);
+								project.set('image_credit', datum.image_credit);
+							}
+						});
+						projects.hasImages = true;
+						_this2.setState({ shouldDisplayImage: true, hasDisplayedImage: true });
+					}
+				});
+			}
+		}]);
+
+		return _class;
+	})(React.Component);
+
+	Comp.Projects.Index.Projects.contextTypes = {
+		router: React.PropTypes.func
+	};
+
+	var Project = (function (_React$Component2) {
+		_inherits(Project, _React$Component2);
+
+		function Project() {
+			_classCallCheck(this, Project);
+
+			_get(Object.getPrototypeOf(Project.prototype), 'constructor', this).apply(this, arguments);
+		}
+
+		_createClass(Project, [{
+			key: 'render',
+			value: function render() {
+				var project;
+				if (!this.isVisible()) {
+					return React.createElement('div', null);
+				}
+				project = this.props.project;
+				return React.createElement(
+					Link,
+					{ className: "atl__project " + this.getModifierClasses(), onMouseEnter: this.applyBackgroundColor.bind(this), onMouseLeave: this.removeBackgroundColor.bind(this), onClick: this.launch.bind(this), to: '/' + project.get('atlas_url') },
+					React.createElement(
+						'div',
+						{ className: 'atl__project__background atl__project__background--unselected', style: this.getBackgroundStyle() },
+						React.createElement(
+							'div',
+							{ className: 'center--content' },
+							React.createElement(
+								'p',
+								{ className: 'atl__project__background__initials' },
+								this.getInitials()
+							)
+						)
+					),
+					React.createElement(
+						'div',
+						{ className: 'atl__project__text', ref: 'project-text' },
+						React.createElement(
+							'div',
+							{ className: 'center--content' },
+							React.createElement(
+								'h1',
+								null,
+								project.get('title')
+							)
+						)
+					),
+					this.renderAttribution()
+				);
+			}
+		}, {
+			key: 'renderAttribution',
+			value: function renderAttribution() {
+				var project = this.props.project,
+				    imageCredit = project.get('image_credit');
+				if (imageCredit == null || imageCredit === '') {
+					return;
+				}
+				return React.createElement(
+					'div',
+					{ className: 'atl__attribution bg-img-info--black' },
+					React.createElement(
+						'div',
+						{ className: 'atl__attribution__link' },
+						React.createElement(
+							'p',
+							null,
+							'Image Credit'
+						),
+						React.createElement(
+							'div',
+							null,
+							'Shutterstock'
+						)
+					)
+				);
+			}
+		}, {
+			key: 'getBackgroundStyle',
+			value: function getBackgroundStyle() {
+				var project = this.props.project;
+				if (project == null || !this.props.shouldDisplayImage) {
+					return;
+				}
+				return { 'backgroundImage': project.getImageUrl() };
+			}
+		}, {
+			key: 'getInitials',
+			value: function getInitials() {
+				var project = this.props.project,
+				    title,
+				    initials;
+				if (project.get('encoded_image') != null) {
+					return '';
+				}
+				title = project.get('title');
+				if (title == null) {
+					return '';
+				}
+				initials = title.substring(0, 1) + title.substring(1, 2).toLowerCase();
+				return initials;
+			}
+		}, {
+			key: 'getModifierClasses',
+			value: function getModifierClasses() {
+				var classes = [],
+				    project = this.props.project;
+				if (project.get('project_template_id') === '1') {
+					classes.push('atl__project--explainer');
+				}
+				if (project.get('is_section_overview') === 'Yes') {
+					classes.push('atl__project--overview');
+				}
+				if (classes.length === 0) {
+					return '';
+				}
+				return classes.join(' ');
+			}
+		}, {
+			key: 'isVisible',
+			value: function isVisible() {
+				var project = this.props.project,
+				    projectSections = this.props.projectSections,
+				    projectTemplates = this.props.projectTemplates;
+				if (projectSections == null || projectTemplates == null) {
+					return false;
+				}
+				return projectSections.test(project, 'project_section') && projectTemplates.test(project, 'project_template');
+			}
+		}, {
+			key: 'launch',
+			value: function launch(e) {
+				var href, App;
+				href = this.props.project.get('atlas_url');
+				// When the following page is rendered, its theme color is set to
+				//   current highlight color.
+				// TODO refactor current theme color assignments
+				App = this.props.App;
+				if (App == null) {
+					return;
+				}
+				App.currentThemeColor = this.getColor().replace('0.8', '1.0');
+			}
+		}, {
+			key: 'applyBackgroundColor',
+			value: function applyBackgroundColor() {
+				var color, $el, App;
+				color = this.getColor();
+				$el = $(React.findDOMNode(this.refs['project-text']));
+				$el.css('background-color', color);
+				App = this.props.App;
+				if (App == null) {
+					return;
+				}
+				App.commands.execute('set:header:strip:color', { color: color });
+			}
+		}, {
+			key: 'removeBackgroundColor',
+			value: function removeBackgroundColor() {
+				var $el, App;
+				$el = $(React.findDOMNode(this.refs['project-text']));
+				$el.css('background-color', '');
+				App = this.props.App;
+				if (App == null) {
+					return;
+				}
+				App.commands.execute('set:header:strip:color', 'none');
+			}
+		}, {
+			key: 'getColor',
+			value: function getColor() {
+				var App, project, projects, index, color;
+				App = this.props.App;
+				project = this.props.project;
+				projects = this.props.projects;
+				if (App == null || project == null || projects == null) {
+					return;
+				}
+				index = projects.indexOf(project);
+				color = App.CSS.Colors.toRgba(index % 15, 0.8);
+				return color;
+			}
+		}]);
+
+		return Project;
+	})(React.Component);
+
+	Project.contextTypes = {
+		router: React.PropTypes.func
+	};
+})();
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3735,7 +3844,7 @@ Comp.Projects.New = (function (_React$Component) {
 								React.createElement(
 									'div',
 									{ className: 'static-content' },
-									React.createElement(FormComp, { Model: Atlas.Models.Project })
+									React.createElement(FormComp, { Model: window.M.project.Model })
 								)
 							),
 							React.createElement('div', { className: 'atl-grid__3-3' })
@@ -4593,7 +4702,7 @@ Comp.Projects.Show.Tilemap.InfoBox = (function (_React$Component) {
 				promise.then(function (coll) {
 					var img = coll.models[0];
 					if (img != null) {
-						console.log(img.getUrl());
+						// console.log(img.getUrl())
 						$el.css('background-color', 'initial');
 						$el.css('background-image', img.getUrl());
 						// @_appendImageAttribution(img.getAttributionHtml())
@@ -5558,7 +5667,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== 'function' 
 	    Header = Comp.Header,
 	    Welcome = Comp.Welcome,
 	    ProjectsIndex = Comp.Projects.Index,
-	    ProjectsShow = Comp.Projects.Show;
+	    ProjectsShow = Comp.Projects.Show,
+	    ProjectsNew = Comp.Projects.New;
 
 	var Layout = (function (_React$Component) {
 		_inherits(Layout, _React$Component);
@@ -5588,18 +5698,20 @@ function _inherits(subClass, superClass) { if (typeof superClass !== 'function' 
 	var routes = React.createElement(
 		Route,
 		{ handler: Layout },
+		React.createElement(Route, { path: '', handler: Welcome }),
+		React.createElement(
+			Route,
+			{ path: 'projects' },
+			React.createElement(Route, { path: 'new', handler: ProjectsNew })
+		),
 		React.createElement(Route, { path: 'welcome', handler: Welcome }),
 		React.createElement(Route, { path: 'menu', handler: ProjectsIndex }),
-		React.createElement(Route, { path: ':atlas_url', handler: ProjectsShow, a: 'b' })
+		React.createElement(Route, { path: ':atlas_url', handler: ProjectsShow })
 	);
 
 	Comp.start = function () {
+		console.log('Hi, Mom!');
 		Router.run(routes, Router.HistoryLocation, function (Root, state) {
-			// var routeModifierClass = {
-			// 	'/': 'atl-route--welcome',
-			// 	'/menu': 'atl-route--projects-index',
-			// 	'/welcome': 'atl-route--welcome'
-			// }[state.path] || 'atl-route--projects-show';
 			React.render(React.createElement(Root, { App: Atlas }), $('#site')[0]);
 		});
 	};

@@ -47,7 +47,8 @@
     "mocha": "^2.2.5",
     "should": "^6.0.3",
     "vinyl-source-stream": "^1.1.0",
-    "vinyl-transform": "^1.0.0"
+    "vinyl-transform": "^1.0.0",
+    "watchify": "^3.4.0"
   },
   "dependencies": {
     "babel": "^5.8.21",

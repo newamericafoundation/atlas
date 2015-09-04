@@ -1,9 +1,6 @@
-var _ = require('underscore'),
-    Backbone = require('backbone'),
-    base = require('./base.js'),
+var base = require('./base.js'),
     formatters = require('./../utilities/formatters.js'),
     baseComposite = require('./base_composite.js');
-
 
 var LocalBaseModel = baseComposite.Model.extend({
 

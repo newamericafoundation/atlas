@@ -1,3 +1,7 @@
+(function() {
+
+var Link = ReactRouter.Link;
+
 Comp.Welcome = class extends React.Component {
 
 	constructor(props) {
@@ -20,7 +24,7 @@ Comp.Welcome = class extends React.Component {
 					{ "A policy analysis tool from New America's Education Program" }
 				</div>
 				<div className="welcome__main-nav">
-					<a href="/menu" onClick={ this.navigate.bind(this) } className="bg-img-grid--off-white" id="welcome__main-nav__button"></a>
+					<Link to="/menu" onClick={ this.navigate.bind(this) } className="bg-img-grid--off-white" id="welcome__main-nav__button" />
 					<p className="center">View All Projects</p>
 				</div>
 			</div>
@@ -50,3 +54,10 @@ Comp.Welcome = class extends React.Component {
 	}
 
 }
+
+Comp.Welcome.contextTypes = {
+	router: React.PropTypes.func
+};
+
+
+}());

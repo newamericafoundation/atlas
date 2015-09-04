@@ -15,58 +15,13 @@ var gulp = require('gulp'),
     browserify = require('browserify'),
     source = require('vinyl-source-stream'),
     babel = require('gulp-babel'),
-    jshint = require('gulp-jshint'),
     babelify = require('babelify');
 
 var config = require('./config.js');
 
-// make server-side model definitions available on the client.
-gulp.task('bundle-models', () => {
-    var globalShim = browserifyGlobalShim.configure({
-        'jquery': '$',
-        'underscore': '_',
-        'backbone': 'Backbone',
-        'mongodb': 'mongodb'
-    });
-    var b = browserify({ 
-        entries: [ './app/models/__client__.js' ],
-        noParse: [ 'jquery' ].map(require.resolve)
-    });
-    b.transform(babelify);
-    b.transform(globalShim);
-    return b.bundle()
-        .pipe(source('__auto__models.js'))
-        .pipe(gulp.dest('./app/assets/scripts/atlas'));
-});
+require('./js/one_off_tasks.js');
+require('./js/bundle.js');
 
-// One-time task to copy asynchronously loaded library scripts from bower_components to ./public.
-gulp.task('js-copy-async-vendor-single-script', () => {
-    return gulp.src(config.source.js.vendorAsyncSingleScript)
-        .pipe(copy('public/assets/vendor', { prefix: 2 }))
-        .pipe(gzip())
-        .pipe(gulp.dest('public/assets/vendor'));
-});
-
-// One-time task to copy vendor folders to ./public. These scripts require other scripts of their own
-//   so the entire directory is needed.
-gulp.task('js-copy-async-vendor-folder', () => {
-    return gulp.src(config.source.js.vendorAsyncFolder)
-        .pipe(copy('public/assets/vendor', { prefix: 1 }));
-});
-
-// Gzip json.
-gulp.task('js-db-json', () => {
-    return gulp.src('./db/seeds/core_data/**/*')
-        .pipe(gzip())
-        .pipe(gulp.dest('db/seeds/core_data'));
-});
-
-// Gzip async vendor tasks.
-gulp.task('js-gzip-async-vendor', () => {
-    return gulp.src('public/assets/vendor/*.js')
-        .pipe(gzip())
-        .pipe(gulp.dest('public/assets/vendor'));
-});
 
 // Build main application source.
 gulp.task('js-build-source', [ 'bundle-models' ], () => {
@@ -89,8 +44,6 @@ gulp.task('js-build-component', () => {
         .pipe(gulpIf(/[.]cjsx$/, cjsx({ bare: true })))
         .pipe(gulpIf(/[.]jsx$/, babel()))
         .pipe(concat('component.js'))
-        // .pipe(jshint())
-        // .pipe(jshint.reporter('default'))
         .pipe(gulp.dest('public/assets/scripts/partials'));
 });
 

@@ -20,7 +20,7 @@
 
             @renderSvgContainer() if @renderSvgContainer?
 
-            @shape = App.Assets.svg.shapes.pindrop_new
+            @shape = App.Assets.svg.shapes.pindrop
 
             pindrop = [
                 { path: @shape.paths.slice_1_of_2, className: 'map-pin__1-of-2' }

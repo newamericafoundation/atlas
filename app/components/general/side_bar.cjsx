@@ -5,11 +5,13 @@ Comp.SideBar = React.createClass
 	mixins: [ Comp.Mixins.BackboneEvents ]
 
 	render: ->
-		cls = if @state['isActive'] then 'atl__side-bar atl__side-bar--active' else 'atl__side-bar'
-		<div className={cls} onClick={ @toggle }>
-			<div className="atl__side-bar__title">{ @state['hoveredButtonTitle'] }</div>
-			{ @renderButtons() }
-		</div>
+		cls = if this.state['isActive'] then 'atl__side-bar atl__side-bar--active' else 'atl__side-bar'
+		return (
+			<div className={cls} onClick={ this.toggle.bind(this) }>
+				<div className="atl__side-bar__title">{ this.state['hoveredButtonTitle'] }</div>
+				{ this.renderButtons() }
+			</div>
+		);
 
 	getDefaultProps: ->
 		props = 
@@ -57,13 +59,16 @@ Comp.SideBar = React.createClass
 		return { isActive: false }
 
 	toggle: ->
-		@setState { isActive: not @state['isActive'] }
+		this.setState({ isActive: not this.state['isActive'] });
 
 	renderButtons: ->
-		list = @props.buttons.map @renderButton
-		<ul className="atl__side-bar__icons">
-			{list}
-		</ul>
+		list = this.props.buttons.map(this.renderButton);
+		return (
+			<ul className="atl__side-bar__icons">
+				{list}
+			</ul>
+		);
+		
 
 	renderButton: (options, i) ->
 		<li className="atl__side-bar__icon" onMouseEnter={ @onButtonMouseEnter.bind(@, options) } onMouseLeave={ @onButtonMouseLeave.bind(@, options) } onClick={ @[ '_' + options.method ] } key={'button-'+i}>
@@ -91,25 +96,25 @@ Comp.SideBar = React.createClass
 				</div>
 
 	onButtonMouseEnter: (options) ->
-		@setState { hoveredButtonTitle: options.title }
+		this.setState({ hoveredButtonTitle: options.title })
 
 	onButtonMouseLeave: (options) ->
-		@setState { hoveredButtonTitle: '' }
+		this.setState({ hoveredButtonTitle: '' })
 
 	# Button press method.
 	_getAtlasUrl: () ->
-		project = @props.project
+		project = this.props.project
 		if project?
 			atlas_url = project.get 'atlas_url'
 
 	# Button press method.
 	_projects: ->
-		Backbone.history.navigate 'menu', { trigger: true } if Backbone?
+		# Backbone.history.navigate 'menu', { trigger: true } if Backbone?
 
 	# Button press method.
 	_edit: ->
-		App = @props.App
-		project = @props.project
+		App = this.props.App
+		project = this.props.project
 		if App? and project?
 			Backbone.history.navigate ''
 			url = project.buildUrl()
@@ -123,11 +128,12 @@ Comp.SideBar = React.createClass
 
 	# Button press method.
 	_help: (e) ->
-		$('.atl').toggleClass('atl--help') if $?
+		return unless $?
+		$('.atl').toggleClass('atl--help')
 
 	# Button press method.
 	_print: ->
-		window.print() if window?
+		window.print()
 
 	# Button press method.
 	_download: ->

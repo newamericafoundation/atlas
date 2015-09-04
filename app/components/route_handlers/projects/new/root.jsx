@@ -25,8 +25,7 @@ Comp.Projects.New = class extends React.Component {
 							</div>
 							<div className="atl-grid__2-3">
 								<div className="static-content">
-
-									<FormComp Model={ Atlas.Models.Project } />
+									<FormComp Model={ window.M.project.Model } />
 								</div>
 								
 							</div>

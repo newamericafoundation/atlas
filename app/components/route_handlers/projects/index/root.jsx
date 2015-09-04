@@ -1,15 +1,11 @@
-Comp.Projects.Index = React.createClass
+Comp.Projects.Index = class extends React.Component {
 
-	displayName: 'Projects.Index'
+	constructor(props) {
+		super(props);
+		this.state = {};
+	}
 
-	mixins: [ Comp.Mixins.BackboneEvents ]
-
-	getInitialState: ->
-		{
-
-		}
-
-	render: ->
+	render() {
 		return (
 			<div className="atl fill-parent">
 				<Comp.SideBar buttons={[{title: 'Submit Comment', method: 'comment', reactIconName: 'Comment', isToggleable: false }]} />
@@ -38,26 +34,40 @@ Comp.Projects.Index = React.createClass
 					</div>
 				</div>
 			</div>
-		)		
+		)	
+	}	
 
-	componentDidMount: ->
-		this.fetchProjects()
-		this.fetchProjectSections()
-		this.fetchProjectTemplates()
+	componentDidMount() {
+		this.fetchProjects();
+		this.fetchProjectSections();
+		this.fetchProjectTemplates();
+	}
 
-	fetchProjects: ->
-		coll = new M.project.Collection()
-		coll.getClientFetchPromise().then (coll) =>
-			@setState { projects: coll }
+	fetchProjects() {
+		var coll = new M.project.Collection()
+		coll.getClientFetchPromise().then((coll) => {
+			this.setState({ projects: coll });
+		});
+	}
 
-	fetchProjectSections: ->
-		coll = new M.projectSection.Collection()
-		coll.getClientFetchPromise().then (coll) =>
+	fetchProjectSections() {
+		var coll = new M.projectSection.Collection()
+		coll.getClientFetchPromise().then((coll) => {
 			coll.initializeActiveStates();
-			@setState { projectSections: coll }
+			this.setState({ projectSections: coll });
+		});
+	}
 
-	fetchProjectTemplates: ->
-		coll = new M.projectTemplate.Collection()
-		coll.getClientFetchPromise().then (coll) =>
+	fetchProjectTemplates() {
+		var coll = new M.projectTemplate.Collection()
+		coll.getClientFetchPromise().then((coll) => {
 			coll.initializeActiveStates();
-			@setState { projectTemplates: coll }
+			this.setState({ projectTemplates: coll });
+		});
+	}
+
+}
+
+Comp.Projects.Index.contextTypes = {
+	router: React.PropTypes.func
+};
