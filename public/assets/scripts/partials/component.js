@@ -60,121 +60,155 @@ Comp.Mixins.BackboneEvents = {
 	}
 
 };
-Comp.Header = React.createClass({
-  render: function() {
-    return React.createElement("div", {
-      "className": 'header ' + this.getBackgroundColorClass()
-    }, React.createElement("div", {
-      "className": "header__corner"
-    }, React.createElement(ReactRouter.Link, {
-      "className": "bg-img-naf--off-white",
-      "id": "header__welcome-link",
-      "to": "/welcome",
-      "onClick": this.navigate
-    })), React.createElement("div", {
-      "className": "header__main"
-    }, React.createElement("h1", {
-      "className": "header__main__cursive-prefix"
-    }), React.createElement("h1", {
-      "className": "header__main__site-name"
-    }, "ATLAS"), React.createElement("p", {
-      "className": "header__main__title"
-    })), React.createElement(Comp.Header.NavCircles, {
-      "App": this.props.App
-    }), React.createElement("div", {
-      "className": "header__strip",
-      "ref": "strip"
-    }));
-  },
-  getBackgroundColorClass: function() {
-    return 'bg-c-grey--base';
-    switch (this.props.theme) {
-      case 'atlas':
-        return 'bg-c-grey--base';
-      case 'naf':
-        return 'bg-c-naf-green';
-      default:
-        return '';
-    }
-  },
-  getHeaderTitle: function() {
-    if (this.props.headerTitle == null) {
-      return;
-    }
-    if (this.props.headerTitle.toUpperCase == null) {
-      return this.props.headerTitle;
-    }
-    return this.props.headerTitle.toUpperCase();
-  },
-  componentDidMount: function() {
-    return this._setStripHandler();
-  },
-  navigate: function(e) {
-    if (typeof Backbone !== "undefined" && Backbone !== null) {
-      e.preventDefault();
-      return Backbone.history.navigate('/welcome', {
-        trigger: true
-      });
-    }
-  },
-  _setStripHandler: function() {
-    var $strip, App, stripClassName;
-    App = this.props.App;
-    stripClassName = 'header__strip';
-    if ((App != null) && (typeof $ !== "undefined" && $ !== null)) {
-      $strip = $(React.findDOMNode(this.refs.strip));
-      return App.commands.setHandler('set:header:strip:color', (function(_this) {
-        return function(options) {
-          if ((options == null) || (options === 'none')) {
-            $strip.attr('class', stripClassName);
-            return $strip.css('background-color', '');
-          } else if (options.color != null) {
-            $strip.attr('class', stripClassName);
-            return $strip.css('background-color', options.color);
-          } else if (options.className != null) {
-            $strip.css('background-color', '');
-            $strip.attr('class', stripClassName);
-            return $strip.addClass(options.className);
-          }
-        };
-      })(this));
-    }
-  }
-});
+"use strict";
 
-Comp.Header.contextTypes = {};
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-Comp.Header.NavCircles = React.createClass({
-  displayName: 'Header.NavCircles',
-  render: function() {
-    return React.createElement("div", {
-      "className": "header__nav-circles"
-    }, React.createElement("ul", {
-      "className": "nav-circles"
-    }, this.renderList()));
-  },
-  renderList: function() {
-    return ['welcome', 'menu', 'show'].map((function(_this) {
-      return function(item, i) {
-        var cls;
-        cls = i === 1 ? 'nav-circle nav-circle--active' : 'nav-circle';
-        return React.createElement("li", {
-          "className": cls,
-          "key": i
-        }, React.createElement("a", {
-          "href": '/' + item,
-          "onClick": _this.navigate
-        }));
-      };
-    })(this));
-  },
-  getInitialState: function() {
-    return {
-      activeIndex: 0
-    };
-  }
-});
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+(function () {
+
+	Comp.Header = (function (_React$Component) {
+		_inherits(_class, _React$Component);
+
+		function _class() {
+			_classCallCheck(this, _class);
+
+			_get(Object.getPrototypeOf(_class.prototype), "constructor", this).apply(this, arguments);
+		}
+
+		_createClass(_class, [{
+			key: "render",
+			value: function render() {
+				return React.createElement(
+					"div",
+					{ className: this.getClass() },
+					React.createElement(
+						"div",
+						{ className: "header__corner" },
+						React.createElement(ReactRouter.Link, {
+							className: "bg-img-naf--off-white",
+							id: "header__welcome-link",
+							to: "/welcome"
+						})
+					),
+					React.createElement(
+						"div",
+						{ className: "header__main" },
+						React.createElement("h1", { className: "header__main__cursive-prefix" }),
+						React.createElement(
+							"h1",
+							{ className: "header__main__site-name" },
+							"ATLAS"
+						),
+						React.createElement("p", { className: "header__main__title" })
+					),
+					React.createElement(HeaderNavCircles, this.props),
+					React.createElement("div", { className: "header__strip", ref: "strip" })
+				);
+			}
+		}, {
+			key: "getClass",
+			value: function getClass() {
+				return classNames({
+					'header': true,
+					'bg-c-grey--base': this.props.theme == null || this.props.theme === 'atlas',
+					'bg-c-naf-green': this.props.theme === 'naf'
+				});
+			}
+		}, {
+			key: "getHeaderTitle",
+			value: function getHeaderTitle() {
+				return this.props.headerTitle;
+			}
+		}, {
+			key: "componentDidMount",
+			value: function componentDidMount() {
+				this.setStripHandler();
+			}
+		}, {
+			key: "setStripHandler",
+			value: function setStripHandler() {
+				var App = this.props.App;
+				if (App == null) {
+					return;
+				}
+				var stripClassName = 'header__strip';
+				var $strip = $(React.findDOMNode(this.refs.strip));
+				App.commands.setHandler('set:header:strip:color', function (options) {
+					if (options == null || options === 'none') {
+						$strip.attr('class', stripClassName);
+						$strip.css('background-color', '');
+					} else if (options.color != null) {
+						// reset class to original
+						$strip.attr('class', stripClassName);
+						$strip.css('background-color', options.color);
+					} else if (options.className != null) {
+						// erase all previously assigned color setting classes
+						$strip.css('background-color', '');
+						$strip.attr('class', stripClassName);
+						$strip.addClass(options.className);
+					}
+				});
+			}
+		}]);
+
+		return _class;
+	})(React.Component);
+
+	Comp.Header.contextTypes = {
+		router: React.PropTypes.func
+	};
+
+	var HeaderNavCircles = (function (_React$Component2) {
+		_inherits(HeaderNavCircles, _React$Component2);
+
+		function HeaderNavCircles(props) {
+			_classCallCheck(this, HeaderNavCircles);
+
+			_get(Object.getPrototypeOf(HeaderNavCircles.prototype), "constructor", this).call(this, props);
+			this.state = {
+				activeIndex: 0
+			};
+		}
+
+		_createClass(HeaderNavCircles, [{
+			key: "render",
+			value: function render() {
+				return React.createElement(
+					"div",
+					{ className: "header__nav-circles" },
+					React.createElement(
+						"ul",
+						{ className: "nav-circles" },
+						this.renderList()
+					)
+				);
+			}
+		}, {
+			key: "renderList",
+			value: function renderList() {
+				return ['welcome', 'menu', 'show'].map(function (item, i) {
+					var cls = classNames({
+						'nav-circle': true,
+						'nav-circle--active': i === 1
+					});
+					return React.createElement(
+						"li",
+						{ className: cls, key: i },
+						React.createElement("a", { href: '/' + item })
+					);
+				});
+			}
+		}]);
+
+		return HeaderNavCircles;
+	})(React.Component);
+})();
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -211,219 +245,265 @@ Comp.Loading = (function (_React$Component) {
 
 	return _class;
 })(React.Component);
-Comp.Setup = React.createClass({
-  displayName: 'Setup',
-  render: function() {
-    var App;
-    App = this.props.App;
-    return React.createElement("div", {
-      "className": "atl__setup"
-    }, React.createElement("svg", {
-      "id": "patterns"
-    }, React.createElement(Comp.Setup.Patterns, {
-      "App": App,
-      "size": 30.
-    })));
-  }
-});
+"use strict";
 
-Comp.Setup.Patterns = React.createClass({
-  displayName: 'Setup.Patterns',
-  mixins: [Comp.Mixins.BackboneEvents],
-  render: function() {
-    return React.createElement("defs", null, this.renderList());
-  },
-  getInitialState: function() {
-    return {
-      data: []
-    };
-  },
-  renderList: function() {
-    var colorCodes, i, j, ref, results;
-    results = [];
-    for (i = j = 0, ref = this.props.size; j < ref; i = j += 1) {
-      colorCodes = this.state.data[i];
-      results.push(React.createElement(Comp.Setup.Pattern, {
-        "App": this.props.App,
-        "id": i,
-        "key": i,
-        "colorCodes": colorCodes
-      }));
-    }
-    return results;
-  },
-  componentDidMount: function() {
-    var App;
-    App = this.props.App;
-    if (App != null) {
-      App.commands.setHandler('reset:patterns', this.resetPatterns.bind(this));
-      return App.reqres.setHandler('get:pattern:id', this.ensureAndGetPattern.bind(this));
-    }
-  },
-  componentWillUnmount: function() {
-    var App;
-    App = this.props.App;
-    return App.commands.clearHandler('reset:patterns');
-  },
-  resetPatterns: function() {
-    return this.setState({
-      data: []
-    });
-  },
-  ensureAndGetPattern: function(colorCodes) {
-    var data, existingColorCodes, i, j, len, ref;
-    ref = this.state.data;
-    for (i = j = 0, len = ref.length; j < len; i = ++j) {
-      existingColorCodes = ref[i];
-      if (colorCodes.join('-') === existingColorCodes.join('-')) {
-        return i;
-      }
-    }
-    data = this.state.data;
-    if (data.length > this.props.size - 2) {
-      data = [];
-    }
-    data.push(colorCodes);
-    this.setState({
-      data: data
-    });
-    return this.state.data.length - 1;
-  },
-  __testRenderTwoColorPattern: function() {
-    return React.createElement("pattern", {
-      "id": "diagonal-stripes",
-      "x": "0",
-      "y": "0",
-      "width": "8",
-      "height": "8",
-      "patternUnits": "userSpaceOnUse",
-      "patternTransform": "rotate(45)"
-    }, React.createElement("rect", {
-      "x": "0",
-      "y": "0",
-      "width": "2",
-      "height": "8",
-      "style": "stroke:none; fill:" + 'roed' + ";"
-    }), React.createElement("rect", {
-      "x": "2",
-      "y": "0",
-      "width": "2",
-      "height": "8",
-      "style": "stroke:none; fill:" + 'roed' + ";"
-    }), React.createElement("rect", {
-      "x": "4",
-      "y": "0",
-      "width": "2",
-      "height": "8",
-      "style": "stroke:none; fill:" + 'hvid' + ";"
-    }), React.createElement("rect", {
-      "x": "6",
-      "y": "0",
-      "width": "2",
-      "height": "8",
-      "style": "stroke:none; fill:" + 'hvid' + ";"
-    }));
-  },
-  __testRenderThreeColorPattern: function() {
-    return React.createElement("pattern", {
-      "id": "diagonal-stripes",
-      "x": "0",
-      "y": "0",
-      "width": "18",
-      "height": "18",
-      "patternUnits": "userSpaceOnUse",
-      "patternTransform": "rotate(45)"
-    }, React.createElement("rect", {
-      "x": "0",
-      "y": "0",
-      "width": "6",
-      "height": "18",
-      "style": "stroke:none; fill:" + 'schwarz' + ";"
-    }), React.createElement("rect", {
-      "x": "6",
-      "y": "0",
-      "width": "6",
-      "height": "18",
-      "style": "stroke:none; fill:" + 'rot' + ";"
-    }), React.createElement("rect", {
-      "x": "12",
-      "y": "0",
-      "width": "6",
-      "height": "18",
-      "style": "stroke:none; fill:" + 'gold' + ";"
-    }));
-  }
-});
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-Comp.Setup.Pattern = React.createClass({
-  displayName: 'Setup.Pattern',
-  render: function() {
-    var className, colorCount, dim;
-    if (this.props.colorCodes == null) {
-      return React.createElement("pattern", null);
-    }
-    colorCount = this.props.colorCodes.length;
-    dim = colorCount === 2 ? 12 : 18;
-    className = 'striped-pattern-' + this.props.colorCodes.join('-');
-    return React.createElement("pattern", {
-      "id": 'stripe-pattern-' + this.props.id,
-      "className": className,
-      "x": "0",
-      "y": "0",
-      "width": dim,
-      "height": dim,
-      "patternUnits": "userSpaceOnUse",
-      "patternTransform": "rotate(45)"
-    }, this._getPatternRects());
-  },
-  getColor: function(colorCode) {
-    var App;
-    App = this.props.App;
-    if (App != null) {
-      return App.CSS.Colors.toRgb(colorCode - 1);
-    }
-  },
-  componentDidMount: function() {
-    return this.setPatternTransform();
-  },
-  componentDidUpdate: function() {
-    return this.setPatternTransform();
-  },
-  setPatternTransform: function() {
-    return React.findDOMNode(this).setAttribute('patternTransform', 'rotate(45)');
-  },
-  _getPatternRects: function(n) {
-    var j, results;
-    if (this.props.colorCodes == null) {
-      return;
-    }
-    n = this.props.colorCodes.length;
-    return (function() {
-      results = [];
-      for (var j = 0; 0 <= n ? j < n : j > n; 0 <= n ? j++ : j--){ results.push(j); }
-      return results;
-    }).apply(this).map((function(_this) {
-      return function(i) {
-        var color, height, style;
-        height = n === 2 ? 12 : 18;
-        color = _this.getColor(_this.props.colorCodes[i]);
-        style = {
-          'stroke': 'none',
-          'fill': color
-        };
-        return React.createElement("rect", {
-          "key": i,
-          "x": 6 * i,
-          "y": "0",
-          "width": "6",
-          "height": height,
-          "style": style
-        });
-      };
-    })(this));
-  }
-});
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+(function () {
+
+	Comp.Setup = (function (_React$Component) {
+		_inherits(_class, _React$Component);
+
+		function _class() {
+			_classCallCheck(this, _class);
+
+			_get(Object.getPrototypeOf(_class.prototype), "constructor", this).apply(this, arguments);
+		}
+
+		_createClass(_class, [{
+			key: "render",
+			value: function render() {
+				return React.createElement(
+					"div",
+					{ className: "atl__setup" },
+					React.createElement(
+						"svg",
+						{ id: "patterns" },
+						React.createElement(PatternsSetup, _extends({}, this.props, { size: 30 }))
+					)
+				);
+			}
+		}]);
+
+		return _class;
+	})(React.Component);
+
+	// Component that defines the color combination patterns needed for
+	//   multi-colored striped fill on SVG elements.
+
+	var PatternsSetup = (function (_React$Component2) {
+		_inherits(PatternsSetup, _React$Component2);
+
+		function PatternsSetup(props) {
+			_classCallCheck(this, PatternsSetup);
+
+			_get(Object.getPrototypeOf(PatternsSetup.prototype), "constructor", this).call(this, props);
+			this.state = {
+				data: []
+			};
+		}
+
+		// Single pattern element.
+
+		_createClass(PatternsSetup, [{
+			key: "render",
+			value: function render() {
+				return React.createElement(
+					"defs",
+					null,
+					this.renderList()
+				);
+			}
+		}, {
+			key: "renderList",
+			value: function renderList() {
+				var _this = this;
+
+				// Need to start with a set number of empty patterns and modify as new patterns are requested.
+				//   it does not work when they are generated from scratch on the fly.
+				// this.state.data.map (colorCodes, id) =>
+				var arr = [];
+				for (var i = 0; i < this.props.size; i += 1) {
+					arr.push(i);
+				}
+				return arr.map(function (i) {
+					var colorCodes = _this.state.data[i];
+					return React.createElement(Pattern, {
+						App: _this.props.App,
+						id: i,
+						key: i,
+						colorCodes: colorCodes
+					});
+				});
+			}
+		}, {
+			key: "componentDidMount",
+			value: function componentDidMount() {
+				var App = this.props.App;
+				if (App == null) {
+					return;
+				}
+				App.commands.setHandler('reset:patterns', this.resetPatterns.bind(this));
+				App.reqres.setHandler('get:pattern:id', this.ensureAndGetPattern.bind(this));
+			}
+		}, {
+			key: "componentWillUnmount",
+			value: function componentWillUnmount() {
+				var App = this.props.App;
+				if (App == null) {
+					return;
+				}
+				App.commands.clearHandler('reset:patterns');
+			}
+		}, {
+			key: "resetPatterns",
+			value: function resetPatterns() {
+				this.setState({ data: [] });
+			}
+
+			// Ensures a pattern is defined and returns its id.
+			// this.param {array} colorCodes
+			// this.returns {number} id
+		}, {
+			key: "ensureAndGetPattern",
+			value: function ensureAndGetPattern(colorCodes) {
+				var data;
+				// Loop through existing patterns to see if the combination has been defined before.
+				for (var i = 0; i < this.state.data.length; i += 1) {
+					var existingColorCodes = this.state.data[i];
+					if (colorCodes.join('-') === existingColorCodes.join('-')) {
+						return i;
+					}
+				}
+				// If the pattern is not found, define it on the fly.
+				data = this.state.data;
+				// If the size is exceeded, erase all patterns (suboptimal).
+				if (data.length > this.props.size - 2) {
+					data = [];
+				}
+				data.push(colorCodes);
+				this.setState({ data: data });
+				// Return the index of the newly defined color code.
+				return this.state.data.length - 1;
+			}
+
+			// These are the readily assembled pattern templates are assembled programatically by the child component.
+		}, {
+			key: "__testRenderTwoColorPattern",
+			value: function __testRenderTwoColorPattern() {
+				return React.createElement(
+					"pattern",
+					{ id: "diagonal-stripes", x: "0", y: "0", width: "8", height: "8", patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" },
+					React.createElement("rect", { x: "0", y: "0", width: "2", height: "8", style: "stroke:none; fill:#{ 'roed' };" }),
+					React.createElement("rect", { x: "2", y: "0", width: "2", height: "8", style: "stroke:none; fill:#{ 'roed' };" }),
+					React.createElement("rect", { x: "4", y: "0", width: "2", height: "8", style: "stroke:none; fill:#{ 'hvid' };" }),
+					React.createElement("rect", { x: "6", y: "0", width: "2", height: "8", style: "stroke:none; fill:#{ 'hvid' };" })
+				);
+			}
+		}, {
+			key: "__testRenderThreeColorPattern",
+			value: function __testRenderThreeColorPattern() {
+				return React.createElement(
+					"pattern",
+					{ id: "diagonal-stripes", x: "0", y: "0", width: "18", height: "18", patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" },
+					React.createElement("rect", { x: "0", y: "0", width: "6", height: "18", style: "stroke:none; fill:#{ 'schwarz' };" }),
+					React.createElement("rect", { x: "6", y: "0", width: "6", height: "18", style: "stroke:none; fill:#{ 'rot' };" }),
+					React.createElement("rect", { x: "12", y: "0", width: "6", height: "18", style: "stroke:none; fill:#{ 'gold' };" })
+				);
+			}
+		}]);
+
+		return PatternsSetup;
+	})(React.Component);
+
+	var Pattern = (function (_React$Component3) {
+		_inherits(Pattern, _React$Component3);
+
+		function Pattern() {
+			_classCallCheck(this, Pattern);
+
+			_get(Object.getPrototypeOf(Pattern.prototype), "constructor", this).apply(this, arguments);
+		}
+
+		_createClass(Pattern, [{
+			key: "render",
+			value: function render() {
+				var colorCount, dim, className;
+				if (this.props.colorCodes == null) {
+					return React.createElement("pattern", null);
+				}
+				colorCount = this.props.colorCodes.length;
+				dim = colorCount === 2 ? 12 : 18;
+				className = 'striped-pattern-' + this.props.colorCodes.join('-');
+				return React.createElement(
+					"pattern",
+					{
+						id: 'stripe-pattern-' + this.props.id,
+						className: className,
+						x: "0",
+						y: "0",
+						width: dim,
+						height: dim,
+						patternUnits: "userSpaceOnUse",
+						patternTransform: "rotate(45)"
+					},
+					this._getPatternRects()
+				);
+			}
+
+			// Custom color function that translates a color code into an rgb value.
+			// TODO: this function needs to be provided as props to the parent component.
+			//   this will make the component more general.
+		}, {
+			key: "getColor",
+			value: function getColor(colorCode) {
+				var App = this.props.App;
+				if (App == null) {
+					return;
+				}
+				return App.CSS.Colors.toRgb(colorCode - 1);
+			}
+		}, {
+			key: "componentDidMount",
+			value: function componentDidMount() {
+				this.setPatternTransform();
+			}
+		}, {
+			key: "componentDidUpdate",
+			value: function componentDidUpdate() {
+				this.setPatternTransform();
+			}
+
+			// React does not support patternTransform as an attribute.
+			//   Need to set with vanilla JavaScript instead (jQuery lowercases it by default).
+		}, {
+			key: "setPatternTransform",
+			value: function setPatternTransform() {
+				React.findDOMNode(this).setAttribute('patternTransform', 'rotate(45)');
+			}
+
+			// this.param {number} n - Number of rectangles defining the pattern.
+		}, {
+			key: "_getPatternRects",
+			value: function _getPatternRects(n) {
+				var _this2 = this;
+
+				var n, arr;
+				if (this.props.colorCodes == null) {
+					return;
+				}
+				n = this.props.colorCodes.length;
+				arr = n === 3 ? [0, 1, 2] : [0, 1];
+				return arr.map(function (i) {
+					var height = n === 2 ? 12 : 18;
+					var color = _this2.getColor(_this2.props.colorCodes[i]);
+					var style = { 'stroke': 'none', 'fill': color };
+					return React.createElement("rect", { key: i, x: 6 * i, y: "0", width: "6", height: height, style: style });
+				});
+			}
+		}]);
+
+		return Pattern;
+	})(React.Component);
+})();
 'use strict';
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -4127,6 +4207,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== 'function' 
 
 		return _class;
 	})(React.Component);
+
+	Comp.Projects.Show.contextTypes = {
+		router: React.PropTypes.func
+	};
 })();
 'use strict';
 
@@ -5473,163 +5557,257 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 		return TopBarIcon;
 	})(React.Component);
 })();
-Comp.Projects.Show.Explainer = React.createClass({
-  displayName: 'Projects.Show.Explainer',
-  render: function() {
-    return React.createElement("div", {
-      "className": "atl__main fill-parent"
-    }, React.createElement("div", {
-      "className": "atl__title-bar atl__title-bar--solid bg-c-off-white",
-      "ref": 'title-bar'
-    }, React.createElement("div", {
-      "className": "atl__title-bar__background",
-      "ref": 'title-bar__background'
-    }), React.createElement("div", {
-      "className": "atl__title-bar__content"
-    }, React.createElement("h1", {
-      "className": 'title'
-    }, this.getTitle()), React.createElement("ul", null, React.createElement("li", null, "Updated: ", this.getUpdateMoment())))), React.createElement("div", {
-      "className": "atl__content-bar bg-c-off-white"
-    }, React.createElement("div", {
-      "className": "atl-grid"
-    }, React.createElement("div", {
-      "className": "atl-grid__1-3"
-    }, React.createElement("div", {
-      "className": "atl__page-nav",
-      "ref": "page-nav"
-    }, this.renderToc())), React.createElement("div", {
-      "className": "atl-grid__2-3"
-    }, React.createElement("div", {
-      "className": "static-content",
-      "dangerouslySetInnerHTML": {
-        __html: this.getBodyText()
-      }
-    }), React.createElement(Comp.Projects.Show.Explainer.Related, {
-      "related": this.props.related
-    })), React.createElement("div", {
-      "className": "atl-grid__3-3"
-    }))));
-  },
-  renderToc: function() {
-    return React.createElement("div", {
-      "className": "atl__toc"
-    }, React.createElement("p", null, "Page Contents"), React.createElement("div", {
-      "id": "atl__toc__list"
-    }, React.createElement("ul", null, this.renderTocList())));
-  },
-  renderTocList: function() {
-    var renderedList, tocItems;
-    tocItems = this.props.project.get('body_text_toc');
-    if (!((tocItems != null) && (tocItems.map != null) && tocItems.length > 0)) {
-      return;
-    }
-    return renderedList = tocItems.map((function(_this) {
-      return function(item, i) {
-        return React.createElement("li", {
-          "className": 'toc-' + item.tagName,
-          "key": 'toc-' + i
-        }, React.createElement("a", {
-          "href": "#toc-" + item.id,
-          "onClick": _this.triggerScrollAfterDelay.bind(_this)
-        }, item.content));
-      };
-    })(this));
-  },
-  componentDidMount: function() {
-    this.buildAtlasCharts();
-    this.setStickyNavLayout();
-    this.onScroll();
-    return this.setThemeColor();
-  },
-  componentWillUnmount: function() {
-    this.destroyAtlasCharts();
-    return this.offScroll();
-  },
-  getTitle: function() {
-    var title;
-    title = this.props.project != null ? this.props.project.get('title') : '';
-    return title;
-  },
-  getBodyText: function() {
-    var bodyText;
-    bodyText = this.props.project != null ? this.props.project.get('body_text') : '';
-    return bodyText;
-  },
-  getUpdateMoment: function() {
-    if (typeof moment !== "undefined" && moment !== null) {
-      return moment(this.props.project.get('updated_at')).format("MMMM Do YYYY");
-    }
-  },
-  triggerScrollAfterDelay: function() {
-    var App, fn;
-    App = this.props.App;
-    if (App == null) {
-      return;
-    }
-    fn = function() {
-      return App.vent.trigger('scroll');
-    };
-    return setTimeout(fn, 75);
-  },
-  buildAtlasCharts: function() {
-    if ((typeof ChartistHtml !== "undefined" && ChartistHtml !== null) && (typeof $ !== "undefined" && $ !== null)) {
-      this.chartManager = new ChartistHtml.ChartCollectionManager($('.atlas-chart'));
-      return this.chartManager.render();
-    }
-  },
-  destroyAtlasCharts: function() {
-    if (this.chartManager != null) {
-      return this.chartManager.destroy();
-    }
-  },
-  setStickyNavLayout: function(subClasses) {
-    var $elem, className, scrollTop;
-    if (typeof $ !== "undefined" && $ !== null) {
-      scrollTop = $('.atl__main').scrollTop();
-      className = "atl__page-nav";
-      $elem = $(React.findDOMNode(this.refs['page-nav']));
-      if (scrollTop > this.getTitleBarHeight()) {
-        return $elem.addClass(className + "--fixed");
-      } else {
-        return $elem.removeClass(className + "--fixed");
-      }
-    }
-  },
-  getTitleBarHeight: function() {
-    var $el;
-    if (!((this._titleBarHeightCache != null) && (this._titleBarHeightCache > 0))) {
-      $el = $(React.findDOMNode(this.refs['title-bar']));
-      this._titleBarHeightCache = $el.height();
-    }
-    return this._titleBarHeightCache;
-  },
-  onScroll: function() {
-    var App;
-    App = this.props.App;
-    if (App != null) {
-      return App.vent.on('scroll', this.setStickyNavLayout);
-    }
-  },
-  offScroll: function() {
-    var App;
-    App = this.props.App;
-    if (App != null) {
-      return App.vent.off('scroll', this.setStickyNavLayout);
-    }
-  },
-  setThemeColor: function() {
-    var $bg, App, color;
-    App = this.props.App;
-    if ((typeof $ !== "undefined" && $ !== null) && (App != null)) {
-      $bg = $(React.findDOMNode(this.refs['title-bar__background']));
-      color = App.currentThemeColor;
-      if (color != null) {
-        return $bg.css('background-color', color);
-      }
-    }
-  }
-});
+"use strict";
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+(function () {
+
+	Comp.Projects.Show.Explainer = (function (_React$Component) {
+		_inherits(_class, _React$Component);
+
+		function _class() {
+			_classCallCheck(this, _class);
+
+			_get(Object.getPrototypeOf(_class.prototype), "constructor", this).apply(this, arguments);
+		}
+
+		_createClass(_class, [{
+			key: "render",
+			value: function render() {
+				return React.createElement(
+					"div",
+					{ className: "atl__main fill-parent" },
+					React.createElement(
+						"div",
+						{ className: "atl__title-bar atl__title-bar--solid bg-c-off-white", ref: "title-bar" },
+						React.createElement("div", { className: "atl__title-bar__background", ref: "title-bar__background" }),
+						React.createElement(
+							"div",
+							{ className: "atl__title-bar__content" },
+							React.createElement(
+								"h1",
+								{ className: "title" },
+								this.getTitle()
+							),
+							React.createElement(
+								"ul",
+								null,
+								React.createElement(
+									"li",
+									null,
+									"Updated: ",
+									this.getUpdateMoment()
+								)
+							)
+						)
+					),
+					React.createElement(
+						"div",
+						{ className: "atl__content-bar bg-c-off-white" },
+						React.createElement(
+							"div",
+							{ className: "atl-grid" },
+							React.createElement(
+								"div",
+								{ className: "atl-grid__1-3" },
+								React.createElement(
+									"div",
+									{ className: "atl__page-nav", ref: "page-nav" },
+									this.renderToc()
+								)
+							),
+							React.createElement(
+								"div",
+								{ className: "atl-grid__2-3" },
+								React.createElement("div", { className: "static-content", dangerouslySetInnerHTML: { __html: this.getBodyText() } }),
+								React.createElement(Comp.Projects.Show.Explainer.Related, { related: this.props.related })
+							),
+							React.createElement("div", { className: "atl-grid__3-3" })
+						)
+					)
+				);
+			}
+		}, {
+			key: "renderToc",
+			value: function renderToc() {
+				return React.createElement(
+					"div",
+					{ className: "atl__toc" },
+					React.createElement(
+						"p",
+						null,
+						"Page Contents"
+					),
+					React.createElement(
+						"div",
+						{ id: "atl__toc__list" },
+						React.createElement(
+							"ul",
+							null,
+							this.renderTocList()
+						)
+					)
+				);
+			}
+		}, {
+			key: "renderTocList",
+			value: function renderTocList() {
+				var _this = this;
+
+				var tocItems = this.props.project.get('body_text_toc');
+				if (tocItems == null || tocItems.length === 0) {
+					return;
+				}
+				return tocItems.map(function (item, i) {
+					return React.createElement(
+						"li",
+						{ className: 'toc-' + item.tagName, key: 'toc-' + i },
+						React.createElement(
+							"a",
+							{ href: "#toc-" + item.id, onClick: _this.triggerScrollAfterDelay.bind(_this) },
+							item.content
+						)
+					);
+				});
+			}
+		}, {
+			key: "componentDidMount",
+			value: function componentDidMount() {
+				this.buildAtlasCharts();
+				this.setStickyNavLayout();
+				this.onScroll();
+				this.setThemeColor();
+			}
+		}, {
+			key: "componentWillUnmount",
+			value: function componentWillUnmount() {
+				this.destroyAtlasCharts();
+				this.offScroll();
+			}
+		}, {
+			key: "getTitle",
+			value: function getTitle() {
+				var project = this.props.project;
+				return project != null ? project.get('title') : '';
+			}
+		}, {
+			key: "getBodyText",
+			value: function getBodyText() {
+				var project = this.props.project;
+				return project != null ? project.get('body_text') : '';
+			}
+		}, {
+			key: "getUpdateMoment",
+			value: function getUpdateMoment() {
+				if (moment == null) {
+					return;
+				}
+				return moment(this.props.project.get('updated_at')).format("MMMM Do YYYY");
+			}
+
+			// When a table of contents item is clicked, the sticky scroll layout code is not invoked.
+			//   To fix this, an extra scroll event is triggered after every click
+			//   to make sure the new scroll position is reached.
+		}, {
+			key: "triggerScrollAfterDelay",
+			value: function triggerScrollAfterDelay() {
+				var App = this.props.App;
+				if (App == null) {
+					return;
+				}
+				var fn = function fn() {
+					App.vent.trigger('scroll');
+				};
+				setTimeout(fn, 75);
+			}
+		}, {
+			key: "buildAtlasCharts",
+			value: function buildAtlasCharts() {
+				if (ChartistHtml == null) {
+					return;
+				}
+				this.chartManager = new ChartistHtml.ChartCollectionManager($('.atlas-chart'));
+				this.chartManager.render();
+			}
+		}, {
+			key: "destroyAtlasCharts",
+			value: function destroyAtlasCharts() {
+				if (this.chartManager != null) {
+					this.chartManager.destroy();
+					delete this.chartManager;
+				}
+			}
+		}, {
+			key: "setStickyNavLayout",
+			value: function setStickyNavLayout() {
+				if ($ == null) {
+					return;
+				}
+				// TODO - optimize title bar height check so it is not performed all the time
+				var scrollTop = $('.atl__main').scrollTop();
+				var className = "atl__page-nav";
+				var $elem = $(React.findDOMNode(this.refs['page-nav']));
+				if (scrollTop > this.getTitleBarHeight()) {
+					$elem.addClass("#{className}--fixed");
+				} else {
+					$elem.removeClass("#{className}--fixed");
+				}
+			}
+
+			// Get title bar height.
+		}, {
+			key: "getTitleBarHeight",
+			value: function getTitleBarHeight() {
+				if (this._titleBarHeightCache && this._titleBarHeightCache > 0) {
+					return this._titleBarHeightCache;
+				}
+				var $el = $(React.findDOMNode(this.refs['title-bar']));
+				this._titleBarHeightCache = $el.height();
+				return this._titleBarHeightCache;
+			}
+		}, {
+			key: "onScroll",
+			value: function onScroll() {
+				var App = this.props.App;
+				if (App == null) {
+					return;
+				}
+				App.vent.on('scroll', this.setStickyNavLayout.bind(this));
+			}
+		}, {
+			key: "offScroll",
+			value: function offScroll() {
+				var App = this.props.App;
+				if (App == null) {
+					return;
+				}
+				App.vent.off('scroll', this.setStickyNavLayout.bind(this));
+			}
+		}, {
+			key: "setThemeColor",
+			value: function setThemeColor() {
+				var App = this.props.App;
+				if (App == null) {
+					return;
+				}
+				var $bg = $(React.findDOMNode(this.refs['title-bar__background']));
+				var color = App.currentThemeColor;
+				if (color != null) {
+					$bg.css('background-color', color);
+				}
+			}
+		}]);
+
+		return _class;
+	})(React.Component);
+})();
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();

@@ -202,6 +202,9 @@ Comp.Projects.Show = class extends React.Component {
 
 }
 
+Comp.Projects.Show.contextTypes = {
+	router: React.PropTypes.func
+};
 
 }());
 

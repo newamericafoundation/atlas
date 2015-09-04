@@ -41,8 +41,7 @@ gulp.task('js-build-vendor', () => {
 // Build components.
 gulp.task('js-build-component', () => {
     gulp.src(config.source.js.component)
-        .pipe(gulpIf(/[.]cjsx$/, cjsx({ bare: true })))
-        .pipe(gulpIf(/[.]jsx$/, babel()))
+        .pipe(babel())
         .pipe(concat('component.js'))
         .pipe(gulp.dest('public/assets/scripts/partials'));
 });

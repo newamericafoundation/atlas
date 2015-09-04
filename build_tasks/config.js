@@ -65,7 +65,7 @@ module.exports = {
 		        './app/components/route_handlers/projects/show/root.jsx',
 		        './app/components/route_handlers/projects/show/tilemap/root.jsx',
 		        './app/components/route_handlers/projects/show/tilemap/subcomponents/**/*',
-		        './app/components/route_handlers/projects/show/explainer/root.cjsx',
+		        './app/components/route_handlers/projects/show/explainer/root.jsx',
 		        './app/components/route_handlers/projects/show/explainer/subcomponents/**/*',
 		        './app/components/routes.jsx'
 		    ]
