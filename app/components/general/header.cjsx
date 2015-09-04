@@ -1,13 +1,14 @@
 Comp.Header = React.createClass
 
-	mixins: [ Comp.Mixins.BackboneEvents ]
-
-	displayName: 'Header'
-
 	render: ->
 		<div className={ 'header ' + @getBackgroundColorClass() }>
 			<div className="header__corner">
-				<a className="bg-img-naf--off-white" id="header__welcome-link" href="/welcome" onClick={@navigate} />
+				<ReactRouter.Link 
+					className="bg-img-naf--off-white" 
+					id="header__welcome-link" 
+					to="/welcome" 
+					onClick={@navigate} 
+				/>
 			</div>
 			<div className="header__main">
 				<h1 className="header__main__cursive-prefix"></h1>
@@ -58,11 +59,14 @@ Comp.Header = React.createClass
 					$strip.addClass options.className
 
 
+Comp.Header.contextTypes = {
+	
+};
+
+
 Comp.Header.NavCircles = React.createClass
 	
 	displayName: 'Header.NavCircles'
-
-	mixins: [ Comp.Mixins.BackboneEvents ]
 
 	render: ->
 		<div className="header__nav-circles">
@@ -73,23 +77,10 @@ Comp.Header.NavCircles = React.createClass
 
 	renderList: ->
 		[ 'welcome', 'menu', 'show' ].map (item, i) =>
-			cls = if (i is @state['activeIndex']) then ('nav-circle nav-circle--active') else ('nav-circle')
+			cls = if (i is 1) then ('nav-circle nav-circle--active') else ('nav-circle')
 			<li className={cls} key={i}>
 				<a href={ '/' + item } onClick={ @navigate } />
 			</li>
-
-	componentDidMount: ->
-		App = @props.App
-		if App? and @listenTo?
-			@listenTo App.vent, 'router:current:action:change', (index) ->
-				@setState { activeIndex: index }
-
-	navigate: (e) ->
-		e.preventDefault()
-		$target = $(e.target)
-		App = @props.App
-		if App?
-			App.router.navigate $target.attr('href')
 
 	getInitialState: ->
 		return { activeIndex: 0 }

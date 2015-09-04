@@ -35,7 +35,8 @@ module.exports = {
 		        './bower_components/moment/moment.js',
 		        './bower_components/jszip/dist/jszip.js',
 		        './bower_components/js-xlsx/dist/xlsx.js',
-		        './bower_components/numeral/numeral.js'
+		        './bower_components/numeral/numeral.js',
+		        './node_modules/classnames/index.js'
 		    ],
 
 		    // main application code

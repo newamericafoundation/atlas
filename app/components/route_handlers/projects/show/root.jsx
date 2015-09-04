@@ -1,3 +1,48 @@
+(function() {
+
+var defaultButtons = [
+	{ 
+		title: 'Explore Atlas',
+		contentType: 'inner-link',
+		url: '/menu',
+		method: 'projects', 
+		reactIconName: 'Grid', 
+		isToggleable: false 
+	},
+	{ 
+		title: 'Collapse/Expand',
+		contentType: 'button',
+		method: 'collapse', 
+		reactIconName: 'Contract', 
+		activeReactIconName: 'Expand', 
+		isToggleable: false 
+	},
+	{ 
+		title: 'Help',
+		contentType: 'button',
+		method: 'help', 
+		reactIconName: 'Help', 
+		isToggleable: false 
+	},
+	{ 
+		title: 'Print',
+		contentType: 'button',
+		method: 'print', 
+		reactIconName: 'Print', 
+		isToggleable: false 
+	},
+	{ 
+		title: 'Download Data',
+		contentType: 'form',
+		hiddenInputKey: 'atlas_url',
+		hiddenInputValue: '',
+		url: '/api/v1/projects/print',
+		method: 'download',
+		reactIconName: 'Download',
+		isToggleable: false
+	}
+];
+
 Comp.Projects.Show = class extends React.Component {
 
 	constructor(props) {
@@ -25,9 +70,16 @@ Comp.Projects.Show = class extends React.Component {
 	}
 
 	render() {
+		defaultButtons[4].hiddenInputValue = this.getAtlasUrl();
 		return (
 			<div className={ this.getClassName() }>
-				<Comp.SideBar App={ this.props.App } project={ this.state.project } uiState={ this.state.ui } setUiState={ this.setUiState.bind(this) } />
+				<Comp.SideBar 
+					App={ this.props.App } 
+					project={ this.state.project } 
+					uiState={ this.state.ui } 
+					setUiState={ this.setUiState.bind(this) }
+					buttons={ defaultButtons }
+				/>
 				{ this.renderProject() }
 			</div>
 		);
@@ -37,27 +89,20 @@ Comp.Projects.Show = class extends React.Component {
 
 		var cls, project, data;
 
-		cls = "atl";
 		project = this.state.project;
-		if (project == null) { return cls; }
-		
+		data = (project != null) ? project.get('data') : null;
+
+		// boolean classnames
+		cls = classNames({
+			'atl': true,
+			'atl--collapsed': (this.state.ui.isCollapsedMaster) || (!this.state.ui.isCollapsedMaster && this.state.ui.isCollapsed),
+			'atl__info-box--active': this.state.ui.isInfoBoxActive,
+			'atl__info-box--narrow': data && (data.infobox_variables.length < 2)
+		});
+
+		// custom classnames
 		cls += ` atl--${this.state.ui.display}-display`;
-
-		var isCollapsedByDimension = (this.state.ui.isCollapsed);
-		if ((this.state.ui.isCollapsedMaster) || (!this.state.ui.isCollapsedMaster && isCollapsedByDimension)) {
-			cls += ' atl--collapsed';
-		}
-		
-		cls += ' atl--' + project.get('project_template_name').toLowerCase();
-
-		if (this.state.ui.isInfoBoxActive) { 
-			cls += ' atl__info-box--active' 
-		}
-
-		data = project.get('data');
-		if ((data != null) && (data.infobox_variables.length < 2)) {
-			cls += ' atl__info-box--narrow' ;
-		}
+		if (project != null) { cls += ' atl--' + project.get('project_template_name').toLowerCase(); }
 		
 		return cls;
 
@@ -121,7 +166,7 @@ Comp.Projects.Show = class extends React.Component {
 	// Send network request to get project data.
 	fetchProject() {
 
-		var atlas_url = this.props.atlas_url || this.props.params.atlas_url;
+		var atlas_url = this.getAtlasUrl();
 
 		new M.project.Collection()
 			.getClientFetchPromise({ 
@@ -140,6 +185,10 @@ Comp.Projects.Show = class extends React.Component {
 
 	}
 
+	getAtlasUrl() {
+		return this.props.atlas_url || this.props.params.atlas_url;
+	}
+
 	componentDidMount() {
 		// View is rendered before current project is synced.
 		var App = this.props.App;
@@ -152,3 +201,7 @@ Comp.Projects.Show = class extends React.Component {
 	}
 
 }
+
+
+}());
+

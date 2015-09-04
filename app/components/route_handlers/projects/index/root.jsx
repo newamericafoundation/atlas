@@ -1,3 +1,16 @@
+(function(){
+
+var defaultButtons = [
+	{
+		title: 'Submit Comment',
+		contentType: 'outer-link',
+		method: 'comment',
+		url: 'mailto:atlas@newamerica.org',
+		reactIconName: 'Comment', 
+		isToggleable: false 
+	}
+];
+
 Comp.Projects.Index = class extends React.Component {
 
 	constructor(props) {
@@ -5,23 +18,10 @@ Comp.Projects.Index = class extends React.Component {
 		this.state = {};
 	}
 
-	getSideBarData() {
-		return [
-			{
-				title: 'Submit Comment',
-				contentType: 'link',
-				method: 'comment',
-				url: 'mailto:atlas@newamerica.org',
-				reactIconName: 'Comment', 
-				isToggleable: false 
-			}
-		];
-	}
-
 	render() {
 		return (
 			<div className="atl fill-parent">
-				<Comp.SideBar buttons={ this.getSideBarData() } />
+				<Comp.SideBar buttons={ defaultButtons } />
 				<div id="atl__main" className="-id-atl__main fill-parent">
 					<div className="atl__main">
 						<div className="atl__nav bg-c-off-white">
@@ -84,3 +84,6 @@ Comp.Projects.Index = class extends React.Component {
 Comp.Projects.Index.contextTypes = {
 	router: React.PropTypes.func
 };
+
+}());
+

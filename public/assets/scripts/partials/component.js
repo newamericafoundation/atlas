@@ -61,17 +61,15 @@ Comp.Mixins.BackboneEvents = {
 
 };
 Comp.Header = React.createClass({
-  mixins: [Comp.Mixins.BackboneEvents],
-  displayName: 'Header',
   render: function() {
     return React.createElement("div", {
       "className": 'header ' + this.getBackgroundColorClass()
     }, React.createElement("div", {
       "className": "header__corner"
-    }, React.createElement("a", {
+    }, React.createElement(ReactRouter.Link, {
       "className": "bg-img-naf--off-white",
       "id": "header__welcome-link",
-      "href": "/welcome",
+      "to": "/welcome",
       "onClick": this.navigate
     })), React.createElement("div", {
       "className": "header__main"
@@ -144,9 +142,10 @@ Comp.Header = React.createClass({
   }
 });
 
+Comp.Header.contextTypes = {};
+
 Comp.Header.NavCircles = React.createClass({
   displayName: 'Header.NavCircles',
-  mixins: [Comp.Mixins.BackboneEvents],
   render: function() {
     return React.createElement("div", {
       "className": "header__nav-circles"
@@ -158,7 +157,7 @@ Comp.Header.NavCircles = React.createClass({
     return ['welcome', 'menu', 'show'].map((function(_this) {
       return function(item, i) {
         var cls;
-        cls = i === _this.state['activeIndex'] ? 'nav-circle nav-circle--active' : 'nav-circle';
+        cls = i === 1 ? 'nav-circle nav-circle--active' : 'nav-circle';
         return React.createElement("li", {
           "className": cls,
           "key": i
@@ -168,26 +167,6 @@ Comp.Header.NavCircles = React.createClass({
         }));
       };
     })(this));
-  },
-  componentDidMount: function() {
-    var App;
-    App = this.props.App;
-    if ((App != null) && (this.listenTo != null)) {
-      return this.listenTo(App.vent, 'router:current:action:change', function(index) {
-        return this.setState({
-          activeIndex: index
-        });
-      });
-    }
-  },
-  navigate: function(e) {
-    var $target, App;
-    e.preventDefault();
-    $target = $(e.target);
-    App = this.props.App;
-    if (App != null) {
-      return App.router.navigate($target.attr('href'));
-    }
   },
   getInitialState: function() {
     return {
@@ -445,212 +424,221 @@ Comp.Setup.Pattern = React.createClass({
   }
 });
 
-Comp.SideBar = React.createClass({
-  displayName: 'SideBar',
-  render: function() {
-    var cls;
-    cls = this.state['isActive'] ? 'atl__side-bar atl__side-bar--active' : 'atl__side-bar';
-    return React.createElement("div", {
-      "className": cls,
-      "onClick": this.toggle.bind(this)
-    }, React.createElement("div", {
-      "className": "atl__side-bar__title"
-    }, this.state['hoveredButtonTitle']), this.renderButtons());
-  },
-  getDefaultProps: function() {
-    var props;
-    props = {
-      buttons: [
-        {
-          title: 'Explore Atlas',
-          contentType: 'link',
-          method: 'projects',
-          reactIconName: 'Grid',
-          isToggleable: false
-        }, {
-          title: 'Collapse/Expand',
-          contentType: 'button',
-          method: 'collapse',
-          reactIconName: 'Contract',
-          activeReactIconName: 'Expand',
-          isToggleable: false
-        }, {
-          title: 'Help',
-          contentType: 'button',
-          method: 'help',
-          reactIconName: 'Help',
-          isToggleable: false
-        }, {
-          title: 'Print',
-          contentType: 'button',
-          method: 'print',
-          reactIconName: 'Print',
-          isToggleable: false
-        }, {
-          title: 'Download Data',
-          contentType: 'form',
-          url: '/api/v1/projects/print',
-          method: 'download',
-          reactIconName: 'Download',
-          isToggleable: false
-        }
-      ]
-    };
-    return props;
-  },
-  getInitialState: function() {
-    return {
-      isActive: false
-    };
-  },
-  toggle: function() {
-    return this.setState({
-      isActive: !this.state['isActive']
-    });
-  },
-  renderButtons: function() {
-    var list;
-    list = this.props.buttons.map(this.renderButton);
-    return React.createElement("ul", {
-      "className": "atl__side-bar__icons"
-    }, list);
-  },
-  renderButton: function(options, i) {
-    return React.createElement("li", {
-      "className": "atl__side-bar__icon",
-      "onMouseEnter": this.onButtonMouseEnter.bind(this, options),
-      "onMouseLeave": this.onButtonMouseLeave.bind(this, options),
-      "onClick": this.handleClick.bind(this, options),
-      "key": 'button-' + i
-    }, this.renderButtonContent(options, i));
-  },
-  renderButtonContent: function(options, i) {
-    var contentType;
-    contentType = options.contentType;
-    if (contentType === 'form') {
-      return this.renderButtonFormContent(options);
-    }
-    if (contentType === 'link') {
-      return this.renderButtonLinkContent(options);
-    }
-    return this.renderButtonDefaultContent(options);
-  },
-  renderButtonDefaultContent: function(options) {
-    var IconComp;
-    IconComp = Comp.Icons[options.reactIconName];
-    return React.createElement("div", null, React.createElement(IconComp, null));
-  },
-  handleClick: function(options) {
-    if (this['_' + options.method] != null) {
-      return this['_' + options.method]();
-    }
-  },
-  renderButtonLinkContent: function(options) {
-    var IconComp;
-    IconComp = Comp.Icons[options.reactIconName];
-    return React.createElement("a", {
-      "href": options.url
-    }, React.createElement(IconComp, null));
-  },
-  renderButtonFormContent: function(options) {
-    var IconComp, atlas_url;
-    atlas_url = this._getAtlasUrl();
-    IconComp = Comp.Icons[options.reactIconName];
-    return React.createElement("form", {
-      "action": options.url,
-      "method": 'post'
-    }, React.createElement(IconComp, null), React.createElement("input", {
-      "type": "hidden",
-      "name": "atlas_url",
-      "value": atlas_url
-    }), React.createElement("input", {
-      "type": "submit",
-      "value": ""
-    }));
-  },
-  onButtonMouseEnter: function(options) {
-    return this.setState({
-      hoveredButtonTitle: options.title
-    });
-  },
-  onButtonMouseLeave: function(options) {
-    return this.setState({
-      hoveredButtonTitle: ''
-    });
-  },
-  _getAtlasUrl: function() {
-    var atlas_url, project;
-    project = this.props.project;
-    if (project != null) {
-      return atlas_url = project.get('atlas_url');
-    }
-  },
-  _edit: function() {
-    var App, project, url;
-    App = this.props.App;
-    project = this.props.project;
-    if ((App != null) && (project != null)) {
-      Backbone.history.navigate('');
-      url = project.buildUrl();
-      return window.location.href = url;
-    }
-  },
-  _collapse: function(e) {
-    if (this.props.setUiState != null) {
-      return this.props.setUiState({
-        isCollapsedMaster: !this.props.uiState.isCollapsedMaster
-      });
-    }
-  },
-  _help: function(e) {
-    if (typeof $ === "undefined" || $ === null) {
-      return;
-    }
-    return $('.atl').toggleClass('atl--help');
-  },
-  _print: function() {
-    return window.print();
-  }
-});
+'use strict';
 
-Comp.SideBar.Button = React.createClass({
-  render: function() {
-    return React.createElement("li", {
-      "className": "atl__side-bar__icon",
-      "onMouseEnter": this.onButtonMouseEnter.bind(this, options),
-      "onMouseLeave": this.onButtonMouseLeave.bind(this, options),
-      "onClick": this['_' + options.method],
-      "key": 'button-' + i
-    }, this.renderContent());
-  },
-  renderContent: function() {
-    if (this.props.contentType) {
-      return 1;
-    }
-  },
-  renderButtonContent: function() {
-    return React.createElement("div", null, React.createElement(IconComp, null));
-  },
-  renderFormContent: function() {
-    return React.createElement("form", {
-      "action": '/api/v1/projects/print',
-      "method": 'post'
-    }, React.createElement(IconComp, null), React.createElement("input", {
-      "type": "hidden",
-      "name": "atlas_url",
-      "value": "atlas_url"
-    }), React.createElement("input", {
-      "type": "submit",
-      "value": ""
-    }));
-  },
-  renderLinkContent: function() {
-    return React.createElement("a", {
-      "href": 'mailto:atlas@newamerica.org'
-    }, React.createElement(IconComp, null));
-  }
-});
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+(function () {
+
+	var Link = ReactRouter.Link;
+
+	Comp.SideBar = (function (_React$Component) {
+		_inherits(_class, _React$Component);
+
+		function _class(props) {
+			_classCallCheck(this, _class);
+
+			_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
+			this.state = {
+				isActive: false
+			};
+			this.props.buttons = this.props.buttons || defaultButtons;
+		}
+
+		_createClass(_class, [{
+			key: 'render',
+			value: function render() {
+				return React.createElement(
+					'div',
+					{ className: this.getClass(), onClick: this.toggle.bind(this) },
+					React.createElement(
+						'div',
+						{ className: 'atl__side-bar__title' },
+						this.state['hoveredButtonTitle']
+					),
+					this.renderButtons()
+				);
+			}
+		}, {
+			key: 'getClass',
+			value: function getClass() {
+				return classNames({
+					'atl__side-bar': true,
+					'atl__side-bar--active': this.state['isActive']
+				});
+			}
+		}, {
+			key: 'setHoveredButtonTitle',
+			value: function setHoveredButtonTitle(title) {
+				this.setState({ hoveredButtonTitle: title });
+			}
+		}, {
+			key: 'toggle',
+			value: function toggle() {
+				this.setState({ isActive: !this.state['isActive'] });
+			}
+		}, {
+			key: 'renderButtons',
+			value: function renderButtons() {
+				var _this = this;
+
+				if (this.props.buttons == null) {
+					return;
+				}
+				var list = this.props.buttons.map(function (options, i) {
+					return React.createElement(SideBarButton, _extends({}, _this.props, {
+						options: options,
+						setHoveredButtonTitle: _this.setHoveredButtonTitle.bind(_this),
+						key: i
+					}));
+				});
+				return React.createElement(
+					'ul',
+					{ className: 'atl__side-bar__icons' },
+					list
+				);
+			}
+		}]);
+
+		return _class;
+	})(React.Component);
+
+	var SideBarButton = (function (_React$Component2) {
+		_inherits(SideBarButton, _React$Component2);
+
+		function SideBarButton() {
+			_classCallCheck(this, SideBarButton);
+
+			_get(Object.getPrototypeOf(SideBarButton.prototype), 'constructor', this).apply(this, arguments);
+		}
+
+		_createClass(SideBarButton, [{
+			key: 'render',
+			value: function render() {
+				return React.createElement(
+					'li',
+					{ className: 'atl__side-bar__icon',
+						onMouseEnter: this.onButtonMouseEnter.bind(this),
+						onMouseLeave: this.onButtonMouseLeave.bind(this),
+						onClick: this.handleClick.bind(this)
+					},
+					this.renderContent()
+				);
+			}
+		}, {
+			key: 'onButtonMouseEnter',
+			value: function onButtonMouseEnter() {
+				this.props.setHoveredButtonTitle(this.props.options.title);
+			}
+		}, {
+			key: 'onButtonMouseLeave',
+			value: function onButtonMouseLeave() {
+				this.props.setHoveredButtonTitle('');
+			}
+		}, {
+			key: 'renderContent',
+			value: function renderContent() {
+				var contentType = this.props.options.contentType;
+				if (contentType === 'form') {
+					return this.renderFormContent();
+				}
+				if (contentType === 'inner-link') {
+					return this.renderInnerLinkContent();
+				}
+				if (contentType === 'outer-link') {
+					return this.renderOuterLinkContent();
+				}
+				return this.renderDefaultContent();
+			}
+		}, {
+			key: 'renderDefaultContent',
+			value: function renderDefaultContent() {
+				var IconComp = Comp.Icons[this.props.options.reactIconName];
+				return React.createElement(
+					'div',
+					null,
+					React.createElement(IconComp, null)
+				);
+			}
+		}, {
+			key: 'renderInnerLinkContent',
+			value: function renderInnerLinkContent() {
+				var IconComp = Comp.Icons[this.props.options.reactIconName];
+				return React.createElement(
+					Link,
+					{ to: this.props.options.url },
+					React.createElement(IconComp, null)
+				);
+			}
+		}, {
+			key: 'renderOuterLinkContent',
+			value: function renderOuterLinkContent() {
+				var IconComp = Comp.Icons[this.props.options.reactIconName];
+				return React.createElement(
+					'a',
+					{ href: this.props.options.url },
+					React.createElement(IconComp, null)
+				);
+			}
+		}, {
+			key: 'renderFormContent',
+			value: function renderFormContent() {
+				var IconComp = Comp.Icons[this.props.options.reactIconName];
+				return React.createElement(
+					'form',
+					{ action: this.props.options.url, method: 'post' },
+					React.createElement(IconComp, null),
+					React.createElement('input', { type: 'hidden', name: this.props.options.hiddenInputKey, value: this.props.options.hiddenInputValue }),
+					React.createElement('input', { type: 'submit', value: '' })
+				);
+			}
+		}, {
+			key: 'handleClick',
+			value: function handleClick() {
+				if (this['_' + this.props.options.method] != null) {
+					this['_' + this.props.options.method]();
+				}
+			}
+
+			// Button press method.
+			// 	Expand or collapse. To be renamed.
+		}, {
+			key: '_collapse',
+			value: function _collapse(e) {
+				if (this.props.setUiState != null) {
+					this.props.setUiState({ isCollapsedMaster: !this.props.uiState.isCollapsedMaster });
+				}
+			}
+
+			// Button press method.
+		}, {
+			key: '_help',
+			value: function _help(e) {
+				if ($ == null) {
+					return;
+				}
+				$('.atl').toggleClass('atl--help');
+			}
+
+			// Button press method.
+		}, {
+			key: '_print',
+			value: function _print(e) {
+				window.print();
+			}
+		}]);
+
+		return SideBarButton;
+	})(React.Component);
+})();
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3199,118 +3187,118 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-Comp.Projects.Index = (function (_React$Component) {
-	_inherits(_class, _React$Component);
+(function () {
 
-	function _class(props) {
-		_classCallCheck(this, _class);
+	var defaultButtons = [{
+		title: 'Submit Comment',
+		contentType: 'outer-link',
+		method: 'comment',
+		url: 'mailto:atlas@newamerica.org',
+		reactIconName: 'Comment',
+		isToggleable: false
+	}];
 
-		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
-		this.state = {};
-	}
+	Comp.Projects.Index = (function (_React$Component) {
+		_inherits(_class, _React$Component);
 
-	_createClass(_class, [{
-		key: 'getSideBarData',
-		value: function getSideBarData() {
-			return [{
-				title: 'Submit Comment',
-				contentType: 'link',
-				method: 'comment',
-				url: 'mailto:atlas@newamerica.org',
-				reactIconName: 'Comment',
-				isToggleable: false
-			}];
+		function _class(props) {
+			_classCallCheck(this, _class);
+
+			_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
+			this.state = {};
 		}
-	}, {
-		key: 'render',
-		value: function render() {
-			return React.createElement(
-				'div',
-				{ className: 'atl fill-parent' },
-				React.createElement(Comp.SideBar, { buttons: this.getSideBarData() }),
-				React.createElement(
+
+		_createClass(_class, [{
+			key: 'render',
+			value: function render() {
+				return React.createElement(
 					'div',
-					{ id: 'atl__main', className: '-id-atl__main fill-parent' },
+					{ className: 'atl fill-parent' },
+					React.createElement(Comp.SideBar, { buttons: defaultButtons }),
 					React.createElement(
 						'div',
-						{ className: 'atl__main' },
+						{ id: 'atl__main', className: '-id-atl__main fill-parent' },
 						React.createElement(
 							'div',
-							{ className: 'atl__nav bg-c-off-white' },
+							{ className: 'atl__main' },
 							React.createElement(
-								'h1',
-								{ className: 'title title--compact' },
-								'Explore Atlas'
+								'div',
+								{ className: 'atl__nav bg-c-off-white' },
+								React.createElement(
+									'h1',
+									{ className: 'title title--compact' },
+									'Explore Atlas'
+								),
+								React.createElement(Comp.Projects.Index.ProjectTemplates, {
+									App: this.props.App,
+									projectTemplates: this.state.projectTemplates,
+									updateProjectsIndex: this.forceUpdate.bind(this)
+								}),
+								React.createElement(Comp.Projects.Index.ProjectSections, {
+									App: this.props.App,
+									projectSections: this.state.projectSections,
+									updateProjectsIndex: this.forceUpdate.bind(this)
+								})
 							),
-							React.createElement(Comp.Projects.Index.ProjectTemplates, {
+							React.createElement(Comp.Projects.Index.Projects, {
 								App: this.props.App,
+								projects: this.state.projects,
 								projectTemplates: this.state.projectTemplates,
-								updateProjectsIndex: this.forceUpdate.bind(this)
-							}),
-							React.createElement(Comp.Projects.Index.ProjectSections, {
-								App: this.props.App,
 								projectSections: this.state.projectSections,
 								updateProjectsIndex: this.forceUpdate.bind(this)
 							})
-						),
-						React.createElement(Comp.Projects.Index.Projects, {
-							App: this.props.App,
-							projects: this.state.projects,
-							projectTemplates: this.state.projectTemplates,
-							projectSections: this.state.projectSections,
-							updateProjectsIndex: this.forceUpdate.bind(this)
-						})
+						)
 					)
-				)
-			);
-		}
-	}, {
-		key: 'componentDidMount',
-		value: function componentDidMount() {
-			this.fetchProjects();
-			this.fetchProjectSections();
-			this.fetchProjectTemplates();
-		}
-	}, {
-		key: 'fetchProjects',
-		value: function fetchProjects() {
-			var _this = this;
+				);
+			}
+		}, {
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+				this.fetchProjects();
+				this.fetchProjectSections();
+				this.fetchProjectTemplates();
+			}
+		}, {
+			key: 'fetchProjects',
+			value: function fetchProjects() {
+				var _this = this;
 
-			var coll = new M.project.Collection();
-			coll.getClientFetchPromise().then(function (coll) {
-				_this.setState({ projects: coll });
-			});
-		}
-	}, {
-		key: 'fetchProjectSections',
-		value: function fetchProjectSections() {
-			var _this2 = this;
+				var coll = new M.project.Collection();
+				coll.getClientFetchPromise().then(function (coll) {
+					_this.setState({ projects: coll });
+				});
+			}
+		}, {
+			key: 'fetchProjectSections',
+			value: function fetchProjectSections() {
+				var _this2 = this;
 
-			var coll = new M.projectSection.Collection();
-			coll.getClientFetchPromise().then(function (coll) {
-				coll.initializeActiveStates();
-				_this2.setState({ projectSections: coll });
-			});
-		}
-	}, {
-		key: 'fetchProjectTemplates',
-		value: function fetchProjectTemplates() {
-			var _this3 = this;
+				var coll = new M.projectSection.Collection();
+				coll.getClientFetchPromise().then(function (coll) {
+					coll.initializeActiveStates();
+					_this2.setState({ projectSections: coll });
+				});
+			}
+		}, {
+			key: 'fetchProjectTemplates',
+			value: function fetchProjectTemplates() {
+				var _this3 = this;
 
-			var coll = new M.projectTemplate.Collection();
-			coll.getClientFetchPromise().then(function (coll) {
-				coll.initializeActiveStates();
-				_this3.setState({ projectTemplates: coll });
-			});
-		}
-	}]);
+				var coll = new M.projectTemplate.Collection();
+				coll.getClientFetchPromise().then(function (coll) {
+					coll.initializeActiveStates();
+					_this3.setState({ projectTemplates: coll });
+				});
+			}
+		}]);
 
-	return _class;
-})(React.Component);
+		return _class;
+	})(React.Component);
 
-Comp.Projects.Index.contextTypes = {
-	router: React.PropTypes.func
-};
+	Comp.Projects.Index.contextTypes = {
+		router: React.PropTypes.func
+	};
+})();
 "use strict";
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -3916,185 +3904,230 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-Comp.Projects.Show = (function (_React$Component) {
-	_inherits(_class, _React$Component);
+(function () {
 
-	function _class(props) {
-		_classCallCheck(this, _class);
-
-		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
-		this.state = {
-			ui: {
-				currentSpecifier: '2012', // if time-dependent data is visualized, this field holds the active specifier, such as the year
-				display: 'filter', // display type, e.g. filter or search
-				itemsDisplayMode: 'map',
-				isCollapsed: false, // depends on screen size
-				isCollapsedMaster: false, // master toggle
-				isInfoBoxActive: false, // stores whether the info box is active
-				isInfoBoxNarrow: false // stores whether the info box is narrow
-			}
-		};
-	}
-
-	// This is a method passed down to all deep children so they can modify the state of the ui.
-
-	_createClass(_class, [{
-		key: 'setUiState',
-		value: function setUiState(uiStateChanges) {
-			var currentUiState = this.state.ui;
-			for (var key in uiStateChanges) {
-				currentUiState[key] = uiStateChanges[key];
-			}
-			this.forceUpdate();
-		}
+	var defaultButtons = [{
+		title: 'Explore Atlas',
+		contentType: 'inner-link',
+		url: '/menu',
+		method: 'projects',
+		reactIconName: 'Grid',
+		isToggleable: false
 	}, {
-		key: 'render',
-		value: function render() {
-			return React.createElement(
-				'div',
-				{ className: this.getClassName() },
-				React.createElement(Comp.SideBar, { App: this.props.App, project: this.state.project, uiState: this.state.ui, setUiState: this.setUiState.bind(this) }),
-				this.renderProject()
-			);
-		}
+		title: 'Collapse/Expand',
+		contentType: 'button',
+		method: 'collapse',
+		reactIconName: 'Contract',
+		activeReactIconName: 'Expand',
+		isToggleable: false
 	}, {
-		key: 'getClassName',
-		value: function getClassName() {
+		title: 'Help',
+		contentType: 'button',
+		method: 'help',
+		reactIconName: 'Help',
+		isToggleable: false
+	}, {
+		title: 'Print',
+		contentType: 'button',
+		method: 'print',
+		reactIconName: 'Print',
+		isToggleable: false
+	}, {
+		title: 'Download Data',
+		contentType: 'form',
+		hiddenInputKey: 'atlas_url',
+		hiddenInputValue: '',
+		url: '/api/v1/projects/print',
+		method: 'download',
+		reactIconName: 'Download',
+		isToggleable: false
+	}];
 
-			var cls, project, data;
+	Comp.Projects.Show = (function (_React$Component) {
+		_inherits(_class, _React$Component);
 
-			cls = "atl";
-			project = this.state.project;
-			if (project == null) {
+		function _class(props) {
+			_classCallCheck(this, _class);
+
+			_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
+			this.state = {
+				ui: {
+					currentSpecifier: '2012', // if time-dependent data is visualized, this field holds the active specifier, such as the year
+					display: 'filter', // display type, e.g. filter or search
+					itemsDisplayMode: 'map',
+					isCollapsed: false, // depends on screen size
+					isCollapsedMaster: false, // master toggle
+					isInfoBoxActive: false, // stores whether the info box is active
+					isInfoBoxNarrow: false // stores whether the info box is narrow
+				}
+			};
+		}
+
+		// This is a method passed down to all deep children so they can modify the state of the ui.
+
+		_createClass(_class, [{
+			key: 'setUiState',
+			value: function setUiState(uiStateChanges) {
+				var currentUiState = this.state.ui;
+				for (var key in uiStateChanges) {
+					currentUiState[key] = uiStateChanges[key];
+				}
+				this.forceUpdate();
+			}
+		}, {
+			key: 'render',
+			value: function render() {
+				defaultButtons[4].hiddenInputValue = this.getAtlasUrl();
+				return React.createElement(
+					'div',
+					{ className: this.getClassName() },
+					React.createElement(Comp.SideBar, {
+						App: this.props.App,
+						project: this.state.project,
+						uiState: this.state.ui,
+						setUiState: this.setUiState.bind(this),
+						buttons: defaultButtons
+					}),
+					this.renderProject()
+				);
+			}
+		}, {
+			key: 'getClassName',
+			value: function getClassName() {
+
+				var cls, project, data;
+
+				project = this.state.project;
+				data = project != null ? project.get('data') : null;
+
+				// boolean classnames
+				cls = classNames({
+					'atl': true,
+					'atl--collapsed': this.state.ui.isCollapsedMaster || !this.state.ui.isCollapsedMaster && this.state.ui.isCollapsed,
+					'atl__info-box--active': this.state.ui.isInfoBoxActive,
+					'atl__info-box--narrow': data && data.infobox_variables.length < 2
+				});
+
+				// custom classnames
+				cls += ' atl--' + this.state.ui.display + '-display';
+				if (project != null) {
+					cls += ' atl--' + project.get('project_template_name').toLowerCase();
+				}
+
 				return cls;
 			}
 
-			cls += ' atl--' + this.state.ui.display + '-display';
-
-			var isCollapsedByDimension = this.state.ui.isCollapsed;
-			if (this.state.ui.isCollapsedMaster || !this.state.ui.isCollapsedMaster && isCollapsedByDimension) {
-				cls += ' atl--collapsed';
-			}
-
-			cls += ' atl--' + project.get('project_template_name').toLowerCase();
-
-			if (this.state.ui.isInfoBoxActive) {
-				cls += ' atl__info-box--active';
-			}
-
-			data = project.get('data');
-			if (data != null && data.infobox_variables.length < 2) {
-				cls += ' atl__info-box--narrow';
-			}
-
-			return cls;
-		}
-
-		// Pick and render template-specific project.
-	}, {
-		key: 'renderProject',
-		value: function renderProject() {
-			var LoadingComp = Comp.Loading,
-			    ExplainerComp = Comp.Projects.Show.Explainer,
-			    TilemapComp = Comp.Projects.Show.Tilemap;
-			if (this.state.project == null) {
+			// Pick and render template-specific project.
+		}, {
+			key: 'renderProject',
+			value: function renderProject() {
+				var LoadingComp = Comp.Loading,
+				    ExplainerComp = Comp.Projects.Show.Explainer,
+				    TilemapComp = Comp.Projects.Show.Tilemap;
+				if (this.state.project == null) {
+					return React.createElement(LoadingComp, null);
+				}
+				if (this._isModelStatic()) {
+					return React.createElement(ExplainerComp, {
+						App: this.props.App,
+						uiState: this.state.ui,
+						setUiState: this.setUiState.bind(this),
+						project: this.state.project,
+						related: this.state.related
+					});
+				}
+				if (this._isModelTilemap()) {
+					return React.createElement(TilemapComp, {
+						App: this.props.App,
+						uiState: this.state.ui,
+						setUiState: this.setUiState.bind(this),
+						project: this.state.project
+					});
+				}
 				return React.createElement(LoadingComp, null);
 			}
-			if (this._isModelStatic()) {
-				return React.createElement(ExplainerComp, {
-					App: this.props.App,
-					uiState: this.state.ui,
-					setUiState: this.setUiState.bind(this),
-					project: this.state.project,
-					related: this.state.related
-				});
-			}
-			if (this._isModelTilemap()) {
-				return React.createElement(TilemapComp, {
-					App: this.props.App,
-					uiState: this.state.ui,
-					setUiState: this.setUiState.bind(this),
-					project: this.state.project
-				});
-			}
-			return React.createElement(LoadingComp, null);
-		}
-	}, {
-		key: '_isModelStatic',
-		value: function _isModelStatic() {
-			var project = this.state.project;
-			if (project == null) {
-				return false;
-			}
-			return ["Explainer", "Polling", "Policy Brief", "PolicyBrief"].indexOf(project.get('project_template_name')) > -1;
-		}
-	}, {
-		key: '_isModelTilemap',
-		value: function _isModelTilemap() {
-			var project = this.state.project;
-			if (project == null) {
-				return false;
-			}
-			return project.get('project_template_name') === 'Tilemap';
-		}
-
-		// Send separate network request fetching related projects.
-	}, {
-		key: 'fetchRelatedProjects',
-		value: function fetchRelatedProjects() {
-			var _this = this;
-
-			var project;
-
-			project = this.state.project;
-
-			new M.project.Collection().getClientFetchPromise({
-				related_to: project.get('id')
-			}).then(function (coll) {
-				_this.setState({ related: coll });
-			});
-		}
-
-		// Send network request to get project data.
-	}, {
-		key: 'fetchProject',
-		value: function fetchProject() {
-			var _this2 = this;
-
-			var atlas_url = this.props.atlas_url || this.props.params.atlas_url;
-
-			new M.project.Collection().getClientFetchPromise({
-				atlas_url: atlas_url
-			}).then(function (coll) {
-				var project = coll.models[0];
-				if (project.exists()) {
-					project.prepOnClient();
-					_this2.setState({ project: project });
-					_this2.fetchRelatedProjects();
-				} else {
-					Backbone.history.navigate('welcome', { trigger: true });
+		}, {
+			key: '_isModelStatic',
+			value: function _isModelStatic() {
+				var project = this.state.project;
+				if (project == null) {
+					return false;
 				}
-			});
-		}
-	}, {
-		key: 'componentDidMount',
-		value: function componentDidMount() {
-			// View is rendered before current project is synced.
-			var App = this.props.App;
-			if (App == null) {
-				return;
+				return ["Explainer", "Polling", "Policy Brief", "PolicyBrief"].indexOf(project.get('project_template_name')) > -1;
 			}
-			this.fetchProject();
-		}
-	}, {
-		key: 'componentWillUnmount',
-		value: function componentWillUnmount() {
-			var App = this.props.App;
-		}
-	}]);
+		}, {
+			key: '_isModelTilemap',
+			value: function _isModelTilemap() {
+				var project = this.state.project;
+				if (project == null) {
+					return false;
+				}
+				return project.get('project_template_name') === 'Tilemap';
+			}
 
-	return _class;
-})(React.Component);
+			// Send separate network request fetching related projects.
+		}, {
+			key: 'fetchRelatedProjects',
+			value: function fetchRelatedProjects() {
+				var _this = this;
+
+				var project;
+
+				project = this.state.project;
+
+				new M.project.Collection().getClientFetchPromise({
+					related_to: project.get('id')
+				}).then(function (coll) {
+					_this.setState({ related: coll });
+				});
+			}
+
+			// Send network request to get project data.
+		}, {
+			key: 'fetchProject',
+			value: function fetchProject() {
+				var _this2 = this;
+
+				var atlas_url = this.getAtlasUrl();
+
+				new M.project.Collection().getClientFetchPromise({
+					atlas_url: atlas_url
+				}).then(function (coll) {
+					var project = coll.models[0];
+					if (project.exists()) {
+						project.prepOnClient();
+						_this2.setState({ project: project });
+						_this2.fetchRelatedProjects();
+					} else {
+						Backbone.history.navigate('welcome', { trigger: true });
+					}
+				});
+			}
+		}, {
+			key: 'getAtlasUrl',
+			value: function getAtlasUrl() {
+				return this.props.atlas_url || this.props.params.atlas_url;
+			}
+		}, {
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+				// View is rendered before current project is synced.
+				var App = this.props.App;
+				if (App == null) {
+					return;
+				}
+				this.fetchProject();
+			}
+		}, {
+			key: 'componentWillUnmount',
+			value: function componentWillUnmount() {
+				var App = this.props.App;
+			}
+		}]);
+
+		return _class;
+	})(React.Component);
+})();
 'use strict';
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -5231,7 +5264,7 @@ Comp.Projects.Show.Tilemap.SettingsBar = (function (_React$Component) {
 	}, {
 		key: 'checkOverflow',
 		value: function checkOverflow() {
-			console.log('checking overflow');
+			// console.log('checking overflow');
 			var totalHeight,
 			    isCollapsed,
 			    App = this.props.App;
@@ -5733,7 +5766,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== 'function' 
 			value: function render() {
 				return React.createElement(
 					'div',
-					{ className: 'wrapper ' },
+					{ className: 'wrapper' },
 					React.createElement(Setup, this.props),
 					React.createElement(Header, this.props),
 					React.createElement(RouteHandler, this.props)

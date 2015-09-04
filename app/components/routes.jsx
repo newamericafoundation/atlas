@@ -14,7 +14,7 @@ class Layout extends React.Component {
 
 	render() {
 		return (
-			<div className='wrapper '>
+			<div className='wrapper'>
 				<Setup {...this.props} />
 				<Header {...this.props} />
 				<RouteHandler {...this.props} />
