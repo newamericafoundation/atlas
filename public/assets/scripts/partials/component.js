@@ -447,7 +447,6 @@ Comp.Setup.Pattern = React.createClass({
 
 Comp.SideBar = React.createClass({
   displayName: 'SideBar',
-  mixins: [Comp.Mixins.BackboneEvents],
   render: function() {
     var cls;
     cls = this.state['isActive'] ? 'atl__side-bar atl__side-bar--active' : 'atl__side-bar';
@@ -490,6 +489,7 @@ Comp.SideBar = React.createClass({
         }, {
           title: 'Download Data',
           contentType: 'form',
+          url: '/api/v1/projects/print',
           method: 'download',
           reactIconName: 'Download',
           isToggleable: false
@@ -520,33 +520,53 @@ Comp.SideBar = React.createClass({
       "className": "atl__side-bar__icon",
       "onMouseEnter": this.onButtonMouseEnter.bind(this, options),
       "onMouseLeave": this.onButtonMouseLeave.bind(this, options),
-      "onClick": this['_' + options.method],
+      "onClick": this.handleClick.bind(this, options),
       "key": 'button-' + i
     }, this.renderButtonContent(options, i));
   },
   renderButtonContent: function(options, i) {
-    var IconComp, atlas_url;
-    IconComp = Comp.Icons[options.reactIconName];
-    if (options.method === 'download') {
-      atlas_url = this._getAtlasUrl();
-      return React.createElement("form", {
-        "action": '/api/v1/projects/print',
-        "method": 'post'
-      }, React.createElement(IconComp, null), React.createElement("input", {
-        "type": "hidden",
-        "name": "atlas_url",
-        "value": atlas_url
-      }), React.createElement("input", {
-        "type": "submit",
-        "value": ""
-      }));
-    } else if (options.method === 'comment') {
-      return React.createElement("a", {
-        "href": 'mailto:atlas@newamerica.org'
-      }, React.createElement(IconComp, null));
-    } else {
-      return React.createElement("div", null, React.createElement(IconComp, null));
+    var contentType;
+    contentType = options.contentType;
+    if (contentType === 'form') {
+      return this.renderButtonFormContent(options);
     }
+    if (contentType === 'link') {
+      return this.renderButtonLinkContent(options);
+    }
+    return this.renderButtonDefaultContent(options);
+  },
+  renderButtonDefaultContent: function(options) {
+    var IconComp;
+    IconComp = Comp.Icons[options.reactIconName];
+    return React.createElement("div", null, React.createElement(IconComp, null));
+  },
+  handleClick: function(options) {
+    if (this['_' + options.method] != null) {
+      return this['_' + options.method]();
+    }
+  },
+  renderButtonLinkContent: function(options) {
+    var IconComp;
+    IconComp = Comp.Icons[options.reactIconName];
+    return React.createElement("a", {
+      "href": options.url
+    }, React.createElement(IconComp, null));
+  },
+  renderButtonFormContent: function(options) {
+    var IconComp, atlas_url;
+    atlas_url = this._getAtlasUrl();
+    IconComp = Comp.Icons[options.reactIconName];
+    return React.createElement("form", {
+      "action": options.url,
+      "method": 'post'
+    }, React.createElement(IconComp, null), React.createElement("input", {
+      "type": "hidden",
+      "name": "atlas_url",
+      "value": atlas_url
+    }), React.createElement("input", {
+      "type": "submit",
+      "value": ""
+    }));
   },
   onButtonMouseEnter: function(options) {
     return this.setState({
@@ -565,7 +585,6 @@ Comp.SideBar = React.createClass({
       return atlas_url = project.get('atlas_url');
     }
   },
-  _projects: function() {},
   _edit: function() {
     var App, project, url;
     App = this.props.App;
@@ -591,9 +610,6 @@ Comp.SideBar = React.createClass({
   },
   _print: function() {
     return window.print();
-  },
-  _download: function() {
-    return 'keep default action';
   }
 });
 
@@ -611,6 +627,27 @@ Comp.SideBar.Button = React.createClass({
     if (this.props.contentType) {
       return 1;
     }
+  },
+  renderButtonContent: function() {
+    return React.createElement("div", null, React.createElement(IconComp, null));
+  },
+  renderFormContent: function() {
+    return React.createElement("form", {
+      "action": '/api/v1/projects/print',
+      "method": 'post'
+    }, React.createElement(IconComp, null), React.createElement("input", {
+      "type": "hidden",
+      "name": "atlas_url",
+      "value": "atlas_url"
+    }), React.createElement("input", {
+      "type": "submit",
+      "value": ""
+    }));
+  },
+  renderLinkContent: function() {
+    return React.createElement("a", {
+      "href": 'mailto:atlas@newamerica.org'
+    }, React.createElement(IconComp, null));
   }
 });
 
@@ -3173,12 +3210,24 @@ Comp.Projects.Index = (function (_React$Component) {
 	}
 
 	_createClass(_class, [{
+		key: 'getSideBarData',
+		value: function getSideBarData() {
+			return [{
+				title: 'Submit Comment',
+				contentType: 'link',
+				method: 'comment',
+				url: 'mailto:atlas@newamerica.org',
+				reactIconName: 'Comment',
+				isToggleable: false
+			}];
+		}
+	}, {
 		key: 'render',
 		value: function render() {
 			return React.createElement(
 				'div',
 				{ className: 'atl fill-parent' },
-				React.createElement(Comp.SideBar, { buttons: [{ title: 'Submit Comment', method: 'comment', reactIconName: 'Comment', isToggleable: false }] }),
+				React.createElement(Comp.SideBar, { buttons: this.getSideBarData() }),
 				React.createElement(
 					'div',
 					{ id: 'atl__main', className: '-id-atl__main fill-parent' },

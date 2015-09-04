@@ -2,8 +2,6 @@ Comp.SideBar = React.createClass
 
 	displayName: 'SideBar'
 
-	mixins: [ Comp.Mixins.BackboneEvents ]
-
 	render: ->
 		cls = if this.state['isActive'] then 'atl__side-bar atl__side-bar--active' else 'atl__side-bar'
 		return (
@@ -22,7 +20,7 @@ Comp.SideBar = React.createClass
 					method: 'projects', 
 					reactIconName: 'Grid', 
 					isToggleable: false 
-				}
+				},
 				{ 
 					title: 'Collapse/Expand',
 					contentType: 'button',
@@ -30,24 +28,25 @@ Comp.SideBar = React.createClass
 					reactIconName: 'Contract', 
 					activeReactIconName: 'Expand', 
 					isToggleable: false 
-				}
+				},
 				{ 
 					title: 'Help',
 					contentType: 'button'
 					method: 'help', 
 					reactIconName: 'Help', 
 					isToggleable: false 
-				}
+				},
 				{ 
 					title: 'Print',
-					contentType: 'button'
+					contentType: 'button',
 					method: 'print', 
 					reactIconName: 'Print', 
 					isToggleable: false 
-				}
+				},
 				{ 
 					title: 'Download Data',
 					contentType: 'form',
+					url: '/api/v1/projects/print',
 					method: 'download',
 					reactIconName: 'Download',
 					isToggleable: false
@@ -68,32 +67,56 @@ Comp.SideBar = React.createClass
 				{list}
 			</ul>
 		);
-		
 
 	renderButton: (options, i) ->
-		<li className="atl__side-bar__icon" onMouseEnter={ @onButtonMouseEnter.bind(@, options) } onMouseLeave={ @onButtonMouseLeave.bind(@, options) } onClick={ @[ '_' + options.method ] } key={'button-'+i}>
+		<li 
+			className="atl__side-bar__icon" 
+			onMouseEnter={ @onButtonMouseEnter.bind(@, options) } 
+			onMouseLeave={ @onButtonMouseLeave.bind(@, options) } 
+			onClick={ this.handleClick.bind(this, options) } 
+			key={'button-'+i}
+		>
 			{ @renderButtonContent(options, i) }
 		</li>
 		
 	renderButtonContent: (options, i) ->
-		# custom form button for download case
+		contentType = options.contentType
+		if contentType is 'form'
+			return @renderButtonFormContent(options)
+		if contentType is 'link'
+			return @renderButtonLinkContent(options)
+		return @renderButtonDefaultContent(options)
+
+	renderButtonDefaultContent: (options) ->
 		IconComp = Comp.Icons[options.reactIconName]
-		if options.method is 'download'
-			atlas_url = @_getAtlasUrl()
-			return <form action='/api/v1/projects/print' method='post'> 
+		return (
+			<div>
+				<IconComp />
+			</div>
+		)
+
+	handleClick: (options) ->
+		if @[ '_' + options.method ]?
+			@[ '_' + options.method ]()
+
+	renderButtonLinkContent: (options) ->
+		IconComp = Comp.Icons[options.reactIconName]
+		return (
+			<a href={ options.url }>
+				<IconComp />
+			</a>
+		)
+
+	renderButtonFormContent: (options) ->
+		atlas_url = @_getAtlasUrl()
+		IconComp = Comp.Icons[options.reactIconName]
+		return ( 
+			<form action={ options.url } method='post'> 
 				<IconComp />
 				<input type="hidden" name="atlas_url" value={ atlas_url } />
 				<input type="submit" value="" />
 			</form>
-		# regular case
-		else if options.method is 'comment'
-			return <a href='mailto:atlas@newamerica.org'>
-					<IconComp />
-				</a>
-		else
-			return <div>
-					<IconComp />
-				</div>
+		)
 
 	onButtonMouseEnter: (options) ->
 		this.setState({ hoveredButtonTitle: options.title })
@@ -106,10 +129,6 @@ Comp.SideBar = React.createClass
 		project = this.props.project
 		if project?
 			atlas_url = project.get 'atlas_url'
-
-	# Button press method.
-	_projects: ->
-		# Backbone.history.navigate 'menu', { trigger: true } if Backbone?
 
 	# Button press method.
 	_edit: ->
@@ -135,10 +154,6 @@ Comp.SideBar = React.createClass
 	_print: ->
 		window.print()
 
-	# Button press method.
-	_download: ->
-		'keep default action'
-
 
 
 # TODO - refactor button logic here, including tracking of active states.
@@ -153,19 +168,19 @@ Comp.SideBar.Button = React.createClass
 		if (this.props.contentType)
 			return 1
 
-	# renderButtonContent: ->
-	# 	<div>
-	# 		<IconComp />
-	# 	</div>
+	renderButtonContent: ->
+		<div>
+			<IconComp />
+		</div>
 
-	# renderFormContent: ->
-	# 	<form action='/api/v1/projects/print' method='post'> 
-	# 		<IconComp />
-	# 		<input type="hidden" name="atlas_url" value="atlas_url" />
-	# 		<input type="submit" value="" />
-	# 	</form>
+	renderFormContent: ->
+		<form action='/api/v1/projects/print' method='post'> 
+			<IconComp />
+			<input type="hidden" name="atlas_url" value="atlas_url" />
+			<input type="submit" value="" />
+		</form>
 
-	# renderLinkContent: ->
-	# 	<a href='mailto:atlas@newamerica.org'>
-	# 		<IconComp />
-	# 	</a>
+	renderLinkContent: ->
+		<a href='mailto:atlas@newamerica.org'>
+			<IconComp />
+		</a>

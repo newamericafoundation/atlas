@@ -5,10 +5,23 @@ Comp.Projects.Index = class extends React.Component {
 		this.state = {};
 	}
 
+	getSideBarData() {
+		return [
+			{
+				title: 'Submit Comment',
+				contentType: 'link',
+				method: 'comment',
+				url: 'mailto:atlas@newamerica.org',
+				reactIconName: 'Comment', 
+				isToggleable: false 
+			}
+		];
+	}
+
 	render() {
 		return (
 			<div className="atl fill-parent">
-				<Comp.SideBar buttons={[{title: 'Submit Comment', method: 'comment', reactIconName: 'Comment', isToggleable: false }]} />
+				<Comp.SideBar buttons={ this.getSideBarData() } />
 				<div id="atl__main" className="-id-atl__main fill-parent">
 					<div className="atl__main">
 						<div className="atl__nav bg-c-off-white">
