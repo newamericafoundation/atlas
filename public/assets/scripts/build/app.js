@@ -74808,11 +74808,14 @@ var Model = Backbone.Model.extend({
 	/**
   * Set table of contents for html data under a given key.
   * @param {string} key
+  * @param {string} saveKey - Key under which the modified html snippet is placed.
   * @returns {object} this
   */
-	setHtmlToc: function setHtmlToc(key) {
+	setHtmlToc: function setHtmlToc(key, saveKey) {
 
 		var html, $containedHtml, arr;
+
+		saveKey = saveKey || key;
 
 		html = this.get(key);
 		if (html == null) {
@@ -74845,8 +74848,8 @@ var Model = Backbone.Model.extend({
 			}
 		});
 
-		this.set(key, $containedHtml.html());
-		this.set(key + '_toc', arr);
+		this.set(saveKey, $containedHtml.html());
+		this.set(saveKey + '_toc', arr);
 	}
 
 });
@@ -83356,9 +83359,8 @@ Comp.Projects.Show = (function (_React$Component) {
 	_createClass(_class, [{
 		key: 'setUiState',
 		value: function setUiState(uiStateChanges) {
-			var key,
-			    currentUiState = this.state.ui;
-			for (key in uiStateChanges) {
+			var currentUiState = this.state.ui;
+			for (var key in uiStateChanges) {
 				currentUiState[key] = uiStateChanges[key];
 			}
 			this.forceUpdate();
@@ -83460,11 +83462,13 @@ Comp.Projects.Show = (function (_React$Component) {
 		value: function fetchRelatedProjects() {
 			var _this = this;
 
-			var project = this.state.project;
+			var project;
 
-			var coll = new M.project.Collection();
-			var promise = coll.getClientFetchPromise({ related_to: project.get('id') });
-			promise.then(function (coll) {
+			project = this.state.project;
+
+			new M.project.Collection().getClientFetchPromise({
+				related_to: project.get('id')
+			}).then(function (coll) {
 				_this.setState({ related: coll });
 			});
 		}
@@ -83477,10 +83481,9 @@ Comp.Projects.Show = (function (_React$Component) {
 
 			var atlas_url = this.props.atlas_url || this.props.params.atlas_url;
 
-			var coll = new M.project.Collection();
-			var promise = coll.getClientFetchPromise({ atlas_url: atlas_url });
-			promise.then(function (coll) {
-				console.log(coll);
+			new M.project.Collection().getClientFetchPromise({
+				atlas_url: atlas_url
+			}).then(function (coll) {
 				var project = coll.models[0];
 				if (project.exists()) {
 					project.prepOnClient();
@@ -83534,25 +83537,27 @@ Comp.Projects.Show.Tilemap = (function (_React$Component) {
 	_createClass(_class, [{
 		key: 'render',
 		value: function render() {
+			var T = Comp.Projects.Show.Tilemap;
 			return React.createElement(
 				'div',
 				{ className: 'atl__main fill-parent' },
 				this.renderItems(),
-				React.createElement(Comp.Projects.Show.Tilemap.Map, this.props),
-				React.createElement(Comp.Projects.Show.Tilemap.TopBar, this.props),
-				React.createElement(Comp.Projects.Show.Tilemap.SettingsBar, this.props),
-				React.createElement(Comp.Projects.Show.Tilemap.Popup, this.props),
-				React.createElement(Comp.Projects.Show.Tilemap.InfoBox, _extends({}, this.props, { activeItem: this.getActiveItem() })),
+				React.createElement(T.Map, this.props),
+				React.createElement(T.TopBar, this.props),
+				React.createElement(T.SettingsBar, this.props),
+				React.createElement(T.Popup, this.props),
+				React.createElement(T.InfoBox, _extends({}, this.props, { activeItem: this.getActiveItem() })),
 				this.renderBaseLayer()
 			);
 		}
 	}, {
 		key: 'renderItems',
 		value: function renderItems() {
+			var T = Comp.Projects.Show.Tilemap;
 			if (this.props.uiState.itemsDisplayMode === 'map') {
-				return React.createElement(Comp.Projects.Show.Tilemap.Map, this.props);
+				return React.createElement(T.Map, this.props);
 			} else {
-				return React.createElement(Comp.Projects.Show.Tilemap.List, this.props);
+				return React.createElement(T.List, this.props);
 			}
 		}
 	}, {
@@ -83565,11 +83570,6 @@ Comp.Projects.Show.Tilemap = (function (_React$Component) {
 		key: 'getActiveItem',
 		value: function getActiveItem() {
 			return this.props.project.get('data').items.active;
-		}
-	}, {
-		key: 'componentWillUpdate',
-		value: function componentWillUpdate() {
-			// console.log('updating Tilemap');
 		}
 	}, {
 		key: 'componentWillMount',
@@ -84381,11 +84381,6 @@ Comp.Projects.Show.Tilemap.Map = (function (_React$Component) {
 			App.Map.stop();
 		}
 	}, {
-		key: "componentWillUpdate",
-		value: function componentWillUpdate() {
-			// console.log('Updating Tilemap.Map');
-		}
-	}, {
 		key: "componentDidUpdate",
 		value: function componentDidUpdate() {
 
@@ -84697,179 +84692,172 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-(function () {})();
+(function () {
 
-Comp.Projects.Show.Tilemap.TopBar = (function (_React$Component) {
-	_inherits(_class, _React$Component);
+	Comp.Projects.Show.Tilemap.TopBar = (function (_React$Component) {
+		_inherits(_class, _React$Component);
 
-	function _class() {
-		_classCallCheck(this, _class);
+		function _class() {
+			_classCallCheck(this, _class);
 
-		_get(Object.getPrototypeOf(_class.prototype), "constructor", this).apply(this, arguments);
-	}
+			_get(Object.getPrototypeOf(_class.prototype), "constructor", this).apply(this, arguments);
+		}
 
-	_createClass(_class, [{
-		key: "render",
-		value: function render() {
-			var IconsComp = Comp.Projects.Show.Tilemap.TopBarIcons;
-			return React.createElement(
-				"div",
-				{ className: "atl__top-bar" },
-				React.createElement(
+		_createClass(_class, [{
+			key: "render",
+			value: function render() {
+				return React.createElement(
 					"div",
-					{ className: "atl__top-bar__content" },
-					React.createElement(IconsComp, this.props),
-					this.renderTimeline(),
+					{ className: "atl__top-bar" },
 					React.createElement(
 						"div",
-						{ className: "atl__top-bar__summary" },
+						{ className: "atl__top-bar__content" },
+						React.createElement(TopBarIcons, this.props),
+						this.renderTimeline(),
 						React.createElement(
 							"div",
-							null,
-							this.getName()
+							{ className: "atl__top-bar__summary" },
+							React.createElement(
+								"div",
+								null,
+								this.getName()
+							)
 						)
 					)
-				)
-			);
-		}
-	}, {
-		key: "renderTimeline",
-		value: function renderTimeline() {
-			return;
-			var SliderComp = Comp.Slider;
-			return React.createElement(
-				"div",
-				{ className: "atl__top-bar__timeline" },
-				React.createElement(SliderComp, _extends({}, this.props, { values: ['2003', '2004', '2005', '2006'] }))
-			);
-		}
-	}, {
-		key: "getName",
-		value: function getName() {
-			var hoveredItem = this.getHoveredItem();
-			if (hoveredItem == null) {
+				);
+			}
+		}, {
+			key: "renderTimeline",
+			value: function renderTimeline() {
 				return;
+				var SliderComp = Comp.Slider;
+				return React.createElement(
+					"div",
+					{ className: "atl__top-bar__timeline" },
+					React.createElement(SliderComp, _extends({}, this.props, { values: ['2003', '2004', '2005', '2006'] }))
+				);
 			}
-			return hoveredItem.get('name');
-		}
-	}, {
-		key: "getHoveredItem",
-		value: function getHoveredItem() {
-			return this.props.project.get('data').items.hovered;
-		}
-	}, {
-		key: "getBackgroundColorClass",
-		value: function getBackgroundColorClass() {
-			var App, filter, hoveredItem, indeces, cls;
-			App = this.props.App;
-			filter = this.props.project.get('data').filter;
-			hoveredItem = this.getHoveredItem();
-			indeces = filter.getFriendlyIndeces(hoveredItem, 15);
-			cls = "bg-c-" + indeces[0];
-			return cls;
-		}
-	}]);
-
-	return _class;
-})(React.Component);
-
-Comp.Projects.Show.Tilemap.TopBarIcons = (function (_React$Component2) {
-	_inherits(_class2, _React$Component2);
-
-	function _class2() {
-		_classCallCheck(this, _class2);
-
-		_get(Object.getPrototypeOf(_class2.prototype), "constructor", this).apply(this, arguments);
-	}
-
-	_createClass(_class2, [{
-		key: "render",
-		value: function render() {
-			return React.createElement(
-				"div",
-				{ className: "atl__top-bar__icons" },
-				React.createElement(
-					"ul",
-					{ className: "icons" },
-					this.renderIcons()
-				)
-			);
-		}
-	}, {
-		key: "getIconData",
-		value: function getIconData() {
-			return [{
-				id: 'map',
-				reactIconName: 'List'
-			}, {
-				id: 'list',
-				reactIconName: 'List'
-			}, {
-				id: 'graph',
-				reactIconName: 'Graph'
-			}, {
-				id: 'info',
-				reactIconName: 'Dictionary'
-			}];
-		}
-	}, {
-		key: "renderIcons",
-		value: function renderIcons() {
-			var _this = this;
-
-			var IconComp = Comp.Projects.Show.Tilemap.TopBarIcon;
-			return this.getIconData().map(function (icon) {
-				return React.createElement(IconComp, _extends({}, _this.props, { icon: icon }));
-			});
-		}
-	}]);
-
-	return _class2;
-})(React.Component);
-
-Comp.Projects.Show.Tilemap.TopBarIcon = (function (_React$Component3) {
-	_inherits(_class3, _React$Component3);
-
-	function _class3() {
-		_classCallCheck(this, _class3);
-
-		_get(Object.getPrototypeOf(_class3.prototype), "constructor", this).apply(this, arguments);
-	}
-
-	_createClass(_class3, [{
-		key: "render",
-		value: function render() {
-			var Icon = Comp.Icons[this.props.icon.reactIconName];
-			return React.createElement(
-				"li",
-				{ className: 'icons__icon ' + this.getModifierClass(), onClick: this.changeGlobalItemsDisplayMode.bind(this) },
-				React.createElement(Icon, null)
-			);
-		}
-	}, {
-		key: "changeGlobalItemsDisplayMode",
-		value: function changeGlobalItemsDisplayMode() {
-			this.props.setUiState({
-				itemsDisplayMode: this.props.icon.id
-			});
-		}
-	}, {
-		key: "getModifierClass",
-		value: function getModifierClass() {
-			if (this.isActive()) {
-				return 'icons__icon--active';
+		}, {
+			key: "getName",
+			value: function getName() {
+				var hoveredItem = this.getHoveredItem();
+				if (hoveredItem == null) {
+					return;
+				}
+				return hoveredItem.get('name');
 			}
-			return '';
-		}
-	}, {
-		key: "isActive",
-		value: function isActive() {
-			return this.props.uiState.itemsDisplayMode === this.props.icon.id;
-		}
-	}]);
+		}, {
+			key: "getHoveredItem",
+			value: function getHoveredItem() {
+				return this.props.project.get('data').items.hovered;
+			}
+		}, {
+			key: "getBackgroundColorClass",
+			value: function getBackgroundColorClass() {
+				var App, filter, hoveredItem, indeces, cls;
+				App = this.props.App;
+				filter = this.props.project.get('data').filter;
+				hoveredItem = this.getHoveredItem();
+				indeces = filter.getFriendlyIndeces(hoveredItem, 15);
+				cls = "bg-c-" + indeces[0];
+				return cls;
+			}
+		}]);
 
-	return _class3;
-})(React.Component);
+		return _class;
+	})(React.Component);
+
+	var TopBarIcons = (function (_React$Component2) {
+		_inherits(TopBarIcons, _React$Component2);
+
+		function TopBarIcons() {
+			_classCallCheck(this, TopBarIcons);
+
+			_get(Object.getPrototypeOf(TopBarIcons.prototype), "constructor", this).apply(this, arguments);
+		}
+
+		_createClass(TopBarIcons, [{
+			key: "render",
+			value: function render() {
+				return React.createElement(
+					"div",
+					{ className: "atl__top-bar__icons" },
+					React.createElement(
+						"ul",
+						{ className: "icons" },
+						this.renderIcons()
+					)
+				);
+			}
+		}, {
+			key: "getIconData",
+			value: function getIconData() {
+				return [{
+					id: 'map',
+					reactIconName: 'UsMap'
+				}, {
+					id: 'info',
+					reactIconName: 'Dictionary'
+				}];
+			}
+		}, {
+			key: "renderIcons",
+			value: function renderIcons() {
+				var _this = this;
+
+				return this.getIconData().map(function (icon) {
+					return React.createElement(TopBarIcon, _extends({}, _this.props, { icon: icon }));
+				});
+			}
+		}]);
+
+		return TopBarIcons;
+	})(React.Component);
+
+	var TopBarIcon = (function (_React$Component3) {
+		_inherits(TopBarIcon, _React$Component3);
+
+		function TopBarIcon() {
+			_classCallCheck(this, TopBarIcon);
+
+			_get(Object.getPrototypeOf(TopBarIcon.prototype), "constructor", this).apply(this, arguments);
+		}
+
+		_createClass(TopBarIcon, [{
+			key: "render",
+			value: function render() {
+				var Icon = Comp.Icons[this.props.icon.reactIconName];
+				return React.createElement(
+					"li",
+					{ className: 'icons__icon ' + this.getModifierClass(), onClick: this.changeGlobalItemsDisplayMode.bind(this) },
+					React.createElement(Icon, null)
+				);
+			}
+		}, {
+			key: "changeGlobalItemsDisplayMode",
+			value: function changeGlobalItemsDisplayMode() {
+				this.props.setUiState({
+					itemsDisplayMode: this.props.icon.id
+				});
+			}
+		}, {
+			key: "getModifierClass",
+			value: function getModifierClass() {
+				if (this.isActive()) {
+					return 'icons__icon--active';
+				}
+				return '';
+			}
+		}, {
+			key: "isActive",
+			value: function isActive() {
+				return this.props.uiState.itemsDisplayMode === this.props.icon.id;
+			}
+		}]);
+
+		return TopBarIcon;
+	})(React.Component);
+})();
 Comp.Projects.Show.Explainer = React.createClass({
   displayName: 'Projects.Show.Explainer',
   render: function() {

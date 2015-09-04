@@ -4430,6 +4430,12 @@ label {
   overflow: scroll; }
   .page .feature-box {
     display: inline-block;
+    margin: 10px 15px 0px 0; }
+  .page--staff-registry .feature-box {
+    display: inline-block;
+    margin: 30px 15px 30px 0; }
+  .page .feature-box {
+    display: inline-block;
     margin: 30px 15px 30px 0; }
   .page__svg-path {
     stroke-width: 2px;
@@ -4517,6 +4523,14 @@ label {
         padding-left: 0; } }
   .page h1, .page h2, .page h3, .page h4, .page p, .page div, .page li, .page ul, .page a {
     color: #323232; }
+
+.faq {
+  margin: 40px 0; }
+  .faq .faq__question {
+    font-family: 'SimplonNorm-Bold-WebS';
+    font-size: 18px;
+    font-size: 1.125rem;
+    color: #2dbbb3; }
 
 .atl__setup {
   height: 0; }

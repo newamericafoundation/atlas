@@ -12,6 +12,17 @@
 
 	.feature-box {
 		display: inline-block;
+		margin: 10px 15px 0px 0; 
+	}
+
+	&--staff-registry .feature-box {
+	    display: inline-block;
+	    margin: 30px 15px 30px 0; 
+	}
+
+
+	.feature-box {
+		display: inline-block;
 		margin: 30px 15px 30px 0;
 	}
 

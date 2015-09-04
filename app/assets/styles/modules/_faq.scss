@@ -1,0 +1,8 @@
+.faq {
+ 	margin: 40px 0; 
+	& &__question {
+		font-family: 'SimplonNorm-Bold-WebS';
+		@include font-size(18px);
+		color: map-get($palette, naf-green); 
+	}
+}
