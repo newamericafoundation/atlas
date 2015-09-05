@@ -24,7 +24,7 @@ require('./js/bundle.js');
 
 
 // Build main application source.
-gulp.task('js-build-source', [ 'bundle-models' ], () => {
+gulp.task('js-build-source', () => {
     return gulp.src(config.source.js.source)
         .pipe(gulpIf(/[.]coffee$/, coffee()))
         .pipe(concat('source.js'))

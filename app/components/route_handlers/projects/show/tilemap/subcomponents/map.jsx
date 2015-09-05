@@ -31,7 +31,7 @@ class Map extends React.Component {
 	}
 
 	componentDidUpdate() {
-		
+		console.log('updating');
 		var App = this.props.App;
 		if (App == null) { return; }
 		if (App.Map.overlayView) {

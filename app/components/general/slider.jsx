@@ -1,4 +1,4 @@
-import React form 'react';
+import React from 'react';
 
 class Slider extends React.Component {
 

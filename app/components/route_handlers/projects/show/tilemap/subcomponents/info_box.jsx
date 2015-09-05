@@ -1,7 +1,9 @@
 import React from 'react';
 import Static from './../../../../../general/static.jsx';
 
-class InfoBox extends Comp.Static {
+import image from './../../../../../../models/image.js';
+
+class InfoBox extends Static {
 
 	constructor(props) {
 		super(props);
@@ -120,7 +122,7 @@ class InfoBox extends Comp.Static {
 		imageName = activeItem.getImageName();
 
 		if (imageName != null) {
-			coll = new M.image.Collection();
+			coll = new image.Collection();
 			promise = coll.getClientFetchPromise({ name: imageName });
 			promise.then((coll) => {
 				var img = coll.models[0];

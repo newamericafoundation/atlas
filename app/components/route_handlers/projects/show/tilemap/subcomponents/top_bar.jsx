@@ -1,5 +1,6 @@
 import React from 'react';
 import Slider from './../../../../../general/slider.jsx';
+import Icons from './../../../../../general/icons.jsx';
 
 class TopBar extends React.Component {
 
@@ -87,7 +88,7 @@ class TopBarIcons extends React.Component {
 class TopBarIcon extends React.Component {
 
 	render() {
-		var Icon = Comp.Icons[this.props.icon.reactIconName];
+		var Icon = Icons[this.props.icon.reactIconName];
 		return (
 			<li className={ 'icons__icon ' + this.getModifierClass() } onClick={this.changeGlobalItemsDisplayMode.bind(this)} >
 				<Icon />

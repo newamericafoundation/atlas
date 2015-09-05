@@ -9,7 +9,6 @@ import List from './subcomponents/list.jsx';
 class Tilemap extends React.Component {
 	
 	render() {
-		var T = Comp.Projects.Show.Tilemap;
 		return (
 			<div className='atl__main fill-parent'>
 				{ this.renderItems() }

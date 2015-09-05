@@ -2,6 +2,11 @@ import React from 'react';
 import Projects from './subcomponents/projects.jsx';
 import ProjectSections from './subcomponents/project_sections.jsx';
 import ProjectTemplates from './subcomponents/project_templates.jsx';
+import SideBar from './../../../general/side_bar.jsx';
+
+import project from './../../../../models/project.js';
+import projectSection from './../../../../models/project_section.js';
+import projectTemplate from './../../../../models/project_template.js';
 
 var defaultButtons = [
 	{
@@ -24,7 +29,7 @@ class Index extends React.Component {
 	render() {
 		return (
 			<div className="atl fill-parent">
-				<Comp.SideBar buttons={ defaultButtons } />
+				<SideBar buttons={ defaultButtons } />
 				<div id="atl__main" className="-id-atl__main fill-parent">
 					<div className="atl__main">
 						<div className="atl__nav bg-c-off-white">
@@ -60,14 +65,14 @@ class Index extends React.Component {
 	}
 
 	fetchProjects() {
-		var coll = new M.project.Collection()
+		var coll = new project.Collection()
 		coll.getClientFetchPromise().then((coll) => {
 			this.setState({ projects: coll });
 		});
 	}
 
 	fetchProjectSections() {
-		var coll = new M.projectSection.Collection()
+		var coll = new projectSection.Collection()
 		coll.getClientFetchPromise().then((coll) => {
 			coll.initializeActiveStates();
 			this.setState({ projectSections: coll });
@@ -75,7 +80,7 @@ class Index extends React.Component {
 	}
 
 	fetchProjectTemplates() {
-		var coll = new M.projectTemplate.Collection()
+		var coll = new projectTemplate.Collection()
 		coll.getClientFetchPromise().then((coll) => {
 			coll.initializeActiveStates();
 			this.setState({ projectTemplates: coll });

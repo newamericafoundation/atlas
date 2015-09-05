@@ -13,8 +13,7 @@ var browserifyArgs = {
 var globalShim = browserifyGlobalShim.configure({
     'jquery': '$',
     'underscore': '_',
-    'backbone': 'Backbone',
-    'mongodb': 'mongodb'
+    'backbone': 'Backbone'
 });
 
 var getBrowserifyBundler = (entries) => {
@@ -35,13 +34,7 @@ var writeBundle = (instance, name, dest) => {
         .pipe(gulp.dest(dest));
 };
 
-// make server-side model definitions available on the client.
-gulp.task('bundle-models', () => {
-    var bundler = getBrowserifyBundler('./app/models/__client__.js');
-    return writeBundle(bundler, '__auto__models.js', './app/assets/scripts/atlas');
-});
-
-// make server-side model definitions available on the client.
+// make server-side component definitions available on the client.
 gulp.task('bundle-components', () => {
     var bundler = getBrowserifyBundler('./app/components/routes.jsx');
     return writeBundle(bundler, 'component.js', './public/assets/scripts/partials');

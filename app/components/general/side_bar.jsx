@@ -1,4 +1,4 @@
-import React form 'react';
+import React from 'react';
 import { Link } from 'react-router';
 import Icons from './icons.jsx';
 
@@ -114,12 +114,8 @@ class SideBarButton extends React.Component {
 		);
 	}
 
-	getIconComp() {
-		return Icons[this.props.options.reactIconName];
-	}
-
 	renderFormContent() {
-		var IconComp = Comp.Icons[this.props.options.reactIconName];
+		var IconComp = this.getIconComp();
 		return ( 
 			<form action={ this.props.options.url } method='post'> 
 				<IconComp />
@@ -127,6 +123,10 @@ class SideBarButton extends React.Component {
 				<input type="submit" value="" />
 			</form>
 		);
+	}
+
+	getIconComp() {
+		return Icons[this.props.options.reactIconName];
 	}
 
 	handleClick() {

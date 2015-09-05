@@ -1,6 +1,6 @@
 import React from 'react';
 import Headline from './headline.jsx';
-import DisplayToggle form './display_toggle.jsx';
+import DisplayToggle from './display_toggle.jsx';
 import Search from './search.jsx';
 import Filter from './filter.jsx';
 

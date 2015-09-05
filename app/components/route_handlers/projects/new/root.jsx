@@ -2,6 +2,8 @@ import React from 'react';
 import Static from './../../../general/static.jsx';
 import Form from './../../../form/root.jsx';
 
+import project from './../../../../models/project.js';
+
 class New extends Static {
 
 	render() {
@@ -37,7 +39,7 @@ class New extends Static {
 	renderPageContent() {
 		return (
 			<div className="static-content">
-				<Form Model={ window.M.project.Model } />
+				<Form Model={ project.Model } />
 			</div>
 		);
 	}

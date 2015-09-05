@@ -1,4 +1,10 @@
 import React from 'react';
+import Tilemap from './tilemap/root.jsx';
+import Explainer from './explainer/root.jsx';
+import Loading from './../../../general/loading.jsx';
+import SideBar from './../../../general/side_bar.jsx';
+
+import project from './../../../../models/project.js';
 
 var defaultButtons = [
 	{ 
@@ -73,7 +79,7 @@ class Show extends React.Component {
 		defaultButtons[4].hiddenInputValue = this.getAtlasUrl();
 		return (
 			<div className={ this.getClassName() }>
-				<Comp.SideBar 
+				<SideBar 
 					App={ this.props.App } 
 					project={ this.state.project } 
 					uiState={ this.state.ui } 
@@ -110,12 +116,9 @@ class Show extends React.Component {
 
 	// Pick and render template-specific project.
 	renderProject() {
-		var LoadingComp = Comp.Loading,
-			ExplainerComp = Comp.Projects.Show.Explainer,
-			TilemapComp = Comp.Projects.Show.Tilemap;
-		if (this.state.project == null) { return <LoadingComp />; }
+		if (this.state.project == null) { return <Loading />; }
 		if (this._isModelStatic()) {
-			return <ExplainerComp 
+			return <Explainer 
 				App={this.props.App} 
 				uiState={ this.state.ui } 
 				setUiState={ this.setUiState.bind(this) } 
@@ -124,14 +127,14 @@ class Show extends React.Component {
 			/>
 		}
 		if (this._isModelTilemap()) {
-			return <TilemapComp 
+			return <Tilemap 
 				App={this.props.App} 
 				uiState={ this.state.ui } 
 				setUiState={ this.setUiState.bind(this) } 
 				project={ this.state.project } 
 			/>
 		}
-		return <LoadingComp />;
+		return <Loading />;
 	}
 
 	_isModelStatic() {
@@ -153,7 +156,7 @@ class Show extends React.Component {
 
 		project = this.state.project;
 
-		new M.project.Collection()
+		new project.Collection()
 			.getClientFetchPromise({ 
 				related_to: project.get('id') 
 			})
@@ -168,7 +171,7 @@ class Show extends React.Component {
 
 		var atlas_url = this.getAtlasUrl();
 
-		new M.project.Collection()
+		new project.Collection()
 			.getClientFetchPromise({ 
 				atlas_url: atlas_url 
 			})

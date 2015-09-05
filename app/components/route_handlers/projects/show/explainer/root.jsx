@@ -2,7 +2,7 @@ import React from 'react';
 import Static from './../../../../general/static.jsx';
 import Related from './subcomponents/related.jsx';
 
-class Explainer extends Comp.Static {
+class Explainer extends Static {
 
 	render() {
 		return (

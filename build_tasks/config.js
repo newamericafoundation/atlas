@@ -44,10 +44,8 @@ module.exports = {
 		    	'./app/assets/scripts/vendor/jquery-ui.js',
 		        './app/assets/scripts/config/**/*',
 		        './app/assets/scripts/atlas/atlas.js.coffee',
-		        './app/assets/scripts/atlas/routes/**/*',
 		        './app/assets/scripts/atlas/util/**/*.js.coffee',
-		        './app/assets/scripts/atlas/site/map/**/*.js.coffee',
-		        './app/assets/scripts/atlas/__auto__models.js'
+		        './app/assets/scripts/atlas/site/map/**/*.js.coffee'
 		    ],
 
 		    // view and controller code

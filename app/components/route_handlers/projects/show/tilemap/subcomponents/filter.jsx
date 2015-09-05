@@ -1,4 +1,6 @@
 import React from 'react';
+import Help from './../../../../../general/help.jsx';
+import Icons from './../../../../../general/icons.jsx';
 
 class Filter extends React.Component {
 
@@ -8,20 +10,19 @@ class Filter extends React.Component {
 	}
 
 	render() {
-		var HelpComp = Comp.Help;
 		return (
 			<div className='atl__filter' ref='root'>
 				<div className="atl__filter__keys">
 					<ul>
 						{ this.renderKeys() }
 					</ul>
-					<HelpComp position='right' text='Select the variable you want to filter by.' id='filter-keys' />
+					<Help position='right' text='Select the variable you want to filter by.' id='filter-keys' />
 				</div>
 				<div className="atl__filter__values">
 					<ul>
 						{ this.renderValues() }
 					</ul>
-					<HelpComp position='right' text='Select the values you want to filter out. Corresponding map colors are indicated.' id='filter-values' />
+					<Help position='right' text='Select the values you want to filter out. Corresponding map colors are indicated.' id='filter-values' />
 				</div>
 			</div>
 		);
@@ -92,7 +93,7 @@ class FilterKey extends React.Component {
 class FilterValue extends React.Component {
 
 	render() {
-		var IconComp = Comp.Icons.Hex;
+		var IconComp = Icons.Hex;
 		return (
 			<li className={ 'toggle-button ' + this.getModifierClass() } onClick={ this.toggle.bind(this) } onMouseEnter={ this.setHovered.bind(this) } onMouseLeave={ this.clearHovered.bind(this) } >
 				<IconComp className="toggle-button__icon" colorClassName={ this.getColorClass() } />

@@ -31,7 +31,7 @@ class Welcome extends React.Component {
 	}
 
 	getBackgroundImageStyle() {
-		return { 'background-image': 'url("/assets/images/iStock_000065438623_720.jpg")' }
+		return { 'backgroundImage': 'url("/assets/images/iStock_000065438623_720.jpg")' }
 	}
 
 	getRootVisibilityStyle() {
