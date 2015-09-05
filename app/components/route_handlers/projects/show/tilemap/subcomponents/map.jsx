@@ -1,4 +1,6 @@
-Comp.Projects.Show.Tilemap.Map = class extends React.Component {
+import React from 'react';
+
+class Map extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -39,3 +41,5 @@ Comp.Projects.Show.Tilemap.Map = class extends React.Component {
 	}
 
 }
+
+export default Map;

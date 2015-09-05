@@ -1,4 +1,6 @@
-Comp.Form.CKEditor = class extends React.Component {
+import React from 'react';
+
+class CKEditor extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -50,3 +52,5 @@ Comp.Form.CKEditor = class extends React.Component {
 	}
 
 }
+
+export default CKEditor;

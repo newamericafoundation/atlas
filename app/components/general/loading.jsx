@@ -1,4 +1,6 @@
-Comp.Loading = class extends React.Component {
+import React from 'react';
+
+class Loading extends React.Component {
 
 	render() {
 		return (
@@ -11,3 +13,5 @@ Comp.Loading = class extends React.Component {
 	}
 
 }
+
+export default Loading;

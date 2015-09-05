@@ -1,6 +1,6 @@
-(function(){
+import React from 'react';
 
-Comp.Header = class extends React.Component {
+class Header extends React.Component {
 
 	render() {
 		return (
@@ -64,7 +64,7 @@ Comp.Header = class extends React.Component {
 }
 
 
-Comp.Header.contextTypes = {
+Header.contextTypes = {
 	router: React.PropTypes.func
 };
 
@@ -104,5 +104,5 @@ class HeaderNavCircles extends React.Component {
 
 }
 
-}());
 
+export default Header;

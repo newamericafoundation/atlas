@@ -1,4 +1,6 @@
-Comp.Projects.Show.Tilemap.Search = class extends React.Component {
+import React from 'react';
+
+class Search extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -39,3 +41,5 @@ Comp.Projects.Show.Tilemap.Search = class extends React.Component {
 	}
 
 }
+
+export default Search;

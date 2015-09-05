@@ -1,8 +1,7 @@
-(function() {
+import React form 'react';
+import { Link } from 'react-router';
 
-var Link = ReactRouter.Link;
-
-Comp.SideBar = class extends React.Component {
+class SideBar extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -152,5 +151,4 @@ class SideBarButton extends React.Component {
 
 }
 
-}());
-
+export default SideBar;

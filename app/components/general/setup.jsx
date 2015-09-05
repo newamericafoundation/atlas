@@ -1,6 +1,6 @@
-(function(){
+import React from 'react';
 
-Comp.Setup = class extends React.Component {
+class Setup extends React.Component {
 	
 	render() {
 		return (
@@ -185,5 +185,4 @@ class Pattern extends React.Component {
 }
 
 
-}());
-
+export default Setup;

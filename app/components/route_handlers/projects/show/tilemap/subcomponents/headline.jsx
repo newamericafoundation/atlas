@@ -1,4 +1,6 @@
-Comp.Projects.Show.Tilemap.Headline = class extends React.Component {
+import React from 'react';
+
+class Headline extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -64,3 +66,5 @@ Comp.Projects.Show.Tilemap.Headline = class extends React.Component {
 	}
 
 }
+
+export default Headline;

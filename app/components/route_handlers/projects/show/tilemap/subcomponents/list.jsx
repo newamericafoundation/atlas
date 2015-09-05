@@ -1,4 +1,6 @@
-Comp.Projects.Show.Tilemap.List = class extends React.Component {
+import React from 'react';
+
+class List extends React.Component {
 
 	render() {
 		return (
@@ -19,3 +21,5 @@ Comp.Projects.Show.Tilemap.List = class extends React.Component {
 	}
 
 }
+
+export default List;

@@ -1,6 +1,6 @@
-(function() {
+import React from 'react';
 
-Comp.Projects.Show.Tilemap.Filter = class extends React.Component {
+class Filter extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -145,4 +145,5 @@ class FilterValue extends React.Component {
 
 }
 
-}());
+
+export default Filter;

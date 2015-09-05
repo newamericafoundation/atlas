@@ -1,4 +1,6 @@
-Comp.Projects.Show.Explainer.Related = class extends React.Component {
+import React from 'react';
+
+class Related extends React.Component {
 
 	render() {
 		if (this.isListEmpty()) { return (<div className="atl__related" />); }
@@ -16,10 +18,9 @@ Comp.Projects.Show.Explainer.Related = class extends React.Component {
 		var relatedItems = this.props.related;
 		if (relatedItems == null) { return; }
 		return relatedItems.map((item, i) => {
-			var Cmp = Comp.Projects.Show.Explainer.RelatedItem;
 			return (
 				<li key={'related-' + i}>
-					<Cmp relatedItem={item} />
+					<RelatedItem relatedItem={item} />
 				</li>
 			);
 		});
@@ -33,7 +34,7 @@ Comp.Projects.Show.Explainer.Related = class extends React.Component {
 
 }
 
-Comp.Projects.Show.Explainer.RelatedItem = class extends React.Component {
+class RelatedItem extends React.Component {
 
 	render() {
 		var item = this.props.relatedItem;
@@ -51,3 +52,5 @@ Comp.Projects.Show.Explainer.RelatedItem = class extends React.Component {
 	}
 
 }
+
+export default Related;

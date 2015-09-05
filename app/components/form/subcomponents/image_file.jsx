@@ -1,4 +1,6 @@
-Comp.Form.ImageFile = class extends React.Component {
+import React from 'react';
+
+class ImageFile extends React.Component {
 
 	render() {
 		return (
@@ -36,3 +38,5 @@ Comp.Form.ImageFile = class extends React.Component {
 	}
 
 }
+
+export default ImageFile;

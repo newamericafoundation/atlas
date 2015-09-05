@@ -1,6 +1,7 @@
-(function() {
+import React from 'react';
+import Slider from './../../../../../general/slider.jsx';
 
-Comp.Projects.Show.Tilemap.TopBar = class extends React.Component {
+class TopBar extends React.Component {
 
 	render() {
 		return (
@@ -18,10 +19,9 @@ Comp.Projects.Show.Tilemap.TopBar = class extends React.Component {
 
 	renderTimeline() {
 		return;
-		var SliderComp = Comp.Slider;
 		return (
 			<div className="atl__top-bar__timeline">
-				<SliderComp {...this.props} values={[ '2003', '2004', '2005', '2006' ]} />
+				<Slider {...this.props} values={[ '2003', '2004', '2005', '2006' ]} />
 			</div>
 		);
 	}
@@ -112,4 +112,5 @@ class TopBarIcon extends React.Component {
 
 }
 
-}());
+
+export default TopBar;

@@ -1,4 +1,6 @@
-Comp.Projects.Show.Tilemap.DisplayToggle = class extends React.Component {
+import React from 'react';
+
+class DisplayToggle extends React.Component {
 
 	render() {
 		return (
@@ -33,3 +35,5 @@ Comp.Projects.Show.Tilemap.DisplayToggle = class extends React.Component {
 	}
 
 }
+
+export default DisplayToggle;

@@ -1,4 +1,6 @@
-Comp.Projects.Show.Tilemap.Popup = class extends React.Component {
+import React from 'react';
+
+class Popup extends React.Component {
 
 	render() {
 		var style = this.getStyle();
@@ -64,3 +66,5 @@ Comp.Projects.Show.Tilemap.Popup = class extends React.Component {
 	}
 
 }
+
+export default Popup;

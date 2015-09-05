@@ -1,4 +1,6 @@
-Comp.Form.Text = class extends React.Component {
+import React from 'react';
+
+class Text extends React.Component {
 
 	render() {
 		return (
@@ -24,3 +26,5 @@ Comp.Form.Text = class extends React.Component {
 	}
 
 }
+
+export default Text;

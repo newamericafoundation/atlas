@@ -1,4 +1,6 @@
-Comp.Form.SpreadsheetFile = class extends React.Component {
+import React from 'react';
+
+class SpreadsheetFile extends React.Component {
 
 	render() {
 		return (
@@ -46,3 +48,5 @@ Comp.Form.SpreadsheetFile = class extends React.Component {
 	}
 
 }
+
+export default SpreadsheetFile;

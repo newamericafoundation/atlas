@@ -1,4 +1,6 @@
-Comp.Form.Radio = class extends React.Component {
+import React from 'react';
+
+class Radio extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -52,3 +54,5 @@ Comp.Form.Radio = class extends React.Component {
 	}
 
 }
+
+export default Radio;

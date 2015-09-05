@@ -1,4 +1,6 @@
-Comp.Form.SelectizeText = class extends React.Component {
+import React from 'react';
+
+class SelectizeText extends React.Component {
 
 	render() {
 		return (
@@ -40,3 +42,5 @@ Comp.Form.SelectizeText = class extends React.Component {
 	}
 
 }
+
+export default SelectizeText;

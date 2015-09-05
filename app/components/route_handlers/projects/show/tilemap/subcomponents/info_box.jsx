@@ -1,4 +1,7 @@
-Comp.Projects.Show.Tilemap.InfoBox = class extends Comp.Static {
+import React from 'react';
+import Static from './../../../../../general/static.jsx';
+
+class InfoBox extends Comp.Static {
 
 	constructor(props) {
 		super(props);
@@ -203,3 +206,5 @@ Comp.Projects.Show.Tilemap.InfoBox = class extends Comp.Static {
 	}
 
 }
+
+export default InfoBox;

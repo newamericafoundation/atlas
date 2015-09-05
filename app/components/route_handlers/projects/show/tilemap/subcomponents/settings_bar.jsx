@@ -1,4 +1,10 @@
-Comp.Projects.Show.Tilemap.SettingsBar = class extends React.Component {
+import React from 'react';
+import Headline from './headline.jsx';
+import DisplayToggle form './display_toggle.jsx';
+import Search from './search.jsx';
+import Filter from './filter.jsx';
+
+class SettingsBar extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -16,10 +22,10 @@ Comp.Projects.Show.Tilemap.SettingsBar = class extends React.Component {
 	render() {
 		return (
 			<div className='atl__settings-bar' ref='root'>
-				<Comp.Projects.Show.Tilemap.Headline {...this.props} cacheHeight={ this.cacheHeight.bind(this, 'headline') } />
-				<Comp.Projects.Show.Tilemap.DisplayToggle {...this.props} />
-				<Comp.Projects.Show.Tilemap.Search {...this.props} />
-				<Comp.Projects.Show.Tilemap.Filter {...this.props} cacheHeight={ this.cacheHeight.bind(this, 'filter') } filter={ this.getFilter() } />
+				<Headline {...this.props} cacheHeight={ this.cacheHeight.bind(this, 'headline') } />
+				<DisplayToggle {...this.props} />
+				<Search {...this.props} />
+				<Filter {...this.props} cacheHeight={ this.cacheHeight.bind(this, 'filter') } filter={ this.getFilter() } />
 			</div>
 		);
 		
@@ -63,3 +69,5 @@ Comp.Projects.Show.Tilemap.SettingsBar = class extends React.Component {
 	}
 
 }
+
+export default SettingsBar;

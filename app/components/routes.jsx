@@ -1,14 +1,13 @@
-(function() {
+import React from 'React';
+import { Router, Route, RouteHandler } from 'react-router';
 
-var Router = ReactRouter,
-	Route = ReactRouter.Route,
-	RouteHandler = ReactRouter.RouteHandler,
-	Setup = Comp.Setup,
-	Header = Comp.Header,
-	Welcome = Comp.Welcome,
-	ProjectsIndex = Comp.Projects.Index,
-	ProjectsShow = Comp.Projects.Show,
-	ProjectsNew = Comp.Projects.New;
+import Setup from './general/setup.jsx';
+import Header from './general.header.jsx';
+import Welcome from './route_handlers/welcome/root.jsx';
+
+import Index from './route_handlers/projects/index/root.jsx';
+import Show from './route_handlers/projects/show/root.jsx';
+import New from './route_handlers/projects/new/root.jsx';
 
 class Layout extends React.Component {
 
@@ -28,19 +27,17 @@ var routes = (
 	<Route handler={Layout}>
 		<Route path='' handler={Welcome} />
 		<Route path='projects'>
-			<Route path='new' handler={ProjectsNew} />
+			<Route path='new' handler={New} />
 		</Route>
 		<Route path='welcome' handler={Welcome} />
-		<Route path='menu' handler={ProjectsIndex} />
-		<Route path=':atlas_url' handler={ProjectsShow} />
+		<Route path='menu' handler={Index} />
+		<Route path=':atlas_url' handler={Show} />
 	</Route>
 );
 
-Comp.start = () => {
+export default function start() {
 	console.log('Hi, Mom!');
 	Router.run(routes, Router.HistoryLocation, (Root, state) => {
 		React.render(<Root App={Atlas} />, $('#site')[0]);
 	});
 };
-
-}());

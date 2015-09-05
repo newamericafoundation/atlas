@@ -1,6 +1,6 @@
-(function() {
+import React form 'react';
 
-Comp.Static = class extends React.Component {
+class Static extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -84,4 +84,4 @@ Comp.Static = class extends React.Component {
 
 }
 
-}());
+export default Static;

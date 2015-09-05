@@ -1,6 +1,8 @@
-(function(){
+import React from 'react';
+import Static from './../../../../general/static.jsx';
+import Related from './subcomponents/related.jsx';
 
-Comp.Projects.Show.Explainer = class extends Comp.Static {
+class Explainer extends Comp.Static {
 
 	render() {
 		return (
@@ -40,7 +42,7 @@ Comp.Projects.Show.Explainer = class extends Comp.Static {
 			<div>
 				<div className="static-content" dangerouslySetInnerHTML={{ __html: this.getBodyText() }}>
 				</div>
-				<Comp.Projects.Show.Explainer.Related related={this.props.related} />
+				<Related related={this.props.related} />
 			</div>
 		);
 	}
@@ -108,6 +110,4 @@ Comp.Projects.Show.Explainer = class extends Comp.Static {
 
 }
 
-}());
-
-
+export default Explainer;

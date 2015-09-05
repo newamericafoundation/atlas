@@ -1,15 +1,22 @@
-Comp.Projects.Show.Tilemap = class extends React.Component {
+import React from 'react';
+import Map from './subcomponents/map.jsx';
+import TopBar from './subcomponents/top_bar.jsx';
+import SettingsBar from './subcomponents/settings_bar.jsx';
+import Popup from './subcomponents/popup.jsx';
+import InfoBox from './subcomponents/info_box.jsx';
+import List from './subcomponents/list.jsx';
+
+class Tilemap extends React.Component {
 	
 	render() {
 		var T = Comp.Projects.Show.Tilemap;
 		return (
 			<div className='atl__main fill-parent'>
 				{ this.renderItems() }
-				<T.Map {...this.props} />
-				<T.TopBar {...this.props} />			
-				<T.SettingsBar {...this.props} />
-				<T.Popup {...this.props} />
-				<T.InfoBox {...this.props} activeItem={ this.getActiveItem() } />
+				<TopBar {...this.props} />			
+				<SettingsBar {...this.props} />
+				<Popup {...this.props} />
+				<InfoBox {...this.props} activeItem={ this.getActiveItem() } />
 				{ this.renderBaseLayer() }
 			</div>
 		);
@@ -17,11 +24,10 @@ Comp.Projects.Show.Tilemap = class extends React.Component {
 	}
 
 	renderItems() {
-		var T = Comp.Projects.Show.Tilemap;
 		if (this.props.uiState.itemsDisplayMode === 'map') {
-			return (<T.Map {...this.props} />);
+			return (<Map {...this.props} />);
 		} else {
-			return (<T.List {...this.props} />);
+			return (<List {...this.props} />);
 		}
 	}
 
@@ -45,3 +51,5 @@ Comp.Projects.Show.Tilemap = class extends React.Component {
 	}
 
 }
+
+export default Tilemap;

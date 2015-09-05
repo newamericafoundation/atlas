@@ -1,4 +1,6 @@
-Comp.Slider = class extends React.Component {
+import React form 'react';
+
+class Slider extends React.Component {
 
     constructor(props) {
         super(props);
@@ -25,10 +27,6 @@ Comp.Slider = class extends React.Component {
     componentDidUpdate() {
         this.setSliderValueText();
     }
-
-    // shouldComponentUpdate(nextProps, nextState) {
-    //     return (this.state.valueIndex !== nextState.valueIndex);
-    // }
 
     buildSlider() {
         var $el = $(React.findDOMNode(this.refs.root));
@@ -65,3 +63,5 @@ Comp.Slider = class extends React.Component {
     }
 
 }
+
+export default Slider;

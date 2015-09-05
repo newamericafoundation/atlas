@@ -1,4 +1,4 @@
-(function() {
+import React from 'react';
 
 var defaultButtons = [
 	{ 
@@ -43,7 +43,7 @@ var defaultButtons = [
 	}
 ];
 
-Comp.Projects.Show = class extends React.Component {
+class Show extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -202,9 +202,8 @@ Comp.Projects.Show = class extends React.Component {
 
 }
 
-Comp.Projects.Show.contextTypes = {
+Show.contextTypes = {
 	router: React.PropTypes.func
 };
 
-}());
-
+export default Show;
