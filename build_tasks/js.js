@@ -38,21 +38,13 @@ gulp.task('js-build-vendor', () => {
         .pipe(gulp.dest('public/assets/scripts/partials'));
 });
 
-// Build components.
-gulp.task('js-build-component', () => {
-    gulp.src(config.source.js.component)
-        .pipe(babel())
-        .pipe(concat('component.js'))
-        .pipe(gulp.dest('public/assets/scripts/partials'));
-});
-
 // Clean js build folder.
 gulp.task('js-clean-build', (next) => {
     del([ 'public/assets/scripts/build/**/*' ], next);
 });
 
 // Main js build task. Concatenates partial builds, compresses and gzips in production mode.
-gulp.task('js-build', [ 'js-clean-build', 'js-build-source', 'js-build-component' ], () => {
+gulp.task('js-build', [ 'js-clean-build', 'js-build-source' ], () => {
     return gulp.src([ 
             'public/assets/scripts/partials/vendor.js', 
             'public/assets/scripts/partials/source.js',

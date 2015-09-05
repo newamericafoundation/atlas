@@ -1,6 +1,7 @@
-(function() {
+import React from 'react';
+import Icons from './../../../../general/icons.jsx';
 
-Comp.Projects.Index.ProjectSections = class extends React.Component {
+class ProjectSections extends React.Component {
 
 	render() {
 		return (
@@ -14,7 +15,7 @@ Comp.Projects.Index.ProjectSections = class extends React.Component {
 		if (this.props.projectSections == null) { return; }
 		return this.props.projectSections.map((item, i) => {
 			return (
-				<ProjectSectionsItem 
+				<ProjectSection
 					{...this.props} 
 					projectSection={item} 
 					key={i}
@@ -26,13 +27,13 @@ Comp.Projects.Index.ProjectSections = class extends React.Component {
 
 }
 
-class ProjectSectionsItem extends React.Component {
+class ProjectSection extends React.Component {
 
 	render() {
 		var projectSection = this.props.projectSection;
 		return (
 			<li className={ "toggle-button toggle-button--black " + this.getModifierClass() } onClick={ this.toggleActiveState.bind(this) }>
-				<Comp.Icons.Hex className={'toggle-button__icon'} />
+				<Icons.Hex className={'toggle-button__icon'} />
 				<div className="toggle-button__text">
 					<p>{projectSection.get('name')}</p>
 				</div>
@@ -56,4 +57,4 @@ class ProjectSectionsItem extends React.Component {
 
 }
 
-}());
+export default ProjectSections;

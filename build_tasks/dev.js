@@ -16,14 +16,6 @@ var devTasks = [
     },
 
     {
-        name: 'js-build-component',
-        shouldRun: function(file) {
-            var ext = path.extname(file);
-            return ([ '.jsx', '.cjsx' ].indexOf(ext) > -1);
-        }
-    },
-
-    {
         name: 'js-build-source',
         shouldRun: function(file) {
             var ext = path.extname(file);

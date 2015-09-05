@@ -1,4 +1,7 @@
-(function(){
+import React from 'react';
+import Projects from './subcomponents/projects.jsx';
+import ProjectSections from './subcomponents/project_sections.jsx';
+import ProjectTemplates from './subcomponents/project_templates.jsx';
 
 var defaultButtons = [
 	{
@@ -11,7 +14,7 @@ var defaultButtons = [
 	}
 ];
 
-Comp.Projects.Index = class extends React.Component {
+class Index extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -26,18 +29,18 @@ Comp.Projects.Index = class extends React.Component {
 					<div className="atl__main">
 						<div className="atl__nav bg-c-off-white">
 							<h1 className="title title--compact">Explore Atlas</h1>
-							<Comp.Projects.Index.ProjectTemplates 
+							<ProjectTemplates 
 								App={this.props.App}
 								projectTemplates={this.state.projectTemplates}
 								updateProjectsIndex={this.forceUpdate.bind(this)}
 							/>
-							<Comp.Projects.Index.ProjectSections 
+							<ProjectSections 
 								App={this.props.App} 
 								projectSections={this.state.projectSections}
 								updateProjectsIndex={this.forceUpdate.bind(this)}
 							/>
 						</div>
-						<Comp.Projects.Index.Projects 
+						<Projects 
 							App={this.props.App} 
 							projects={this.state.projects} 
 							projectTemplates={this.state.projectTemplates} 
@@ -81,9 +84,8 @@ Comp.Projects.Index = class extends React.Component {
 
 }
 
-Comp.Projects.Index.contextTypes = {
+Index.contextTypes = {
 	router: React.PropTypes.func
 };
 
-}());
-
+export default Index;

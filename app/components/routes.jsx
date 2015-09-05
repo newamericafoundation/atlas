@@ -1,8 +1,9 @@
-import React from 'React';
-import { Router, Route, RouteHandler } from 'react-router';
+import React from 'react';
+import Router from 'react-router';
+import { Route, RouteHandler } from 'react-router';
 
 import Setup from './general/setup.jsx';
-import Header from './general.header.jsx';
+import Header from './general/header.jsx';
 import Welcome from './route_handlers/welcome/root.jsx';
 
 import Index from './route_handlers/projects/index/root.jsx';
@@ -35,9 +36,15 @@ var routes = (
 	</Route>
 );
 
-export default function start() {
+function start() {
 	console.log('Hi, Mom!');
 	Router.run(routes, Router.HistoryLocation, (Root, state) => {
-		React.render(<Root App={Atlas} />, $('#site')[0]);
+		React.render(<Root App={global.Atlas} />, $('#site')[0]);
 	});
 };
+
+global.Comp = {
+	start: start
+};
+
+export default start;

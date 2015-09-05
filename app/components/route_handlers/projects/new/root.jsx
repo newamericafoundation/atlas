@@ -1,4 +1,8 @@
-Comp.Projects.New = class extends Comp.Static {
+import React from 'react';
+import Static from './../../../general/static.jsx';
+import Form from './../../../form/root.jsx';
+
+class New extends Static {
 
 	render() {
 		return (
@@ -31,12 +35,13 @@ Comp.Projects.New = class extends Comp.Static {
 	}
 
 	renderPageContent() {
-		var FormComp = Comp.Form;
 		return (
 			<div className="static-content">
-				<FormComp Model={ window.M.project.Model } />
+				<Form Model={ window.M.project.Model } />
 			</div>
 		);
 	}
 
 }
+
+export default New;

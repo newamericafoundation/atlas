@@ -1,6 +1,7 @@
-(function() {
+import React from 'react';
+import Icons from './../../../../general/icons.jsx';
 
-Comp.Projects.Index.ProjectTemplates = class extends React.Component {
+class ProjectTemplates extends React.Component {
 
 	render() {
 		return (
@@ -14,7 +15,7 @@ Comp.Projects.Index.ProjectTemplates = class extends React.Component {
 		if (this.props.projectTemplates == null) { return; }
 		return this.props.projectTemplates.map((item, i) => {
 			return (
-				<ProjectTemplateItem 
+				<ProjectTemplate
 					{...this.props} 
 					projectTemplate={item} 
 					key={i} 
@@ -26,7 +27,7 @@ Comp.Projects.Index.ProjectTemplates = class extends React.Component {
 }
 
 
-class ProjectTemplateItem extends React.Component {
+class ProjectTemplate extends React.Component {
 	
 	render() {
 		var projectTemplate = this.props.projectTemplate;
@@ -67,5 +68,4 @@ class ProjectTemplateItem extends React.Component {
 
 }
 
-
-}());
+export default ProjectTemplates;

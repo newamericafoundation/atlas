@@ -27,8 +27,6 @@ module.exports = {
 		        './bower_components/underscore/underscore.js',
 		        './bower_components/backbone/backbone.js',
 		        './bower_components/marionette/lib/backbone.marionette.js',
-		        './bower_components/react/react.js',
-		        './bower_components/react-router/build/umd/ReactRouter.js',
 		        './bower_components/topojson/topojson.js',
 		        './bower_components/chartist/dist/chartist.js',
 		        './bower_components/chartist-html/build/chartist-html.js',

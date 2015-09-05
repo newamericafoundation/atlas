@@ -184,5 +184,4 @@ class Pattern extends React.Component {
 
 }
 
-
 export default Setup;

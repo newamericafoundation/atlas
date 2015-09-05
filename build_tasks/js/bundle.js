@@ -7,8 +7,7 @@ import source from 'vinyl-source-stream';
 import watchify from 'watchify';
 
 var browserifyArgs = {
-    entries: [ './app/models/__client__.js' ],
-    noParse: [ 'jquery' ].map(require.resolve)
+    entries: [ './app/models/__client__.js' ]
 };
 
 var globalShim = browserifyGlobalShim.configure({
@@ -18,8 +17,8 @@ var globalShim = browserifyGlobalShim.configure({
     'mongodb': 'mongodb'
 });
 
-var getBrowserifyBundler = () => {
-    var args = _.extend(browserifyArgs, watchify.args, { debug: true });
+var getBrowserifyBundler = (entries) => {
+    var args = _.extend({ entries: entries }, watchify.args, { debug: true });
     var b = browserify(args);
     b.transform(babelify);
     b.transform(globalShim);
@@ -30,13 +29,20 @@ var getWatchifyBundler = () => {
     return watchify(getBrowserifyBundler());
 };
 
-var writeBundle = (instance) => {
+var writeBundle = (instance, name, dest) => {
     return instance.bundle()
-        .pipe(source('__auto__models.js'))
-        .pipe(gulp.dest('./app/assets/scripts/atlas'));
+        .pipe(source(name))
+        .pipe(gulp.dest(dest));
 };
 
 // make server-side model definitions available on the client.
 gulp.task('bundle-models', () => {
-    return writeBundle(getBrowserifyBundler());
+    var bundler = getBrowserifyBundler('./app/models/__client__.js');
+    return writeBundle(bundler, '__auto__models.js', './app/assets/scripts/atlas');
+});
+
+// make server-side model definitions available on the client.
+gulp.task('bundle-components', () => {
+    var bundler = getBrowserifyBundler('./app/components/routes.jsx');
+    return writeBundle(bundler, 'component.js', './public/assets/scripts/partials');
 });

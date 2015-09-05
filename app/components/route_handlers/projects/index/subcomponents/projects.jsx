@@ -1,8 +1,7 @@
-(function(){
+import React from 'react';
+import { Link } from 'react-router';
 
-var Link = ReactRouter.Link;
-
-Comp.Projects.Index.Projects = class extends React.Component {
+class Projects extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -71,7 +70,7 @@ Comp.Projects.Index.Projects = class extends React.Component {
 
 }
 
-Comp.Projects.Index.Projects.contextTypes = {
+Projects.contextTypes = {
 	router: React.PropTypes.func
 };
 
@@ -201,5 +200,5 @@ Project.contextTypes = {
 	router: React.PropTypes.func
 };
 
-}());
 
+export default Projects;

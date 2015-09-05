@@ -1,5 +1,6 @@
 import React form 'react';
 import { Link } from 'react-router';
+import Icons from './icons.jsx';
 
 class SideBar extends React.Component {
 
@@ -87,7 +88,7 @@ class SideBarButton extends React.Component {
 	}
 
 	renderDefaultContent() {
-		var IconComp = Comp.Icons[this.props.options.reactIconName];
+		var IconComp = this.getIconComp();
 		return (
 			<div>
 				<IconComp />
@@ -96,7 +97,7 @@ class SideBarButton extends React.Component {
 	}
 
 	renderInnerLinkContent() {
-		var IconComp = Comp.Icons[this.props.options.reactIconName];
+		var IconComp = this.getIconComp();
 		return (
 			<Link to={ this.props.options.url }>
 				<IconComp />
@@ -105,12 +106,16 @@ class SideBarButton extends React.Component {
 	}
 
 	renderOuterLinkContent() {
-		var IconComp = Comp.Icons[this.props.options.reactIconName];
+		var IconComp = this.getIconComp();
 		return (
 			<a href={ this.props.options.url }>
 				<IconComp />
 			</a>
 		);
+	}
+
+	getIconComp() {
+		return Icons[this.props.options.reactIconName];
 	}
 
 	renderFormContent() {

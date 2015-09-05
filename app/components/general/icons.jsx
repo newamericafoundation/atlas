@@ -1,6 +1,6 @@
 import React from 'react';
 
-Icons = {};
+var Icons = {};
 
 Icons.Hex = class extends React.Component {
 	

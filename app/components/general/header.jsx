@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 
 class Header extends React.Component {
 
@@ -6,7 +7,7 @@ class Header extends React.Component {
 		return (
 			<div className={ this.getClass() }>
 				<div className="header__corner">
-					<ReactRouter.Link 
+					<Link 
 						className="bg-img-naf--off-white" 
 						id="header__welcome-link" 
 						to="/welcome" 
