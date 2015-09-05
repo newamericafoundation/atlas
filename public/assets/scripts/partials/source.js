@@ -8662,16 +8662,7 @@ if (!Array.prototype.map) {
   };
 }
 (function() {
-  this.Atlas = (function(Backbone, Marionette) {
-    var App;
-    App = new Marionette.Application();
-    App.on('start', function() {
-      return $(document).on('mousewheel', function(e) {
-        return App.vent.trigger('scroll');
-      });
-    });
-    return App;
-  })(Backbone, Marionette);
+  this.Atlas = new Marionette.Application();
 
 }).call(this);
 

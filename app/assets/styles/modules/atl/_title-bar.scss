@@ -1,4 +1,5 @@
 .atl__title-bar {
+
 	position: relative;
 	width: 100%;
 	overflow-x: hidden;
@@ -6,6 +7,17 @@
 	@media print { height: 100px; }
 	display: table;
 	text-align: center;
+
+	&--solid {
+
+	}
+
+	&--image {
+		background-color: map-get($palette, off-white);
+		.title, .icon-button__text {
+			color: map-get(map-get($palette, grey), base);
+		}
+	}
 
 	.title { @include font-size(40px); }
 

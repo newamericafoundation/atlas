@@ -38,7 +38,7 @@ Comp.Form.CKEditor = class extends React.Component {
 	componentDidMount() {
 		$().ensureScript('CKEDITOR', this.editorBasePath + '/ckeditor.js', () => {
 			this.configureEditor();
-			CKEDITOR.replace(this.props.id);
+			// CKEDITOR.replace(this.props.id);
 		});
 	}
 

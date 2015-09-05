@@ -811,6 +811,123 @@ Comp.Slider = (function (_React$Component) {
 
     return _class;
 })(React.Component);
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+(function () {
+
+	Comp.Static = (function (_React$Component) {
+		_inherits(_class, _React$Component);
+
+		function _class(props) {
+			_classCallCheck(this, _class);
+
+			_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
+			this.state = {
+				scrollTop: 0
+			};
+		}
+
+		_createClass(_class, [{
+			key: 'render',
+			value: function render() {
+				return React.createElement(
+					'div',
+					{ className: 'atl__main' },
+					this.renderTitleBar(),
+					this.renderContentBar()
+				);
+			}
+		}, {
+			key: 'renderTitleBar',
+			value: function renderTitleBar(state) {
+				var cls = classNames({
+					'atl__title-bar': true,
+					'atl__title-bar--image': state === 'image',
+					'atl__title-bar--solid': state === 'solid'
+				});
+				return React.createElement(
+					'div',
+					{ className: cls, ref: 'title-bar' },
+					React.createElement('div', { className: 'atl__title-bar__background', ref: 'title-bar-background' }),
+					this.renderTitleBarContent()
+				);
+			}
+		}, {
+			key: 'renderTitleBarContent',
+			value: function renderTitleBarContent() {
+				return React.createElement(
+					'div',
+					{ className: 'atl__title-bar__content' },
+					React.createElement(
+						'h1',
+						{ className: 'title' },
+						this.getTitle()
+					),
+					React.createElement(
+						'ul',
+						null,
+						this.renderWebsite()
+					)
+				);
+			}
+		}, {
+			key: 'renderContentBar',
+			value: function renderContentBar() {
+				return React.createElement(
+					'div',
+					{ className: 'atl__content-bar bg-c-off-white' },
+					React.createElement(
+						'div',
+						{ className: 'atl-grid' },
+						React.createElement(
+							'div',
+							{ className: 'atl-grid__1-3' },
+							this.renderPageNav()
+						),
+						React.createElement(
+							'div',
+							{ className: 'atl-grid__2-3' },
+							this.renderPageContent()
+						),
+						React.createElement('div', { className: 'atl-grid__3-3' })
+					)
+				);
+			}
+		}, {
+			key: 'renderPageNav',
+			value: function renderPageNav() {
+				var cls = classNames({
+					'atl__page-nav': true,
+					'atl__page-nav--fixed': this.state.scrollTop > 300
+				});
+				return React.createElement(
+					'div',
+					{ className: cls, ref: 'page-nav' },
+					this.renderPageNavContent()
+				);
+			}
+		}, {
+			key: 'renderPageNavContent',
+			value: function renderPageNavContent() {}
+		}, {
+			key: 'setStickyPageNav',
+			value: function setStickyPageNav(e) {
+				console.log('setting state to ' + e.target.scrollTop);
+				this.setState({ scrollTop: e.target.scrollTop });
+			}
+		}]);
+
+		return _class;
+	})(React.Component);
+})();
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2771,7 +2888,7 @@ Comp.Form.CKEditor = (function (_React$Component) {
 
 			$().ensureScript('CKEDITOR', this.editorBasePath + '/ckeditor.js', function () {
 				_this.configureEditor();
-				CKEDITOR.replace(_this.props.id);
+				// CKEDITOR.replace(this.props.id);
 			});
 		}
 	}, {
@@ -3902,8 +4019,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-Comp.Projects.New = (function (_React$Component) {
-	_inherits(_class, _React$Component);
+Comp.Projects.New = (function (_Comp$Static) {
+	_inherits(_class, _Comp$Static);
 
 	function _class() {
 		_classCallCheck(this, _class);
@@ -3914,66 +4031,66 @@ Comp.Projects.New = (function (_React$Component) {
 	_createClass(_class, [{
 		key: 'render',
 		value: function render() {
-			var FormComp = Comp.Form;
 			return React.createElement(
 				'div',
 				{ className: 'atl atl--explainer' },
 				React.createElement(
 					'div',
-					{ className: 'atl__main fill-parent' },
+					{ className: 'atl__main fill-parent', onScroll: this.setStickyPageNav.bind(this) },
+					this.renderTitleBar('solid'),
+					this.renderContentBar()
+				)
+			);
+		}
+	}, {
+		key: 'renderTitleBarContent',
+		value: function renderTitleBarContent() {
+			return React.createElement(
+				'div',
+				{ className: 'atl__title-bar__content' },
+				React.createElement(
+					'h1',
+					{ className: 'title' },
+					'New Project'
+				),
+				React.createElement(
+					'ul',
+					null,
 					React.createElement(
-						'div',
-						{ className: 'atl__title-bar atl__title-bar--solid bg-c-off-white', ref: 'title-bar' },
-						React.createElement('div', { className: 'atl__title-bar__background', ref: 'title-bar__background' }),
-						React.createElement(
-							'div',
-							{ className: 'atl__title-bar__content' },
-							React.createElement(
-								'h1',
-								{ className: 'title' },
-								'New Project'
-							),
-							React.createElement(
-								'ul',
-								null,
-								React.createElement(
-									'li',
-									null,
-									'Updated: '
-								)
-							)
-						)
-					),
-					React.createElement(
-						'div',
-						{ className: 'atl__content-bar bg-c-off-white' },
-						React.createElement(
-							'div',
-							{ className: 'atl-grid' },
-							React.createElement(
-								'div',
-								{ className: 'atl-grid__1-3' },
-								React.createElement('div', { className: 'atl__page-nav', ref: 'page-nav' })
-							),
-							React.createElement(
-								'div',
-								{ className: 'atl-grid__2-3' },
-								React.createElement(
-									'div',
-									{ className: 'static-content' },
-									React.createElement(FormComp, { Model: window.M.project.Model })
-								)
-							),
-							React.createElement('div', { className: 'atl-grid__3-3' })
-						)
+						'li',
+						null,
+						'Updated: '
 					)
 				)
+			);
+		}
+	}, {
+		key: 'renderPageNavContent',
+		value: function renderPageNavContent() {
+			return React.createElement(
+				'div',
+				null,
+				React.createElement(
+					'p',
+					null,
+					'I navigate the page!'
+				)
+			);
+		}
+	}, {
+		key: 'renderPageContent',
+		value: function renderPageContent() {
+			var FormComp = Comp.Form;
+			return React.createElement(
+				'div',
+				{ className: 'static-content' },
+				React.createElement(FormComp, { Model: window.M.project.Model })
 			);
 		}
 	}]);
 
 	return _class;
-})(React.Component);
+})(Comp.Static);
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -4687,106 +4804,88 @@ Comp.Projects.Show.Tilemap.Headline = (function (_React$Component) {
 
 	return _class;
 })(React.Component);
-"use strict";
+'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-Comp.Projects.Show.Tilemap.InfoBox = (function (_React$Component) {
-	_inherits(_class, _React$Component);
+Comp.Projects.Show.Tilemap.InfoBox = (function (_Comp$Static) {
+	_inherits(_class, _Comp$Static);
 
 	function _class(props) {
 		_classCallCheck(this, _class);
 
-		_get(Object.getPrototypeOf(_class.prototype), "constructor", this).call(this, props);
-		this.state = {
-			transitionEventNamespace: 0
-		};
+		_get(Object.getPrototypeOf(_class.prototype), 'constructor', this).call(this, props);
+		this.state.transitionEventNamespace = 0;
+		this.state.titleBarImgUrl = '';
 	}
 
 	_createClass(_class, [{
-		key: "render",
+		key: 'render',
 		value: function render() {
-			var content = this.getContent();
+			console.log(this.state);
 			return React.createElement(
-				"div",
-				{ className: "atl__info-box", ref: "main" },
-				React.createElement("a", { href: "#", className: "bg-img-no--black atl__info-box__close", onClick: this.close.bind(this) }),
+				'div',
+				{ className: 'atl__info-box', ref: 'main', onScroll: this.setStickyPageNav.bind(this) },
+				React.createElement('a', { href: '#', className: 'bg-img-no--black atl__info-box__close', onClick: this.close.bind(this) }),
+				this.renderTitleBar('image'),
+				this.renderContentBar()
+			);
+		}
+	}, {
+		key: 'renderTitleBarContent',
+		value: function renderTitleBarContent() {
+			return React.createElement(
+				'div',
+				{ className: 'atl__title-bar__content' },
 				React.createElement(
-					"div",
-					{ className: "atl__title-bar atl__title-bar--image bg-c-off-white" },
-					React.createElement("div", { className: "atl__title-bar__background", ref: "title-bar-background" }),
-					React.createElement(
-						"div",
-						{ className: "atl__title-bar__content" },
-						React.createElement(
-							"h1",
-							{ className: "title" },
-							this.getTitle()
-						),
-						React.createElement(
-							"ul",
-							null,
-							this.renderWebsite()
-						)
-					)
+					'h1',
+					{ className: 'title' },
+					this.getTitle()
 				),
 				React.createElement(
-					"div",
-					{ className: "atl__content-bar bg-c-off-white" },
-					React.createElement(
-						"div",
-						{ className: "atl-grid" },
-						React.createElement(
-							"div",
-							{ className: "atl-grid__1-3" },
-							React.createElement(
-								"div",
-								{ className: "atl__page-nav" },
-								React.createElement(
-									"div",
-									{ className: "atl__toc" },
-									React.createElement(
-										"p",
-										null,
-										"Page Contents"
-									),
-									React.createElement(
-										"div",
-										{ id: "atl__toc__list" },
-										this.renderTocList()
-									)
-								),
-								React.createElement("div", { id: "atl__related" })
-							)
-						),
-						React.createElement(
-							"div",
-							{ className: "atl-grid__2-3" },
-							React.createElement("div", { className: "static-content", dangerouslySetInnerHTML: { __html: content.body } })
-						),
-						React.createElement("div", { className: "atl-grid__3-3" })
-					)
+					'ul',
+					null,
+					this.renderWebsite()
 				)
 			);
 		}
 	}, {
-		key: "shouldComponentUpdate",
-		value: function shouldComponentUpdate(nextProps, nextState) {
-			return this.props.activeItem !== nextProps.activeItem;
+		key: 'renderPageNavContent',
+		value: function renderPageNavContent() {
+			return React.createElement(
+				'div',
+				{ className: 'atl__toc' },
+				React.createElement(
+					'p',
+					null,
+					'Page Contents'
+				),
+				React.createElement(
+					'div',
+					{ id: 'atl__toc__list' },
+					this.renderTocList()
+				)
+			);
 		}
 	}, {
-		key: "componentDidUpdate",
+		key: 'renderPageContent',
+		value: function renderPageContent() {
+			var content = this.getContent();
+			return React.createElement('div', { className: 'static-content', dangerouslySetInnerHTML: { __html: content.body } });
+		}
+	}, {
+		key: 'componentDidUpdate',
 		value: function componentDidUpdate() {
 			return this.setImage();
 		}
 	}, {
-		key: "getTitle",
+		key: 'getTitle',
 		value: function getTitle() {
 			var activeItem, project;
 			project = this.props.project;
@@ -4797,7 +4896,7 @@ Comp.Projects.Show.Tilemap.InfoBox = (function (_React$Component) {
 			return project.get('title');
 		}
 	}, {
-		key: "getBodyHtml",
+		key: 'getBodyHtml',
 		value: function getBodyHtml() {
 			var activeItem, project;
 			project = this.props.project;
@@ -4808,7 +4907,7 @@ Comp.Projects.Show.Tilemap.InfoBox = (function (_React$Component) {
 			return project.get('body_text');
 		}
 	}, {
-		key: "close",
+		key: 'close',
 		value: function close(e) {
 			var $el, App, transitionEventName;
 			e.preventDefault();
@@ -4827,7 +4926,7 @@ Comp.Projects.Show.Tilemap.InfoBox = (function (_React$Component) {
 		// Get a list of transition event names.
 		// Each event is namespaced with an incremental id so that the same events are not reattached over and over again.
 	}, {
-		key: "getTransitionEventName",
+		key: 'getTransitionEventName',
 		value: function getTransitionEventName() {
 			var _this2 = this;
 
@@ -4842,7 +4941,7 @@ Comp.Projects.Show.Tilemap.InfoBox = (function (_React$Component) {
 			return eventName;
 		}
 	}, {
-		key: "setImage",
+		key: 'setImage',
 		value: function setImage() {
 			var activeItem, imageName, project, coll, promise;
 
@@ -4877,25 +4976,25 @@ Comp.Projects.Show.Tilemap.InfoBox = (function (_React$Component) {
 			}
 		}
 	}, {
-		key: "renderWebsite",
+		key: 'renderWebsite',
 		value: function renderWebsite() {
 			return React.createElement(
-				"li",
+				'li',
 				null,
 				React.createElement(
-					"a",
-					{ className: "icon-button", href: "#", target: "_blank" },
-					React.createElement("div", { className: "icon-button__icon bg-img-link--black" }),
+					'a',
+					{ className: 'icon-button', href: '#', target: '_blank' },
+					React.createElement('div', { className: 'icon-button__icon bg-img-link--black' }),
 					React.createElement(
-						"div",
-						{ className: "icon-button__text" },
-						"Website"
+						'div',
+						{ className: 'icon-button__text' },
+						'Website'
 					)
 				)
 			);
 		}
 	}, {
-		key: "getContent",
+		key: 'getContent',
 		value: function getContent() {
 			var activeItem, body, cntnt, project, toc;
 			body = '';
@@ -4916,10 +5015,8 @@ Comp.Projects.Show.Tilemap.InfoBox = (function (_React$Component) {
 			};
 		}
 	}, {
-		key: "renderTocList",
+		key: 'renderTocList',
 		value: function renderTocList() {
-			var _this3 = this;
-
 			var renderedList, tocItems;
 			tocItems = this.getContent().toc;
 			if (!(tocItems != null && tocItems.map != null && tocItems.length > 0)) {
@@ -4927,35 +5024,18 @@ Comp.Projects.Show.Tilemap.InfoBox = (function (_React$Component) {
 			}
 			return renderedList = tocItems.map(function (item, i) {
 				return React.createElement(
-					"li",
+					'li',
 					{ className: 'toc-' + item.tagName, key: 'toc-' + i },
 					React.createElement(
-						"a",
-						{ href: "#toc-" + item.id, onClick: _this3.triggerScrollAfterDelay.bind(_this3) },
+						'a',
+						{ href: "#toc-" + item.id },
 						item.content
 					)
 				);
 			});
 		}
-
-		// When a table of contents item is clicked, the sticky scroll layout code is not invoked.
-		//   To fix this, an extra scroll event is triggered after every click
-		//   to make sure the new scroll position is reached.
 	}, {
-		key: "triggerScrollAfterDelay",
-		value: function triggerScrollAfterDelay() {
-			var App, fn;
-			App = this.props.App;
-			if (App == null) {
-				return;
-			}
-			fn = function () {
-				return App.vent.trigger('scroll');
-			};
-			return setTimeout(fn, 75);
-		}
-	}, {
-		key: "ensureActiveItemContent",
+		key: 'ensureActiveItemContent',
 		value: function ensureActiveItemContent() {
 			var App, activeItem, html, infoBoxVar, project, variables;
 			project = this.props.project;
@@ -4983,7 +5063,7 @@ Comp.Projects.Show.Tilemap.InfoBox = (function (_React$Component) {
 	}]);
 
 	return _class;
-})(React.Component);
+})(Comp.Static);
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -5569,8 +5649,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 (function () {
 
-	Comp.Projects.Show.Explainer = (function (_React$Component) {
-		_inherits(_class, _React$Component);
+	Comp.Projects.Show.Explainer = (function (_Comp$Static) {
+		_inherits(_class, _Comp$Static);
 
 		function _class() {
 			_classCallCheck(this, _class);
@@ -5583,60 +5663,37 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 			value: function render() {
 				return React.createElement(
 					"div",
-					{ className: "atl__main fill-parent" },
+					{ className: "atl__main fill-parent", onScroll: this.setStickyPageNav.bind(this) },
+					this.renderTitleBar('solid'),
+					this.renderContentBar()
+				);
+			}
+		}, {
+			key: "renderTitleBarContent",
+			value: function renderTitleBarContent() {
+				return React.createElement(
+					"div",
+					{ className: "atl__title-bar__content" },
 					React.createElement(
-						"div",
-						{ className: "atl__title-bar atl__title-bar--solid bg-c-off-white", ref: "title-bar" },
-						React.createElement("div", { className: "atl__title-bar__background", ref: "title-bar__background" }),
-						React.createElement(
-							"div",
-							{ className: "atl__title-bar__content" },
-							React.createElement(
-								"h1",
-								{ className: "title" },
-								this.getTitle()
-							),
-							React.createElement(
-								"ul",
-								null,
-								React.createElement(
-									"li",
-									null,
-									"Updated: ",
-									this.getUpdateMoment()
-								)
-							)
-						)
+						"h1",
+						{ className: "title" },
+						this.getTitle()
 					),
 					React.createElement(
-						"div",
-						{ className: "atl__content-bar bg-c-off-white" },
+						"ul",
+						null,
 						React.createElement(
-							"div",
-							{ className: "atl-grid" },
-							React.createElement(
-								"div",
-								{ className: "atl-grid__1-3" },
-								React.createElement(
-									"div",
-									{ className: "atl__page-nav", ref: "page-nav" },
-									this.renderToc()
-								)
-							),
-							React.createElement(
-								"div",
-								{ className: "atl-grid__2-3" },
-								React.createElement("div", { className: "static-content", dangerouslySetInnerHTML: { __html: this.getBodyText() } }),
-								React.createElement(Comp.Projects.Show.Explainer.Related, { related: this.props.related })
-							),
-							React.createElement("div", { className: "atl-grid__3-3" })
+							"li",
+							null,
+							"Updated: ",
+							this.getUpdateMoment()
 						)
 					)
 				);
 			}
 		}, {
-			key: "renderToc",
-			value: function renderToc() {
+			key: "renderPageNavContent",
+			value: function renderPageNavContent() {
 				return React.createElement(
 					"div",
 					{ className: "atl__toc" },
@@ -5657,10 +5714,18 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 				);
 			}
 		}, {
+			key: "renderPageContent",
+			value: function renderPageContent() {
+				return React.createElement(
+					"div",
+					null,
+					React.createElement("div", { className: "static-content", dangerouslySetInnerHTML: { __html: this.getBodyText() } }),
+					React.createElement(Comp.Projects.Show.Explainer.Related, { related: this.props.related })
+				);
+			}
+		}, {
 			key: "renderTocList",
 			value: function renderTocList() {
-				var _this = this;
-
 				var tocItems = this.props.project.get('body_text_toc');
 				if (tocItems == null || tocItems.length === 0) {
 					return;
@@ -5671,7 +5736,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 						{ className: 'toc-' + item.tagName, key: 'toc-' + i },
 						React.createElement(
 							"a",
-							{ href: "#toc-" + item.id, onClick: _this.triggerScrollAfterDelay.bind(_this) },
+							{ href: "#toc-" + item.id },
 							item.content
 						)
 					);
@@ -5681,15 +5746,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 			key: "componentDidMount",
 			value: function componentDidMount() {
 				this.buildAtlasCharts();
-				this.setStickyNavLayout();
-				this.onScroll();
 				this.setThemeColor();
 			}
 		}, {
 			key: "componentWillUnmount",
 			value: function componentWillUnmount() {
 				this.destroyAtlasCharts();
-				this.offScroll();
 			}
 		}, {
 			key: "getTitle",
@@ -5711,22 +5773,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 				}
 				return moment(this.props.project.get('updated_at')).format("MMMM Do YYYY");
 			}
-
-			// When a table of contents item is clicked, the sticky scroll layout code is not invoked.
-			//   To fix this, an extra scroll event is triggered after every click
-			//   to make sure the new scroll position is reached.
-		}, {
-			key: "triggerScrollAfterDelay",
-			value: function triggerScrollAfterDelay() {
-				var App = this.props.App;
-				if (App == null) {
-					return;
-				}
-				var fn = function fn() {
-					App.vent.trigger('scroll');
-				};
-				setTimeout(fn, 75);
-			}
 		}, {
 			key: "buildAtlasCharts",
 			value: function buildAtlasCharts() {
@@ -5745,52 +5791,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 				}
 			}
 		}, {
-			key: "setStickyNavLayout",
-			value: function setStickyNavLayout() {
-				if ($ == null) {
-					return;
-				}
-				// TODO - optimize title bar height check so it is not performed all the time
-				var scrollTop = $('.atl__main').scrollTop();
-				var className = "atl__page-nav";
-				var $elem = $(React.findDOMNode(this.refs['page-nav']));
-				if (scrollTop > this.getTitleBarHeight()) {
-					$elem.addClass("#{className}--fixed");
-				} else {
-					$elem.removeClass("#{className}--fixed");
-				}
-			}
-
-			// Get title bar height.
-		}, {
-			key: "getTitleBarHeight",
-			value: function getTitleBarHeight() {
-				if (this._titleBarHeightCache && this._titleBarHeightCache > 0) {
-					return this._titleBarHeightCache;
-				}
-				var $el = $(React.findDOMNode(this.refs['title-bar']));
-				this._titleBarHeightCache = $el.height();
-				return this._titleBarHeightCache;
-			}
-		}, {
-			key: "onScroll",
-			value: function onScroll() {
-				var App = this.props.App;
-				if (App == null) {
-					return;
-				}
-				App.vent.on('scroll', this.setStickyNavLayout.bind(this));
-			}
-		}, {
-			key: "offScroll",
-			value: function offScroll() {
-				var App = this.props.App;
-				if (App == null) {
-					return;
-				}
-				App.vent.off('scroll', this.setStickyNavLayout.bind(this));
-			}
-		}, {
 			key: "setThemeColor",
 			value: function setThemeColor() {
 				var App = this.props.App;
@@ -5806,7 +5806,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 		}]);
 
 		return _class;
-	})(React.Component);
+	})(Comp.Static);
 })();
 "use strict";
 

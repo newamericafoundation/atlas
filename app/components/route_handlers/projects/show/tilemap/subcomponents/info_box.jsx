@@ -1,57 +1,49 @@
-Comp.Projects.Show.Tilemap.InfoBox = class extends React.Component {
+Comp.Projects.Show.Tilemap.InfoBox = class extends Comp.Static {
 
 	constructor(props) {
 		super(props);
-		this.state = {
-			transitionEventNamespace: 0
-		};
+		this.state.transitionEventNamespace = 0;
+		this.state.titleBarImgUrl = '';
 	}
 
 	render() {
-		var content = this.getContent();
+		console.log(this.state);
 		return (
-			<div className="atl__info-box" ref='main'>
-
+			<div className="atl__info-box" ref='main' onScroll={ this.setStickyPageNav.bind(this) }>
 				<a href="#" className="bg-img-no--black atl__info-box__close" onClick={ this.close.bind(this) }></a>
+				{ this.renderTitleBar('image') }
+				{ this.renderContentBar() }
+			</div>
+		);
+	}
 
-				<div className="atl__title-bar atl__title-bar--image bg-c-off-white">
+	renderTitleBarContent() {
+		return (
+			<div className="atl__title-bar__content">
+				<h1 className='title'>{ this.getTitle() }</h1>
+				<ul>
+					{ this.renderWebsite() }
+				</ul>
+			</div>
+		);
+	}
 
-					<div className="atl__title-bar__background" ref='title-bar-background' />
-					<div className="atl__title-bar__content">
-						<h1 className='title'>{ this.getTitle() }</h1>
-						<ul>
-							{ this.renderWebsite() }
-						</ul>
-					</div>
-				</div>
-
-				<div className="atl__content-bar bg-c-off-white">
-					<div className="atl-grid">
-						<div className="atl-grid__1-3">
-							<div className="atl__page-nav">
-								<div className="atl__toc">
-									<p>Page Contents</p>
-									<div id="atl__toc__list">
-										{ this.renderTocList() }
-									</div>
-								</div>
-								<div id="atl__related"></div>
-							</div>
-						</div>
-						<div className="atl-grid__2-3">
-							<div className='static-content' dangerouslySetInnerHTML={{ __html: content.body }}></div>
-						</div>
-						<div className="atl-grid__3-3">
-						</div>
-					</div>
+	renderPageNavContent() {
+		return (
+			<div className="atl__toc">
+				<p>Page Contents</p>
+				<div id="atl__toc__list">
+					{ this.renderTocList() }
 				</div>
 			</div>
 		);
-
 	}
 
-	shouldComponentUpdate(nextProps, nextState) {
-		return (this.props.activeItem !== nextProps.activeItem);
+	renderPageContent() {
+		var content = this.getContent();
+		return (
+			<div className='static-content' dangerouslySetInnerHTML={{ __html: content.body }}></div>
+		);
 	}
 
 	componentDidUpdate() {
@@ -177,24 +169,12 @@ Comp.Projects.Show.Tilemap.InfoBox = class extends React.Component {
 		return renderedList = tocItems.map((item, i) => {
 			return (
 				<li className={'toc-'+item.tagName} key={'toc-' + i}>
-					<a href={"#toc-"+item.id} onClick={ this.triggerScrollAfterDelay.bind(this) } >
+					<a href={"#toc-"+item.id}>
 						{ item.content }
 					</a>
 				</li>
 			);
 		});
-	}
-
-
-	// When a table of contents item is clicked, the sticky scroll layout code is not invoked.
-	//   To fix this, an extra scroll event is triggered after every click
-	//   to make sure the new scroll position is reached.
-	triggerScrollAfterDelay() {
-		var App, fn;
-		App = this.props.App;
-		if (App == null) { return; }
-		fn = function() { return App.vent.trigger('scroll'); };
-		return setTimeout(fn, 75);
 	}
 
 	ensureActiveItemContent() {
