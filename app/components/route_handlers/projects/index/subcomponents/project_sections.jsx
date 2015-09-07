@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import Icons from './../../../../general/icons.jsx';
 
 class ProjectSections extends React.Component {

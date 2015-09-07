@@ -1,6 +1,8 @@
 import React from 'react';
+import classNames from 'classnames';
 import Static from './../../../../general/static.jsx';
 import Related from './subcomponents/related.jsx';
+import moment from 'moment';
 
 class Explainer extends Static {
 

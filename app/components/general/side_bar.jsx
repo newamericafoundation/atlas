@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 import Icons from './icons.jsx';
+import classNames from 'classnames';
 
 class SideBar extends React.Component {
 

@@ -1,1 +1,0 @@
-@Atlas = new Marionette.Application();

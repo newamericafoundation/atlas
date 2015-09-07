@@ -1,4 +1,6 @@
 import React from 'react';
+import * as colors from './../utilities/colors.js';
+import classNames from 'classnames';
 
 class Setup extends React.Component {
 	
@@ -149,7 +151,7 @@ class Pattern extends React.Component {
 	getColor(colorCode) {
 		var App = this.props.App
 		if (App == null) { return; }
-		return App.CSS.Colors.toRgb(colorCode - 1);
+		return colors.toRgb(colorCode - 1);
 	}
 
 	componentDidMount() {

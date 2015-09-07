@@ -1,4 +1,4 @@
-@Atlas.module 'Map', (Map, App, Backbone, Marionette, $, _) ->
+@Atlas.module 'Map', (Map) ->
 
 	# This is a custom view constructor that uses d3 and Mapbox to render graphics.
 	Map.RootView = Marionette.Object.extend

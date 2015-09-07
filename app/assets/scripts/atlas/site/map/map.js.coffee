@@ -1,4 +1,4 @@
-@Atlas.module 'Map', (Map, App, Backbone, Marionette, $, _) ->
+@Atlas.module 'Map', (Map) ->
 
 	@startWithParent = false
 

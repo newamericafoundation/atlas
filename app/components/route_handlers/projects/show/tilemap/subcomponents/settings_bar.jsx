@@ -1,4 +1,6 @@
 import React from 'react';
+import classNames from 'classnames';
+
 import Headline from './headline.jsx';
 import DisplayToggle from './display_toggle.jsx';
 import Search from './search.jsx';

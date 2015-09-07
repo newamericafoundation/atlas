@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import Static from './../../../../../general/static.jsx';
 
 import image from './../../../../../../models/image.js';
@@ -12,7 +13,6 @@ class InfoBox extends Static {
 	}
 
 	render() {
-		console.log(this.state);
 		return (
 			<div className="atl__info-box" ref='main' onScroll={ this.setStickyPageNav.bind(this) }>
 				<a href="#" className="bg-img-no--black atl__info-box__close" onClick={ this.close.bind(this) }></a>

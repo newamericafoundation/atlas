@@ -1,5 +1,7 @@
 import React from 'react';
+import classNames from 'classnames';
 import { Link } from 'react-router';
+import * as colors from './../../../../utilities/colors.js';
 
 class Projects extends React.Component {
 
@@ -190,7 +192,7 @@ class Project extends React.Component {
 		projects = this.props.projects;
 		if (App == null || project == null || projects == null) { return; }
 		index = projects.indexOf(project);
-		color = App.CSS.Colors.toRgba(index % 15, 0.8);
+		color = colors.toRgba(index % 15, 0.8);
 		return color;
 	}
 

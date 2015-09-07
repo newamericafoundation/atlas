@@ -24,18 +24,32 @@ var getBrowserifyBundler = (entries) => {
     return b;
 };
 
-var getWatchifyBundler = () => {
-    return watchify(getBrowserifyBundler());
+var getWatchifyBundler = (entries) => {
+    return watchify(getBrowserifyBundler(entries));
 };
 
-var writeBundle = (instance, name, dest) => {
-    return instance.bundle()
+var writeBundle = (bundler, name = 'component.js', dest = './public/assets/scripts/partials') => {
+    return bundler.bundle()
+        .on('error', (err) => {
+            console.log('Browserify error..');
+            console.dir(err);
+        })
         .pipe(source(name))
         .pipe(gulp.dest(dest));
 };
 
 // make server-side component definitions available on the client.
-gulp.task('bundle-components', () => {
+gulp.task('bundle', () => {
     var bundler = getBrowserifyBundler('./app/components/routes.jsx');
-    return writeBundle(bundler, 'component.js', './public/assets/scripts/partials');
+    return writeBundle(bundler);
+});
+
+// make server-side component definitions available on the client.
+gulp.task('bundle-watch', () => {
+    var bundler = getWatchifyBundler('./app/components/routes.jsx');
+    bundler.on('update', () => {
+        console.log('Reboundling..')
+        writeBundle(bundler);
+    });
+    return writeBundle(bundler);
 });

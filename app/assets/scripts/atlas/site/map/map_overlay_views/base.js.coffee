@@ -1,10 +1,10 @@
-@Atlas.module "Map", (Map, App, Backbone, Marionette, $, _) ->
+@Atlas.module "Map", (Map) ->
 
     # overlay view layers inherit from this object
 	class Map.OverlayBaseView extends Marionette.Object
 
         initialize: () ->
-            App.reqres.setHandler 'item:map:position', (item) => @getItemMapPosition(item)
+            Map.props.App.reqres.setHandler('item:map:position', (item) => @getItemMapPosition(item))
             @
 
         setHeaderStripColor: ->
@@ -15,9 +15,9 @@
             if hoveredItem?
                 indeces = filter.getFriendlyIndeces(hoveredItem, 15)
                 cls = "bg-c-#{indeces[0]}"
-                App.commands.execute 'set:header:strip:color', { className: cls }
+                Map.props.App.commands.execute('set:header:strip:color', { className: cls })
             else
-                App.commands.execute 'set:header:strip:color', 'none'
+                Map.props.App.commands.execute('set:header:strip:color', 'none')
 
         # Return pixel coordinates of a map display item's centroid.
         getItemMapPosition: (item) ->
@@ -43,7 +43,7 @@
             items = project.get('data').items
             items.setHovered -1
             @setHeaderStripColor()
-            App.commands.execute 'update:tilemap'
+            Map.props.App.commands.execute('update:tilemap')
 
         # Callback.
         onFeatureMouseOver: (feature) ->
@@ -54,7 +54,7 @@
             model = if feature._model? then feature._model else feature.id
             items.setHovered model
             @setHeaderStripColor()
-            App.commands.execute 'update:tilemap'
+            Map.props.App.commands.execute('update:tilemap')
 
         # Callback.
         onFeatureClick: (feature) ->
@@ -78,7 +78,7 @@
         onMapClick: (e) -> 
             if @activeFeature?
                 @activeFeature = undefined
-                App.vent.trigger 'item:deactivate'
+                Map.props.App.vent.trigger 'item:deactivate'
 
         # Returns feature corresponding to model.
         getFeatureByModel: (model) ->
@@ -90,10 +90,23 @@
             return unless Map.props.uiState?
             display = Map.props.uiState.display
             filter = Map.props.project.get('data').filter
-            searchTerm = App.reqres.request 'search:term'
+            searchTerm = Map.props.App.reqres.request 'search:term'
             model = feature._model
             if model?
                 return model.getDisplayState(filter, searchTerm, display)
+
+        # Get feature fill.
+        # @param {object} feature
+        # @returns {string} fill - Color string or stripe pattern url.
+        getFill: (feature) ->
+            filter = Map.props.project.get('data').filter
+            valueIndeces = filter.getFriendlyIndeces(feature._model, 15)
+            return if not valueIndeces? or valueIndeces.length is 0
+            if valueIndeces.length is 1
+                return Map.colors.toRgb(valueIndeces[0]-1)
+            # Communicate with Comp.Setup.Component to create and retrieve stripe pattern id
+            id = Map.props.App.reqres.request('get:pattern:id', valueIndeces)
+            return "url(#stripe-pattern-#{id})"
 
         # Checks if bounds are finite.
         # @returns {boolean}

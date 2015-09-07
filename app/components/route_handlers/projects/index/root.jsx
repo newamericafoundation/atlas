@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import Projects from './subcomponents/projects.jsx';
 import ProjectSections from './subcomponents/project_sections.jsx';
 import ProjectTemplates from './subcomponents/project_templates.jsx';

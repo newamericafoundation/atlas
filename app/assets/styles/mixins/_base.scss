@@ -70,6 +70,15 @@
     -ms-filter: #{$str};
 }
 
+// generic transform
+@mixin transform($transforms) {
+       -moz-transform: $transforms;
+         -o-transform: $transforms;
+        -ms-transform: $transforms;
+    -webkit-transform: $transforms;
+          transform: $transforms;
+}
+
 @include keyframes(bounce) {
     $val: 0 2 3 2 0 -2 -3 -2 0;
     @each $i in 1, 2, 3, 4, 5, 6, 7, 8, 9 {

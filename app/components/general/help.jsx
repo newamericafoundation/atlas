@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 
 // Render a help text segment that displays when help is activated.
 // Parent needs to be relatively positioned for this to work.

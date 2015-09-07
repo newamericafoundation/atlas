@@ -1,6 +1,7 @@
 import * as Backbone from 'backbone';
 import * as _ from 'underscore';
 import $ from 'jquery';
+import marked from 'marked';
 
 var Model = Backbone.Model.extend({
 

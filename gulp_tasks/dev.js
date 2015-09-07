@@ -48,10 +48,11 @@ var buildTaskList = function(changedFiles) {
 // Development environment.
 gulp.task('dev', () => {
     liveReload.listen();
+    gulp.start('bundle-watch');
     nodemon({
         script: './app.js',
         env: secretEnv,
-        ext: 'js jade scss coffee cjsx jsx',
+        ext: 'js jade scss coffee jsx',
         ignore: [ 'node_modules/**/*', 'bower_components/**/*', 'spec/**/*', 'db/**/*' ],
         tasks: buildTaskList
     })
@@ -65,6 +66,7 @@ gulp.task('dev', () => {
 // Development environment for the intranet project.
 gulp.task('dev-intranet', () => {
     liveReload.listen();
+
     nodemon({
         script: './app.js',
         ext: 'js jade scss coffee cjsx jsx',

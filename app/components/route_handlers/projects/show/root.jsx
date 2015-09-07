@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import Tilemap from './tilemap/root.jsx';
 import Explainer from './explainer/root.jsx';
 import Loading from './../../../general/loading.jsx';
@@ -152,13 +153,11 @@ class Show extends React.Component {
 	// Send separate network request fetching related projects.
 	fetchRelatedProjects() {
 
-		var project;
-
-		project = this.state.project;
+		var prj = this.state.project;
 
 		new project.Collection()
 			.getClientFetchPromise({ 
-				related_to: project.get('id') 
+				related_to: prj.get('id') 
 			})
 			.then((coll) => {
 				this.setState({ related: coll });

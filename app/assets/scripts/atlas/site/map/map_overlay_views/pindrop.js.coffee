@@ -1,4 +1,4 @@
-@Atlas.module "Map", (Map, App, Backbone, Marionette, $, _) ->
+@Atlas.module "Map", (Map) ->
 
 	class Map.PindropOverlayView extends Map.OverlayBaseView
 
@@ -20,7 +20,7 @@
 
             @renderSvgContainer() if @renderSvgContainer?
 
-            @shape = App.Assets.svg.shapes.pindrop
+            @shape = Map.svgPaths.shapes.pindrop
 
             pindrop = [
                 { path: @shape.paths.slice_1_of_2, className: 'map-pin__1-of-2' }
@@ -61,7 +61,7 @@
             valueIndeces = filter.getFriendlyIndeces(feature._model, 15)
             return if not valueIndeces? or valueIndeces.length is 0
             return valueIndeces.map (valueIndex) ->
-                return App.CSS.Colors.toRgb(valueIndex-1)
+                return Map.colors.toRgb(valueIndex-1)
 
 
         update: () ->

@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 
 class Static extends React.Component {
 
@@ -78,7 +79,7 @@ class Static extends React.Component {
 	}
 
 	setStickyPageNav(e) {
-		console.log('setting state to ' + e.target.scrollTop);
+		// console.log('setting state to ' + e.target.scrollTop);
 		this.setState({ scrollTop: e.target.scrollTop });
 	}
 

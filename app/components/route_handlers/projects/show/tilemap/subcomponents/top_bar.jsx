@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import Slider from './../../../../../general/slider.jsx';
 import Icons from './../../../../../general/icons.jsx';
 
@@ -11,6 +12,11 @@ class TopBar extends React.Component {
 					<TopBarIcons {...this.props} />
 					{ this.renderTimeline() }
 					<div className="atl__top-bar__summary">
+						<div>
+							<div className='button'>
+								<p>Button</p>
+							</div>
+						</div>
 						<div>{ this.getName() }</div>
 					</div>
 				</div>
@@ -25,6 +31,10 @@ class TopBar extends React.Component {
 				<Slider {...this.props} values={[ '2003', '2004', '2005', '2006' ]} />
 			</div>
 		);
+	}
+
+	componentDidMount() {
+
 	}
 
 	getName() {

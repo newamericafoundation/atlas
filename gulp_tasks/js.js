@@ -22,7 +22,6 @@ var config = require('./config.js');
 require('./js/one_off_tasks.js');
 require('./js/bundle.js');
 
-
 // Build main application source.
 gulp.task('js-build-source', () => {
     return gulp.src(config.source.js.source)

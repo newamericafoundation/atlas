@@ -571,50 +571,24 @@ th {
   padding: 2px 5px 0px 5px;
   border-radius: 7px;
   cursor: pointer;
-  border: 2px solid #fffaef;
+  border: 2px solid;
+  text-align: center;
+  border-color: #fffaef;
   opacity: 0.4; }
   .button p {
-    color: #fffaef;
     display: inline-block;
     width: auto;
     font-size: 16px;
     font-size: 1rem;
     white-space: nowrap;
     overflow: hidden;
-    text-align: center;
     position: static;
-    width: 100%;
     margin: 0 0 0 0;
     pointer-events: none;
     font-family: 'SimplonNorm-Regular-WebS' !important; }
+  .button p {
+    color: #fffaef; }
   .button:hover, .button--active {
-    opacity: 0.9; }
-
-.button--large {
-  line-height: 80%;
-  position: static;
-  display: inline-block;
-  margin: 6px 6px 0px 0px;
-  padding: 10px 13px 8px 13px;
-  border-radius: 7px;
-  cursor: pointer;
-  border: 2px solid #fffaef;
-  opacity: 0.4; }
-  .button--large p {
-    color: #fffaef;
-    display: inline-block;
-    width: auto;
-    font-size: 26px;
-    font-size: 1.625rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-align: center;
-    position: static;
-    width: 100%;
-    margin: 0 0 0 0;
-    pointer-events: none;
-    font-family: 'SimplonNorm-Regular-WebS' !important; }
-  .button--large:hover, .button--large--active {
     opacity: 0.9; }
 
 .icon-button {
@@ -4911,10 +4885,15 @@ label {
 
 .atl__info-box {
   width: 100%;
-  height: 0%;
+  height: 100%;
   position: absolute;
-  bottom: 0;
+  top: 0;
   right: 0;
+  -moz-transform: translate(0, 100%);
+  -o-transform: translate(0, 100%);
+  -ms-transform: translate(0, 100%);
+  -webkit-transform: translate(0, 100%);
+  transform: translate(0, 100%);
   z-index: 9;
   overflow: hidden;
   -webkit-transition: all 0.5s ease-in-out;
@@ -4928,6 +4907,11 @@ label {
     .atl__info-box--narrow .atl__info-box {
       width: 360px; } }
   .atl__info-box--active .atl__info-box {
+    -moz-transform: translate(0, 0%);
+    -o-transform: translate(0, 0%);
+    -ms-transform: translate(0, 0%);
+    -webkit-transform: translate(0, 0%);
+    transform: translate(0, 0%);
     height: 100%;
     -webkit-transition: all 0.5s ease-in-out;
     -moz-transition: all 0.5s ease-in-out;
@@ -5517,7 +5501,7 @@ label {
       display: block; } }
 
 .atl__settings-bar {
-  z-index: 6;
+  z-index: 7;
   width: 100%;
   position: absolute;
   overflow: visible;
@@ -5630,7 +5614,7 @@ label {
     display: block; }
 
 .atl__top-bar {
-  z-index: 7;
+  z-index: 6;
   position: absolute;
   top: 0;
   width: 100%;
