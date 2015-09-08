@@ -6,6 +6,11 @@
         max-width: 400px; 
         position: relative;
         padding: 10px 20px;
+        
+        .button {
+            margin: 6px 6px 0 0;
+        }
+
         @mixin collapsed {
             padding-left: 40px;
             padding-top: 0px;
@@ -16,9 +21,11 @@
                 padding-left: 40px;
             }
         }
+
         @mixin expanded {
             padding: 10px 20px 10px 20px;
         }
+
         @include collapsed;
         .atl--collapsed & { @include collapsed; } 
         @include bp-unstack-map-settings-bar { @include expanded; }

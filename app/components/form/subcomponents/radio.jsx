@@ -4,9 +4,6 @@ class Radio extends React.Component {
 
 	constructor(props) {
 		super(props);
-		// When the form is first displayed, the first item should be checked.
-		//   after there is form interaction, checked state should not be manipulted by React.
-		this.shouldSetDefaultOption = false;
 	}
 
 	render() {
@@ -21,7 +18,7 @@ class Radio extends React.Component {
 
 	renderOptions() {
 		return this.props.options.map((option, i) => {
-			var isChecked = this.shouldSetDefaultOption ? undefined : (i === 0);
+			var isChecked = this.isOptionChecked(option, i);
 			return (
 				<div className='form__radio'>
 					<input 
@@ -38,11 +35,19 @@ class Radio extends React.Component {
 		});
 	}
 
+	isOptionChecked(option, i) {
+		if(this.props.initialValue) { return (option === this.props.initialValue); }
+		return (i === 0);
+	}
+
 	componentDidMount() {
-		this.props.sendData({
-			id: this.props.id,
-			value: this.props.options[0]
-		});
+		// If there was no initial value passed to the component, pass back the first option to the parent.
+		if(!this.props.initialValue) {
+			this.props.sendData({
+				id: this.props.id,
+				value: this.props.options[0]
+			});
+		}
 	}
 
 	sendData(e) {

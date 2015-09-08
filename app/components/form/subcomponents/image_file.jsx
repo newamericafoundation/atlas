@@ -5,6 +5,7 @@ class ImageFile extends React.Component {
 	render() {
 		return (
 			<div className='form__wrapper'>
+
 				<label>{ this.props.labelText }</label>
 				<p className='form__hint'>{ this.props.hint }</p>
 				<input 
@@ -17,6 +18,10 @@ class ImageFile extends React.Component {
 				/>
 			</div>
 		);
+	}
+
+	getDisplayStyle() {
+		
 	}
 
 	sendData(e) {

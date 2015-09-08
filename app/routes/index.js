@@ -27,7 +27,9 @@ resources.forEach(function(resource) {
 
 // Main routes - routing done by client.
 router.get([ '/', 'welcome', '/menu', '*' ], (req, res) => {
-	res.render('index.jade', fingerprintManifest);
+	var opt = fingerprintManifest;
+	opt.user = req.user;
+	res.render('index.jade', opt);
 });
 
 // Print route that takes a title and html as post parameter, assemble a 

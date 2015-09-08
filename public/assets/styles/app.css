@@ -567,16 +567,16 @@ th {
   line-height: 80%;
   position: static;
   display: inline-block;
-  margin: 6px 6px 0px 0px;
   padding: 2px 5px 0px 5px;
   border-radius: 7px;
   cursor: pointer;
   border: 2px solid;
   text-align: center;
   border-color: #fffaef;
-  opacity: 0.4; }
+  opacity: 0.5; }
   .button p {
     display: inline-block;
+    text-align: center;
     width: auto;
     font-size: 16px;
     font-size: 1rem;
@@ -842,9 +842,9 @@ img {
   width: 100%;
   height: 100%; }
 
-body {
+.wrapper {
   background-color: #fffaef; }
-  body.atl-route--welcome_index {
+  .wrapper.atl-route--welcome_index {
     background-color: #2a2a2a; }
 
 ul {
@@ -4547,19 +4547,15 @@ label {
   margin: 15px 0;
   line-height: 110%; }
 
-.atl__page-nav {
-  position: static; }
-  .atl__page-nav--fixed {
-    position: static; }
-  @media only screen and (min-width: 1250px) {
-    .atl__page-nav {
-      position: relative;
-      top: 0px; }
-      .atl__page-nav--fixed {
-        width: 280px;
-        position: fixed;
-        left: 45px;
-        top: 95px; } }
+@media only screen and (min-width: 1250px) {
+  .atl__page-nav {
+    width: 280px;
+    position: relative;
+    top: 0px; }
+    .atl__page-nav--fixed {
+      position: fixed;
+      left: 45px;
+      top: 95px; } }
 
 .atl--filter-display .atl__search {
   display: none; }
@@ -4687,6 +4683,8 @@ label {
     padding: 10px 20px;
     padding-left: 40px;
     padding-top: 0px; }
+    .atl__filter__keys .button {
+      margin: 6px 6px 0 0; }
     @media only screen and (min-width: 640px) {
       .atl__filter__keys {
         padding-left: 20px; } }
@@ -4912,7 +4910,6 @@ label {
     -ms-transform: translate(0, 0%);
     -webkit-transform: translate(0, 0%);
     transform: translate(0, 0%);
-    height: 100%;
     -webkit-transition: all 0.5s ease-in-out;
     -moz-transition: all 0.5s ease-in-out;
     -ms-transition: all 0.5s ease-in-out;
@@ -5628,8 +5625,7 @@ label {
   .atl__top-bar__content {
     position: relative;
     width: 100%;
-    height: 100%;
-    background-color: #4d48b1; }
+    height: 100%; }
     .atl__top-bar__content > * {
       height: 100%; }
   .atl__top-bar__icons {
@@ -5658,15 +5654,25 @@ label {
         width: 45px;
         height: 25px; }
   .atl__top-bar__summary {
-    width: 200px;
     float: right;
-    overflow-x: hidden;
     display: table; }
-    .atl__top-bar__summary div {
-      width: 200px;
-      white-space: nowrap;
+    .atl__top-bar__summary .button {
+      padding: 4px 7px 0px 7px;
+      background-color: #fffaef;
+      border: none;
+      opacity: 0.9; }
+      .atl__top-bar__summary .button p {
+        color: #323232; }
+    .atl__top-bar__summary > div {
+      max-width: 120px;
+      overflow: ellipsis;
       display: table-cell;
       vertical-align: middle;
       padding-right: 20px;
       font-size: 18px;
       font-size: 1.125rem; }
+      .atl__top-bar__summary > div > p {
+        width: 100%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap; }

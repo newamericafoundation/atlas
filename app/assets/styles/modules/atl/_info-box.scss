@@ -18,14 +18,12 @@
 	@include transition(all, 0.5s, ease-in-out);
 	.atl__info-box--active & {
 		@include transform(translate(0, 0%));
-		height: 100%;
 	   	@include transition(all, 0.5s, ease-in-out);
 	}
 
 	&__close {
 		z-index: 10;
 		position: absolute;
-		//top: $top-bar-height + 25px;
 		top: 25px;
 		right: 25px;
 		width: 25px;

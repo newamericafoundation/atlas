@@ -251,6 +251,8 @@ var Collection = Backbone.Collection.extend({
 
 		queryString = queryString.slice(0, -1);
 
+		console.log(query, queryString);
+
 		return queryString;
 
 	},

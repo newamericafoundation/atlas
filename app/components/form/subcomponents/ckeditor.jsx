@@ -4,8 +4,7 @@ class CKEditor extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.editorBasePath = '/assets/vendor/ckeditor';
-		// this.editorBasePath = '//cdn.ckeditor.com/4.5.3/standard';
+		this.editorBasePath = '/assets/vendor/ckeditor/';
 	}
 
 	render() {
@@ -24,12 +23,10 @@ class CKEditor extends React.Component {
 	}
 
 	configureEditor() {
-		window.CKEDITOR_BASEPATH = this.editorBasePath;
-		CKEDITOR.config.basePath = this.editorBasePath;
+		CKEDITOR.basePath = this.editorBasePath;
 		CKEDITOR.config.allowedContent = true;
 		CKEDITOR.config.format_tags = 'p;h1;h2;h3;h4';
 		CKEDITOR.config.format_h4 = { element: 'h4', attributes: { 'class': 'Notes under tables' } };
-		CKEDITOR.config.extraPlugins = 'timestamp';
 		CKEDITOR.config.toolbar = [
 			[ 'Source','-','Undo','Redo','Cut','Copy','Paste','-','Find','Replace', 'Timestamp'],
 			[ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote','-','Link','Unlink','-','Format','-','TextColor','BGColor' ]
@@ -38,10 +35,20 @@ class CKEditor extends React.Component {
 	}
 
 	componentDidMount() {
-		$().ensureScript('CKEDITOR', this.editorBasePath + '/ckeditor.js', () => {
+		$().ensureScript('CKEDITOR', this.editorBasePath + 'ckeditor.js', () => {
 			this.configureEditor();
-			// CKEDITOR.replace(this.props.id);
+			this.instance = CKEDITOR.replace(this.props.id);
+			this.instance.on('key', (e) => {
+				this.props.sendData({
+					id: this.props.id,
+					value: this.instance.getData()
+				});
+			});
 		});
+	}
+
+	componentWillUnmount() {
+		this.instance.destroy();
 	}
 
 	sendData(e) {

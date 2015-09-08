@@ -65,7 +65,7 @@ img {
     height: 100%;
 }
 
-body {
+.wrapper {
     background-color: map-get($palette, off-white);
     &.atl-route--welcome_index { background-color: darken(map-get(map-get($palette, grey), base), 3); }
 }

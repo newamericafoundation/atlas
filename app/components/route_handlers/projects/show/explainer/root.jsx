@@ -19,11 +19,21 @@ class Explainer extends Static {
 		return (
 			<div className="atl__title-bar__content">
 				<h1 className='title'>{ this.getTitle() }</h1>
+				{ this.renderEditLink() }
 				<ul>
 					<li>Updated: { this.getUpdateMoment() }</li>
+					{ this.renderEditLink() }
 				</ul>
 			</div>
 		);
+	}
+
+	renderEditLink() {
+		if (window && window.isResearcherAuthenticated) {
+			return (
+				<li><a href={ `/projects/${this.props.project.get('id')}/edit` }>Edit Project</a></li>
+			);
+		}
 	}
 
 	renderPageNavContent() {
@@ -64,6 +74,7 @@ class Explainer extends Static {
 	}
 
 	componentDidMount() {
+		console.log(this.props.project);
 		this.buildAtlasCharts();
 		this.setThemeColor();
 	}

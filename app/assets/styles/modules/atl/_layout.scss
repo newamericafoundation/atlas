@@ -38,17 +38,12 @@
 
 	&__page-nav {
 
-		position: static;
-		
-		&--fixed {
-			position: static;
-		}
-
 		@include bp-atl-grid-unstack {
+			width: 280px;
 			position: relative;
 			top: 0px;
 			&--fixed {
-				width: 280px;
+				
 				position: fixed;
 				left: 45px;
 				top: $top-bar-height + 20px;

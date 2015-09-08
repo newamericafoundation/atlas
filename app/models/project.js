@@ -9,6 +9,14 @@ var _ = require('underscore'),
 
 exports.Model = base.Model.extend({
 
+    defaults: {
+        'title': 'New Project',
+        'author': '',
+        'tags': 'a,b,c,d',
+        'is_section_overview': 'No',
+        'is_live': 'No'
+    },
+
     fields: [
 
         {
@@ -126,7 +134,8 @@ exports.Model = base.Model.extend({
             formComponentProps: {
                 id: 'image_credit',
                 labelText: 'Image Credit',
-                hint: "Single URL or Markdown, e.g. 'Image supplied by [Image Corporation](http://www.imgcrp.com)':"
+                hint: "Single URL or Markdown, e.g. 'Image supplied by [Image Corporation](http://www.imgcrp.com)':",
+                placeholder: 'Image Credit'
             }
         }
 
@@ -335,6 +344,17 @@ exports.Model = base.Model.extend({
     prepOnClient: function() {
         this.buildData();
         this.setHtmlToc('body_text');
+    },
+
+    /*
+     * Return an integer friendly index value for the current hovered or active item.
+     * Used in coloring.
+     */
+    getFriendlyIndeces: function() {
+        var items = this.get('data').items,
+            filter = this.get('data').filter,
+            item = items.hovered || items.active;
+        return filter.getFriendlyIndeces(item, 15);
     }
 
 });

@@ -4,6 +4,13 @@ import classNames from 'classnames';
 
 class Header extends React.Component {
 
+	constructor(props) {
+		super(props);
+		this.state = {
+			stripColor: ''
+		};
+	}
+
 	render() {
 		return (
 			<div className={ this.getClass() }>
@@ -20,7 +27,17 @@ class Header extends React.Component {
 					<p className="header__main__title"></p>
 				</div>
 				<HeaderNavCircles {...this.props} />
-				<div className="header__strip" ref="strip" />
+				<div className="header__strip bg-c-grey--light" ref="strip" />
+			</div>
+		);
+	}
+
+	renderAuth() {
+		if (this.props.user == null) { return; }
+		return (
+			<div className="header__auth">
+				<img src={this.getUserPhotoUrl()}></img>
+				<p>{ this.getUserDisplayName() }</p>
 			</div>
 		);
 	}
@@ -28,7 +45,7 @@ class Header extends React.Component {
 	getClass() {
 		return classNames({
 			'header': true,
-			'bg-c-grey--base': (this.props.theme == null || this.props.theme === 'atlas'),
+			'bg-c-grey--base': (this.props.theme === 'atlas'),
 			'bg-c-naf-green': (this.props.theme === 'naf')
 		});
 	}

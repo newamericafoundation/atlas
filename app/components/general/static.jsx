@@ -1,18 +1,23 @@
 import React from 'react';
 import classNames from 'classnames';
 
+/*
+ * This a base class and example setup for a standard, static page.
+ * It has several sub-render methods that can be overridden on the subclass, or left along on the superclass.
+ */
 class Static extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {
-			scrollTop: 0
-		};
+		// Make sure there is a scrollTop state value on the subclass.
+		// Otherwise, setting sticky page layout will not work.
+		this.state = { scrollTop: 0 };
 	}
 
 	render() {
+		var style = { 'overflow-y': 'scroll' }
 		return (
-			<div className='atl__main'>
+			<div className='atl__main' style={style} onScroll={ this.setStickyPageNav.bind(this) }>
 				{ this.renderTitleBar() }
 				{ this.renderContentBar() }
 			</div>
@@ -27,9 +32,15 @@ class Static extends React.Component {
 		});
 		return (
 			<div className={ cls } ref='title-bar'>
-				<div className="atl__title-bar__background" ref='title-bar-background' />
+				{ this.renderTitleBarBackground() }
 				{ this.renderTitleBarContent() }
 			</div>			
+		);
+	}
+
+	renderTitleBarBackground() {
+		return (
+			<div className="atl__title-bar__background" ref='title-bar-background' />
 		);
 	}
 
@@ -62,6 +73,7 @@ class Static extends React.Component {
 		);
 	}
 
+
 	renderPageNav() {
 		var cls = classNames({
 			'atl__page-nav': true,
@@ -75,11 +87,19 @@ class Static extends React.Component {
 	}
 
 	renderPageNavContent() {
-
+		return (
+			<p>Page Nav Content</p>
+		);
 	}
 
+	renderPageContent() {
+		return (
+			<p>Page Content</p>
+		);
+	}
+
+	// This method should not be overridden on the subclass in order to keep sticky page nav logic DRY.
 	setStickyPageNav(e) {
-		// console.log('setting state to ' + e.target.scrollTop);
 		this.setState({ scrollTop: e.target.scrollTop });
 	}
 

@@ -9,13 +9,9 @@
 
         setHeaderStripColor: ->
             project = Map.props.project
-            items = project.get('data').items
-            filter = project.get('data').filter
-            hoveredItem = items.hovered
-            if hoveredItem?
-                indeces = filter.getFriendlyIndeces(hoveredItem, 15)
-                cls = "bg-c-#{indeces[0]}"
-                Map.props.App.commands.execute('set:header:strip:color', { className: cls })
+            indeces = project.getFriendlyIndeces()
+            if indeces.length > 0
+                Map.props.App.commands.execute('set:header:strip:color', { color: Map.colors.toRgb(indeces[0] - 1) })
             else
                 Map.props.App.commands.execute('set:header:strip:color', 'none')
 

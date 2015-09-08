@@ -29,6 +29,7 @@
     "leaflet": "~0.7.3",
     "underscore": "~1.8.3",
     "ckeditor": "~4.5.3",
-    "js-xlsx": "~0.8.0"
+    "js-xlsx": "~0.8.0",
+    "numeral": "~1.5.3"
   }
 }

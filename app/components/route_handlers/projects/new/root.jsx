@@ -40,7 +40,7 @@ class New extends Static {
 	renderPageContent() {
 		return (
 			<div className="static-content">
-				<Form Model={ project.Model } />
+				<Form model={ new project.Model() } />
 			</div>
 		);
 	}

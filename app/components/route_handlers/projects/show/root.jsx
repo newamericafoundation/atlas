@@ -180,8 +180,6 @@ class Show extends React.Component {
 					project.prepOnClient();
 					this.setState({ project: project });
 					this.fetchRelatedProjects();
-				} else {
-					Backbone.history.navigate('welcome', { trigger: true });
 				}
 			});
 

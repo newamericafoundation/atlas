@@ -1,0 +1,159 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'i', 'ckeditor', '--save' ]
+2 info using npm@2.10.1
+3 info using node@v0.12.4
+4 verbose node symlink /usr/local/bin/node
+5 verbose install initial load of /Users/szerzop/Documents/web/atlas-all/atlas/package.json
+6 warn package.json node_rewrite@1.0.0 No repository field.
+7 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/assert/package.json
+8 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/async/package.json
+9 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/babel/package.json
+10 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/babelify/package.json
+11 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/backbone/package.json
+12 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/body-parser/package.json
+13 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/browserify/package.json
+14 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/browserify-global-shim/package.json
+15 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/cheerio/package.json
+16 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/classnames/package.json
+17 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/cookie-parser/package.json
+18 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/csv/package.json
+19 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/del/package.json
+20 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/es6-promise/package.json
+21 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/express/package.json
+22 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/express-session/package.json
+23 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp/package.json
+24 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-babel/package.json
+25 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-cjsx/package.json
+26 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-coffee/package.json
+27 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-concat/package.json
+28 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-copy/package.json
+29 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-eslint/package.json
+30 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-gzip/package.json
+31 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-if/package.json
+32 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-insert/package.json
+33 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-jasmine/package.json
+34 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-jshint/package.json
+35 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-livereload/package.json
+36 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-minify-css/package.json
+37 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-mocha/package.json
+38 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-nodemon/package.json
+39 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-notify/package.json
+40 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-rename/package.json
+41 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-rev/package.json
+42 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-sass/package.json
+43 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-scp/package.json
+44 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-shell/package.json
+45 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-ssh/package.json
+46 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-uglify/package.json
+47 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-util/package.json
+48 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/gulp-watch/package.json
+49 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/htmltidy/package.json
+50 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/jade/package.json
+51 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/jquery/package.json
+52 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/lodash/package.json
+53 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/marked/package.json
+54 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/method-override/package.json
+55 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/mocha/package.json
+56 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/moment/package.json
+57 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/mongodb/package.json
+58 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/nice-json2csv/package.json
+59 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/numeral/package.json
+60 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/passport/package.json
+61 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/passport-google-oauth/package.json
+62 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/prerender-node/package.json
+63 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/react/package.json
+64 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/react-router/package.json
+65 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/should/package.json
+66 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/underscore/package.json
+67 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/vinyl-source-stream/package.json
+68 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/vinyl-transform/package.json
+69 verbose installManyTop reading scoped package data from /Users/szerzop/Documents/web/atlas-all/atlas/node_modules/watchify/package.json
+70 info package.json assert@1.3.0 assert is also the name of a node core module.
+71 info package.json browserify-global-shim@1.0.0 No license field.
+72 info package.json gulp-coffee@2.3.1 No license field.
+73 info package.json gulp-copy@0.0.2 No license field.
+74 info package.json gulp-gzip@1.2.0 No license field.
+75 info package.json gulp-if@1.2.5 No license field.
+76 info package.json gulp-cjsx@3.0.0 license should be a valid SPDX license expression
+77 info package.json gulp-rename@1.2.2 No license field.
+78 info package.json jquery@2.1.4 No license field.
+79 info package.json passport-google-oauth@0.2.0 No license field.
+80 info package.json htmltidy@0.0.6 No license field.
+81 info package.json gulp-notify@2.2.0 No license field.
+82 info package.json numeral@1.5.3 No license field.
+83 verbose readDependencies loading dependencies from /Users/szerzop/Documents/web/atlas-all/atlas/package.json
+84 silly cache add args [ 'ckeditor', null ]
+85 verbose cache add spec ckeditor
+86 silly cache add parsed spec { raw: 'ckeditor',
+86 silly cache add   scope: null,
+86 silly cache add   name: 'ckeditor',
+86 silly cache add   rawSpec: '',
+86 silly cache add   spec: '*',
+86 silly cache add   type: 'range' }
+87 silly addNamed ckeditor@*
+88 verbose addNamed "*" is a valid semver range for ckeditor
+89 silly addNameRange { name: 'ckeditor', range: '*', hasData: false }
+90 silly mapToRegistry name ckeditor
+91 silly mapToRegistry using default registry
+92 silly mapToRegistry registry https://registry.npmjs.org/
+93 silly mapToRegistry uri https://registry.npmjs.org/ckeditor
+94 verbose addNameRange registry:https://registry.npmjs.org/ckeditor not in flight; fetching
+95 verbose request uri https://registry.npmjs.org/ckeditor
+96 verbose request no auth needed
+97 info attempt registry request try #1 at 14:02:08
+98 verbose request id 85063e0dd04a1f3b
+99 http request GET https://registry.npmjs.org/ckeditor
+100 http 404 https://registry.npmjs.org/ckeditor
+101 verbose headers { 'content-type': 'application/json',
+101 verbose headers   'cache-control': 'max-age=0',
+101 verbose headers   'content-length': '2',
+101 verbose headers   'accept-ranges': 'bytes',
+101 verbose headers   date: 'Tue, 08 Sep 2015 18:02:08 GMT',
+101 verbose headers   via: '1.1 varnish',
+101 verbose headers   age: '0',
+101 verbose headers   connection: 'keep-alive',
+101 verbose headers   'x-served-by': 'cache-iad2141-IAD',
+101 verbose headers   'x-cache': 'MISS',
+101 verbose headers   'x-cache-hits': '0',
+101 verbose headers   'x-timer': 'S1441735328.615565,VS0,VE16' }
+102 silly get cb [ 404,
+102 silly get   { 'content-type': 'application/json',
+102 silly get     'cache-control': 'max-age=0',
+102 silly get     'content-length': '2',
+102 silly get     'accept-ranges': 'bytes',
+102 silly get     date: 'Tue, 08 Sep 2015 18:02:08 GMT',
+102 silly get     via: '1.1 varnish',
+102 silly get     age: '0',
+102 silly get     connection: 'keep-alive',
+102 silly get     'x-served-by': 'cache-iad2141-IAD',
+102 silly get     'x-cache': 'MISS',
+102 silly get     'x-cache-hits': '0',
+102 silly get     'x-timer': 'S1441735328.615565,VS0,VE16' } ]
+103 verbose stack Error: Registry returned 404 for GET on https://registry.npmjs.org/ckeditor
+103 verbose stack     at CachingRegistryClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:239:14)
+103 verbose stack     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:170:14)
+103 verbose stack     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:368:22)
+103 verbose stack     at Request.emit (events.js:110:17)
+103 verbose stack     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1219:14)
+103 verbose stack     at Request.emit (events.js:129:20)
+103 verbose stack     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1167:12)
+103 verbose stack     at IncomingMessage.emit (events.js:129:20)
+103 verbose stack     at _stream_readable.js:908:16
+103 verbose stack     at process._tickCallback (node.js:355:11)
+104 verbose statusCode 404
+105 verbose pkgid ckeditor
+106 verbose cwd /Users/szerzop/Documents/web/atlas-all/atlas
+107 error Darwin 14.1.0
+108 error argv "node" "/usr/local/bin/npm" "i" "ckeditor" "--save"
+109 error node v0.12.4
+110 error npm  v2.10.1
+111 error code E404
+112 error 404 Registry returned 404 for GET on https://registry.npmjs.org/ckeditor
+112 error 404
+112 error 404 'ckeditor' is not in the npm registry.
+112 error 404 You should bug the author to publish it (or use the name yourself!)
+112 error 404 It was specified as a dependency of 'node_rewrite'
+112 error 404
+112 error 404 Note that you can also install from a
+112 error 404 tarball, folder, http url, or git url.
+113 verbose exit [ 1, true ]

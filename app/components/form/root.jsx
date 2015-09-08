@@ -3,6 +3,7 @@ import React from 'react';
 import Text from './subcomponents/text.jsx';
 import Radio from './subcomponents/radio.jsx';
 import SelectizeText from './subcomponents/selectize_text.jsx';
+import SpreadsheetFile from './subcomponents/spreadsheet_file.jsx';
 import ImageFile from './subcomponents/image_file.jsx';
 import CKEditor from './subcomponents/ckeditor.jsx';
 
@@ -10,6 +11,7 @@ var Subcomponents = {
 	Text: Text,
 	Radio: Radio,
 	SelectizeText: SelectizeText,
+	SpreadsheetFile: SpreadsheetFile,
 	ImageFile: ImageFile,
 	CKEditor: CKEditor
 };
@@ -18,15 +20,13 @@ class Form extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {
-			data: {}
-		};
 	}
 
 	setData(newDatum) {
-		var data = this.state.data;
-		data[newDatum.id] = newDatum.value;
-		this.setState({ data: data });
+		console.log(newDatum.id, newDatum.value);
+		this.props.model.set(newDatum.id, newDatum.value);
+		console.log(this.props.model);
+		this.forceUpdate();
 	}
 
 	render() {
@@ -39,19 +39,19 @@ class Form extends React.Component {
 	}
 
 	renderFormComponents() {
-		var model = new this.props.Model();
-		return model.fields.map((field) => {
+		return this.props.model.fields.map((field) => {
 			var FormComp = Subcomponents[field.formComponentName] || Subcomponents.Text,
+				id = field.formComponentProps.id,
 				props = field.formComponentProps || {};
 			return (
-				<FormComp {...props} sendData={this.setData.bind(this)} />
+				<FormComp 
+					{...props} 
+					sendData={this.setData.bind(this)}
+					initialValue={this.props.model.get(id)}
+				/>
 			);
 		});
 		return (<input />);
-	}
-
-	componentDidUpdate() {
-		// console.log(this.state.data);
 	}
 
 }

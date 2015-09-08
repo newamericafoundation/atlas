@@ -488,16 +488,12 @@ window.Atlas = new Marionette.Application();
       };
 
       OverlayBaseView.prototype.setHeaderStripColor = function() {
-        var cls, filter, hoveredItem, indeces, items, project;
+        var indeces, project;
         project = Map.props.project;
-        items = project.get('data').items;
-        filter = project.get('data').filter;
-        hoveredItem = items.hovered;
-        if (hoveredItem != null) {
-          indeces = filter.getFriendlyIndeces(hoveredItem, 15);
-          cls = "bg-c-" + indeces[0];
+        indeces = project.getFriendlyIndeces();
+        if (indeces.length > 0) {
           return Map.props.App.commands.execute('set:header:strip:color', {
-            className: cls
+            color: Map.colors.toRgb(indeces[0] - 1)
           });
         } else {
           return Map.props.App.commands.execute('set:header:strip:color', 'none');

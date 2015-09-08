@@ -9,7 +9,6 @@ class InfoBox extends Static {
 	constructor(props) {
 		super(props);
 		this.state.transitionEventNamespace = 0;
-		this.state.titleBarImgUrl = '';
 	}
 
 	render() {
@@ -20,6 +19,27 @@ class InfoBox extends Static {
 				{ this.renderContentBar() }
 			</div>
 		);
+	}
+
+	renderTitleBarBackground() {
+		var style = this.getTitleBarBackgroundStyle();
+		return (
+			<div className="atl__title-bar__background" style={style} ref='title-bar-background' />
+		);
+	}
+
+	getTitleBarBackgroundStyle() {
+		var img = this.state.image;
+		if (img) {
+			return {
+				'backgroundImage': img.getUrl(),
+				'backgroundColor': 'initial'
+			};
+		}
+		return {
+			'backgroundImage': 'none',
+			'backgroundColor': 'rgba(50, 50, 50, 0.1)'
+		}
 	}
 
 	renderTitleBarContent() {
@@ -51,8 +71,16 @@ class InfoBox extends Static {
 		);
 	}
 
+	componentDidMount() {
+		this.setImage();
+	}
+
 	componentDidUpdate() {
-		return this.setImage();
+		var activeItem = (this.props.project) ? (this.props.project.get('data').items.active) : undefined;
+		if (this.state.image == null) { return this.setImage(); }
+		if (activeItem == null || activeItem.getImageName() !== this.state.image.get('name')) {
+			this.setImage();
+		}
 	}
 
 	getTitle() {
@@ -107,32 +135,26 @@ class InfoBox extends Static {
 
 	setImage() {
 		var activeItem, imageName, project,
-			coll, promise;
-
-		var $el = $(React.findDOMNode(this.refs['title-bar-background']));
-
-		$el.css('background-color', 'rgba(50, 50, 50, 0.1)');
-		$el.css('background-image', '');
+			coll;
 
 		project = this.props.project;
 		if (project == null) { return; }
+
 		activeItem = project.get('data').items.active;
 		if (activeItem == null) { return; }
-
+		
 		imageName = activeItem.getImageName();
 
 		if (imageName != null) {
 			coll = new image.Collection();
-			promise = coll.getClientFetchPromise({ name: imageName });
-			promise.then((coll) => {
-				var img = coll.models[0];
-				if (img != null) {
-					// console.log(img.getUrl())
-					$el.css('background-color', 'initial');
-					$el.css('background-image', img.getUrl());
-					// @_appendImageAttribution(img.getAttributionHtml())
+			coll.getClientFetchPromise({ name: imageName })
+				.then((coll) => {
+					var img = coll.models[0];
+					if (img != null) {
+						this.setState({ image: img });
+					}
 				}
-			});
+			);
 		}
 	}
 

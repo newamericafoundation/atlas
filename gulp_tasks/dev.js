@@ -5,6 +5,7 @@ import notify from 'gulp-notify';
 import path from 'path';
 import secretEnv from './../../secrets/atlas.json';
 
+// A list of development tasks and when they should run.
 var devTasks = [
 
     {
@@ -21,16 +22,15 @@ var devTasks = [
             var ext = path.extname(file);
             return ((file.slice(0, 4) === 'app/') && (['.js', '.coffee'].indexOf(ext) > -1));
         }
-    },
-
-    {
-        name: 'js-build-vendor',
-        shouldRun: function(file) {
-            return false;
-        }
     }
 
 ];
+
+/*
+ * Task list builder.
+ * @param {array} changedFiles - A list of changed files.
+ * @returns {array} tasks - A list of task names.
+ */
 
 var buildTaskList = function(changedFiles) {
     var tasks = [];
@@ -41,7 +41,7 @@ var buildTaskList = function(changedFiles) {
             }
         });
     });
-    if (tasks.length === 0) { return [ 'css-build' ]; }
+    if (tasks.length === 0) { return [ 'null' ]; }
     return tasks;
 };
 
@@ -52,30 +52,20 @@ gulp.task('dev', () => {
     nodemon({
         script: './app.js',
         env: secretEnv,
-        ext: 'js jade scss coffee jsx',
-        ignore: [ 'node_modules/**/*', 'bower_components/**/*', 'spec/**/*', 'db/**/*' ],
+        ext: 'js jade scss coffee',
+        ignore: [ 
+            'node_modules/**/*', 
+            'bower_components/**/*', 
+            'spec/**/*', 
+            'db/**/*',
+            'app/components/**/*', // monitored by watchify
+            'app/models/**/*' // monitored by watchify
+        ],
         tasks: buildTaskList
     })
     .on('restart', () => { 
         gulp.src('./app.js')
             .pipe(liveReload())
             .pipe(notify('Reloading, please wait..'));
-    });
-});
-
-// Development environment for the intranet project.
-gulp.task('dev-intranet', () => {
-    liveReload.listen();
-
-    nodemon({
-        script: './app.js',
-        ext: 'js jade scss coffee cjsx jsx',
-        tasks: (changedFiles) => {
-            return ['default'];
-        }
-    })
-    .on('restart', function() { 
-        gulp.src('./app.js')
-            .pipe(liveReload());
     });
 });

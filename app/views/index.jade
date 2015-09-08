@@ -22,3 +22,7 @@ block content
 			Atlas.start();
 			Comp.start();
 		});
+	- if (user) {
+		script(type='text/javascript').
+			window.isResearcherAuthenticated = true
+	- }

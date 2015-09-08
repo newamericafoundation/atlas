@@ -12,6 +12,7 @@ class Text extends React.Component {
 					onChange={this.sendData.bind(this)} 
 					name={this.props.id}
 					id={this.props.id}
+					value={this.props.initialValue}
 					placeholder={this.props.placeholder} 
 				/>
 			</div>

@@ -80,12 +80,20 @@ Projects.contextTypes = {
 
 class Project extends React.Component {
 	
+	constructor(props) {
+		super(props);
+		this.state = {
+			highlightBackgroundColor: 'none'
+		};
+	}
+
 	render() {
 		var project;
 		if (!this.isVisible()) {
 			return (<div/>);
 		}
 		project = this.props.project;
+		console.log(this.state);
 		return (
 			<Link className={ "atl__project " + this.getModifierClasses() } onMouseEnter={ this.applyBackgroundColor.bind(this) } onMouseLeave={ this.removeBackgroundColor.bind(this) } onClick={ this.launch.bind(this) } to={ '/' + project.get('atlas_url') }>
 				<div className="atl__project__background atl__project__background--unselected" style={this.getBackgroundStyle()} >
@@ -93,7 +101,7 @@ class Project extends React.Component {
 						<p className="atl__project__background__initials">{ this.getInitials() }</p>
 					</div>
 				</div>
-				<div className="atl__project__text" ref="project-text">
+				<div className="atl__project__text" style={{ backgroundColor: this.state.highlightBackgroundColor }} ref="project-text">
 					<div className="center--content">
 						<h1>{ project.get('title') }</h1>
 					</div>
@@ -167,19 +175,17 @@ class Project extends React.Component {
 	}
 
 	applyBackgroundColor() {
-		var color, $el, App;
-		color = this.getColor()
-		$el = $(React.findDOMNode(this.refs['project-text']))
-		$el.css('background-color', color);
+		var color, App;
+		color = this.getColor();
+		this.setState({ highlightBackgroundColor: color });
 		App = this.props.App;
 		if (App == null) { return; }
 		App.commands.execute('set:header:strip:color', { color: color });
 	}
 
 	removeBackgroundColor() {
-		var $el, App;
-		$el = $(React.findDOMNode(this.refs['project-text']))
-		$el.css('background-color', '');
+		var App;
+		this.setState({ highlightBackgroundColor: '' });
 		App = this.props.App;
 		if (App == null) { return; }
 		App.commands.execute('set:header:strip:color', 'none');

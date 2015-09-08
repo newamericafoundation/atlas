@@ -5,23 +5,34 @@ import Icons from './../../../../../general/icons.jsx';
 
 class TopBar extends React.Component {
 
+	constructor(props) {
+		super(props);
+	}
+
 	render() {
 		return (
 			<div className="atl__top-bar">
-				<div className="atl__top-bar__content">
+				<div className={ this.getContentClassName() }>
 					<TopBarIcons {...this.props} />
 					{ this.renderTimeline() }
 					<div className="atl__top-bar__summary">
+						<div><p>{ this.getName() }</p></div>
 						<div>
 							<div className='button'>
-								<p>Button</p>
+								<p>{ this.getKey() }</p>
 							</div>
 						</div>
-						<div>{ this.getName() }</div>
+						<div><p>{ this.getValue() }</p></div>
 					</div>
 				</div>
 			</div>
 		);
+	}
+
+	getContentClassName() {
+		return classNames({
+			'atl__top-bar__content': true,
+		}, this.getBackgroundColorClass());
 	}
 
 	renderTimeline() {
@@ -39,20 +50,35 @@ class TopBar extends React.Component {
 
 	getName() {
 		var hoveredItem = this.getHoveredItem();
-		if (hoveredItem == null) { return; }
+		if (hoveredItem == null) { return ''; }
 		return hoveredItem.get('name');
+	}
+
+	getValue() {
+		var hoveredItem = this.getHoveredItem();
+		var filter = this.getFilter();
+		if (hoveredItem == null || filter == null) { return; }
+		var varId = filter.getActiveChild().get('variable').get('id');
+		return hoveredItem.get(varId);
+	}
+
+	getKey() {
+		var filter = this.getFilter();
+		return filter.getActiveChild().get('display_title');
 	}
 
 	getHoveredItem() {
 		return this.props.project.get('data').items.hovered;
 	}
 
+	getFilter() {
+		return this.props.project.get('data').filter;
+	}
+
 	getBackgroundColorClass() {
-		var App, filter, hoveredItem, indeces, cls;
-		App = this.props.App;
-		filter = this.props.project.get('data').filter;
-		hoveredItem = this.getHoveredItem();
-		indeces = filter.getFriendlyIndeces(hoveredItem, 15);
+		var hoveredItem, indeces, cls;
+		indeces = this.props.project.getFriendlyIndeces();
+		if (indeces == null || indeces.length === 0) { return 'bg-c-grey--base'; }
 		cls = `bg-c-${indeces[0]}`;
 		return cls;
 	}
