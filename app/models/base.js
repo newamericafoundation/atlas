@@ -5,6 +5,12 @@ import marked from 'marked';
 
 var Model = Backbone.Model.extend({
 
+	defaults: {
+
+	},
+
+
+
 	/** 
 	 * Recognize and process data.
 	 * @param {object} data - Data as key-value pairs.
@@ -237,6 +243,25 @@ var Model = Backbone.Model.extend({
 var Collection = Backbone.Collection.extend({
 	
 	model: Model,
+
+	/*
+	 * The database can be queried by its fields.
+	 *
+	 */
+	organizeQueryParameters: function(queryParams) {
+		var dbQueryParams = {}, customQueryParams = {}, fieldSelectionParams;
+		var paramDefaults = new this.model().defaults;
+		for (let key in queryParams) {
+			let value = queryParams[key];
+			if (paramDefaults[key]) {
+				dbQueryParams[key] = value;
+			} else if (key === '_fields') {
+				fieldSelectionParams = value;
+			} else {
+				customQueryParams[key] = value;
+			}
+		}
+	},
 
 	buildQueryString: function(query) {
 

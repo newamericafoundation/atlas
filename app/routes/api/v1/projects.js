@@ -47,6 +47,7 @@ router.get('/', function(req, res) {
 		cursor = collection.find(queryParams, fields);
 
 		cursor.toArray(function(err, models) {
+
 			if (err) { return console.dir(err); }
 
 			var selectedModels = [],
@@ -56,19 +57,14 @@ router.get('/', function(req, res) {
 
 			models = base.Collection.prototype.parse(models);
 
-			var coll = new project.Collection(models),
-				temp = new projectTemplate.Collection(),
-				sect = new projectSection.Collection();
-
-			coll.each(function(mod) {
-				mod.addForeignField('project_template_id', temp, 'name');
-				mod.addForeignField('project_section_ids', sect, 'name');
-			});
+			var coll = new project.Collection(models);
 
 			// Get related models.
 			if (specialQueryParams == null) {
 				return res.json(coll.toJSON());
 			} else {
+
+				// return res.json(coll.related_to());
 
 				referenceModel = coll.findWhere({ id: specialQueryParams.related_to });
 				if (referenceModel == null) { return res.json([]); }

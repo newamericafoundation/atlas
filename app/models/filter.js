@@ -100,7 +100,7 @@ exports.FilterValue = LocalBaseModel.extend({
             return false;
         }
         res = false;
-        key = this.parent.get('variable_id');
+        key = this.parent.get('variable').get('id');
         value = d[key];
         if (!_.isArray(value)) {
             value = [value];

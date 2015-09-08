@@ -20,7 +20,7 @@ var devTasks = [
         name: 'js-build-source',
         shouldRun: function(file) {
             var ext = path.extname(file);
-            return ((file.slice(0, 4) === 'app/') && (['.js', '.coffee'].indexOf(ext) > -1));
+            return ((file.slice(0, 10) === 'app/assets') && (['.js', '.coffee'].indexOf(ext) > -1));
         }
     }
 

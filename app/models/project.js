@@ -2,6 +2,8 @@ var _ = require('underscore'),
     Backbone = require('backbone'),
     formatters = require('./../utilities/formatters.js'),
     base = require('./base.js'),
+    projectSection = require('./project_section.js'),
+    projectTemplate = require('./project_template.js'),
     filter = require('./filter.js'),
     variable = require('./variable.js'),
     item = require('./item.js');
@@ -14,7 +16,8 @@ exports.Model = base.Model.extend({
         'author': '',
         'tags': 'a,b,c,d',
         'is_section_overview': 'No',
-        'is_live': 'No'
+        'is_live': 'No',
+        'atlas_url': ''
     },
 
     fields: [
@@ -271,22 +274,19 @@ exports.Model = base.Model.extend({
         }
     },
 
-    buildFilterTree: function(items, variables, filters) {
+    /*
+     * Build filter tree by taking each variable the display items are filtered by, and finding every possible value for each variable.
+     * E.g. if the items are filtered by marital status and preferred pet, the return value of this method is schematically represented as follows:
+     * { "marital_status": [ "single", "married", "divourced five times" ], "preferred_pet": [ "hamster", "comodo dragon", "lama" ] } 
+     */
+    buildFilterTree: function() {
 
-        var self = this,
-            filterTree, filterVariables,
+        var filterTree, filterVariables,
             data = this.get('data'),
             items = data.items,
-            variables = data.variables,
-            filters = data.filters;
+            variables = data.variables;
 
-        if (filters == null) {
-            filters = [];
-        }
-
-        var fv = variables.getFilterVariables();
-
-        filterVariables = fv.map(function(variable, index) {
+        filterVariables = variables.getFilterVariables().map(function(variable, index) {
 
             var formatter, nd, o, variable;
 
@@ -297,10 +297,6 @@ exports.Model = base.Model.extend({
             o = {
                 variable: variable,
                 variable_id: variable.get('id'),
-                display_title: variable.get('display_title'),
-                short_description: variable.get('short_description'),
-                long_description: variable.getMarkdownHtml('long_description'),
-                type: variable.get('filter_type'),
                 _isActive: (index === 0 ? true : false)
             };
 
@@ -344,6 +340,19 @@ exports.Model = base.Model.extend({
     prepOnClient: function() {
         this.buildData();
         this.setHtmlToc('body_text');
+        this.embedForeignModelNames();
+    },
+
+    embedForeignModelNames: function() {
+        var templates = new projectTemplate.Collection(),
+            sections = new projectSection.Collection();
+
+        console.log(templates, sections);
+
+        this.addForeignField('project_template_id', templates, 'name');
+        this.addForeignField('project_section_ids', sections, 'name');
+
+        return this;
     },
 
     /*
@@ -426,6 +435,29 @@ exports.Collection = base.Collection.extend({
             resp[i] = exports.Model.prototype.parse(item);
         }
         return resp;
+    },
+
+    /*
+     * API query filter.
+     *
+     */
+    related_to: function(id) {
+
+        var referenceModel = this.findWhere({ id: id }),
+            resp;
+
+        if (referenceModel == null) { return []; }
+
+        resp = [];
+
+        this.each((model) => {
+            if (model.isRelatedTo(referenceModel)) {
+                resp.push(model.toJSON());
+            }
+        });
+
+        return resp;
+
     }
 
 });

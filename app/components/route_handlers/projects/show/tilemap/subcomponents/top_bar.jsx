@@ -44,10 +44,6 @@ class TopBar extends React.Component {
 		);
 	}
 
-	componentDidMount() {
-
-	}
-
 	getName() {
 		var hoveredItem = this.getHoveredItem();
 		if (hoveredItem == null) { return ''; }
@@ -64,7 +60,7 @@ class TopBar extends React.Component {
 
 	getKey() {
 		var filter = this.getFilter();
-		return filter.getActiveChild().get('display_title');
+		return filter.getActiveChild().get('variable').get('display_title');
 	}
 
 	getHoveredItem() {

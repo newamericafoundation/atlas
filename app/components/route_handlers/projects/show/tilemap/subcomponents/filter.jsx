@@ -65,10 +65,11 @@ class Filter extends React.Component {
 class FilterKey extends React.Component {
 
 	render() {
+		console.log(this.props.filterKey);
 		return (
 			<li className={ 'button ' + this.getModifierClass() } onClick={ this.toggle.bind(this) }>
 				<p>
-					{ this.props.filterKey.get('display_title') }
+					{ this.props.filterKey.get('variable').get('display_title') }
 				</p>
 			</li>
 		);
