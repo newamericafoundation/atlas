@@ -71,10 +71,10 @@ exports.Model = base.Model.extend({
         {
             id: 'project_section_ids',
             name: 'Project Sections',
-            formComponentName: 'MultipleSelect',
-            foreignModelName: 'ProjectSection',
+            formComponentName: 'ForeignCollectionCheckBox',
             formComponentProps: {
                 id: 'project_section_ids',
+                foreignCollection: new projectSection.Collection(),
                 labelText: 'Project Sections',
                 hint: ''
             }
@@ -82,9 +82,10 @@ exports.Model = base.Model.extend({
 
         {
             id: 'project_template_id',
-            formComponentName: 'SingleSelect',
+            formComponentName: 'ForeignCollectionRadio',
             formComponentProps: {
                 id: 'project_template_id',
+                foreignCollection: new projectTemplate.Collection(),
                 labelText: 'Project Template',
                 hint: 'Determines how data is displayed, e.g. Explainer'
             },
@@ -148,22 +149,6 @@ exports.Model = base.Model.extend({
 
     /** API queries that need to be handled custom. For every key, there is a this.is_#{key} method that filters a model. */
     customQueryKeys: ['related_to'],
-
-    /** 
-     * Returns the URL of the Atlas API that holds the data for the project. 
-     * @returns {string} url
-     */
-    url: function() {
-        return this.urlRoot + ("?atlas_url=" + (this.get('atlas_url')));
-    },
-
-    /** 
-     * Returns the URL of the Build.Atlas API that holds the data for the project. 
-     * @returns {string} buildUrl
-     */
-    buildUrl: function() {
-        return "http://build.atlas.newamerica.org/projects/" + (this.get('id')) + "/edit";
-    },
 
     /** 
      * Conversts model object to json
@@ -346,8 +331,6 @@ exports.Model = base.Model.extend({
     embedForeignModelNames: function() {
         var templates = new projectTemplate.Collection(),
             sections = new projectSection.Collection();
-
-        console.log(templates, sections);
 
         this.addForeignField('project_template_id', templates, 'name');
         this.addForeignField('project_section_ids', sections, 'name');

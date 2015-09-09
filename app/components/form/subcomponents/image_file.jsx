@@ -10,7 +10,7 @@ class ImageFile extends React.Component {
 				<p className='form__hint'>{ this.props.hint }</p>
 				<input 
 					ref='input' 
-					onChange={this.sendData.bind(this)} 
+					onChange={this.saveDataOnParent.bind(this)} 
 					type='file' 
 					name={this.props.id} 
 					id={this.props.id} 
@@ -24,7 +24,7 @@ class ImageFile extends React.Component {
 		
 	}
 
-	sendData(e) {
+	saveDataOnParent(e) {
 
 		var file = e.target.files[0];
 		var reader = new FileReader();
@@ -32,7 +32,7 @@ class ImageFile extends React.Component {
 		reader.onload = () => { 
 			var b64 = reader.result;
 			console.log('setting image');
-			this.props.sendData({
+			this.props.saveDataOnParent({
 				id: this.props.id,
 				value: b64
 			});

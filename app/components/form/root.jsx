@@ -1,11 +1,15 @@
 import React from 'react';
 
+import _ from 'underscore';
+
 import Text from './subcomponents/text.jsx';
 import Radio from './subcomponents/radio.jsx';
 import SelectizeText from './subcomponents/selectize_text.jsx';
 import SpreadsheetFile from './subcomponents/spreadsheet_file.jsx';
 import ImageFile from './subcomponents/image_file.jsx';
 import CKEditor from './subcomponents/ckeditor.jsx';
+import ForeignCollectionRadio from './subcomponents/foreign_collection_radio.jsx';
+import ForeignCollectionCheckBox from './subcomponents/foreign_collection_check_box.jsx';
 
 var Subcomponents = {
 	Text: Text,
@@ -13,27 +17,55 @@ var Subcomponents = {
 	SelectizeText: SelectizeText,
 	SpreadsheetFile: SpreadsheetFile,
 	ImageFile: ImageFile,
-	CKEditor: CKEditor
+	CKEditor: CKEditor,
+	ForeignCollectionRadio: ForeignCollectionRadio,
+	ForeignCollectionCheckBox: ForeignCollectionCheckBox
 };
 
 class Form extends React.Component {
 
 	constructor(props) {
 		super(props);
+		this.state = {
+			warnings: [],
+			errors: []
+		};
 	}
 
-	setData(newDatum) {
-		console.log(newDatum.id, newDatum.value);
-		this.props.model.set(newDatum.id, newDatum.value);
-		console.log(this.props.model);
+	saveDataFromChild(childData) {
+		console.log(childData);
+		var key = childData.id,
+			oldValue = this.props.model.get(key),
+			newValue = childData.value;
+
+		// If the data field is an array, add value to array if not already added.
+		// Otherwise, replace old data.
+		if (_.isArray(oldValue)) {
+			if (oldValue.indexOf(newValue) === -1) {
+				oldValue.push(newValue);
+				this.props.model.set(key, oldValue);
+			}
+		} else {
+			this.props.model.set(key, newValue);
+		}
+		console.log(this.props.model.toJSON());
 		this.forceUpdate();
+	}
+
+	shouldComponentUpdate() {
+		return false;
 	}
 
 	render() {
 		return (
-			<form method='post' action='/post-test'>
+			<form 
+				onSubmit={this.sendFormDataToParent.bind(this)}
+			>
 				{ this.renderFormComponents() }
-				<input type='submit' value='Create Project' />
+				<input 
+					type='submit' 
+					value={ this.props.submitButtonText || 'Submit Form' } 
+				/>
 			</form>
 		);
 	}
@@ -46,12 +78,17 @@ class Form extends React.Component {
 			return (
 				<FormComp 
 					{...props} 
-					sendData={this.setData.bind(this)}
+					saveDataOnParent={this.saveDataFromChild.bind(this)}
 					initialValue={this.props.model.get(id)}
 				/>
 			);
 		});
 		return (<input />);
+	}
+
+	sendFormDataToParent(e) {
+		e.preventDefault();
+		this.props.onSubmit(this.props.model);
 	}
 
 }

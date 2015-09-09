@@ -24,7 +24,7 @@ class Welcome extends React.Component {
 					{ "A policy analysis tool from New America's Education Program" }
 				</div>
 				<div className="welcome__main-nav">
-					<Link to="/menu" onClick={ this.navigate.bind(this) } className="bg-img-grid--off-white" id="welcome__main-nav__button" />
+					<Link to="/menu" className="bg-img-grid--off-white" />
 					<p className="center">View All Projects</p>
 				</div>
 			</div>
@@ -44,13 +44,6 @@ class Welcome extends React.Component {
 		$('<img>').attr({ src: "/assets/images/iStock_000065438623_720.jpg" }).load(() => {
 			this.setState({ hasImageLoaded: true });
 		});
-	}
-
-	navigate(e) {
-		App = this.props.App
-		if (App == null) { return; }
-		e.preventDefault();
-		App.router.navigate('menu');
 	}
 
 }

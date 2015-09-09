@@ -93,7 +93,6 @@ class Project extends React.Component {
 			return (<div/>);
 		}
 		project = this.props.project;
-		console.log(this.state);
 		return (
 			<Link className={ "atl__project " + this.getModifierClasses() } onMouseEnter={ this.applyBackgroundColor.bind(this) } onMouseLeave={ this.removeBackgroundColor.bind(this) } onClick={ this.launch.bind(this) } to={ '/' + project.get('atlas_url') }>
 				<div className="atl__project__background atl__project__background--unselected" style={this.getBackgroundStyle()} >

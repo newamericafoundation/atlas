@@ -9,7 +9,31 @@ var Model = Backbone.Model.extend({
 
 	},
 
+	/*
+	 * Returns a fetch promise. Project ID must be set for this to work.
+	 *
+	 */
+	getClientFetchPromise: function() {
 
+		return new Promise((resolve, reject) => {
+
+			var url = this.urlRoot + '/' + this.get('id');
+
+			$.ajax({
+				url: url,
+				type: 'get',
+				success: (datum) => {
+					this.set(datum);
+					resolve(this);
+				},
+				error: (err) => {
+					reject(err);
+				}
+			});
+
+		});
+
+	},
 
 	/** 
 	 * Recognize and process data.
@@ -275,8 +299,6 @@ var Collection = Backbone.Collection.extend({
 		}
 
 		queryString = queryString.slice(0, -1);
-
-		console.log(query, queryString);
 
 		return queryString;
 

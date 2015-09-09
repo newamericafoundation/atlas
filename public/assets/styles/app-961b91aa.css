@@ -358,10 +358,8 @@ th {
 .about, .welcome, .atl {
   width: 100%;
   height: 100%;
-  margin: 0;
   overflow: hidden;
-  position: relative;
-  float: left; }
+  position: relative; }
 
 @-webkit-keyframes bounce {
   0% {
@@ -4547,15 +4545,17 @@ label {
   margin: 15px 0;
   line-height: 110%; }
 
-@media only screen and (min-width: 1250px) {
-  .atl__page-nav {
-    width: 280px;
-    position: relative;
-    top: 0px; }
-    .atl__page-nav--fixed {
-      position: fixed;
-      left: 45px;
-      top: 95px; } }
+.atl__page-nav {
+  height: auto; }
+  @media only screen and (min-width: 1250px) {
+    .atl__page-nav {
+      width: 280px;
+      position: relative;
+      top: 0px; }
+      .atl__page-nav--fixed {
+        position: fixed;
+        left: 45px;
+        top: 95px; } }
 
 .atl--filter-display .atl__search {
   display: none; }

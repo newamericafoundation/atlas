@@ -13,9 +13,9 @@ class CKEditor extends React.Component {
 				<label for={this.props.id}>{ this.props.labelText }</label>
 				<p className='form__hint'>{ this.props.hint }</p>
 				<textarea
-					onChange={this.sendData.bind(this)} 
 					name={this.props.id}
 					id={this.props.id}
+					value={this.props.initialValue}
 					placeholder={this.props.placeholder} 
 				/>
 			</div>
@@ -39,7 +39,7 @@ class CKEditor extends React.Component {
 			this.configureEditor();
 			this.instance = CKEDITOR.replace(this.props.id);
 			this.instance.on('key', (e) => {
-				this.props.sendData({
+				this.props.saveDataOnParent({
 					id: this.props.id,
 					value: this.instance.getData()
 				});
@@ -49,13 +49,6 @@ class CKEditor extends React.Component {
 
 	componentWillUnmount() {
 		this.instance.destroy();
-	}
-
-	sendData(e) {
-		this.props.sendData({
-			id: this.props.id,
-			value: e.target.value
-		});
 	}
 
 }

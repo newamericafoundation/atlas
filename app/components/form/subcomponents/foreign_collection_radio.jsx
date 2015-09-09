@@ -1,6 +1,6 @@
 import React from 'react';
 
-class Radio extends React.Component {
+class ForeignCollectionRadio extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -17,19 +17,20 @@ class Radio extends React.Component {
 	}
 
 	renderOptions() {
-		return this.props.options.map((option, i) => {
-			var isChecked = this.isOptionChecked(option, i);
+		return this.props.foreignCollection.map((foreignModel, i) => {
+			var option = foreignModel.get('id'),
+				isChecked = this.isOptionChecked(option, i);
 			return (
 				<div className='form__radio'>
 					<input 
 						type='radio' 
-						name={this.props.id} 
+						name={this.props.id}
 						id={this.props.id + '-opt-' + i} 
 						checked={ isChecked }
 						onChange={this.saveDataOnParent.bind(this)} 
 						value={ option } 
 					/>
-					<p>{ option }</p>
+					<p>{ foreignModel.get('name') }</p>
 				</div>
 			);
 		});
@@ -45,7 +46,7 @@ class Radio extends React.Component {
 		if(!this.props.initialValue) {
 			this.props.saveDataOnParent({
 				id: this.props.id,
-				value: this.props.options[0]
+				value: this.props.foreignCollection.models[0].get('id')
 			});
 		}
 	}
@@ -59,4 +60,4 @@ class Radio extends React.Component {
 
 }
 
-export default Radio;
+export default ForeignCollectionRadio;

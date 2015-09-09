@@ -27,7 +27,7 @@ class SelectizeText extends React.Component {
 			create: function(input) {
 				return { value: input, text: input };
 			}
-		}).on('change', this.sendData.bind(this));
+		}).on('change', this.saveDataOnParent.bind(this));
 	}
 
 	componentWillUnmount() {
@@ -35,8 +35,8 @@ class SelectizeText extends React.Component {
 		$el[0].selectize.destroy();
 	}
 
-	sendData(e) {
-		this.props.sendData({
+	saveDataOnParent(e) {
+		this.props.saveDataOnParent({
 			id: this.props.id,
 			value: e.target.value
 		});

@@ -29,10 +29,20 @@ class Edit extends Static {
 			<div className="atl__title-bar__content">
 				<h1 className='title'>Edit Project</h1>
 				<ul>
-					<li>Updated: {  }</li>
+					<li>
+						<a className="icon-button" href={this.getViewUrl()} target="_blank">
+							<div className="icon-button__icon bg-img-link--off-white"></div>
+							<div className="icon-button__text">View Project</div>
+						</a>
+					</li>
 				</ul>
 			</div>
 		);
+	}
+
+	getViewUrl() {
+		if (!this.state.project) { return '/'; }
+		return '/' + this.state.project.get('atlas_url');
 	}
 
 	renderPageNavContent() {
@@ -44,7 +54,7 @@ class Edit extends Static {
 	}
 
 	renderPageContent() {
-		var bulk = this.state.project ? <Form model={ this.state.project } /> : <Loading />
+		var bulk = this.state.project ? <Form model={ this.state.project } submitButtonText="Edit Project" /> : <Loading />
 		return (
 			<div className="static-content">
 				{ bulk }
@@ -61,8 +71,9 @@ class Edit extends Static {
 	fetchProject() {
 		if (!this.props.params) { return; }
 		var id = this.props.params.id;
-		new project.Collection().getClientFetchPromise({ id: id }).then((coll) => {
-			console.log(coll);
+		var model = new project.Model({ id: id });
+		model.getClientFetchPromise({ id: id }).then((model) => {
+			this.setState({ project: model });
 		});
 	}
 

@@ -29,17 +29,19 @@ class InfoBox extends Static {
 	}
 
 	getTitleBarBackgroundStyle() {
-		var img = this.state.image;
+		var img = this.state.image,
+			style;
 		if (img) {
-			return {
-				'backgroundImage': img.getUrl(),
-				'backgroundColor': 'initial'
+			style = {
+				'backgroundImage': img.getUrl()
+			};
+		} else {
+			style = {
+				'backgroundColor': 'rgba(50, 50, 50, 0.1)'
 			};
 		}
-		return {
-			'backgroundImage': 'none',
-			'backgroundColor': 'rgba(50, 50, 50, 0.1)'
-		}
+		console.log(style);
+		return style;
 	}
 
 	renderTitleBarContent() {

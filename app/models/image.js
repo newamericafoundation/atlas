@@ -24,7 +24,7 @@ exports.Model = base.Model.extend({
 		var encoded;
 		encoded = this.get('encoded');
 		if (encoded != null) {
-			return "url('data:image/png;base64," + encoded + "')";
+			return "url('data:image/jpeg;base64," + encoded + "')";
 		}
 	},
 
@@ -32,6 +32,7 @@ exports.Model = base.Model.extend({
 	getAttributionHtml: function() {
 		return this.getMarkdownHtml('credit');
 	}
+
 });
 
 exports.Collection = base.Collection.extend({

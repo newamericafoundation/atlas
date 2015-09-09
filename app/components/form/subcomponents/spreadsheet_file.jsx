@@ -9,7 +9,7 @@ class SpreadsheetFile extends React.Component {
 				<p className='form__hint'>{ this.props.hint }</p>
 				<input 
 					ref='input' 
-					onChange={this.sendData.bind(this)} 
+					onChange={this.saveDataOnParent.bind(this)} 
 					type='file' 
 					name={this.props.id} 
 					id={this.props.id} 
@@ -29,7 +29,7 @@ class SpreadsheetFile extends React.Component {
 		return obj;
 	}
 
-	sendData(e) {
+	saveDataOnParent(e) {
 
 		var file = e.target.files[0];
 		var reader = new FileReader();
@@ -37,7 +37,7 @@ class SpreadsheetFile extends React.Component {
 		reader.onload = () => { 
 			var bstr = reader.result;
 			var workbook = XLSX.read(bstr, { type: 'binary' });
-			this.props.sendData({
+			this.props.saveDataOnParent({
 				id: this.props.id,
 				value: this.parseWorkBook(workbook)
 			});

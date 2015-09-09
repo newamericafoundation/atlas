@@ -50,6 +50,28 @@ var defaultButtons = [
 	}
 ];
 
+var authButtons = [
+	{
+		title: 'Edit Project',
+		contentType: 'inner-link',
+		url: '/projects/',
+		reactIconName: 'Build'
+	}
+];
+
+var getButtons = () => {
+
+	var btns = JSON.parse(JSON.stringify(defaultButtons)),
+		authBtns = JSON.parse(JSON.stringify(authButtons));
+
+	if (window.isResearcherAuthenticated) {
+		return btns.concat(authBtns);
+	}
+
+	return btns;
+
+};
+
 class Show extends React.Component {
 
 	constructor(props) {
@@ -77,7 +99,7 @@ class Show extends React.Component {
 	}
 
 	render() {
-		defaultButtons[4].hiddenInputValue = this.getAtlasUrl();
+		
 		return (
 			<div className={ this.getClassName() }>
 				<SideBar 
@@ -85,11 +107,18 @@ class Show extends React.Component {
 					project={ this.state.project } 
 					uiState={ this.state.ui } 
 					setUiState={ this.setUiState.bind(this) }
-					buttons={ defaultButtons }
+					buttons={ this.getButtons() }
 				/>
 				{ this.renderProject() }
 			</div>
 		);
+	}
+
+	getButtons() {
+		var btns = getButtons();
+		btns[4].hiddenInputValue = this.getAtlasUrl();
+		if(btns[5]) { btns[5].url = this.getEditUrl(); }
+		return btns;
 	}
 
 	getClassName() {
@@ -187,6 +216,13 @@ class Show extends React.Component {
 
 	getAtlasUrl() {
 		return this.props.atlas_url || this.props.params.atlas_url;
+	}
+
+	getEditUrl() {
+		if (this.state.project) {
+			return `/projects/${this.state.project.get('id')}/edit`;
+		}
+		return '/';
 	}
 
 	componentDidMount() {

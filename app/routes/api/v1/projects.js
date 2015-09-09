@@ -1,9 +1,8 @@
 var express = require('express'),
 	router = express.Router(),
 	project = require('./../../../models/project.js'),
-	projectSection = require('./../../../models/project_section.js'),
-	projectTemplate = require('./../../../models/project_template.js'),
 	dbConnector = require('./../../../../db/connector'),
+	ObjectID = require('mongodb').ObjectID,
 	base = require('./../../../models/base.js'),
 	csv = require('csv');
 
@@ -33,7 +32,7 @@ router.get('/', function(req, res) {
 
 	fields = { encoded_image: 0 };
 
-	if (typeof queryParams.atlas_url === "undefined") {
+	if (queryParams.atlas_url == null) {
 		fields.data = 0;
 		fields.body_text = 0;
 	}
@@ -50,11 +49,6 @@ router.get('/', function(req, res) {
 
 			if (err) { return console.dir(err); }
 
-			var selectedModels = [],
-				referenceModel,
-				referenceModelTags,
-				resp = [];
-
 			models = base.Collection.prototype.parse(models);
 
 			var coll = new project.Collection(models);
@@ -63,24 +57,12 @@ router.get('/', function(req, res) {
 			if (specialQueryParams == null) {
 				return res.json(coll.toJSON());
 			} else {
-
-				// return res.json(coll.related_to());
-
-				referenceModel = coll.findWhere({ id: specialQueryParams.related_to });
-				if (referenceModel == null) { return res.json([]); }
-				
-				coll.each(function(model) {
-					if (model.isRelatedTo(referenceModel)) {
-						resp.push(model.toJSON());
-					}
-				});
-
-				return res.json(resp);
+				return res.json(coll.related_to(specialQueryParams.related_to));
 			}
 
 		});
 
-	});
+	}, (err) => { console.dir(err); return res.json([]); });
 
 });
 
@@ -98,11 +80,36 @@ router.get('/image', function(req, res) {
 		var cursor = db.collection('projects').find(queryParams, fields);
 
 		cursor.toArray(function(err, models) {
-			if (err) { console.dir(err); }
+			if (err) { 
+				console.dir(err); 
+				return res.json([]); 
+			}
 			res.json(models);
 		});
 
-	});
+	}, (err) => { console.dir(err); return res.json([]); });
+
+});
+
+router.get('/:id', (req, res) => {
+
+	var id = req.params.id;
+
+	return dbConnector.then((db) => {
+		var cursor = db.collection('projects').find({ _id: new ObjectID(id) });
+		cursor.toArray((err, data) => {
+			if (err) { 
+				console.dir(err);
+				return res.json({});
+			}
+			var datum = data[0];
+			if(datum._id) {
+				datum.id = datum._id;
+				delete datum._id;
+			}
+			res.json(datum);
+		});
+	}, (err) => { console.dir(err); return res.json({}); });
 
 });
 
@@ -114,10 +121,6 @@ router.post('/print', function(req, res) {
 		fileName = queryParams.atlas_url || 'file',
 		fields = { data: 1, atlas_url: 1 };
 
-	var exists = function(variable) {
-		return (typeof variable !== "undefined") && (variable != "null");
-	};
-
 	if (!req.isAuthenticated()) {
 		queryParams.is_live = "Yes";
 	}
@@ -128,13 +131,13 @@ router.post('/print', function(req, res) {
 
 		cursor.toArray(function(err, models) {
 			if (err) { console.dir(err); }
-			if (exists(models[0]) && exists(models[0].data) && exists(models[0].data.items)) {
+			if ((models[0]) && (models[0].data) && (models[0].data.items)) {
 				return res.csv(models[0].data.items, fileName + '.csv');
 			}
 			res.send();
 		});
 
-	});
+	}, (err) => { console.dir(err); return res.json([]); });
 
 });
 

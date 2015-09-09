@@ -9,7 +9,7 @@ class Text extends React.Component {
 				<p className='form__hint'>{ this.props.hint }</p>
 				<input 
 					type='text' 
-					onChange={this.sendData.bind(this)} 
+					onChange={this.saveDataOnParent.bind(this)} 
 					name={this.props.id}
 					id={this.props.id}
 					value={this.props.initialValue}
@@ -19,8 +19,9 @@ class Text extends React.Component {
 		);
 	}
 
-	sendData(e) {
-		this.props.sendData({
+	saveDataOnParent(e) {
+		console.log(e.target.value);
+		this.props.saveDataOnParent({
 			id: this.props.id,
 			value: e.target.value
 		});

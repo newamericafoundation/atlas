@@ -48,7 +48,7 @@ gulp.task('bundle', () => {
 gulp.task('bundle-watch', () => {
     var bundler = getWatchifyBundler('./app/components/routes.jsx');
     bundler.on('update', () => {
-        console.log('Reboundling..')
+        console.log('Rebundling..')
         writeBundle(bundler);
     });
     return writeBundle(bundler);

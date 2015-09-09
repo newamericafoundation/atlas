@@ -40,9 +40,17 @@ class New extends Static {
 	renderPageContent() {
 		return (
 			<div className="static-content">
-				<Form model={ new project.Model() } />
+				<Form 
+					model={ new project.Model() } 
+					submitButtonText="Create Project"
+					onSubmit={ this.logFormData.bind(this) }
+				/>
 			</div>
 		);
+	}
+	
+	logFormData(formData) {
+		console.log(formData);
 	}
 
 }

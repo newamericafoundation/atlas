@@ -1,6 +1,6 @@
 import React from 'react';
 import Router from 'react-router';
-import { Route, RouteHandler } from 'react-router';
+import { Route, RouteHandler, Redirect } from 'react-router';
 
 import classNames from 'classnames';
 
@@ -43,22 +43,37 @@ class Layout extends React.Component {
 
 }
 
+// Main route definition.
 var routes = (
 	<Route handler={Layout}>
-		<Route path='' handler={Welcome} />
+
+		<Route name='welcome' path='welcome' params={{a: 'b'}} handler={Welcome} />
+		<Redirect from='/' to='welcome' />
+
 		<Route path='projects'>
-			<Route path='new' handler={ProjectsNew} />
-			<Route path=':id/edit' handler={ProjectsEdit} />
+			<Route name='projects_new' path='new' handler={ProjectsNew} />
+			<Route name='projects_edit' path=':id/edit' handler={ProjectsEdit} />
 		</Route>
-		<Route path='welcome' handler={Welcome} />
-		<Route path='menu' handler={ProjectsIndex} />
-		<Route path=':atlas_url' handler={ProjectsShow} />
+
+		<Route name='projects_index' path='menu' handler={ProjectsIndex} />
+		<Route name='projects_show' path=':atlas_url' handler={ProjectsShow} />
+
 	</Route>
 );
 
+
+
 function start() {
+	var isFirstRoute = true;
+
+	// Developer signature :).
 	console.log('Hi, Mom!');
+
 	Router.run(routes, Router.HistoryLocation, (Root, state) => {
+		if (isFirstRoute) {
+			// fetch data for the first route to be rendered
+		}
+		isFirstRoute = false;
 		React.render(<Root App={global.Atlas} state={state} />, $('#site')[0]);
 	});
 };

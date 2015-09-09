@@ -1,6 +1,6 @@
 @mixin button() {
 
-    $main-color: $main-color: map-get($palette, off-white);
+    $main-color: map-get($palette, off-white);
     $secondary-color: map-get(map-get($palette, grey), base);
     $font-size: 16px;
     $is-solid: false;
