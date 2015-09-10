@@ -1,6 +1,7 @@
 import React from 'react';
+import Base from './base.jsx';
 
-class ImageFile extends React.Component {
+class ImageFile extends Base {
 
 	render() {
 		return (

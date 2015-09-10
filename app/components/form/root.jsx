@@ -33,8 +33,9 @@ class Form extends React.Component {
 	}
 
 	saveDataFromChild(childData) {
-		console.log(childData);
-		var key = childData.id,
+
+		var model = this.props.model,
+			key = childData.id,
 			oldValue = this.props.model.get(key),
 			newValue = childData.value;
 
@@ -43,12 +44,12 @@ class Form extends React.Component {
 		if (_.isArray(oldValue)) {
 			if (oldValue.indexOf(newValue) === -1) {
 				oldValue.push(newValue);
-				this.props.model.set(key, oldValue);
+				model.set(key, oldValue);
 			}
 		} else {
-			this.props.model.set(key, newValue);
+			model.set(key, newValue);
 		}
-		console.log(this.props.model.toJSON());
+
 		this.forceUpdate();
 	}
 
@@ -71,6 +72,7 @@ class Form extends React.Component {
 	}
 
 	renderFormComponents() {
+		console.log(this.props.model.toJSON());
 		return this.props.model.fields.map((field) => {
 			var FormComp = Subcomponents[field.formComponentName] || Subcomponents.Text,
 				id = field.formComponentProps.id,

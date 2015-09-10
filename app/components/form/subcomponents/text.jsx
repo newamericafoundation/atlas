@@ -1,6 +1,7 @@
 import React from 'react';
+import Base from './base.jsx';
 
-class Text extends React.Component {
+class Text extends Base {
 
 	render() {
 		return (
@@ -20,7 +21,6 @@ class Text extends React.Component {
 	}
 
 	saveDataOnParent(e) {
-		console.log(e.target.value);
 		this.props.saveDataOnParent({
 			id: this.props.id,
 			value: e.target.value

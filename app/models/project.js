@@ -17,6 +17,8 @@ exports.Model = base.Model.extend({
         'tags': 'a,b,c,d',
         'is_section_overview': 'No',
         'is_live': 'No',
+        'project_template_id': '0',
+        'project_sections_ids': [ '1' ],
         'atlas_url': ''
     },
 

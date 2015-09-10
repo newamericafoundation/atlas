@@ -24,7 +24,7 @@ exports.Model = base.Model.extend({
 		var encoded;
 		encoded = this.get('encoded');
 		if (encoded != null) {
-			return "url('data:image/jpeg;base64," + encoded + "')";
+			return "url('data:image/jpg;base64," + encoded + "')";
 		}
 	},
 

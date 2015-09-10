@@ -1,6 +1,7 @@
 import React from 'react';
+import Base from './base.jsx';
 
-class ForeignCollectionRadio extends React.Component {
+class ForeignCollectionRadio extends Base {
 
 	constructor(props) {
 		super(props);

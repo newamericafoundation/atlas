@@ -5664,7 +5664,7 @@ label {
       .atl__top-bar__summary .button p {
         color: #323232; }
     .atl__top-bar__summary > div {
-      max-width: 120px;
+      width: 120px;
       overflow: ellipsis;
       display: table-cell;
       vertical-align: middle;
@@ -5672,7 +5672,7 @@ label {
       font-size: 18px;
       font-size: 1.125rem; }
       .atl__top-bar__summary > div > p {
-        width: 100%;
+        width: 100px;
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap; }

@@ -1,6 +1,7 @@
 import React from 'react';
+import Base from './base.jsx';
 
-class SpreadsheetFile extends React.Component {
+class SpreadsheetFile extends Base {
 
 	render() {
 		return (

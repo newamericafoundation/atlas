@@ -1,6 +1,7 @@
 import React from 'react';
+import Base from './base.jsx';
 
-class CKEditor extends React.Component {
+class CKEditor extends Base {
 
 	constructor(props) {
 		super(props);

@@ -95,7 +95,7 @@ class Project extends React.Component {
 		project = this.props.project;
 		return (
 			<Link className={ "atl__project " + this.getModifierClasses() } onMouseEnter={ this.applyBackgroundColor.bind(this) } onMouseLeave={ this.removeBackgroundColor.bind(this) } onClick={ this.launch.bind(this) } to={ '/' + project.get('atlas_url') }>
-				<div className="atl__project__background atl__project__background--unselected" style={this.getBackgroundStyle()} >
+				<div className="atl__project__background" style={this.getBackgroundStyle()} >
 					<div className="center--content">
 						<p className="atl__project__background__initials">{ this.getInitials() }</p>
 					</div>
@@ -127,7 +127,9 @@ class Project extends React.Component {
 	getBackgroundStyle() {
 		var project = this.props.project;
 		if (project == null || !this.props.shouldDisplayImage) { return; }
-		return { 'backgroundImage': project.getImageUrl() };
+		var style = { 'backgroundImage': project.getImageUrl() };
+		console.log(style);
+		return style;
 	}
 
 

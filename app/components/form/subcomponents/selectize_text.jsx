@@ -1,6 +1,7 @@
 import React from 'react';
+import Base from './base.jsx';
 
-class SelectizeText extends React.Component {
+class SelectizeText extends Base {
 
 	render() {
 		return (

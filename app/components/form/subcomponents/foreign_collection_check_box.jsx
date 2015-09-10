@@ -1,6 +1,7 @@
 import React from 'react';
+import Base from './base.jsx';
 
-class ForeignCollectionCheckBox extends React.Component {
+class ForeignCollectionCheckBox extends Base {
 
 	constructor(props) {
 		super(props);

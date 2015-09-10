@@ -29,7 +29,8 @@ class InfoBox extends Static {
 	}
 
 	getTitleBarBackgroundStyle() {
-		var img = this.state.image,
+		var project = this.props.project,
+			img = this.state.image,
 			style;
 		if (img) {
 			style = {
@@ -40,7 +41,7 @@ class InfoBox extends Static {
 				'backgroundColor': 'rgba(50, 50, 50, 0.1)'
 			};
 		}
-		console.log(style);
+		// console.log(style);
 		return style;
 	}
 

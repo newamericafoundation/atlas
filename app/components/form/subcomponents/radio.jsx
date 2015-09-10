@@ -1,6 +1,7 @@
 import React from 'react';
+import Base from './base.jsx';
 
-class Radio extends React.Component {
+class Radio extends Base {
 
 	constructor(props) {
 		super(props);
@@ -27,7 +28,7 @@ class Radio extends React.Component {
 						id={this.props.id + '-opt-' + i} 
 						checked={ isChecked }
 						onChange={this.saveDataOnParent.bind(this)} 
-						value={ option } 
+						value={ option }
 					/>
 					<p>{ option }</p>
 				</div>

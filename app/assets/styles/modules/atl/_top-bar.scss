@@ -79,7 +79,7 @@
 		}
 
 		& > div {
-			max-width: 120px;
+			width: 120px;
 			overflow: ellipsis;
 			display: table-cell;
 			vertical-align: middle;
@@ -87,12 +87,13 @@
 			@include font-size(18px);
 
 			& > p { 
-				width: 100%; 
+				width: 100px; 
 				text-overflow: ellipsis;
 				overflow: hidden;
 				white-space: nowrap;
 			}
 		}
+
 	}
 
 }
