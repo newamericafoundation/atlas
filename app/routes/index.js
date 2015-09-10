@@ -8,7 +8,7 @@ var resources = [ 'projects', 'project_sections', 'project_templates', 'core_dat
 router.use(json2csv.expressDecorator);
 
 router.get('/login', (req, res) => {
-	res.render('login');
+	res.render('login', fingerprintManifest);
 });
 
 router.get('/logout', (req, res) => {
@@ -30,17 +30,6 @@ router.get([ '/', 'welcome', '/menu', '*' ], (req, res) => {
 	var opt = fingerprintManifest;
 	opt.user = req.user;
 	res.render('index.jade', opt);
-});
-
-// Print route that takes a title and html as post parameter, assemble a 
-//   corresponding simple html page and calls window.print automatically.
-router.post('/print', function(req, res) {
-	req.body = req.body || {};
-	req.body.title = req.body.title || 'Title';
-	req.body.content = req.body.content || '<h1>umm</h1><p>mm</p>';
-	var content = '<h1>' + req.body.title + '</h1>' + req.body.content;
-	content += '<script>window.print();</script>'
-	res.render('print.jade', fingerprintManifest);
 });
 
 module.exports = router;

@@ -18,8 +18,6 @@ var batchUpdate = function(url, collectionName, updateFunction) {
 
 		var collection = db.collection(collectionName);
 
-		var cursor = collection.find({});
-
 		var tracker = new UpdateTracker();
 
 		tracker.on('done', function() {
@@ -27,29 +25,28 @@ var batchUpdate = function(url, collectionName, updateFunction) {
 			db.close();
 		});
 
-		cursor.each(function(err, item) {
+		collection.find({}).each(function(err, item) {
 
 			if (err) { return console.log(err); }
 
-			if (item != null) {
+			if (item == null) { return tracker.logCursorEnd(); }
 
-				tracker.logFound();
+			tracker.logFound();
 
-				var query,
-					update = updateFunction(item);
+			var query,
+				update = updateFunction(item);
 
-				if (item['_id']) {
-					query = { '_id': item['_id'] };
-				} else {
-					query = { id: item['id'] }
-				}
+			if (item['_id']) {
+				query = { '_id': item['_id'] };
+			} else {
+				query = { id: item['id'] }
+			}
 
-				collection.update(query, update, function(err) { 
-					if (err) { console.log(err); }
-					tracker.logUpdated();
-				});
+			collection.update(query, update, function(err) { 
+				if (err) { console.log(err); }
+				tracker.logUpdated();
+			});
 
-			} else { tracker.logCursorEnd(); }
 
 		});
 

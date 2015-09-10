@@ -13,8 +13,8 @@
 
 
         setMapEventListeners: () ->
-            Map.map.on 'viewreset', @update.bind @
-            Map.map.on 'click', @onMapClick.bind @
+            Map.map.on('viewreset', @update.bind(@))
+            Map.map.on('click', @onMapClick.bind(@))
 
         render: () ->
 
@@ -22,6 +22,7 @@
 
             @shape = Map.svgPaths.shapes.pindrop
 
+            # Get halves and thirds of the pin to apply corresponding coloring.
             pindrop = [
                 { path: @shape.paths.slice_1_of_2, className: 'map-pin__1-of-2' }
                 { path: @shape.paths.slice_2_of_2,  className: 'map-pin__2-of-2' }

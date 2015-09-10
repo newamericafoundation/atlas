@@ -39,7 +39,7 @@ module.exports = {
 		    source: [
 		        './app/assets/scripts/config/**/*',
 		        './app/assets/scripts/atlas/atlas.js',
-		        './app/assets/scripts/atlas/site/map/**/*.js.coffee'
+		        './app/assets/scripts/atlas/site/map/**/*'
 		    ]
 
     	}

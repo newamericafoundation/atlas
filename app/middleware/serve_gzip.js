@@ -12,8 +12,8 @@ var removeQueryString = function(url) {
 	return url;
 }; 
 
-// Serve gzipped javascript if available
-//   This must be declared before static routes are configured.
+// Serve gzipped JavaScript if available.
+// This middleware will not work if used before static routes are configured on express.
 export default function(req, res, next) {
 	var url, gzipUrl;
 	url = req.url;

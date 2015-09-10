@@ -1,3 +1,4 @@
+// Authentication middleware
 export default {
 
 	// Simple route middleware to ensure user is authenticated.

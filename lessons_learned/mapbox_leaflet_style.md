@@ -1,0 +1,1 @@
+If you use mapbox.js (a library practically on top of leaflet.js), you may get away with leaflet's much simpler stylesheet, which is, at the time of this writing (April 2015) three times smaller. Less CSS to parse and process.

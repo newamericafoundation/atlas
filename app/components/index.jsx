@@ -61,8 +61,6 @@ var routes = (
 	</Route>
 );
 
-
-
 function start() {
 	var isFirstRoute = true;
 

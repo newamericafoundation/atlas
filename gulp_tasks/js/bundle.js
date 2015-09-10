@@ -6,9 +6,8 @@ import babelify from 'babelify';
 import source from 'vinyl-source-stream';
 import watchify from 'watchify';
 
-var browserifyArgs = {
-    entries: [ './app/models/__client__.js' ]
-};
+// Application entry point.
+var entry = './app/components/index.jsx';
 
 var globalShim = browserifyGlobalShim.configure({
     'jquery': '$',
@@ -17,7 +16,7 @@ var globalShim = browserifyGlobalShim.configure({
 });
 
 var getBrowserifyBundler = (entries) => {
-    var args = _.extend({ entries: entries }, watchify.args, { debug: true });
+    var args = _.extend({ entries: entry }, watchify.args, { debug: true });
     var b = browserify(args);
     b.transform(babelify);
     b.transform(globalShim);
@@ -40,13 +39,13 @@ var writeBundle = (bundler, name = 'component.js', dest = './public/assets/scrip
 
 // make server-side component definitions available on the client.
 gulp.task('bundle', () => {
-    var bundler = getBrowserifyBundler('./app/components/routes.jsx');
+    var bundler = getBrowserifyBundler();
     return writeBundle(bundler);
 });
 
 // make server-side component definitions available on the client.
 gulp.task('bundle-watch', () => {
-    var bundler = getWatchifyBundler('./app/components/routes.jsx');
+    var bundler = getWatchifyBundler();
     bundler.on('update', () => {
         console.log('Rebundling..')
         writeBundle(bundler);
