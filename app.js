@@ -19,7 +19,7 @@ var app = express(),
 require('./config/passport_config.js');
 
 // Basic configuration.
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '5mb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Use Prerender if in production.

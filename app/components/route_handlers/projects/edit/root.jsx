@@ -54,11 +54,20 @@ class Edit extends Static {
 	}
 
 	renderPageContent() {
-		var bulk = this.state.project ? <Form model={ this.state.project } submitButtonText="Edit Project" /> : <Loading />
+		var bulk = this.state.project ? this.renderForm() : <Loading />
 		return (
 			<div className="static-content">
 				{ bulk }
 			</div>
+		);
+	}
+
+	renderForm() {
+		return (
+			<Form 
+				model={ this.state.project } 
+				submitButtonText="Edit Project" 
+			/>
 		);
 	}
 

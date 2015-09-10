@@ -32,12 +32,11 @@ class Map extends React.Component {
 	componentWillUnmount() {
 		var App = this.props.App;
 		if (App == null) { return; }
-		App.Map.props = { project: undefined };
+		App.Map.props = {};
 		App.Map.stop();
 	}
 
 	componentDidUpdate() {
-		// console.log('updating');
 		var App = this.props.App;
 		if (App == null) { return; }
 		if (App.Map.overlayView) {

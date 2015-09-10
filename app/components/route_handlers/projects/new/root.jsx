@@ -7,6 +7,17 @@ import project from './../../../../models/project.js';
 
 class New extends Static {
 
+	constructor(props) {
+		super(props);
+		this.state = {};
+	}
+
+	componentWillMount() {
+		if (!this.state.model) {
+			this.setState({ model: new project.Model() });
+		}
+	}
+
 	render() {
 		return (
 			<div className='atl atl--explainer'>
@@ -41,7 +52,7 @@ class New extends Static {
 		return (
 			<div className="static-content">
 				<Form 
-					model={ new project.Model() } 
+					model={ this.state.model } 
 					submitButtonText="Create Project"
 					onSubmit={ this.logFormData.bind(this) }
 				/>
@@ -50,7 +61,9 @@ class New extends Static {
 	}
 	
 	logFormData(formData) {
-		console.log(formData);
+		this.state.model.getClientSavePromise().then((res) => {
+			console.log(res);
+		}, (err) => { console.log(err); });
 	}
 
 }

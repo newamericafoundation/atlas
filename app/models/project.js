@@ -18,7 +18,7 @@ exports.Model = base.Model.extend({
         'is_section_overview': 'No',
         'is_live': 'No',
         'project_template_id': '0',
-        'project_sections_ids': [ '1' ],
+        'project_section_ids': [ '1' ],
         'atlas_url': ''
     },
 
@@ -32,6 +32,17 @@ exports.Model = base.Model.extend({
                 labelText: 'Project Title',
                 hint: '',
                 placeholder: 'Enter Project Title'
+            }
+        },
+
+        {
+            id: 'atlas_url',
+            formComponentName: 'Text',
+            formComponentProps: {
+                id: 'atlas_url',
+                labelText: 'Atlas Url',
+                hint: '',
+                placeholder: 'Enter Atlas Url'
             }
         },
 

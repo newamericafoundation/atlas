@@ -3,7 +3,9 @@
     # overlay view layers inherit from this object
 	class Map.OverlayBaseView extends Marionette.Object
 
-        initialize: () ->
+        initialize: (options) ->
+            options ?= {}
+            # @map = options.map
             Map.props.App.reqres.setHandler('item:map:position', (item) => @getItemMapPosition(item))
             @
 

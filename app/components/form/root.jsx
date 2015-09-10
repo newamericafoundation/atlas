@@ -72,7 +72,6 @@ class Form extends React.Component {
 	}
 
 	renderFormComponents() {
-		console.log(this.props.model.toJSON());
 		return this.props.model.fields.map((field) => {
 			var FormComp = Subcomponents[field.formComponentName] || Subcomponents.Text,
 				id = field.formComponentProps.id,

@@ -35,6 +35,29 @@ var Model = Backbone.Model.extend({
 
 	},
 
+	getClientSavePromise: function() {
+
+		return new Promise((resolve, reject) => {
+
+			var url = this.urlRoot + '/new';
+
+			$.ajax({
+				url: url,
+				type: 'post',
+				dataType: 'json',
+				data: this.toJSON(),
+				success: (datum) => {
+					resolve(datum);
+				},
+				error: (err) => {
+					reject(err);
+				}
+			});
+
+		});
+
+	},
+
 	/** 
 	 * Recognize and process data.
 	 * @param {object} data - Data as key-value pairs.

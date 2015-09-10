@@ -113,6 +113,32 @@ router.get('/:id', (req, res) => {
 
 });
 
+router.post('/new', (req, res) => {
+
+	return dbConnector.then((db) => {
+
+		var collection = db.collection('projects');
+
+		var project = req.body;
+
+		res.json({ status: 'success' });
+
+		collection.insert(project, (err, data) => {
+
+			if(err) { return console.dir(err); }
+
+			var savedProject = data.ops[0];
+
+			console.log(savedProject);
+			console.log(savedProject._id);
+
+		});
+		
+
+	}, (err) => { console.dir(err); return res.json({ status: 'error' }); });
+
+});
+
 
 // Print project data.
 router.post('/print', function(req, res) {

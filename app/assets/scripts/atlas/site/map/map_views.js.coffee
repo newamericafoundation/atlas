@@ -39,14 +39,17 @@
 			# Expose map to the module. 
 			Map.map = @map
 			
+		getMapOptions: ->
+			return {
+				attributionControl: true
+				zoomControl: false
+				inertia: false
+			}
 
 		# Render view.
 		render: ->
 			L.mapbox.accessToken = 'pk.eyJ1Ijoicm9zc3ZhbmRlcmxpbmRlIiwiYSI6ImRxc0hRR28ifQ.XwCYSPHrGbRvofTV-CIUqw'
-			@map = L.mapbox.map @elId, 'rossvanderlinde.874ab107',
-				attributionControl: true
-				zoomControl: false
-				inertia: false
+			@map = L.mapbox.map @elId, 'rossvanderlinde.874ab107', @getMapOptions()
 			@$attribution = $('.leaflet-control-attribution')
 			@$attribution.hide()
 			@_setupMap()

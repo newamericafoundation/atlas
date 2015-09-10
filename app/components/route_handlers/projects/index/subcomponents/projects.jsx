@@ -128,7 +128,6 @@ class Project extends React.Component {
 		var project = this.props.project;
 		if (project == null || !this.props.shouldDisplayImage) { return; }
 		var style = { 'backgroundImage': project.getImageUrl() };
-		console.log(style);
 		return style;
 	}
 

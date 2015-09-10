@@ -3,7 +3,7 @@
 	Map.Controller = 
 
 		show: ->
-			$().ensureScript 'L', '/assets/vendor/mapbox.js', @showMain.bind(@)
+			$().ensureScript('L', '/assets/vendor/mapbox.js', @showMain.bind(@))
 
 		showMain: ->
 			Map.rootView = new Map.RootView().render()
@@ -16,7 +16,10 @@
 			items = Map.props.project.get('data').items
 			itemType = items.getItemType()
 
-			View = if itemType is 'state' then Map.PathOverlayView else Map.PindropOverlayView
+			if itemType is 'state'
+				View = Map.PathOverlayView 
+			else 
+				View = Map.PindropOverlayView
 
 			launch = (baseGeoData) ->
 				coll = items.getRichGeoJson(baseGeoData)
@@ -28,7 +31,7 @@
 					Map.overlayView = overlayView
 					overlayView.render()
 
-			@getStateBaseGeoData launch
+			@getStateBaseGeoData(launch)
 
 			@
 

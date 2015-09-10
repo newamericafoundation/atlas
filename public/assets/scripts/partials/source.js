@@ -326,7 +326,11 @@ window.Atlas = new Marionette.Application();
         var View, itemType, items, launch;
         items = Map.props.project.get('data').items;
         itemType = items.getItemType();
-        View = itemType === 'state' ? Map.PathOverlayView : Map.PindropOverlayView;
+        if (itemType === 'state') {
+          View = Map.PathOverlayView;
+        } else {
+          View = Map.PindropOverlayView;
+        }
         launch = function(baseGeoData) {
           var coll;
           coll = items.getRichGeoJson(baseGeoData);
@@ -407,13 +411,16 @@ window.Atlas = new Marionette.Application();
         })(this));
         return Map.map = this.map;
       },
-      render: function() {
-        L.mapbox.accessToken = 'pk.eyJ1Ijoicm9zc3ZhbmRlcmxpbmRlIiwiYSI6ImRxc0hRR28ifQ.XwCYSPHrGbRvofTV-CIUqw';
-        this.map = L.mapbox.map(this.elId, 'rossvanderlinde.874ab107', {
+      getMapOptions: function() {
+        return {
           attributionControl: true,
           zoomControl: false,
           inertia: false
-        });
+        };
+      },
+      render: function() {
+        L.mapbox.accessToken = 'pk.eyJ1Ijoicm9zc3ZhbmRlcmxpbmRlIiwiYSI6ImRxc0hRR28ifQ.XwCYSPHrGbRvofTV-CIUqw';
+        this.map = L.mapbox.map(this.elId, 'rossvanderlinde.874ab107', this.getMapOptions());
         this.$attribution = $('.leaflet-control-attribution');
         this.$attribution.hide();
         this._setupMap();
@@ -478,7 +485,10 @@ window.Atlas = new Marionette.Application();
         return OverlayBaseView.__super__.constructor.apply(this, arguments);
       }
 
-      OverlayBaseView.prototype.initialize = function() {
+      OverlayBaseView.prototype.initialize = function(options) {
+        if (options == null) {
+          options = {};
+        }
         Map.props.App.reqres.setHandler('item:map:position', (function(_this) {
           return function(item) {
             return _this.getItemMapPosition(item);
