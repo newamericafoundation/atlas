@@ -20,7 +20,11 @@ require('./config/passport_config.js');
 
 // Basic configuration.
 app.use(bodyParser.json({ limit: '5mb' }));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ 
+	extended: false, 
+	limit: '5mb',
+	parameterLimit: 10000
+}));
 
 // Use Prerender if in production.
 if (env === 'production') {

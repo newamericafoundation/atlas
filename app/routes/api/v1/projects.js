@@ -1,10 +1,12 @@
 var express = require('express'),
-	router = express.Router(),
+	bodyParser = require('body-parser'),
 	project = require('./../../../models/project.js'),
 	dbConnector = require('./../../../../db/connector'),
 	ObjectID = require('mongodb').ObjectID,
 	base = require('./../../../models/base.js'),
 	csv = require('csv');
+
+var router = express.Router();
 
 // Separated query parameters into regular queries and specialty ones.
 //   related_to specialty query specifies the id of the project the 
