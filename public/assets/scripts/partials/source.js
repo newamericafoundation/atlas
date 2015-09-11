@@ -255,21 +255,24 @@ this.Atlas.module('Map', function(Map) {
         },
 
         showMain: function() {
-            Map.rootView = new Map.RootView().render();
+            Map.rootView = new Map.RootView({ el: '#atl__map' }).render();
             this.$loading = $("<div class='loading-icon'><div>Loading...</div></div>");
             $('.atl__main').append(this.$loading);
             return $().ensureScript('d3', '/assets/vendor/d3.min.js', this.showOverlay.bind(this));
         },
 
         showOverlay: function() {
+
             var View, itemType, items, launch;
             items = Map.props.project.get('data').items;
             itemType = items.getItemType();
+
             if (itemType === 'state') {
                 View = Map.PathOverlayView;
             } else {
                 View = Map.PindropOverlayView;
             }
+
             launch = function(baseGeoData) {
                 var coll;
                 coll = items.getRichGeoJson(baseGeoData);
@@ -282,16 +285,20 @@ this.Atlas.module('Map', function(Map) {
                     return overlayView.render();
                 });
             };
+
             this.getStateBaseGeoData(launch);
             return this;
+
         },
 
         getStateBaseGeoData: function(next) {
+
             var data;
             data = Map.props.App['us-states-10m'];
             if (data != null) {
                 return next(data);
             }
+
             return $.ajax({
                 url: '/data/us-states-10m.js',
                 dataType: 'script',
@@ -299,6 +306,7 @@ this.Atlas.module('Map', function(Map) {
                     return next(Map.props.App['us-states-10m']);
                 }
             });
+
         },
 
         destroy: function() {
@@ -313,77 +321,101 @@ this.Atlas.module('Map', function(Map) {
     };
 
 });
+this.Atlas.module('Map', function(Map) {
+
+  	return Map.control = {
+
+	    // Centers map on specified target specified as latitude-longitude array.
+	    // @param {Array} latLng - Latitude-longitude array for centering.
+	    // @param {number} widthRatio=0.5 - Relative horizontal position the map is centered to (0 -> left, 1 -> right).
+	    // @param {number} heightRatio=0.5 - Relative vertical position the map is centered to (0 -> top, 1 -> bottom).
+	    // @returns {object} this
+	    center: function(latLng, widthRatio, heightRatio) {
+			var map, mapSize, pt;
+			if (widthRatio == null) {
+			  widthRatio = 0.5;
+			}
+			if (heightRatio == null) {
+			  heightRatio = 0.5;
+			}
+			map = this;
+			pt = map.latLngToContainerPoint(latLng);
+			mapSize = map.getSize();
+			map.panBy([-mapSize.x * widthRatio + pt.x, -mapSize.y * heightRatio + pt.y], {
+			  animate: true,
+			  duration: 0.5
+			});
+			return this;
+	    },
+
+	    // Centers map on specified target specified as 2d point object.
+	    // @param {Object} location - Pixel location object for centering - { x: .., y: .. }.
+	    // @param {number} widthRatio=0.5 - Relative horizontal position the map is centered to (0 -> left, 1 -> right).
+	    // @param {number} heightRatio=0.5 - Relative vertical position the map is centered to (0 -> top, 1 -> bottom).
+	    // @returns {object} this
+	    centerToPixel: function(location, widthRatio, heightRatio) {
+			var map, mapSize, pt;
+			if (widthRatio == null) {
+			  widthRatio = 0.5;
+			}
+			if (heightRatio == null) {
+			  heightRatio = 0.5;
+			}
+			map = this;
+			pt = location;
+			mapSize = map.getSize();
+			map.panBy([-mapSize.x * widthRatio + pt.x, -mapSize.y * heightRatio + pt.y], {
+			  animate: true,
+			  duration: 0.5
+			});
+			return this;
+	    },
+
+	    // Returns view center.
+	    // @returns {Array} latLng - Array of latitude and longitude.
+	    getView: function() {
+			var ll, map;
+			map = this;
+			ll = map.getBounds().getCenter();
+			return [ll.lat, ll.lng];
+	    },
+
+	    // Changes zoom level, using map center as zoom center.
+	    // @param {number} dZoom - Zoom differential.
+	    // @returns {Array} this
+	    changeZoom: function(dZoom) {
+			var map, z;
+			map = this;
+			z = map.getZoom();
+			map.setView(map.getView(), z + dZoom);
+			return this;
+	    },
+
+	    // Sets zoom level, using map center as zoom center.
+	    // @param {number} zoom - New zoom level.
+	    // @returns {Array} this
+	    setZoom: function(zoom) {
+			var map;
+			map = this;
+			map.setView(map.getView(), zoom);
+			return this;
+	    }
+
+	};
+
+});
 (function() {
   this.Atlas.module('Map', function(Map) {
-    return Map.control = {
-      center: function(latLng, widthRatio, heightRatio) {
-        var map, mapSize, pt;
-        if (widthRatio == null) {
-          widthRatio = 0.5;
-        }
-        if (heightRatio == null) {
-          heightRatio = 0.5;
-        }
-        map = this;
-        pt = map.latLngToContainerPoint(latLng);
-        mapSize = map.getSize();
-        map.panBy([-mapSize.x * widthRatio + pt.x, -mapSize.y * heightRatio + pt.y], {
-          animate: true,
-          duration: 0.5
-        });
-        return this;
-      },
-      centerToPixel: function(location, widthRatio, heightRatio) {
-        var map, mapSize, pt;
-        if (widthRatio == null) {
-          widthRatio = 0.5;
-        }
-        if (heightRatio == null) {
-          heightRatio = 0.5;
-        }
-        map = this;
-        pt = location;
-        mapSize = map.getSize();
-        map.panBy([-mapSize.x * widthRatio + pt.x, -mapSize.y * heightRatio + pt.y], {
-          animate: true,
-          duration: 0.5
-        });
-        return this;
-      },
-      getView: function() {
-        var ll, map;
-        map = this;
-        ll = map.getBounds().getCenter();
-        return [ll.lat, ll.lng];
-      },
-      changeZoom: function(dZoom) {
-        var map, z;
-        map = this;
-        z = map.getZoom();
-        map.setView(map.getView(), z + dZoom);
-        return this;
-      },
-      setZoom: function(zoom) {
-        var map;
-        map = this;
-        map.setView(map.getView(), zoom);
-        return this;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  this.Atlas.module('Map', function(Map) {
-    return Map.RootView = Marionette.Object.extend({
-      el: '#atl__map',
-      initialize: function(options) {
+    return Map.RootView = (function() {
+      function RootView(options) {
+        this.el = options.el;
         this.elId = this.el.substr(1);
         this.$el = $(this.el);
-        return this;
-      },
-      _getZoomLevel: function() {
+        _.extend(this, Backbone.Events);
+        this;
+      }
+
+      RootView.prototype._getZoomLevel = function() {
         var width;
         width = this.$el.width();
         if (width > 1350) {
@@ -393,8 +425,9 @@ this.Atlas.module('Map', function(Map) {
           return 4;
         }
         return 3;
-      },
-      _setupMap: function() {
+      };
+
+      RootView.prototype._setupMap = function() {
         var zoomLevel;
         zoomLevel = this._getZoomLevel();
         this.map.setView([37.6, -95.665], zoomLevel);
@@ -411,65 +444,41 @@ this.Atlas.module('Map', function(Map) {
           };
         })(this));
         return Map.map = this.map;
-      },
-      getMapOptions: function() {
+      };
+
+      RootView.prototype.getMapOptions = function() {
         return {
           attributionControl: true,
           zoomControl: false,
           inertia: false
         };
-      },
-      render: function() {
+      };
+
+      RootView.prototype.render = function() {
         L.mapbox.accessToken = 'pk.eyJ1Ijoicm9zc3ZhbmRlcmxpbmRlIiwiYSI6ImRxc0hRR28ifQ.XwCYSPHrGbRvofTV-CIUqw';
         this.map = L.mapbox.map(this.elId, 'rossvanderlinde.874ab107', this.getMapOptions());
-        this.$attribution = $('.leaflet-control-attribution');
-        this.$attribution.hide();
+        Map.props.setMap(this.map);
         this._setupMap();
-        this._addControl();
+        this.hideAttribution();
         return this;
-      },
-      _addControl: function() {
-        var html;
-        html = "<div class='atl__map-control'> <div id='atl__map-attribution' class='atl__map-control__button bg-img-info--black'></div> <div id='atl__map-zoom-in'  class='atl__map-control__button bg-img-plus--black'></div> <div id='atl__map-zoom-out' class='atl__map-control__button bg-img-minus--black'></div> <div class='atl__help atl__help--left'> View <b>copyright</b> information about the map and <b>zoom</b> in and out. </div> </div>";
-        this.$el.append(html);
-        this.$zoomInButton = $('#atl__map-zoom-in');
-        this.$zoomOutButton = $('#atl__map-zoom-out');
-        this.$attributionButton = $('#atl__map-attribution');
-        this._setZoomEvents();
-        return this._setAttributionEvents();
-      },
-      _setZoomEvents: function() {
-        var map;
-        map = this.map;
-        this.$zoomInButton.on('click', function() {
-          return map.changeZoom(+1);
-        });
-        this.$zoomOutButton.on('click', function() {
-          return map.changeZoom(-1);
-        });
-        return this;
-      },
-      _setAttributionEvents: function() {
-        return this.$attributionButton.on('click', (function(_this) {
-          return function() {
-            return _this.$attribution.toggle();
-          };
-        })(this));
-      },
-      clearZoom: function() {
-        this.$zoomInButton.off();
-        this.$zoomOutButton.off();
-        return this;
-      },
-      destroy: function() {
-        this.clearZoom();
-        if (this.map) {
-          this.map.clearAllEventListeners();
-          this.map.remove();
+      };
+
+      RootView.prototype.hideAttribution = function() {
+        return $('.leaflet-control-attribution').hide();
+      };
+
+      RootView.prototype.destroy = function() {
+        if (this.map == null) {
+          return;
         }
+        this.map.clearAllEventListeners();
+        this.map.remove();
         return this;
-      }
-    });
+      };
+
+      return RootView;
+
+    })();
   });
 
 }).call(this);

@@ -1,5 +1,5 @@
 var express = require('express'),
-	fingerprintManifest = require('./fingerprint-manifest'),
+	fingerprintManifest = require('./utilities/fingerprint_manifest.js'),
 	json2csv = require('nice-json2csv');
 
 var router = express.Router();

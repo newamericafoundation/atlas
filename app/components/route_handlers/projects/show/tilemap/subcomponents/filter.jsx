@@ -45,7 +45,7 @@ class Filter extends React.Component {
 		var keys = this.props.filter.children;
 		return keys.map((key, i) => {
 			return (
-				<FilterKey App={this.props.App} filterKey={key} />
+				<FilterKey App={this.props.App} filterKey={key} key={i} />
 			);
 		});
 	}
@@ -54,7 +54,7 @@ class Filter extends React.Component {
 		var values = this.props.filter.getActiveChild().children;
 		return values.map((value, i) => {
 			return (
-				<FilterValue App={this.props.App} filterValue={value} />
+				<FilterValue App={this.props.App} filterValue={value} key={i} />
 			);
 		});
 	}
@@ -65,7 +65,6 @@ class Filter extends React.Component {
 class FilterKey extends React.Component {
 
 	render() {
-		// console.log(this.props.filterKey);
 		return (
 			<li className={ 'button ' + this.getModifierClass() } onClick={ this.toggle.bind(this) }>
 				<p>

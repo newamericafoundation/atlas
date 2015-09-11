@@ -108,9 +108,9 @@ class TopBarIcons extends React.Component {
 	}
 
 	renderIcons() {
-		return this.getIconData().map((icon) => {
+		return this.getIconData().map((icon, i) => {
 			return (
-				<TopBarIcon {...this.props} icon={icon} />
+				<TopBarIcon {...this.props} icon={icon} key={i} />
 			);
 		});
 	}

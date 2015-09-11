@@ -1,13 +1,13 @@
 @Atlas.module 'Map', (Map) ->
 
 	# This is a custom view constructor that uses d3 and Mapbox to render graphics.
-	Map.RootView = Marionette.Object.extend
+	class Map.RootView
 
-		el: '#atl__map'
-
-		initialize: (options) ->
+		constructor: (options) ->
+			@el = options.el
 			@elId = @el.substr(1)
 			@$el = $(@el)
+			_.extend(@, Backbone.Events)
 			@
 			
 
@@ -26,7 +26,7 @@
 			@map.scrollWheelZoom.disable()
 			# add control convenience methods
 
-			_.extend @map, Map.control
+			_.extend(@map, Map.control)
 
 			@map.ignoreNextClick = false
 			# do not register a map item click event if it is fired due to a map drag end
@@ -49,58 +49,18 @@
 		# Render view.
 		render: ->
 			L.mapbox.accessToken = 'pk.eyJ1Ijoicm9zc3ZhbmRlcmxpbmRlIiwiYSI6ImRxc0hRR28ifQ.XwCYSPHrGbRvofTV-CIUqw'
-			@map = L.mapbox.map @elId, 'rossvanderlinde.874ab107', @getMapOptions()
-			@$attribution = $('.leaflet-control-attribution')
-			@$attribution.hide()
+			@map = L.mapbox.map(@elId, 'rossvanderlinde.874ab107', @getMapOptions())
+			Map.props.setMap(@map)
 			@_setupMap()
-			@_addControl()
+			@hideAttribution()
 			@
 
-
-		# Add control buttons.
-		_addControl: ->
-			html = "<div class='atl__map-control'>
-				<div id='atl__map-attribution' class='atl__map-control__button bg-img-info--black'></div> 
-				<div id='atl__map-zoom-in'  class='atl__map-control__button bg-img-plus--black'></div>
-				<div id='atl__map-zoom-out' class='atl__map-control__button bg-img-minus--black'></div>
-				<div class='atl__help atl__help--left'>
-					View <b>copyright</b> information about the map and <b>zoom</b> in and out.
-				</div>
-			</div>"
-			@$el.append html
-			@$zoomInButton = $('#atl__map-zoom-in')
-			@$zoomOutButton = $('#atl__map-zoom-out')
-			@$attributionButton = $('#atl__map-attribution')
-			@_setZoomEvents()
-			@_setAttributionEvents()
-
-
-		#
-		_setZoomEvents: () ->
-			map = @map
-			@$zoomInButton.on 'click', -> map.changeZoom +1
-			@$zoomOutButton.on 'click', -> map.changeZoom -1
-			@
-
-
-		_setAttributionEvents: ->
-			@$attributionButton
-				.on 'click', => 
-					@$attribution.toggle()
-
-
-
-		# Clears zoom event listeners for zoom buttons.
-		clearZoom: ->
-			@$zoomInButton.off()
-			@$zoomOutButton.off()
-			@
-
+		hideAttribution: ->
+			$('.leaflet-control-attribution').hide()
 
 		# Destroy view. Clear Leaflet-specific event listeners.
 		destroy: ->
-			@clearZoom()
-			if @map
-				@map.clearAllEventListeners()
-				@map.remove()
+			return unless @map?
+			@map.clearAllEventListeners()
+			@map.remove()
 			@

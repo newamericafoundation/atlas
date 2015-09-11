@@ -14,9 +14,9 @@ class List extends React.Component {
 	renderItems() {
 		var project = this.props.project;
 		if (project == null) { return; }
-		return project.get('data').items.map((item) => {
+		return project.get('data').items.map((item, i) => {
 			return (
-				<p>{ item.get('name') }</p>
+				<p key={i}>{ item.get('name') }</p>
 			);
 		});
 	}

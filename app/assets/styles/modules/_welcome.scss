@@ -1,6 +1,6 @@
 .welcome {
 
-	@extend %page-container;
+	@include animation(fadein 1s);
 
 	&__title, &__subtitle, &__strip, &__main-nav {
 		position: relative;

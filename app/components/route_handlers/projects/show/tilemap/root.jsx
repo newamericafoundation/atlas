@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import Map from './subcomponents/map.jsx';
+import Map from './subcomponents/map/root.jsx';
 import TopBar from './subcomponents/top_bar.jsx';
 import SettingsBar from './subcomponents/settings_bar.jsx';
 import Popup from './subcomponents/popup.jsx';

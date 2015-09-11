@@ -17,21 +17,24 @@ this.Atlas.module('Map', function(Map) {
         },
 
         showMain: function() {
-            Map.rootView = new Map.RootView().render();
+            Map.rootView = new Map.RootView({ el: '#atl__map' }).render();
             this.$loading = $("<div class='loading-icon'><div>Loading...</div></div>");
             $('.atl__main').append(this.$loading);
             return $().ensureScript('d3', '/assets/vendor/d3.min.js', this.showOverlay.bind(this));
         },
 
         showOverlay: function() {
+
             var View, itemType, items, launch;
             items = Map.props.project.get('data').items;
             itemType = items.getItemType();
+
             if (itemType === 'state') {
                 View = Map.PathOverlayView;
             } else {
                 View = Map.PindropOverlayView;
             }
+
             launch = function(baseGeoData) {
                 var coll;
                 coll = items.getRichGeoJson(baseGeoData);
@@ -44,16 +47,20 @@ this.Atlas.module('Map', function(Map) {
                     return overlayView.render();
                 });
             };
+
             this.getStateBaseGeoData(launch);
             return this;
+
         },
 
         getStateBaseGeoData: function(next) {
+
             var data;
             data = Map.props.App['us-states-10m'];
             if (data != null) {
                 return next(data);
             }
+
             return $.ajax({
                 url: '/data/us-states-10m.js',
                 dataType: 'script',
@@ -61,6 +68,7 @@ this.Atlas.module('Map', function(Map) {
                     return next(Map.props.App['us-states-10m']);
                 }
             });
+
         },
 
         destroy: function() {

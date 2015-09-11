@@ -1,6 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
 import { Link } from 'react-router';
+import Loading from './../../general/loading.jsx';
+
+var imageSource = "/assets/images/iStock_000065438623_720.jpg";
 
 class Welcome extends React.Component {
 
@@ -12,8 +15,9 @@ class Welcome extends React.Component {
 	}
 
 	render() {
+		if (!this.state.hasImageLoaded) { return (<Loading />); }
 		return (
-			<div className="welcome" style={ this.getRootVisibilityStyle() }>
+			<div className="welcome fill-parent" style={ this.getRootVisibilityStyle() }>
 				<div className="welcome__terrain" style={ this.getBackgroundImageStyle() } /> 
 				<div className="welcome__title">
 					<h1 className="welcome__title__name">ATLAS</h1>
@@ -32,7 +36,7 @@ class Welcome extends React.Component {
 	}
 
 	getBackgroundImageStyle() {
-		return { 'backgroundImage': 'url("/assets/images/iStock_000065438623_720.jpg")' }
+		return { 'backgroundImage': `url('${imageSource}')` }
 	}
 
 	getRootVisibilityStyle() {
@@ -41,7 +45,7 @@ class Welcome extends React.Component {
 	}
 
 	componentDidMount() {
-		$('<img>').attr({ src: "/assets/images/iStock_000065438623_720.jpg" }).load(() => {
+		$('<img>').attr({ src: imageSource }).load(() => {
 			this.setState({ hasImageLoaded: true });
 		});
 	}

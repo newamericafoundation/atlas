@@ -14,14 +14,14 @@ class DisplayToggle extends React.Component {
 	}
 
 	renderHalves() {
-		return [ { name: 'filter', iconName: 'Filter' }, { name: 'search', iconName: 'Search' } ].map((half) => {
+		return [ { name: 'filter', iconName: 'Filter' }, { name: 'search', iconName: 'Search' } ].map((half, i) => {
 			var IconComp = Icons[half.iconName],
 				cls = classNames({
 					'atl__binary-toggle__link': true,
 					'atl__binary-toggle__link--active': (this.props.uiState.display === half.name)
 				});
 			return (
-				<div className="atl__binary-toggle__half">
+				<div className="atl__binary-toggle__half" key={i}>
 					<a 
 						href="#"
 						onClick={ this.setUiDisplay.bind(this, half.name) } 

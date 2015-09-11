@@ -7,7 +7,7 @@ import source from 'vinyl-source-stream';
 import watchify from 'watchify';
 
 // Application entry point.
-var entry = './app/components/index.jsx';
+var entry = './app/assets/scripts/bundle.jsx';
 
 var globalShim = browserifyGlobalShim.configure({
     'jquery': '$',
