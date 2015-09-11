@@ -4,13 +4,17 @@ import Static from './../../../general/static.jsx';
 import Form from './../../../form/root.jsx';
 import Loading from './../../../general/loading.jsx';
 
+import { Link } from 'react-router';
+
 import project from './../../../../models/project.js';
 
 class Edit extends Static {
 
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			saveResponseStatus: undefined
+		};
 	}
 
 	render() {
@@ -30,10 +34,10 @@ class Edit extends Static {
 				<h1 className='title'>Edit Project</h1>
 				<ul>
 					<li>
-						<a className="icon-button" href={this.getViewUrl()} target="_blank">
+						<Link className="icon-button" to={this.getViewUrl()} target="_blank">
 							<div className="icon-button__icon bg-img-link--off-white"></div>
 							<div className="icon-button__text">View Project</div>
-						</a>
+						</Link>
 					</li>
 				</ul>
 			</div>
@@ -63,9 +67,11 @@ class Edit extends Static {
 	}
 
 	renderForm() {
+		var isFormEnabled = (this.state.saveResponseStatus == null);
 		return (
 			<Form 
-				model={ this.state.project } 
+				model={ this.state.project }
+				isEnabled={ isFormEnabled }
 				submitButtonText="Edit Project" 
 			/>
 		);

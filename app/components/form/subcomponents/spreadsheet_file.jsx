@@ -11,7 +11,8 @@ class SpreadsheetFile extends Base {
 				<input 
 					ref='input' 
 					onChange={this.saveDataOnParent.bind(this)} 
-					type='file' 
+					type='file'
+					disabled={!this.props.isEnabled}
 					name={this.props.id} 
 					id={this.props.id} 
 					placeholder={this.props.placeholder} 

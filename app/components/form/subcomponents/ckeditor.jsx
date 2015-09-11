@@ -16,6 +16,7 @@ class CKEditor extends Base {
 				<textarea
 					name={this.props.id}
 					id={this.props.id}
+					disabled={!this.props.Enabled}
 					value={this.props.initialValue}
 					placeholder={this.props.placeholder} 
 				/>

@@ -9,8 +9,9 @@ class Text extends Base {
 				<label for={this.props.id}>{ this.props.labelText }</label>
 				<p className='form__hint'>{ this.props.hint }</p>
 				<input 
-					type='text' 
-					onChange={this.saveDataOnParent.bind(this)} 
+					type='text'
+					onChange={this.saveDataOnParent.bind(this)}
+					disabled={!this.props.isEnabled}
 					name={this.props.id}
 					id={this.props.id}
 					value={this.props.initialValue}

@@ -1,15 +1,63 @@
 import React from 'react';
+import { Link } from 'react-router';
 import classNames from 'classnames';
 import Static from './../../../general/static.jsx';
 import Form from './../../../form/root.jsx';
+import Modal from './../../../general/modal.jsx';
 
 import project from './../../../../models/project.js';
+
+class FormModal extends Modal {
+
+	constructor(props) {
+		super(props);
+
+	}
+
+	renderContent() {
+		if(this.props.model && this.props.model.get('id')) {
+			return this.renderSuccessContent();
+		}
+		return this.renderFailureContent();
+	}
+
+	renderSuccessContent() {
+		return (
+			<div>
+				<p className='title'>Save successful</p>
+				<ul>
+				<li><Link className='link' to={this.props.model.getEditUrl()}>Edit Project</Link></li>
+				<li><Link className='link' to={this.props.model.getViewUrl()}>View Project</Link></li>
+				<li><Link className='link' to='/projects/new'>Create another project</Link></li>
+				</ul>
+			</div>
+		);
+	}
+
+	renderFailureContent() {
+		return (
+			<div>
+				<p className='title'>Save failed</p>
+				<a className='link' onClick={this.reactivateForm.bind(this)} href='/'>Keep Editing</a>
+				<Link className='link' to='/projects/new'>Start Over</Link>
+			</div>
+		);
+	}
+
+	reactivateForm(e) {
+		e.preventDefault();
+		this.props.reactivateForm();
+	}
+
+}
 
 class New extends Static {
 
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			saveResponseStatus: undefined
+		};
 	}
 
 	componentWillMount() {
@@ -25,8 +73,20 @@ class New extends Static {
 					{ this.renderTitleBar('solid') }
 					{ this.renderContentBar() }
 				</div>
+				{ this.renderModal() }
 			</div>
 		);
+	}
+
+	renderModal() {
+		if (this.state.saveResponseStatus) {
+			return (
+				<FormModal 
+					model={this.state.model}
+					reactivateForm={this.reactivateForm.bind(this)}
+				/>
+			);
+		}
 	}
 
 	renderTitleBarContent() {
@@ -43,27 +103,39 @@ class New extends Static {
 	renderPageNavContent() {
 		return (
 			<div>
-				<p>I navigate the page!</p>
+				<p>Create a new project</p>
 			</div>
 		);
 	}
 
+	reactivateForm() {
+		this.setState({ saveResponseStatus: undefined });
+	}
+
 	renderPageContent() {
+		var isFormEnabled = (this.state.saveResponseStatus == null);
 		return (
 			<div className="static-content">
 				<Form 
-					model={ this.state.model } 
+					model={ this.state.model }
+					isEnabled={ isFormEnabled }
 					submitButtonText="Create Project"
-					onSubmit={ this.logFormData.bind(this) }
+					onSubmit={ this.saveModel.bind(this) }
 				/>
 			</div>
 		);
 	}
 	
-	logFormData(formData) {
+	saveModel(formData) {
+		this.setState({ saveResponseStatus: 'pending' });
 		this.state.model.getClientSavePromise().then((res) => {
-			console.log(res);
-		}, (err) => { console.log(err); });
+			var model = this.state.model;
+			res = JSON.parse(res);
+			model.set('id', res.id);
+			this.setState({ saveResponseStatus: res.status });
+		}, (err) => { 
+			this.setState({ saveResponseStatus: 'error' });
+		});
 	}
 
 }

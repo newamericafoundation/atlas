@@ -56,6 +56,12 @@ var authButtons = [
 		contentType: 'inner-link',
 		url: '/projects/',
 		reactIconName: 'Build'
+	},
+	{
+		title: 'Delete Project',
+		contentType: 'inner-link',
+		url: '/projects/',
+		reactIconName: 'Shipping'
 	}
 ];
 

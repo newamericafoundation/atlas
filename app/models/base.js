@@ -37,6 +37,8 @@ var Model = Backbone.Model.extend({
 
 	getClientSavePromise: function() {
 
+		console.log('saving');
+
 		return new Promise((resolve, reject) => {
 
 			var url = this.urlRoot + '/new';
@@ -44,8 +46,8 @@ var Model = Backbone.Model.extend({
 			$.ajax({
 				url: url,
 				type: 'post',
-				dataType: 'json',
-				data: this.toJSON(),
+				dataType: 'text',
+				data: { jsonString: JSON.stringify(this.toJSON()) },
 				success: (datum) => {
 					resolve(datum);
 				},

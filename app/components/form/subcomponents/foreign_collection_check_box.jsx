@@ -26,7 +26,8 @@ class ForeignCollectionCheckBox extends Base {
 					<input 
 						type='checkbox' 
 						name={this.props.id}
-						id={this.props.id + '-opt-' + i} 
+						id={this.props.id + '-opt-' + i}
+						disabled={!this.props.isEnabled}
 						checked={ isChecked }
 						onChange={this.saveDataOnParent.bind(this)} 
 						value={ option } 

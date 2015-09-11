@@ -12,6 +12,7 @@ class SelectizeText extends Base {
 					ref='input' 
 					type='text' 
 					name={this.props.id} 
+					disabled={!this.props.isEnabled}
 					id={this.props.id}
 					value={this.props.initialValue}
 					placeholder={this.props.placeholder}

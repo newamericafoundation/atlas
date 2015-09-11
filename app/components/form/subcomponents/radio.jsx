@@ -27,6 +27,7 @@ class Radio extends Base {
 						name={this.props.id} 
 						id={this.props.id + '-opt-' + i} 
 						checked={ isChecked }
+						disabled={!this.props.isEnabled}
 						onChange={this.saveDataOnParent.bind(this)} 
 						value={ option }
 					/>

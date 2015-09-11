@@ -115,29 +115,60 @@ router.get('/:id', (req, res) => {
 
 });
 
+router.post('/:id/edit', (req, res) => {
+	res.json({
+		'status': 'pending',
+		'message': 'api route not yet implemented'
+	});
+});
+
 router.post('/new', (req, res) => {
 
 	return dbConnector.then((db) => {
 
 		var collection = db.collection('projects');
 
-		var project = req.body;
-
-		res.json({ status: 'success' });
+		var project = JSON.parse(req.body.jsonString);
 
 		collection.insert(project, (err, data) => {
 
-			if(err) { return console.dir(err); }
+			if(err) { 
+
+				return setTimeout(() => {
+
+					return res.json({
+						'status': 'error',
+						'message': 'Failed to save project.'
+					});
+
+				}, 0);
+
+			}
 
 			var savedProject = data.ops[0];
 
-			console.log(savedProject);
-			console.log(savedProject._id);
+			setTimeout(() => {
+
+				res.json({ 
+					status: 'success',
+					message: 'Successfully saved project',
+					id: savedProject._id
+				});
+
+			}, 0);
+
+			
 
 		});
 		
 
-	}, (err) => { console.dir(err); return res.json({ status: 'error' }); });
+	}, (err) => { 
+		console.dir(err); 
+		return res.json({ 
+			status: 'error',
+			message: 'Count not connect to database.'
+		}); 
+	});
 
 });
 

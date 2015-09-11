@@ -163,6 +163,14 @@ exports.Model = base.Model.extend({
     /** API queries that need to be handled custom. For every key, there is a this.is_#{key} method that filters a model. */
     customQueryKeys: ['related_to'],
 
+    getEditUrl: function() {
+        return '/projects/' + this.get('id') + '/edit';
+    },
+
+    getViewUrl: function() {
+        return '/' + this.get('atlas_url');
+    },
+
     /** 
      * Conversts model object to json
      * Checks if it has mandatory fields (id and more than one key). 

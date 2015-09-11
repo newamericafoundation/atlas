@@ -26,10 +26,7 @@ class Form extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {
-			warnings: [],
-			errors: []
-		};
+		this.state = {};
 	}
 
 	saveDataFromChild(childData) {
@@ -53,18 +50,17 @@ class Form extends React.Component {
 		this.forceUpdate();
 	}
 
-	shouldComponentUpdate() {
-		return false;
-	}
-
 	render() {
+		var style = this.props.isEnabled ? {} : { opacity: 0.5 };
 		return (
 			<form 
 				onSubmit={this.sendFormDataToParent.bind(this)}
+				style={style}
 			>
 				{ this.renderFormComponents() }
 				<input 
-					type='submit' 
+					type='submit'
+					disabled={!this.props.isEnabled}
 					value={ this.props.submitButtonText || 'Submit Form' } 
 				/>
 			</form>
@@ -78,7 +74,8 @@ class Form extends React.Component {
 				props = field.formComponentProps || {};
 			return (
 				<FormComp 
-					{...props} 
+					{...props}
+					isEnabled={this.props.isEnabled}
 					saveDataOnParent={this.saveDataFromChild.bind(this)}
 					initialValue={this.props.model.get(id)}
 				/>
