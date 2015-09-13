@@ -22,6 +22,7 @@ exports.Model = base.Model.extend({
         'atlas_url': ''
     },
 
+    // Form fields.
     fields: [
 
         {
@@ -164,7 +165,9 @@ exports.Model = base.Model.extend({
     customQueryKeys: ['related_to'],
 
     getEditUrl: function() {
-        return '/projects/' + this.get('id') + '/edit';
+        var id = this.get('id');
+        if (id) { return `/projects/${id}/edit`; }
+        return '/';
     },
 
     getViewUrl: function() {
@@ -180,10 +183,11 @@ exports.Model = base.Model.extend({
         var json, key, keyCount;
         keyCount = 0;
         json = this.toJSON();
+        if (json.id == null) { return false; }
         for (key in json) {
             keyCount += 1;
         }
-        return (keyCount !== 1) && (json.id != null);
+        return (keyCount > 1);
     },
 
     /**
@@ -227,16 +231,12 @@ exports.Model = base.Model.extend({
      * @returns {boolean} - Related status.
      */
     isRelatedTo: function(project) {
-        var self = this,
-            prj, tags0, tags1, i, max;
-        if (this === project) {
-            return false;
-        }
+        var prj, tags0, tags1, i, max;
+        // Project is not related to itself, it is itself :).
+        if (this === project) { return false; }
         tags0 = this.get('tags');
         tags1 = project.get('tags');
-        if (tags0 === '' || tags1 === '') {
-            return false;
-        }
+        if (tags0 === '' || tags1 === '') { return false; }
         tags0 = tags0.split(',');
         tags1 = tags1.split(',');
         for (i = 0, max = tags0.length; i < max; i += 1) {
@@ -265,18 +265,34 @@ exports.Model = base.Model.extend({
         return this.getMarkdownHtml('image_credit');
     },
 
+    beforeSave: function() {
+
+        var varModel = new variable.Model();
+
+        if (this.get('data') && this.get('data').variables) {
+            console.log('there are variables');
+            let variables = this.get('data').variables;
+            variables = variables.map((variable) => {
+                return varModel.parse(variable);
+            });
+            this.get('data').variables = variables;
+        }
+
+    },
+
     /** If there is a data field, convert to appropriate collections. */
     buildData: function() {
         var data;
         data = this.get('data');
         if (data != null) {
-            data.variables = new variable.Collection(data.variables, {
-                parse: true
-            });
+            data.variables = new variable.Collection(data.variables);
             data.items = new item.Collection(data.items, {
                 parse: true
             });
+            // data.filters = data.variables.extractFilters();
             this.buildFilterTree();
+
+            console.log(data.filter);
         }
     },
 
@@ -291,6 +307,8 @@ exports.Model = base.Model.extend({
             data = this.get('data'),
             items = data.items,
             variables = data.variables;
+
+        console.log(variables);
 
         filterVariables = variables.getFilterVariables().map(function(variable, index) {
 

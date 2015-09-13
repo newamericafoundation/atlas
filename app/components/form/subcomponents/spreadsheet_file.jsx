@@ -23,7 +23,6 @@ class SpreadsheetFile extends Base {
 
 	parseWorkBook(workbook) {
 		var obj = {};
-		console.log(workbook);
 		for (let sheetName in workbook.Sheets) {
 			let sheet = workbook.Sheets[sheetName];
 			obj[sheetName] = XLSX.utils.sheet_to_json(sheet, { raw: true });

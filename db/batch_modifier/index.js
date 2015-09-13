@@ -2,7 +2,7 @@ require('babel/register');
 
 var MongoClient = require('mongodb').MongoClient,
 	UpdateTracker = require('./tracker.js').UpdateTracker,
-	updateFunctions = require('./operations.js');
+	updateFunctions = require('./update_functions.js');
 
 /*
  * Batch update a collection.
@@ -57,5 +57,5 @@ var batchUpdate = function(url, collectionName, updateFunction) {
 batchUpdate(
 	'localhost', 
 	'projects', 
-	updateFunctions.testMethod
+	updateFunctions.unsetInfoBoxVariables
 );

@@ -1,82 +1,14 @@
 import React from 'react';
 import classNames from 'classnames';
+
 import Tilemap from './tilemap/root.jsx';
 import Explainer from './explainer/root.jsx';
+
 import Loading from './../../../general/loading.jsx';
 import SideBar from './../../../general/side_bar.jsx';
 
 import project from './../../../../models/project.js';
-
-var defaultButtons = [
-	{ 
-		title: 'Explore Atlas',
-		contentType: 'inner-link',
-		url: '/menu',
-		method: 'projects', 
-		reactIconName: 'Grid', 
-		isToggleable: false 
-	},
-	{ 
-		title: 'Collapse/Expand',
-		contentType: 'button',
-		method: 'collapse', 
-		reactIconName: 'Contract', 
-		activeReactIconName: 'Expand', 
-		isToggleable: false 
-	},
-	{ 
-		title: 'Help',
-		contentType: 'button',
-		method: 'help', 
-		reactIconName: 'Help', 
-		isToggleable: false 
-	},
-	{ 
-		title: 'Print',
-		contentType: 'button',
-		method: 'print', 
-		reactIconName: 'Print', 
-		isToggleable: false 
-	},
-	{ 
-		title: 'Download Data',
-		contentType: 'form',
-		hiddenInputKey: 'atlas_url',
-		hiddenInputValue: '',
-		url: '/api/v1/projects/print',
-		method: 'download',
-		reactIconName: 'Download',
-		isToggleable: false
-	}
-];
-
-var authButtons = [
-	{
-		title: 'Edit Project',
-		contentType: 'inner-link',
-		url: '/projects/',
-		reactIconName: 'Build'
-	},
-	{
-		title: 'Delete Project',
-		contentType: 'inner-link',
-		url: '/projects/',
-		reactIconName: 'Shipping'
-	}
-];
-
-var getButtons = () => {
-
-	var btns = JSON.parse(JSON.stringify(defaultButtons)),
-		authBtns = JSON.parse(JSON.stringify(authButtons));
-
-	if (window.isResearcherAuthenticated) {
-		return btns.concat(authBtns);
-	}
-
-	return btns;
-
-};
+import buttonsDataGenerator from './buttons_data_generator.js';
 
 class Show extends React.Component {
 
@@ -111,7 +43,8 @@ class Show extends React.Component {
 				<SideBar 
 					App={ this.props.App } 
 					project={ this.state.project } 
-					uiState={ this.state.ui } 
+					uiState={ this.state.ui }
+					sendMessageToParent={ this.handleMessageFromButtons.bind(this) }
 					setUiState={ this.setUiState.bind(this) }
 					buttons={ this.getButtons() }
 				/>
@@ -120,11 +53,14 @@ class Show extends React.Component {
 		);
 	}
 
+	handleMessageFromButtons(message) {
+		if (message === 'delete-project') {
+			console.log('deleting project');
+		}
+	}
+
 	getButtons() {
-		var btns = getButtons();
-		btns[4].hiddenInputValue = this.getAtlasUrl();
-		if(btns[5]) { btns[5].url = this.getEditUrl(); }
-		return btns;
+		return buttonsDataGenerator(this.state.project, window.isResearcherAuthenticated);
 	}
 
 	getClassName() {
@@ -139,7 +75,7 @@ class Show extends React.Component {
 			'atl': true,
 			'atl--collapsed': (this.state.ui.isCollapsedMaster) || (!this.state.ui.isCollapsedMaster && this.state.ui.isCollapsed),
 			'atl__info-box--active': this.state.ui.isInfoBoxActive,
-			'atl__info-box--narrow': data && (data.infobox_variables.length < 2)
+			'atl__info-box--narrow': data && (data.variables.getInfoBoxVariableCount() < 2)
 		});
 
 		// custom classnames
@@ -153,24 +89,16 @@ class Show extends React.Component {
 	// Pick and render template-specific project.
 	renderProject() {
 		if (this.state.project == null) { return <Loading />; }
-		if (this._isModelStatic()) {
-			return <Explainer 
+		var Comp = (this._isModelTilemap()) ? Tilemap : Explainer;
+		return (
+			<Comp
 				App={this.props.App} 
 				uiState={ this.state.ui } 
 				setUiState={ this.setUiState.bind(this) } 
 				project={ this.state.project } 
 				related={ this.state.related } 
 			/>
-		}
-		if (this._isModelTilemap()) {
-			return <Tilemap 
-				App={this.props.App} 
-				uiState={ this.state.ui } 
-				setUiState={ this.setUiState.bind(this) } 
-				project={ this.state.project } 
-			/>
-		}
-		return <Loading />;
+		);
 	}
 
 	_isModelStatic() {
@@ -211,7 +139,7 @@ class Show extends React.Component {
 			})
 			.then((coll) => {
 				var project = coll.models[0];
-				if (project.exists()) {
+				if (project && project.exists()) {
 					project.prepOnClient();
 					this.setState({ project: project });
 					this.fetchRelatedProjects();
@@ -225,10 +153,8 @@ class Show extends React.Component {
 	}
 
 	getEditUrl() {
-		if (this.state.project) {
-			return `/projects/${this.state.project.get('id')}/edit`;
-		}
-		return '/';
+		var project = this.state.project;
+		if (project) { return project.getViewUrl(); }
 	}
 
 	componentDidMount() {
@@ -236,10 +162,6 @@ class Show extends React.Component {
 		var App = this.props.App;
 		if (App == null) { return; }
 		this.fetchProject();
-	}
-
-	componentWillUnmount() {
-		var App = this.props.App;
 	}
 
 }

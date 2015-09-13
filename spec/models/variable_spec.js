@@ -8,6 +8,55 @@ describe('variable.Model', function() {
     var Model = variable.Model,
         model = new Model();
 
+    describe('parse', function() {
+
+        it('parses form input', function() {
+
+            var data = {
+                'Display Title': "Definition",
+                'Filter Menu Order': 1,
+                'Filter Type': "categorical",
+                'Long Description': "How do states define college- and career-readiness?",
+                'Short Description': "College- and Career-Ready Definition",
+                'Variable Name': "definition"
+            };
+
+            assert.deepEqual(model.parse(data), {
+                'display_title': "Definition",
+                'filter_menu_order': 1,
+                'filter_type': "categorical",
+                'long_description': "How do states define college- and career-readiness?",
+                'short_description': "College- and Career-Ready Definition",
+                'id': "definition"
+            });
+
+        });
+
+    });
+
+    describe('extractFilter', function() {
+
+        it ('returns undefined if filter menu order is not set', function() {
+
+            var model = new Model({ 'id': '1' });
+            assert.equal(model.extractFilter(), undefined);
+
+        });
+
+        it ('extracts filter', function() {
+
+            var model = new Model({ 'id': '1', 'filter_menu_order': 1, 'filter_type': 'categorical', 'numerical_filter_dividers': '100|200' });
+            assert.deepEqual(model.extractFilter(), {
+                'variable_id': '1',
+                'menu_order': 1,
+                'type': 'categorical',
+                'numerical_dividers': '100|200'
+            });
+
+        });
+
+    });
+
     describe('getNumericalFilter', function() {
 
         it('builds filter including +/- infinity values if leading and trailing delimiter marks are present', function() {

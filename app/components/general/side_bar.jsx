@@ -3,6 +3,20 @@ import { Link } from 'react-router';
 import Icons from './icons.jsx';
 import classNames from 'classnames';
 
+/*
+ * The SideBar component renders a list of buttons with the same appearance but different markup - buttons, links, forms - and functionality - navigate to an inner route, to an outer route, trigger a download through a form, or simple send a custom message to SideBar's parent.
+ * It does so by taking an object for each button using the following syntax:
+ * obj = {
+ *   title: 'Explore Atlas',
+ *   contentType: 'inner-link',
+ *   url: '/menu',
+ *   method: 'projects', 
+ *   reactIconName: 'Grid',
+ *   clickMessage: 'delete-project',
+ *   isToggleable: false 
+ * };
+ */
+
 class SideBar extends React.Component {
 
 	constructor(props) {
@@ -80,6 +94,7 @@ class SideBarButton extends React.Component {
 		this.props.setHoveredButtonTitle('');
 	}
 
+	// Render different types of content.
 	renderContent() {
 		var contentType = this.props.options.contentType;
 		if (contentType === 'form') { return this.renderFormContent(); }
@@ -131,9 +146,17 @@ class SideBarButton extends React.Component {
 	}
 
 	handleClick() {
-		if (this[ '_' + this.props.options.method ] != null) {
+
+		// If the parent of the SideBar component passed down its own method to handle a message from the button and if the button has a click message set, call this method.
+		if (this.props.options.clickMessage && this.props.sendMessageToParent) {
+			this.props.sendMessageToParent(this.props.options.clickMessage);
+		}
+
+		// If the method is defined on the button, call this method.
+		if (this[ '_' + this.props.options.method ]) {
 			this[ '_' + this.props.options.method ]();
 		}
+
 	}		
 
 	// Button press method.

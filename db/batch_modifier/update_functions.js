@@ -10,6 +10,22 @@ export default {
 		};
 	},
 
+	unsetFilters: function(prj) {
+
+		return {
+			$unset: { 'data.filters': '' }
+		};
+
+	},
+
+	unsetInfoBoxVariables: function(prj) {
+
+		return {
+			$unset: { 'data.infobox_variables': '' }
+		};
+
+	},
+
 	// Convert foreign key ids to strings.
 	fixForeignKeyType: function(prj) {
 		return {

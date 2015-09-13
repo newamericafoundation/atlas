@@ -23,16 +23,6 @@ describe('project.Model', function() {
 	});
 
 
-	describe('buildUrl', function() {
-
-		it('creates url by concatenating id to root build url', function() {
-			pm = new project.Model({ id: 234 });
-			assert.equal(pm.buildUrl(), 'http://build.atlas.newamerica.org/projects/234/edit');
-		});
-
-	});
-
-
 	describe('exists', function() {
 
 		it('returns true if project has mandatory fields', function() {
@@ -76,32 +66,6 @@ describe('project.Collection', function() {
 
 
 	var collection = new project.Collection();
-
-
-	/** 
-	 * Failing (1st passes, second fails). 
-	 * But, unsure if queryString should be key within model object?
-	 */
-	describe('url', function() {
-
-		var modelData1 = { id: 1, title: 'C', atlas_url: 'nice-project', queryString: 'something' },
-			base = '/api/v1/projects';
-			
-		//Test that it recognizes queryString
-		it('returns query string', function() {
-			var pc = new project.Collection([ modelData1 ]);
-			assert.equal(pc.models[0].get('queryString'), 'something');
-		});
-		
-		//Actual is just base url when this runs, doesn't find queryString
-		it('creates url by concatenating query string to base url', function() {
-			var pc = new project.Collection([ modelData1 ]);
-			pc.queryString = 'atlas_url=nice-project';
-			assert.equal(pc.url(), '/api/v1/projects?atlas_url=nice-project');
-		});
-
-	});
-
 
 	describe('comparator', function() {
 

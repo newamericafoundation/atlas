@@ -146,11 +146,4 @@ describe('base.Model', function() {
 	});
 
 
-	xdescribe('getMarkdownHtml', function() {
-		
-		//spec here
-
-	});
-
-
 });

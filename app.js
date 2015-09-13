@@ -15,6 +15,8 @@ var app = express(),
 	env = app.get('env'),
 	port = process.env.PORT || 8081;
 
+console.log(process.env.NODE_ENV);
+
 // Configure passport. Always run before initializing passport on the app instance.
 require('./config/passport_config.js');
 

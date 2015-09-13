@@ -3,7 +3,7 @@ import nodemon from 'gulp-nodemon';
 import liveReload from 'gulp-livereload';
 import notify from 'gulp-notify';
 import path from 'path';
-import secretEnv from './../../secrets/atlas.json';
+import env from './../../secrets/atlas.json';
 
 // A list of development tasks and when they should run.
 var devTasks = [
@@ -45,13 +45,15 @@ var buildTaskList = function(changedFiles) {
     return tasks;
 };
 
+env.NODE_ENV = 'development';
+
 // Development environment.
 gulp.task('dev', () => {
     liveReload.listen();
     gulp.start('bundle-watch');
     nodemon({
         script: './app.js',
-        env: secretEnv,
+        env: env,
         ext: 'js jade scss coffee',
         ignore: [ 
             'node_modules/**/*', 

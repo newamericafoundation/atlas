@@ -4,7 +4,10 @@ var express = require('express'),
 	dbConnector = require('./../../../../db/connector'),
 	ObjectID = require('mongodb').ObjectID,
 	base = require('./../../../models/base.js'),
+	authMiddleware = require('./../../../middleware/auth.js'),
 	csv = require('csv');
+
+var currentAuthMiddleware = (process.NODE_ENV === 'production') ? authMiddleware.ensureAuthenticated : authMiddleware.ensureNothing;
 
 var router = express.Router();
 
@@ -21,38 +24,32 @@ var processQueryParameters = function(queryParameters) {
 	return res;
 };
 
-router.get('/', function(req, res) {
+router.get([ '/', '/image' ], function(req, res) {
 
 	var complexQuery = processQueryParameters(req.query),
 		queryParams = complexQuery.query,
 		specialQueryParams = complexQuery.specialQuery,
 		fields;
 
-	if (!req.isAuthenticated()) {
+	if (!req.isAuthenticated() && (process.env.NODE_ENV !== 'development')) {
 		queryParams.is_live = "Yes";
 	}
 
-	fields = { encoded_image: 0 };
-
-	if (queryParams.atlas_url == null) {
-		fields.data = 0;
-		fields.body_text = 0;
+	if (req.url === '/') {
+		fields = { encoded_image: 0 };
+		if (queryParams.atlas_url == null) {
+			fields.data = 0;
+			fields.body_text = 0;
+		}
+	} else if (req.url === '/image') {
+		fields = { encoded_image: 1, image_credit: 1, atlas_url: 1 };
 	}
 
 	return dbConnector.then(function(db) {
 
-		var collection, cursor;
-
-		collection = db.collection('projects');
-
-		cursor = collection.find(queryParams, fields);
-
-		cursor.toArray(function(err, models) {
-
+		db.collection('projects').find(queryParams, fields).toArray((err, models) => {
 			if (err) { return console.dir(err); }
-
 			models = base.Collection.prototype.parse(models);
-
 			var coll = new project.Collection(models);
 
 			// Get related models.
@@ -62,31 +59,6 @@ router.get('/', function(req, res) {
 				return res.json(coll.related_to(specialQueryParams.related_to));
 			}
 
-		});
-
-	}, (err) => { console.dir(err); return res.json([]); });
-
-});
-
-router.get('/image', function(req, res) {
-
-	var queryParams = req.query || {},
-		fields = { encoded_image: 1, image_credit: 1, atlas_url: 1 };
-	
-	if (!req.isAuthenticated()) {
-		queryParams.is_live = "Yes";
-	}
-
-	return dbConnector.then(function(db) {
-
-		var cursor = db.collection('projects').find(queryParams, fields);
-
-		cursor.toArray(function(err, models) {
-			if (err) { 
-				console.dir(err); 
-				return res.json([]); 
-			}
-			res.json(models);
 		});
 
 	}, (err) => { console.dir(err); return res.json([]); });
@@ -115,14 +87,14 @@ router.get('/:id', (req, res) => {
 
 });
 
-router.post('/:id/edit', (req, res) => {
+router.post('/:id/edit', currentAuthMiddleware, (req, res) => {
 	res.json({
 		'status': 'pending',
 		'message': 'api route not yet implemented'
 	});
 });
 
-router.post('/new', (req, res) => {
+router.post('/new', currentAuthMiddleware, (req, res) => {
 
 	return dbConnector.then((db) => {
 
@@ -172,6 +144,43 @@ router.post('/new', (req, res) => {
 
 });
 
+router.delete('/:id', currentAuthMiddleware, (req, res) => {
+
+	var id = req.params.id;
+
+	dbConnector.then((db) => {
+
+		db.collection('projects').remove({ _id: new ObjectID(id) }, (err, numberOfRemovedDocs) => {
+
+			console.log(err, numberOfRemovedDocs);
+
+			if(err) { 
+				console.log('remove unsuccessful');
+				return res.json({
+					'status': 'error'
+				});
+			}
+
+			console.log(`remove ${numberOfRemovedDocs} documents`);
+
+			return res.json({
+				'status': 'success'
+			});
+
+		});
+
+	}, (err) => {
+
+		console.dir(err);
+		return res.json({
+			status: 'error',
+			message: 'Count not connect to database.'
+		});
+
+	});
+
+});
+
 
 // Print project data.
 router.post('/print', function(req, res) {
@@ -180,7 +189,7 @@ router.post('/print', function(req, res) {
 		fileName = queryParams.atlas_url || 'file',
 		fields = { data: 1, atlas_url: 1 };
 
-	if (!req.isAuthenticated()) {
+	if (!req.isAuthenticated() && (process.env.NODE_ENV !== 'development')) {
 		queryParams.is_live = "Yes";
 	}
 

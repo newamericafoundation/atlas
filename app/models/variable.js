@@ -7,6 +7,30 @@ var _ = require('underscore'),
 
 exports.Model = base.Model.extend({
 
+    parse: function(resp) {
+        for(let key in resp) {
+            let value = resp[key];
+            let newKey = (key === 'Variable Name') ? 'id' : key.toLowerCase().replace(/ /g, '_');
+            resp[newKey] = value;
+            delete resp[key];
+        }
+        return resp;
+    },
+
+    /*
+     * If the variable is a filter variable, extract its properties.
+     *
+     */
+    extractFilter: function() {
+        if (this.get('filter_menu_order') == null) { return undefined; }
+        return {
+            'variable_id': this.get('id'),
+            'type': this.get('filter_type'),
+            'menu_order': this.get('filter_menu_order'),
+            'numerical_dividers': this.get('numerical_filter_dividers')
+        };
+    },
+
     /*
      * Return the field of an item corresponding to the variable, applying 
      * formatting as needed.
@@ -88,6 +112,36 @@ exports.Model = base.Model.extend({
 exports.Collection = base.Collection.extend({
 
 	model: exports.Model,
+
+    getInfoBoxVariableCount: function() {
+
+        var count = 0;
+
+        this.models.forEach((model) => {
+            if (model.get('infobox_order')) {
+                count += 1;
+            }
+        });
+
+        return count;
+
+    },
+
+    extractFilters: function() {
+
+        var filters = [];
+
+        this.models.forEach((model) => {
+
+            var filter = model.extractFilter();
+
+            if (filter) { filters.push(filter); }
+
+        });
+
+        return filters.sort((f1, f2) => { return (f1['filter_menu_order'] - f2['filter_menu_order']) });
+
+    },
 
     getFilterVariables: function() {
         var models;

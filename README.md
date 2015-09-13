@@ -31,7 +31,9 @@ Run development environment by typing:
 
 	gulp dev
 
-Then navigate to ``localhost:8081``. This command automatically reads in the secret environment variables from ``./../secrets/atlas.json`` so the app will work in development mode. It will also watch for changes in development scripts and styles automatically (see build logic in the ``gulpfile``).
+Then navigate to ``localhost:8081``. This command automatically reads in the secret environment variables from ``./../secrets/atlas.json`` so the app will work seamlessly in development mode. Note that ``NODE_ENV=development`` is set explicitly. Gulp will also watch for changes in development scripts and styles automatically (see build logic in the ``gulpfile``).
+
+In development mode, the app behaves as if a researcher is always authenticated.
 
 ### Development Database
 

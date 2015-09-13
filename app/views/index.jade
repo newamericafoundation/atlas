@@ -22,7 +22,7 @@ block content
 			Atlas.start();
 			Comp.start();
 		});
-	- if (user) {
+	- if (user || (process.env.NODE_ENV === 'development')) {
 		script(type='text/javascript').
 			window.isResearcherAuthenticated = true
 	- }

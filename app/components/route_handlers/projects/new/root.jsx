@@ -127,15 +127,23 @@ class New extends Static {
 	}
 	
 	saveModel(formData) {
+
+		// Set status to pending.
 		this.setState({ saveResponseStatus: 'pending' });
+
+		// Call before save method on the model.
+		this.state.model.beforeSave();
+
+		// While pending, save form data using the instance method on the model.
 		this.state.model.getClientSavePromise().then((res) => {
+
 			var model = this.state.model;
 			res = JSON.parse(res);
 			model.set('id', res.id);
 			this.setState({ saveResponseStatus: res.status });
-		}, (err) => { 
-			this.setState({ saveResponseStatus: 'error' });
-		});
+
+		}, (err) => { this.setState({ saveResponseStatus: 'error' }); });
+
 	}
 
 }
