@@ -10,6 +10,7 @@ import List from './subcomponents/list.jsx';
 class Tilemap extends React.Component {
 	
 	render() {
+		if (!this.isHealthy()) { return (<div className='bg-c-off-white'><p className='title'>Project data is invalid.</p></div>) }
 		return (
 			<div className='atl__main fill-parent'>
 				{ this.renderItems() }
@@ -21,6 +22,14 @@ class Tilemap extends React.Component {
 			</div>
 		);
 		
+	}
+
+	isHealthy() {
+		var project = this.props.project;
+		if (!project) { return false; }
+		if (!project.get('data')) { return false; }
+		if (!project.get('data').items) { return false; }
+		return true;
 	}
 
 	renderItems() {

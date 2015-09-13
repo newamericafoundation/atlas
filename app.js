@@ -15,18 +15,12 @@ var app = express(),
 	env = app.get('env'),
 	port = process.env.PORT || 8081;
 
-console.log(process.env.NODE_ENV);
-
-// Configure passport. Always run before initializing passport on the app instance.
+// Configure passport. Must run before initializing passport on the app instance.
 require('./config/passport_config.js');
 
 // Basic configuration.
 app.use(bodyParser.json({ limit: '5mb' }));
-app.use(bodyParser.urlencoded({ 
-	extended: false, 
-	limit: '5mb',
-	parameterLimit: 10000
-}));
+app.use(bodyParser.urlencoded({ extended: false, limit: '5mb', parameterLimit: 10000 }));
 
 // Use Prerender if in production.
 if (env === 'production') {

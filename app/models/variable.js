@@ -11,8 +11,10 @@ exports.Model = base.Model.extend({
         for(let key in resp) {
             let value = resp[key];
             let newKey = (key === 'Variable Name') ? 'id' : key.toLowerCase().replace(/ /g, '_');
-            resp[newKey] = value;
-            delete resp[key];
+            if (key !== newKey) {
+                resp[newKey] = value;
+                delete resp[key];
+            }
         }
         return resp;
     },

@@ -4572,6 +4572,10 @@ td, th {
     height: 90%;
     max-height: 500px;
     border-radius: 8px; }
+    .modal__content li {
+      padding: 10px 0; }
+    .modal__content .title {
+      padding: 40px 0 30px 0; }
 
 .atl__setup {
   height: 0; }

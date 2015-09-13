@@ -16,6 +16,7 @@ var indexOf = [].indexOf || function(item) {
  * Note on methods toLatLongPoint, toRichGeoJson: these methods assume that the model instance has a lat and long fields. 
  */
 exports.Model = base.Model.extend({
+	
 	/** 
 	 * Recognize and process data.
 	 * @param {object} data

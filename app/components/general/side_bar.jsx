@@ -8,11 +8,10 @@ import classNames from 'classnames';
  * It does so by taking an object for each button using the following syntax:
  * obj = {
  *   title: 'Explore Atlas',
- *   contentType: 'inner-link',
- *   url: '/menu',
- *   method: 'projects', 
+ *   contentType: 'inner-link', // options: inner-link (react-router's Link component), outer-link or form
+ *   url: '/menu', // if content type is a link, this is the url it will point to
  *   reactIconName: 'Grid',
- *   clickMessage: 'delete-project',
+ *   clickMessage: 'delete-project', // message sent to SideBar's parent which can then handle the click event accordingly.
  *   isToggleable: false 
  * };
  */
@@ -152,30 +151,6 @@ class SideBarButton extends React.Component {
 			this.props.sendMessageToParent(this.props.options.clickMessage);
 		}
 
-		// If the method is defined on the button, call this method.
-		if (this[ '_' + this.props.options.method ]) {
-			this[ '_' + this.props.options.method ]();
-		}
-
-	}		
-
-	// Button press method.
-	// 	Expand or collapse. To be renamed.
-	_collapse(e) {
-		if (this.props.setUiState != null) {
-			this.props.setUiState({ isCollapsedMaster: !this.props.uiState.isCollapsedMaster });
-		}
-	}
-
-	// Button press method.
-	_help(e) {
-		if ($ == null) { return; }
-		$('.atl').toggleClass('atl--help');
-	}
-
-	// Button press method.
-	_print(e) {
-		window.print();
 	}
 
 }

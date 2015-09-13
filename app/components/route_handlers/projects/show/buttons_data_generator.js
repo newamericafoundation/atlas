@@ -9,14 +9,13 @@ export default function(project, isResearcherAuthenticated) {
 			title: 'Explore Atlas',
 			contentType: 'inner-link',
 			url: '/menu',
-			method: 'projects', 
 			reactIconName: 'Grid',
 			isToggleable: false 
 		},
 		{ 
 			title: 'Collapse/Expand',
 			contentType: 'button',
-			method: 'collapse', 
+			clickMessage: 'toggle-collapsed-state', 
 			reactIconName: 'Contract', 
 			activeReactIconName: 'Expand', 
 			isToggleable: false 
@@ -24,14 +23,14 @@ export default function(project, isResearcherAuthenticated) {
 		{ 
 			title: 'Help',
 			contentType: 'button',
-			method: 'help', 
+			clickMessage: 'toggle-help', 
 			reactIconName: 'Help', 
 			isToggleable: false 
 		},
 		{ 
 			title: 'Print',
 			contentType: 'button',
-			method: 'print', 
+			clickMessage: 'print',
 			reactIconName: 'Print', 
 			isToggleable: false 
 		},
@@ -41,7 +40,6 @@ export default function(project, isResearcherAuthenticated) {
 			hiddenInputKey: 'atlas_url',
 			hiddenInputValue: atlas_url,
 			url: '/api/v1/projects/print',
-			method: 'download',
 			reactIconName: 'Download',
 			isToggleable: false
 		}

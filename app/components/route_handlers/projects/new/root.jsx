@@ -11,11 +11,10 @@ class FormModal extends Modal {
 
 	constructor(props) {
 		super(props);
-
 	}
 
 	renderContent() {
-		if(this.props.model && this.props.model.get('id')) {
+		if(this.props.status === 'success') {
 			return this.renderSuccessContent();
 		}
 		return this.renderFailureContent();
@@ -26,9 +25,9 @@ class FormModal extends Modal {
 			<div>
 				<p className='title'>Save successful</p>
 				<ul>
-				<li><Link className='link' to={this.props.model.getEditUrl()}>Edit Project</Link></li>
-				<li><Link className='link' to={this.props.model.getViewUrl()}>View Project</Link></li>
-				<li><Link className='link' to='/projects/new'>Create another project</Link></li>
+					<li><Link className='link' to={this.props.model.getEditUrl()}>Edit Project</Link></li>
+					<li><Link className='link' to={this.props.model.getViewUrl()}>View Project</Link></li>
+					<li><Link className='link' to='/projects/new'>Create another project</Link></li>
 				</ul>
 			</div>
 		);
@@ -38,8 +37,9 @@ class FormModal extends Modal {
 		return (
 			<div>
 				<p className='title'>Save failed</p>
-				<a className='link' onClick={this.reactivateForm.bind(this)} href='/'>Keep Editing</a>
-				<Link className='link' to='/projects/new'>Start Over</Link>
+				<ul>
+					<li><a className='link' onClick={this.reactivateForm.bind(this)} href='/'>Keep Editing</a></li>
+				</ul>
 			</div>
 		);
 	}
@@ -83,6 +83,7 @@ class New extends Static {
 			return (
 				<FormModal 
 					model={this.state.model}
+					status={this.saveResponseStatus}
 					reactivateForm={this.reactivateForm.bind(this)}
 				/>
 			);
@@ -136,6 +137,8 @@ class New extends Static {
 
 		// While pending, save form data using the instance method on the model.
 		this.state.model.getClientSavePromise().then((res) => {
+
+			console.log(res);
 
 			var model = this.state.model;
 			res = JSON.parse(res);

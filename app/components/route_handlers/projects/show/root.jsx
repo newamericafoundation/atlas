@@ -56,6 +56,14 @@ class Show extends React.Component {
 	handleMessageFromButtons(message) {
 		if (message === 'delete-project') {
 			console.log('deleting project');
+		} else if (message === 'toggle-collapsed-state') {
+			this.state.ui.isCollapsedMaster = !this.state.ui.isCollapsedMaster;
+			this.forceUpdate();
+		} else if (message === 'toggle-help') {
+			if ($ == null) { return; }
+			$('.atl').toggleClass('atl--help');
+		} else if (message === 'print') {
+			window.print();
 		}
 	}
 

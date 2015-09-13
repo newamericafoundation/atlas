@@ -88,10 +88,38 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/:id/edit', currentAuthMiddleware, (req, res) => {
-	res.json({
-		'status': 'pending',
-		'message': 'api route not yet implemented'
-	});
+
+	var id = req.params.id,
+		project = JSON.parse(req.body.jsonString);
+
+	// Delete id so that it is not set in the database (_id already set).
+	delete project.id;
+
+	return dbConnector.then((db) => {
+		
+		db.collection('projects').update({ _id: new ObjectID(id) }, project, (err, data) => {
+
+			if (err) {
+				console.dir(err);
+				return res.json({
+					'status': 'error',
+					'message': 'Failed to update project.'
+				});
+			}
+
+			return res.json({
+				'status': 'success',
+				'message': 'Project Updated Successfully.'
+			});
+
+		});
+			
+
+	}, (err) => { console.dir(err); return res.json({
+		'status': 'error',
+		'message': 'Could not connect to database.'
+	}); });
+
 });
 
 router.post('/new', currentAuthMiddleware, (req, res) => {
@@ -102,9 +130,13 @@ router.post('/new', currentAuthMiddleware, (req, res) => {
 
 		var project = JSON.parse(req.body.jsonString);
 
+		console.log('inserting');
+
 		collection.insert(project, (err, data) => {
 
 			if(err) { 
+
+				console.dir(err);
 
 				return setTimeout(() => {
 
@@ -118,6 +150,8 @@ router.post('/new', currentAuthMiddleware, (req, res) => {
 			}
 
 			var savedProject = data.ops[0];
+
+			console.log(savedProject);
 
 			setTimeout(() => {
 
