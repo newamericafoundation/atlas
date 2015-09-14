@@ -12,6 +12,9 @@ class Header extends React.Component {
 	}
 
 	render() {
+		var stripStyle = {
+			'backgroundColor': this.state.stripColor
+		};
 		return (
 			<div className={ this.getClass() }>
 				<div className="header__corner">
@@ -27,7 +30,7 @@ class Header extends React.Component {
 					<p className="header__main__title"></p>
 				</div>
 				<HeaderNavCircles {...this.props} />
-				<div className="header__strip bg-c-grey--light" ref="strip" />
+				<div className="header__strip" style={stripStyle} />
 			</div>
 		);
 	}
@@ -61,21 +64,12 @@ class Header extends React.Component {
 	setStripHandler() {
 		var App = this.props.App;
 		if (App == null) { return; }
-		var stripClassName = 'header__strip';
-		var $strip = $(React.findDOMNode(this.refs.strip));
 		App.commands.setHandler('set:header:strip:color', (options) => {
-			if ((options == null) || (options === 'none')) {
-				$strip.attr('class', stripClassName);
-				$strip.css('background-color', '');
-			} else if (options.color != null) {
+			if (options.color) {
 				// reset class to original
-				$strip.attr('class', stripClassName);
-				$strip.css('background-color', options.color);
-			} else if (options.className != null) {
-				// erase all previously assigned color setting classes
-				$strip.css ('background-color', '');
-				$strip.attr('class', stripClassName);
-				$strip.addClass(options.className);
+				this.setState({ stripColor: options.color });
+			} else {
+				this.setState({ stripColor: undefined });
 			}
 		});
 	}

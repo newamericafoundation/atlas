@@ -265,12 +265,15 @@ exports.FilterTree = LocalBaseModel.extend({
      *
      */
     getValueCountOnActiveKey: function() {
-        return this.getActiveChild().children.length;
+        var activeChild = this.getActiveChild();
+        if (!activeChild) { return 0; }
+        return activeChild.children.length;
     },
 
     getValueIndeces: function(model) {
         var ach;
         ach = this.getActiveChild();
+        if (!ach) { return []; }
         return ach.getValueIndeces(model);
     },
 

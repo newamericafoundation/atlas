@@ -88,7 +88,7 @@ class Show extends React.Component {
 
 		// custom classnames
 		cls += ` atl--${this.state.ui.display}-display`;
-		if (project != null) { cls += ' atl--' + project.get('project_template_name').toLowerCase(); }
+		// if (project != null) { cls += ' atl--' + project.get('project_template_name').toLowerCase(); }
 		
 		return cls;
 

@@ -51,16 +51,20 @@ class TopBar extends React.Component {
 	}
 
 	getValue() {
-		var hoveredItem = this.getHoveredItem();
-		var filter = this.getFilter();
-		if (hoveredItem == null || filter == null) { return; }
-		var varId = filter.getActiveChild().get('variable').get('id');
+		var hoveredItem = this.getHoveredItem(),
+			filter = this.getFilter(),
+			filterActiveChild = filter.getActiveChild(),
+			varId;
+		if (!hoveredItem || !filter || !filterActiveChild) { return; }
+		varId = filter.getActiveChild().get('variable').get('id');
 		return hoveredItem.get(varId);
 	}
 
 	getKey() {
-		var filter = this.getFilter();
-		return filter.getActiveChild().get('variable').get('display_title');
+		var filter = this.getFilter(),
+			filterActiveChild = filter.getActiveChild();
+		if (!filterActiveChild) { return ''; }
+		return filterActiveChild.get('variable').get('display_title');
 	}
 
 	getHoveredItem() {
@@ -74,7 +78,7 @@ class TopBar extends React.Component {
 	getBackgroundColorClass() {
 		var hoveredItem, indeces, cls;
 		indeces = this.props.project.getFriendlyIndeces();
-		if (indeces == null || indeces.length === 0) { return 'bg-c-grey--base'; }
+		if (indeces == null || indeces.length === 0) { return 'bg-c-grey--light'; }
 		cls = `bg-c-${indeces[0]}`;
 		return cls;
 	}

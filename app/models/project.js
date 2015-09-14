@@ -11,6 +11,8 @@ var _ = require('underscore'),
 
 exports.Model = base.Model.extend({
 
+    name: 'project',
+
     defaults: {
         'title': 'New Project',
         'author': '',

@@ -3,6 +3,8 @@ import classNames from 'classnames';
 import Help from './../../../../../general/help.jsx';
 import Icons from './../../../../../general/icons.jsx';
 
+import * as colors from './../../../../../utilities/colors.js';
+
 class Filter extends React.Component {
 
 	constructor(props) {
@@ -51,7 +53,9 @@ class Filter extends React.Component {
 	}
 
 	renderValues() {
-		var values = this.props.filter.getActiveChild().children;
+		var activeChild = this.props.filter.getActiveChild();
+		if (!activeChild) { return; }
+		var values = activeChild.children;
 		return values.map((value, i) => {
 			return (
 				<FilterValue App={this.props.App} filterValue={value} key={i} />
@@ -97,7 +101,7 @@ class FilterValue extends React.Component {
 		var IconComp = Icons.Hex;
 		return (
 			<li className={ 'toggle-button ' + this.getModifierClass() } onClick={ this.toggle.bind(this) } onMouseEnter={ this.setHovered.bind(this) } onMouseLeave={ this.clearHovered.bind(this) } >
-				<IconComp className="toggle-button__icon" colorClassName={ this.getColorClass() } />
+				<IconComp className="toggle-button__icon" fillColor={this.getColor()} />
 				<div className="toggle-button__text">
 				   	<p>{ this.props.filterValue.get('value') }</p>
 				</div>
@@ -111,18 +115,20 @@ class FilterValue extends React.Component {
 		return '';
 	}
 
-	getColorClass() {
-		return `bg-c-${ this.props.filterValue.getFriendlySiblingIndex(15) }`;
+	getColor() {
+		if (!this.props.filterValue.isActive()) { return; }
+		var i = this.props.filterValue.getFriendlySiblingIndex(15);
+		return colors.toRgba(i - 1);
 	}
 
 	setHovered() {
-		var App, modelIndex, cls;
+		var App, modelIndex, color;
 		App = this.props.App;
 		modelIndex = this.getFilterValueIndex();
 		this.props.filterValue.parent.parent.state.valueHoverIndex = modelIndex;
 		App.commands.execute('update:tilemap');
-		cls = this.getColorClass();
-		App.commands.execute('set:header:strip:color', { className: cls });
+		color = this.getColor();
+		App.commands.execute('set:header:strip:color', { color: color });
 	}
 
 	clearHovered() {

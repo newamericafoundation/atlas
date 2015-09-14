@@ -18,6 +18,8 @@ var app = express(),
 // Configure passport. Must run before initializing passport on the app instance.
 require('./config/passport_config.js');
 
+// require('./app/assets/images/utilities/icon_parser.js');
+
 // Basic configuration.
 app.use(bodyParser.json({ limit: '5mb' }));
 app.use(bodyParser.urlencoded({ extended: false, limit: '5mb', parameterLimit: 10000 }));

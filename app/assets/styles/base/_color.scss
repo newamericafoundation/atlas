@@ -23,6 +23,10 @@
 	background-color: map-get(map-get($palette, grey), base);
 }
 
+.bg-c-grey--light {
+	background-color: map-get(map-get($palette, grey), light);
+}
+
 .bg-c-naf-green {
 	background-color: map-get($palette, naf-green);
 }

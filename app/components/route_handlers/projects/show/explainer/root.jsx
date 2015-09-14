@@ -6,34 +6,19 @@ import moment from 'moment';
 
 class Explainer extends Static {
 
-	render() {
-		return (
-			<div className="atl__main fill-parent" onScroll={ this.setStickyPageNav.bind(this) }>
-				{ this.renderTitleBar('solid') }
-				{ this.renderContentBar() }
-			</div>
-		);
+	getTitleBarType() {
+		return 'solid';
 	}
 
 	renderTitleBarContent() {
 		return (
 			<div className="atl__title-bar__content">
 				<h1 className='title'>{ this.getTitle() }</h1>
-				{ this.renderEditLink() }
 				<ul>
 					<li>Updated: { this.getUpdateMoment() }</li>
-					{ this.renderEditLink() }
 				</ul>
 			</div>
 		);
-	}
-
-	renderEditLink() {
-		if (window && window.isResearcherAuthenticated) {
-			return (
-				<li><a href={ `/projects/${this.props.project.get('id')}/edit` }>Edit Project</a></li>
-			);
-		}
 	}
 
 	renderPageNavContent() {

@@ -2,6 +2,7 @@ import * as Backbone from 'backbone';
 import * as _ from 'underscore';
 import $ from 'jquery';
 import marked from 'marked';
+// import Qajax from 'qajax';
 
 var Model = Backbone.Model.extend({
 
@@ -69,6 +70,27 @@ var Model = Backbone.Model.extend({
 				type: 'post',
 				dataType: 'text',
 				data: { jsonString: JSON.stringify(this.toJSON()) },
+				success: (datum) => {
+					resolve(datum);
+				},
+				error: (err) => {
+					reject(err);
+				}
+			});
+
+		});
+
+	},
+
+	getClientDeletePromise: function() {
+
+		return new Promise((resolve, reject) => {
+
+			var url = `${this.urlRoot}/${this.get('id')}`;
+
+			$.ajax({
+				url: url,
+				type: 'delete',
 				success: (datum) => {
 					resolve(datum);
 				},

@@ -55,9 +55,9 @@ export default function(project, isResearcherAuthenticated) {
 		},
 		{
 			title: 'Delete Project',
-			contentType: 'button',
-			clickMessage: 'delete-project',
-			reactIconName: 'Shipping'
+			contentType: 'inner-link',
+			url: `/projects/${id}/delete`,
+			reactIconName: 'Trash'
 		}
 	];
 

@@ -29,7 +29,7 @@ class IconSvgFile {
 	defineReactComponent(componentName, renderMarkup) {
 /* multi-line formatted code */
 		return `
-Comp.Icons.${componentName} = class extends React.Component {
+Icons.${componentName} = class extends React.Component {
 	render() {
 		return (
 ${renderMarkup}

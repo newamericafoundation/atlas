@@ -11,6 +11,8 @@ import ProjectsIndex from './../components/route_handlers/projects/index/root.js
 import ProjectsShow from './../components/route_handlers/projects/show/root.jsx';
 import ProjectsNew from './../components/route_handlers/projects/new/root.jsx';
 import ProjectsEdit from './../components/route_handlers/projects/edit/root.jsx';
+import ProjectsDelete from './../components/route_handlers/projects/delete/root.jsx';
+
 
 // Main route definition.
 var routes = (
@@ -22,6 +24,7 @@ var routes = (
 		<Route path='projects'>
 			<Route name='projects_new' path='new' handler={ProjectsNew} />
 			<Route name='projects_edit' path=':id/edit' handler={ProjectsEdit} />
+			<Route name='projects_delete' path=':id/delete' handler={ProjectsDelete} />
 		</Route>
 
 		<Route name='projects_index' path='menu' handler={ProjectsIndex} />

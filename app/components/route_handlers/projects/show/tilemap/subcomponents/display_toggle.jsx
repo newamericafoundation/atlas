@@ -2,26 +2,31 @@ import React from 'react';
 import classNames from 'classnames';
 import Icons from './../../../../../general/icons.jsx';
 
+var buttons = [
+	{ name: 'filter', iconName: 'Filter' }, 
+	{ name: 'search', iconName: 'Search' }
+];
+
 class DisplayToggle extends React.Component {
 
 	render() {
 		return (
 
-			<div className="atl__display-toggle atl__binary-toggle">
+			<div className="atl__display-toggle binary-toggle">
 				{ this.renderHalves() }
 			</div>
 		);
 	}
 
 	renderHalves() {
-		return [ { name: 'filter', iconName: 'Filter' }, { name: 'search', iconName: 'Search' } ].map((half, i) => {
+		return buttons.map((half, i) => {
 			var IconComp = Icons[half.iconName],
 				cls = classNames({
-					'atl__binary-toggle__link': true,
-					'atl__binary-toggle__link--active': (this.props.uiState.display === half.name)
+					'binary-toggle__link': true,
+					'binary-toggle__link--active': (this.props.uiState.display === half.name)
 				});
 			return (
-				<div className="atl__binary-toggle__half" key={i}>
+				<div className="binary-toggle__half" key={i}>
 					<a 
 						href="#"
 						onClick={ this.setUiDisplay.bind(this, half.name) } 
@@ -36,10 +41,7 @@ class DisplayToggle extends React.Component {
 
 	// 
 	setUiDisplay(name) {
-		var App;
 		if (this.props.uiState.display === name) { return; }
-		App = this.props.App;
-		if (App != null) { App.vent.trigger('display:mode:change'); }
 		this.props.setUiState({ display: name });
 	}
 

@@ -1,6 +1,16 @@
 .atl__legend {
 
+	display: none;
+	@include bp-unstack-map-settings-bar { display: block; }
 	position: absolute;
+	bottom: 100px;
+	right: 25px;
+	@include bp-w-sm {
+		bottom: 5px;
+		right: 338px;
+	}
+	.atl__info-box--active &, .atl--search-display & { display: none; }
+
 	$n: $legend-bar-grid-size;
 	$w: $legend-icon-size + 2 * $legend-icon-padding;
 	$width: ($n + 1) * $w;

@@ -355,7 +355,7 @@ td,
 th {
   padding: 0; }
 
-.about, .atl {
+.about {
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -703,26 +703,26 @@ th {
       text-overflow: ellipsis;
       vertical-align: middle; }
 
-.atl__binary-toggle {
+.binary-toggle {
   position: absolute;
   width: 80px;
   height: 20px; }
-  .atl__binary-toggle__half {
+  .binary-toggle__half {
     width: 40px;
     height: 20px;
     padding: 0 10px;
     float: left; }
-    .atl__binary-toggle__half:first-child {
+    .binary-toggle__half:first-child {
       border-right: 1px solid #fffaef; }
-    .atl__binary-toggle__half .atl__binary-toggle__link {
+    .binary-toggle__half .binary-toggle__link {
       width: 20px;
       height: 20px;
       opacity: 0.5; }
-      .atl__binary-toggle__half .atl__binary-toggle__link:hover {
+      .binary-toggle__half .binary-toggle__link:hover {
         opacity: 0.7; }
-      .atl__binary-toggle__half .atl__binary-toggle__link--active {
+      .binary-toggle__half .binary-toggle__link--active {
         opacity: 1; }
-        .atl__binary-toggle__half .atl__binary-toggle__link--active:hover {
+        .binary-toggle__half .binary-toggle__link--active:hover {
           opacity: 1; }
 
 .link {
@@ -1256,6 +1256,9 @@ p, a, li {
 
 .bg-c-grey--base {
   background-color: #323232; }
+
+.bg-c-grey--light {
+  background-color: #4a4a4a; }
 
 .bg-c-naf-green {
   background-color: #2dbbb3; }
@@ -4577,133 +4580,82 @@ td, th {
     .modal__content .title {
       padding: 40px 0 30px 0; }
 
-.atl__setup {
-  height: 0; }
-
-.atl__toc > p, .atl__related > p {
-  font-family: 'SimplonNorm-Bold-WebS';
-  font-size: 21px;
-  font-size: 1.3125rem; }
-
-.atl__toc a, .atl__related a {
-  color: #333;
-  border-bottom: 2px solid #333;
-  opacity: 0.4;
-  display: inline;
-  font-family: 'SimplonNorm-Bold-WebS';
-  font-size: 17px;
-  font-size: 1.0625rem; }
-  .atl__toc a:hover, .atl__related a:hover {
-    outline: 0;
-    opacity: 1; }
-
-.atl__toc {
-  padding-top: 15px;
-  padding-bottom: 15px; }
-  .atl__toc ul {
-    max-width: 300px; }
-  @media only screen and (min-width: 1250px) {
-    .atl__toc {
-      padding-bottom: 0;
-      padding-top: 0; } }
-  @media print {
-    .atl__toc {
-      display: none; } }
-  .atl__toc li.toc-h1 {
-    padding-left: 0; }
-  .atl__toc li.toc-h2 {
-    padding-left: 20px; }
-
-.atl .atl__related li, .atl__toc li {
-  margin: 15px 0;
-  line-height: 110%; }
-
-.atl__page-nav {
-  height: auto; }
-  @media only screen and (min-width: 1250px) {
-    .atl__page-nav {
-      width: 280px;
-      position: relative;
-      top: 0px; }
-      .atl__page-nav--fixed {
-        position: fixed;
-        left: 45px;
-        top: 95px; } }
-
-.atl--filter-display .atl__search {
-  display: none; }
-
-.atl--search-display .atl__filter {
-  display: none; }
-
-.atl--search-display .atl__legend {
-  display: none; }
-
-.atl__search {
-  max-width: 450px;
-  opacity: 0.8;
-  padding: 20px 20px; }
-  .atl--collapsed .atl__search {
-    padding-left: 0; }
-
-.atl--collapsed .atl__search {
-  position: absolute;
-  left: 40px;
-  top: 75px;
-  width: 350px; }
-
-.atl__main {
-  position: relative;
-  top: 0;
-  height: 100%;
-  overflow: hidden; }
-  .atl--explainer .atl__main, .atl--polling .atl__main {
-    overflow-y: scroll; }
-  .atl-route--projects_index .atl__main {
-    overflow-y: scroll; }
-    @media only screen and (min-width: 1000px) {
-      .atl-route--projects_index .atl__main {
-        overflow-y: hidden; } }
-
-.atl__display-toggle {
-  position: absolute;
-  top: 32px;
-  left: 30px; }
-  @media only screen and (min-width: 800px) {
-    .atl__display-toggle {
-      left: auto;
-      right: 5px; } }
-  .atl--collapsed .atl__display-toggle {
-    left: 30px; }
-  .atl__display-toggle svg {
-    fill: black; }
-    .atl--collapsed .atl__display-toggle svg {
-      fill: black; }
-    @media only screen and (min-width: 800px) {
-      .atl__display-toggle svg {
-        fill: #fffaef; } }
-  .atl__display-toggle .atl__binary-toggle__half:first-child {
-    border-right: 1px solid black; }
-    .atl--collapsed .atl__display-toggle .atl__binary-toggle__half:first-child {
-      border-right: 1px solid black; }
-    @media only screen and (min-width: 800px) {
-      .atl__display-toggle .atl__binary-toggle__half:first-child {
-        border-right: 1px solid #fffaef; } }
-
-.atl__legend {
-  display: none;
-  position: absolute;
-  bottom: 100px;
-  right: 25px; }
-  @media only screen and (min-width: 800px) {
-    .atl__legend {
-      display: block; } }
-  @media only screen and (min-width: 640px) {
-    .atl__legend {
-      bottom: 5px;
-      right: 338px; } }
-  .atl__info-box--active .atl__legend, .atl--search-display .atl__legend {
+.atl {
+  width: 100%;
+  height: 100%; }
+  .atl__setup {
+    height: 0; }
+  .atl__toc > p, .atl__related > p {
+    font-family: 'SimplonNorm-Bold-WebS';
+    font-size: 21px;
+    font-size: 1.3125rem; }
+  .atl__toc a, .atl__related a {
+    color: #333;
+    border-bottom: 2px solid #333;
+    opacity: 0.4;
+    display: inline;
+    font-family: 'SimplonNorm-Bold-WebS';
+    font-size: 17px;
+    font-size: 1.0625rem; }
+    .atl__toc a:hover, .atl__related a:hover {
+      outline: 0;
+      opacity: 1; }
+  .atl__toc {
+    padding-top: 15px;
+    padding-bottom: 15px; }
+    .atl__toc ul {
+      max-width: 300px; }
+    @media only screen and (min-width: 1250px) {
+      .atl__toc {
+        padding-bottom: 0;
+        padding-top: 0; } }
+    @media print {
+      .atl__toc {
+        display: none; } }
+    .atl__toc li.toc-h1 {
+      padding-left: 0; }
+    .atl__toc li.toc-h2 {
+      padding-left: 20px; }
+  .atl .atl__related li, .atl__toc li {
+    margin: 15px 0;
+    line-height: 110%; }
+  .atl__page-nav {
+    height: auto; }
+    @media only screen and (min-width: 1250px) {
+      .atl__page-nav {
+        width: 280px;
+        position: relative;
+        top: 0px; }
+        .atl__page-nav--fixed {
+          position: fixed;
+          left: 45px;
+          top: 95px; } }
+  .atl--filter-display .atl__search {
     display: none; }
+  .atl--search-display .atl__filter {
+    display: none; }
+  .atl--search-display .atl__legend {
+    display: none; }
+  .atl__search {
+    max-width: 450px;
+    opacity: 0.8;
+    padding: 20px 20px; }
+    .atl--collapsed .atl__search {
+      padding-left: 0;
+      position: absolute;
+      left: 40px;
+      top: 75px;
+      width: 350px; }
+  .atl__main {
+    position: relative;
+    top: 0;
+    height: 100%;
+    overflow: hidden; }
+    .atl-route--projects_index .atl__main {
+      overflow-y: scroll; }
+      @media only screen and (min-width: 1000px) {
+        .atl-route--projects_index .atl__main {
+          overflow-y: hidden; } }
 
 .atl-grid {
   margin: 0;
@@ -4864,12 +4816,24 @@ td, th {
       margin-left: 5px; }
 
 .atl__legend {
+  display: none;
   position: absolute;
+  bottom: 100px;
+  right: 25px;
   width: 136px;
   height: 136px;
   overflow: visible;
   padding: 0;
   float: left; }
+  @media only screen and (min-width: 800px) {
+    .atl__legend {
+      display: block; } }
+  @media only screen and (min-width: 640px) {
+    .atl__legend {
+      bottom: 5px;
+      right: 338px; } }
+  .atl__info-box--active .atl__legend, .atl--search-display .atl__legend {
+    display: none; }
   .atl__legend__icon {
     position: absolute;
     cursor: pointer;
@@ -5742,3 +5706,28 @@ td, th {
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap; }
+
+.atl__display-toggle {
+  position: absolute;
+  top: 32px;
+  left: 30px; }
+  @media only screen and (min-width: 800px) {
+    .atl__display-toggle {
+      left: auto;
+      right: 5px; } }
+  .atl--collapsed .atl__display-toggle {
+    left: 30px; }
+  .atl__display-toggle svg {
+    fill: black; }
+    .atl--collapsed .atl__display-toggle svg {
+      fill: black; }
+    @media only screen and (min-width: 800px) {
+      .atl__display-toggle svg {
+        fill: #fffaef; } }
+  .atl__display-toggle .binary-toggle__half:first-child {
+    border-right: 1px solid black; }
+    .atl--collapsed .atl__display-toggle .binary-toggle__half:first-child {
+      border-right: 1px solid black; }
+    @media only screen and (min-width: 800px) {
+      .atl__display-toggle .binary-toggle__half:first-child {
+        border-right: 1px solid #fffaef; } }

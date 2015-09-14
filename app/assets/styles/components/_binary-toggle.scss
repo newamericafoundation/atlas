@@ -1,4 +1,4 @@
-.atl__binary-toggle {
+.binary-toggle {
 
 	$size: 20px;
 	$padding: 10px;
@@ -13,7 +13,7 @@
 			border-right: 1px solid map-get($palette, off-white);
 		}
 
-		.atl__binary-toggle__link { 
+		.binary-toggle__link {
 			width: $size; 
 			height: $size;
 			opacity: 0.5;
