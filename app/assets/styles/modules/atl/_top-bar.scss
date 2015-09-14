@@ -2,6 +2,8 @@
 
 	z-index: 6;
 
+	@include animation(fadeinwithdelay 1.5s);
+
 	position: absolute;
 	top: 0;
 	width: 100%;
@@ -17,11 +19,42 @@
 		padding-left: 0;
 	}
 
+	&__title {
+		display: inline-block;
+		float: left;
+		@include bp-unstack-map-settings-bar {
+			display: none;
+			.atl--collapsed & {
+				display: block;
+			}
+		}
+
+		padding: 0;
+		margin: 0;
+		height: 100%;
+
+		div {
+			height: 100%;
+			display: table;
+			p {
+				display: table-cell;
+				vertical-align: middle;
+				margin: 0;
+				padding: 0;
+				font-family: 'Platform Web';
+				text-transform: uppercase;
+				@include font-size(24px);
+			}
+		}
+
+	}
+
 	&__content {
 		position: relative;
 		width: 100%;
 		height: 100%;
 		& > * { height: 100%; }
+		transition: all 0.2s;
 	}
 
 	&__icons {
@@ -79,7 +112,8 @@
 		}
 
 		& > div {
-			width: 120px;
+			min-width: 40px;
+			max-width: 120px;
 			overflow: ellipsis;
 			display: table-cell;
 			vertical-align: middle;

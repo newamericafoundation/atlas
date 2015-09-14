@@ -23,8 +23,9 @@ exports.Model = base.Model.extend({
 	getUrl: function() {
 		var encoded;
 		encoded = this.get('encoded');
+		encoded = encoded.replace(/(\r\n|\n|\r)/gm, '');
 		if (encoded != null) {
-			return "url('data:image/jpg;base64," + encoded + "')";
+			return "url('data:image/png;base64," + encoded + "')";
 		}
 	},
 

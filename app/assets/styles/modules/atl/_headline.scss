@@ -18,16 +18,18 @@
 		margin: 0;
 
 		@mixin collapsed {
-			@include font-size(24px);
-			color: map-get(map-get($palette, grey), base);
-			padding-left: 100px;
-			padding-top: 12px;
+			display: none;
+			// @include font-size(24px);
+			// color: map-get(map-get($palette, grey), base);
+			// padding-left: 100px;
+			// padding-top: 12px;
 		}
 		
 		@include collapsed;
 		.atl--collapsed & { @include collapsed; }
 
 		@include bp-unstack-map-settings-bar {
+			display: block;
 			@include font-size(42px);
 			color: map-get($palette, off-white);
 			padding-left: 0;

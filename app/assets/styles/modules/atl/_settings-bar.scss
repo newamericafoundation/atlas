@@ -2,6 +2,8 @@
 
 	z-index: 7;
 
+	@include animation(fadeinwithdelay 1s);
+
 	width: 100%;
 	position: absolute;
 	overflow: visible;
@@ -20,7 +22,7 @@
 		background: none;
 		height: auto;
 		top: 80px;
-		padding: 20px 0;
+		padding: 40px 0;
 	}
 
 	input {

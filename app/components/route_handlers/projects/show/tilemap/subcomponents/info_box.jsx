@@ -33,6 +33,8 @@ class InfoBox extends Static {
 			img = this.state.image,
 			style;
 		if (img) {
+			// console.log(project.getImageUrl());
+			// console.log(img.getUrl());
 			style = {
 				'backgroundImage': img.getUrl()
 			};
@@ -41,7 +43,6 @@ class InfoBox extends Static {
 				'backgroundColor': 'rgba(50, 50, 50, 0.1)'
 			};
 		}
-		// console.log(style);
 		return style;
 	}
 

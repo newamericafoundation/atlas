@@ -15,6 +15,7 @@ class TopBar extends React.Component {
 				<div className={ this.getContentClassName() }>
 					<TopBarIcons {...this.props} />
 					{ this.renderTimeline() }
+					<div className="atl__top-bar__title"><div><p>{ this.props.project.get('title') }</p></div></div>
 					<div className="atl__top-bar__summary">
 						<div><p>{ this.getName() }</p></div>
 						<div>

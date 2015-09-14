@@ -276,13 +276,11 @@ exports.Model = base.Model.extend({
         if (data) {
 
             if (data.variables) {
-                console.log('there are variables');
                 let variables = this.get('data').variables;
                 variables = variables.map((variable) => {
                     return varModel.parse(variable);
                 });
                 this.get('data').variables = variables;
-                console.log(variables);
             }
 
             if (data.data) {
@@ -301,11 +299,8 @@ exports.Model = base.Model.extend({
         if (data != null) {
             data.variables = new variable.Collection(data.variables);
             data.items = new item.Collection(data.items, { parse: true });
-            console.log(data.items);
             // data.filters = data.variables.extractFilters();
             this.buildFilterTree();
-
-            console.log(data.filter);
         }
     },
 
@@ -320,8 +315,6 @@ exports.Model = base.Model.extend({
             data = this.get('data'),
             items = data.items,
             variables = data.variables;
-
-        console.log(variables);
 
         filterVariables = variables.getFilterVariables().map(function(variable, index) {
 

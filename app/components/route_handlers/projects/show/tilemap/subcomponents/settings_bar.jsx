@@ -34,7 +34,7 @@ class SettingsBar extends React.Component {
 	}
 
 	componentDidMount() {
-		this.checkOverflow();
+		setTimeout(this.checkOverflow.bind(this), 300);
 		// namespace resize event for convenient removal
 		$(window).on('resize.settings-bar-overflow', () => {
 			this.checkOverflow();
@@ -53,7 +53,7 @@ class SettingsBar extends React.Component {
 			App = this.props.App;
 		if (App == null) { return; }
 		this.heights.window = $(window).height();
-		totalHeight = this.heights.headline + this.heights.filter + this.heights.header;
+		totalHeight = this.getTotalHeight();
 		isCollapsed = totalHeight > this.heights.window;
 		if (this.props.uiState.isCollapsed !== isCollapsed) {
 			this.props.setUiState({ isCollapsed: isCollapsed });
@@ -64,6 +64,10 @@ class SettingsBar extends React.Component {
 	//   component's state. Current component can then check whether its contents are overflowing.
 	cacheHeight(elementName, height) {
 		this.heights[elementName] = height;
+	}
+
+	getTotalHeight() {
+		return this.heights.headline + this.heights.filter + this.heights.header;
 	}
 
 	getFilter() {

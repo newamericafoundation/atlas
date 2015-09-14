@@ -21,7 +21,6 @@ class Tilemap extends React.Component {
 				{ this.renderBaseLayer() }
 			</div>
 		);
-		
 	}
 
 	isHealthy() {
@@ -57,6 +56,12 @@ class Tilemap extends React.Component {
 		App.commands.setHandler('update:tilemap', () => {
 			this.forceUpdate();
 		});
+	}
+
+	componentWillUnmount() {
+		var App = this.props.App;
+		if (App == null) { return; }
+		App.commands.removeHandler('update:tilemap');
 	}
 
 }
