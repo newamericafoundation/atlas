@@ -1,3 +1,5 @@
+import _ from 'underscore';
+
 export default {
 
     _list: [
@@ -46,19 +48,16 @@ export default {
         return "rgb(" + (interpolated.join(',')) + ")";
     },
 
-    toRgba: function(index, opacity) {
-        if (opacity == null) {
-            opacity = 1;
+    toRgba: function(index, opacity = 1) {
+        if ((index != null) && this.get(index)) {
+            return `rgba(${this.get(index).join(',')}, ${opacity})`;
         }
-        return "rgba(" + (this.get(index).join(',')) + "," + opacity + ")";
     },
 
     toRgb: function(index) {
-        var color;
-        if ((index != null) && (this.get(index) != null)) {
-            color = "rgb(" + (this.get(index).join(',')) + ")";
+        if ((index != null) && this.get(index)) {
+            return `rgb(${this.get(index).join(',')})`;
         }
-        return color;
     }
 
 };

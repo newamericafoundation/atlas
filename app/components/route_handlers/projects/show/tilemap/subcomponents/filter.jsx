@@ -13,11 +13,15 @@ class Filter extends React.Component {
 	}
 
 	render() {
+		var MoreIcon = Icons.More;
 		return (
 			<div className='atl__filter' ref='root'>
 				<div className="atl__filter__keys">
 					<ul>
 						{ this.renderKeys() }
+						<li className='button' onClick={ this.toggleOptionsTab.bind(this) }>
+							<MoreIcon />
+						</li>
 					</ul>
 					<Help position='right' text='Select the variable you want to filter by.' id='filter-keys' />
 				</div>
@@ -39,13 +43,21 @@ class Filter extends React.Component {
 		return height;
 	}
 
+	toggleOptionsTab() {
+		this.props.setUiState({ isOptionsTabActive: !this.props.uiState.isOptionsTabActive });
+	}
+
 	componentDidUpdate() {
 		this.props.cacheHeight(this.getHeight());
 	}
 
+	// Render only three around the current active key.
 	renderKeys() {
-		var keys = this.props.filter.children;
-		return keys.map((key, i) => {
+		var keys = this.props.filter.children,
+			activeKey = this.props.filter.getActiveChild(),
+			index = keys.indexOf(activeKey),
+			neighborHood = this.props.filter.getActiveChildNeighborhood(1);
+		return neighborHood.map((key, i) => {
 			return (
 				<FilterKey App={this.props.App} filterKey={key} key={i} />
 			);
@@ -69,20 +81,21 @@ class Filter extends React.Component {
 class FilterKey extends React.Component {
 
 	render() {
+		var cls = classNames({
+			'button': 'true',
+			'button--active': this.props.filterKey.isActive()
+		});
 		return (
-			<li className={ 'button ' + this.getModifierClass() } onClick={ this.toggle.bind(this) }>
+			<li className={ cls } onClick={ this.toggle.bind(this) }>
 				<p>
-					{ this.props.filterKey.get('variable').get('display_title') }
+					{ this.getContent() }
 				</p>
 			</li>
 		);
 	}
 
-	getModifierClass() {
-		if (this.props.filterKey.isActive()) {
-			return 'button--active';
-		}
-		return '';
+	getContent() {
+		return this.props.filterKey.get('variable').get('display_title');
 	}
 
 	toggle() {

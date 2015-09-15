@@ -27,14 +27,16 @@ class ProjectTemplates extends React.Component {
 
 }
 
-
 class ProjectTemplate extends React.Component {
 	
 	render() {
-		var projectTemplate = this.props.projectTemplate;
+		var projectTemplate = this.props.projectTemplate,
+			IconComp = Icons[this.getIconName()];
 		return (
 			<li className={ "icon-button " + this.getModifierClasses() } onClick={this.toggleActiveState.bind(this)} >
-				<div className={ `icon-button__icon bg-img-${ this.getIcon() }--black` }></div>
+				<div className='icon-button__icon'>
+					<IconComp />
+				</div>
 				<p className="icon-button__text">
 					{projectTemplate.get('display_name')}
 				</p>
@@ -52,12 +54,13 @@ class ProjectTemplate extends React.Component {
 		return classes.join(' ');
 	}
 
-	getIcon() {
+	getIconName() {
 		var templateName = this.props.projectTemplate.get('name'),
 			dictionary = {
-				'Tilemap': 'map',
-				'Explainer': 'dictionary',
-				'Polling': 'graph'
+				'Tilemap': 'Map',
+				'Explainer': 'Dictionary',
+				'Policy Brief': 'Dictionary',
+				'Polling': 'Graph'
 			};
 		return dictionary[templateName];
 	}

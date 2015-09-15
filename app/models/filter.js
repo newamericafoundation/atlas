@@ -222,16 +222,21 @@ exports.FilterTree = LocalBaseModel.extend({
     },
 
     /*
-     * 
-     *
+     * Returns an array of children around the active child. Used to display a short list of filter keys.
+     * E.g. if the active child is the third and countOnEitherSide = 1, return [ second, third, fourth ]
      */
-    setActiveChildByIndex: function(activeChildIndex) {
-        if (this.children[activeChildIndex] !== this.getActiveChild()) {
-            this.getActiveChild().deactivate();
-            this.children[activeChildIndex].activate();
-            return true;
-        }
-        return false;
+    getActiveChildNeighborhood: function(countOnEitherSide) {
+        var keys = this.children,
+            activeKey = this.getActiveChild(),
+            keysLength = keys.length,
+            activeKeyIndex = keys.indexOf(activeKey),
+            neighborhoodLength = (2 * countOnEitherSide + 1);
+
+        if (neighborhoodLength > keysLength) { return keys; }
+
+        if ((activeKeyIndex - countOnEitherSide) < 0) { return keys.slice(0, neighborhoodLength); } 
+        if ((activeKeyIndex + countOnEitherSide > keysLength - 1)) { return keys.slice(keysLength - neighborhoodLength); }
+        return keys.slice(activeKeyIndex - countOnEitherSide, activeKeyIndex + countOnEitherSide + 1);
     },
 
     /*

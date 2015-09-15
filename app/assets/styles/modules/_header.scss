@@ -1,5 +1,7 @@
 .header {
 
+	svg { fill: map-get($palette, off-white); }
+
 	overflow: visible;
 	height: $top-bar-height;
 	width: 100%;

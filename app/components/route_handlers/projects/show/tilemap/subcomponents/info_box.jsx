@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import Static from './../../../../../general/static.jsx';
+import Icons from './../../../../../general/icons.jsx';
 
 import image from './../../../../../../models/image.js';
 
@@ -12,9 +13,12 @@ class InfoBox extends Static {
 	}
 
 	render() {
+		var NoIcon = Icons.No;
 		return (
 			<div className="atl__info-box" ref='main' onScroll={ this.setStickyPageNav.bind(this) }>
-				<a href="#" className="bg-img-no--black atl__info-box__close" onClick={ this.close.bind(this) }></a>
+				<a href="#" className="atl__info-box__close" onClick={ this.close.bind(this) }>
+					<NoIcon />
+				</a>
 				{ this.renderTitleBar('image') }
 				{ this.renderContentBar() }
 			</div>
@@ -154,6 +158,7 @@ class InfoBox extends Static {
 	}
 
 	renderWebsiteLink() {
+		var LinkComp = Icons.Link;
 		var project = this.props.project;
 		if (!project) { return; }
 		var activeItem = project.get('data').items.active;
@@ -162,7 +167,9 @@ class InfoBox extends Static {
 		return (
 			<li>
 				<a className="icon-button" href={url}>
-					<div className="icon-button__icon bg-img-link--black"></div>
+					<div className="icon-button__icon">
+						<LinkComp />
+					</div>
 					<div className="icon-button__text">Website</div>
 				</a>
 			</li>

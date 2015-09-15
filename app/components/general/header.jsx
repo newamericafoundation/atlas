@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router';
+import Icons from './icons.jsx';
 import classNames from 'classnames';
 
 class Header extends React.Component {
@@ -12,6 +13,7 @@ class Header extends React.Component {
 	}
 
 	render() {
+		var NafIcon = Icons.Naf;
 		var stripStyle = {
 			'backgroundColor': this.state.stripColor
 		};
@@ -19,10 +21,11 @@ class Header extends React.Component {
 			<div className={ this.getClass() }>
 				<div className="header__corner">
 					<Link 
-						className="bg-img-naf--off-white" 
 						id="header__welcome-link" 
 						to="/welcome" 
-					/>
+					>
+						<NafIcon />
+					</Link>
 				</div>
 				<div className="header__main">
 					<h1 className="header__main__cursive-prefix"></h1>

@@ -43,26 +43,24 @@
 
     border-color: $main-color;
     p { color: $main-color; }
+    svg {
+        fill: $main-color;
+    }
 
     opacity: 0.5;
-    &:hover, &--active { opacity: 0.9; }
+    &:hover, &--active { 
+        
+        opacity: 0.9;
+
+        border-color: $main-color;
+        background-color: $main-color;
+        p { color: $secondary-color; }
+        svg {
+            fill: $secondary-color;
+        }
+
+    }
 
 }
 
 .button { @include button; }
-
-.button--light-hollow {
-
-}
-
-.button--light-full {
-
-}
-
-.button--dark-hollow {
-
-}
-
-.button--dark-full {
-
-}

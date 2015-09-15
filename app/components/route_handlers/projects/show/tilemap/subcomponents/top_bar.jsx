@@ -19,21 +19,25 @@ class TopBar extends React.Component {
 					<div className="atl__top-bar__title"><div><p>{ this.props.project.get('title') }</p></div></div>
 					<div className="atl__top-bar__summary">
 						<div className="atl__top-bar__summary__item"><p>{ this.getName() }</p></div>
+						<div className="atl__top-bar__summary__item"><p>{ this.getValue() }</p></div>
 						<div className="atl__top-bar__summary__item">
-							<div className='button'>
+							<div className='button button--active'>
 								<p>{ this.getKey() }</p>
 							</div>
 						</div>
 						<div className="atl__top-bar__summary__item">
-							<div className='button'>
+							<div className='button' onClick={ this.toggleOptionsTab.bind(this) }>
 								<MoreIcon />
 							</div>
 						</div>
-						<div className="atl__top-bar__summary__item"><p>{ this.getValue() }</p></div>
 					</div>
 				</div>
 			</div>
 		);
+	}
+
+	toggleOptionsTab() {
+		this.props.setUiState({ isOptionsTabActive: !this.props.uiState.isOptionsTabActive });
 	}
 
 	getContentClassName() {
@@ -131,9 +135,13 @@ class TopBarIcons extends React.Component {
 class TopBarIcon extends React.Component {
 
 	render() {
-		var Icon = Icons[this.props.icon.reactIconName];
+		var Icon = Icons[this.props.icon.reactIconName],
+			cls = classNames({
+				'icons__icon': true,
+				'icons__icon--active': this.isActive()
+			});
 		return (
-			<li className={ 'icons__icon ' + this.getModifierClass() } onClick={this.changeGlobalItemsDisplayMode.bind(this)} >
+			<li className={ cls } onClick={this.changeGlobalItemsDisplayMode.bind(this)} >
 				<Icon />
 			</li>
 		);
@@ -143,11 +151,6 @@ class TopBarIcon extends React.Component {
 		this.props.setUiState({
 			itemsDisplayMode: this.props.icon.id
 		});
-	}
-
-	getModifierClass() {
-		if (this.isActive()) { return 'icons__icon--active'; }
-		return '';
 	}
 
 	isActive() {

@@ -2,6 +2,10 @@
 
 	@include animation(fadein 1s);
 
+	svg {
+		fill: map-get($palette, off-white);
+	}
+
 	&__title, &__subtitle, &__strip, &__main-nav {
 		position: relative;
 		z-index: 1;
@@ -63,6 +67,7 @@
 	}
 
 	&__main-nav {
+
 		display: block;
 		position: absolute;
 		bottom: 15%;

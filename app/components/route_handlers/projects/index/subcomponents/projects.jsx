@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { Link } from 'react-router';
 import * as colors from './../../../../utilities/colors.js';
+import * as Icons from './../../../../general/icons.jsx';
 
 class Projects extends React.Component {
 
@@ -112,10 +113,12 @@ class Project extends React.Component {
 
 	renderAttribution() {
 		var project = this.props.project,
-			imageCredit = project.get('image_credit');
+			imageCredit = project.get('image_credit'),
+			InfoComp = Icons.Info;
 		if (imageCredit == null || (imageCredit === '')) { return; }
 		return (
-			<div className="atl__attribution bg-img-info--black">
+			<div className="atl__attribution">
+				<InfoComp />
 				<div className="atl__attribution__link">
 					<p>{ 'Image Credit' }</p>
 					<div>{ 'Shutterstock' }</div>

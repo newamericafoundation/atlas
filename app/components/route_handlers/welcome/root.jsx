@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { Link } from 'react-router';
 import Loading from './../../general/loading.jsx';
+import Icons from './../../general/icons.jsx';
 
 var imageSource = "/assets/images/iStock_000065438623_720.jpg";
 
@@ -15,6 +16,7 @@ class Welcome extends React.Component {
 	}
 
 	render() {
+		var GridIcon = Icons.Grid;
 		if (!this.state.hasImageLoaded) { return (<Loading />); }
 		return (
 			<div className="welcome fill-parent" style={ this.getRootVisibilityStyle() }>
@@ -28,7 +30,9 @@ class Welcome extends React.Component {
 					{ "A policy analysis tool from New America's Education Program" }
 				</div>
 				<div className="welcome__main-nav">
-					<Link to="/menu" className="bg-img-grid--off-white" />
+					<Link to="/menu">
+						<GridIcon />
+					</Link>
 					<p className="center">View All Projects</p>
 				</div>
 			</div>
