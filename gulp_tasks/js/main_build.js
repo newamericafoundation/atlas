@@ -8,7 +8,7 @@ import rev from 'gulp-rev';
 import config from './../config.js';
 
 // Main js build task. Concatenates partial builds, compresses and gzips in production mode.
-gulp.task('js-build', [ 'js-clean-build', 'js-build-source' ], () => {
+gulp.task('js-build', [ 'js-clean-build', 'js-build-source', 'js-build-vendor', 'bundle' ], () => {
     return gulp.src([ 
             'public/assets/scripts/partials/vendor.js', 
             'public/assets/scripts/partials/source.js',

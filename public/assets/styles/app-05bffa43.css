@@ -4598,6 +4598,7 @@ td, th {
   width: 100%;
   height: 100%;
   display: table;
+  text-align: center;
   background-color: rgba(0, 0, 0, 0.5);
   -webkit-animation: fadein 1s;
   -moz-animation: fadein 1s;
@@ -4605,29 +4606,33 @@ td, th {
   -o-animation: fadein 1s;
   animation: fadein 1s; }
   .modal__wrapper {
-    top: auto;
-    bottom: auto;
-    left: auto;
-    right: auto;
-    text-align: center;
-    position: relative;
+    margin: auto;
     display: table-cell;
-    width: 90%;
-    max-width: 600px;
-    height: 400px;
+    text-align: center;
     vertical-align: middle; }
-  .modal__content {
+  .modal__window {
     padding: 40px;
     display: inline-block;
+    text-align: center;
     width: 90%;
     max-width: 600px;
     height: 90%;
     max-height: 500px;
     border-radius: 8px; }
-    .modal__content li {
+    .modal__window li {
       padding: 10px 0; }
-    .modal__content .title {
+    .modal__window .title {
       padding: 40px 0 30px 0; }
+  .modal__content {
+    width: 100%;
+    height: 100%;
+    display: table; }
+    .modal__content > div {
+      position: relative;
+      top: -20px;
+      display: table-cell;
+      vertical-align: middle;
+      text-align: center; }
 
 .atl {
   width: 100%;

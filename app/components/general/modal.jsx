@@ -6,8 +6,12 @@ class Modal extends React.Component {
 		return (
 			<div className='modal'>
 				<div className='modal__wrapper'>
-					<div className='modal__content bg-c-off-white'>
-						{ this.renderContent() }
+					<div className='modal__window bg-c-off-white'>
+						<div className='modal__content'>
+							<div>
+								{ this.renderContent() }
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
