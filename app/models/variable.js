@@ -39,9 +39,9 @@ exports.Model = base.Model.extend({
      * @param {object} item
      * @returns {string} formattedField
      */
-    getFormattedField: function(item) {
+    getFormattedField: function(item, defaultFormat) {
         var rawField = item.get(this.get('id')),
-            format = this.get('format');
+            format = this.get('format') || defaultFormat;
         if (format == null || formatters[format] == null) { return rawField; }
         return formatters[format](rawField);
     },

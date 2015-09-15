@@ -6,7 +6,7 @@
     $is-solid: false;
 
     line-height: 80%;
-	position: static;
+	position: relative;
     display: inline-block;
     padding: 2px 5px 0px 5px;
     
@@ -16,17 +16,29 @@
 
     text-align: center;
 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
     p {
+        width: 100%;
         display: inline-block;
         text-align: center;
         width: auto;
         @include font-size($font-size);
-        white-space: nowrap;
-        overflow: hidden;
         position: static;
         margin: 0 0 0 0;
         pointer-events: none;
         font-family: 'SimplonNorm-Regular-WebS' !important;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    svg {
+        height: $font-size + 4px;
+        width: $font-size + 4px;
     }
 
     border-color: $main-color;
@@ -38,3 +50,19 @@
 }
 
 .button { @include button; }
+
+.button--light-hollow {
+
+}
+
+.button--light-full {
+
+}
+
+.button--dark-hollow {
+
+}
+
+.button--dark-full {
+
+}

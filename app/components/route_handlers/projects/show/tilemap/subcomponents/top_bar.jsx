@@ -10,6 +10,7 @@ class TopBar extends React.Component {
 	}
 
 	render() {
+		var MoreIcon = Icons.More;
 		return (
 			<div className="atl__top-bar">
 				<div className={ this.getContentClassName() }>
@@ -17,13 +18,18 @@ class TopBar extends React.Component {
 					{ this.renderTimeline() }
 					<div className="atl__top-bar__title"><div><p>{ this.props.project.get('title') }</p></div></div>
 					<div className="atl__top-bar__summary">
-						<div><p>{ this.getName() }</p></div>
-						<div>
+						<div className="atl__top-bar__summary__item"><p>{ this.getName() }</p></div>
+						<div className="atl__top-bar__summary__item">
 							<div className='button'>
 								<p>{ this.getKey() }</p>
 							</div>
 						</div>
-						<div><p>{ this.getValue() }</p></div>
+						<div className="atl__top-bar__summary__item">
+							<div className='button'>
+								<MoreIcon />
+							</div>
+						</div>
+						<div className="atl__top-bar__summary__item"><p>{ this.getValue() }</p></div>
 					</div>
 				</div>
 			</div>

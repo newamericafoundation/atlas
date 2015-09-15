@@ -633,27 +633,35 @@ th {
 
 .button {
   line-height: 80%;
-  position: static;
+  position: relative;
   display: inline-block;
   padding: 2px 5px 0px 5px;
   border-radius: 7px;
   cursor: pointer;
   border: 2px solid;
   text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   border-color: #fffaef;
   opacity: 0.5; }
   .button p {
+    width: 100%;
     display: inline-block;
     text-align: center;
     width: auto;
     font-size: 16px;
     font-size: 1rem;
-    white-space: nowrap;
-    overflow: hidden;
     position: static;
     margin: 0 0 0 0;
     pointer-events: none;
-    font-family: 'SimplonNorm-Regular-WebS' !important; }
+    font-family: 'SimplonNorm-Regular-WebS' !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; }
+  .button svg {
+    height: 20px;
+    width: 20px; }
   .button p {
     color: #fffaef; }
   .button:hover, .button--active {
@@ -4683,7 +4691,7 @@ td, th {
     opacity: 0.8;
     padding: 20px 20px; }
     .atl--collapsed .atl__search {
-      padding-left: 0;
+      padding: 0;
       position: absolute;
       left: 40px;
       top: 75px;
@@ -4749,7 +4757,7 @@ td, th {
     position: relative;
     padding: 10px 20px;
     padding-left: 40px;
-    padding-top: 0px; }
+    padding-top: 10px; }
     .atl__filter__keys .button {
       margin: 6px 6px 0 0; }
     @media only screen and (min-width: 640px) {
@@ -4760,7 +4768,7 @@ td, th {
         padding-left: 40px; } }
     .atl--collapsed .atl__filter__keys {
       padding-left: 40px;
-      padding-top: 0px; }
+      padding-top: 10px; }
       @media only screen and (min-width: 640px) {
         .atl--collapsed .atl__filter__keys {
           padding-left: 20px; } }
@@ -5581,6 +5589,7 @@ td, th {
   top: 80px;
   padding: 40px 0; }
   .atl__settings-bar input {
+    background-color: #4a4a4a;
     color: #fffaef; }
   .atl--collapsed .atl__settings-bar {
     background: none;
@@ -5701,7 +5710,7 @@ td, th {
   .atl__top-bar__title {
     display: inline-block;
     float: left;
-    padding: 0;
+    padding: 0 0 0 15px;
     margin: 0;
     height: 100%; }
     @media only screen and (min-width: 800px) {
@@ -5730,11 +5739,10 @@ td, th {
       height: 100%; }
   .atl__top-bar__icons {
     float: left;
-    width: 200px; }
+    display: inline;
+    width: auto; }
     .atl__top-bar__icons .icons {
-      width: 75px;
-      height: 75px;
-      width: 300px; }
+      height: 75px; }
       .atl__top-bar__icons .icons li {
         float: left;
         fill: #fffaef; }
@@ -5757,22 +5765,23 @@ td, th {
     float: right;
     display: table; }
     .atl__top-bar__summary .button {
+      width: 100%;
       padding: 4px 7px 0px 7px;
       background-color: #fffaef;
       border: none;
       opacity: 0.9; }
       .atl__top-bar__summary .button p {
         color: #323232; }
-    .atl__top-bar__summary > div {
+    .atl__top-bar__summary__item {
+      text-align: center;
       min-width: 40px;
       max-width: 120px;
-      overflow: ellipsis;
       display: table-cell;
       vertical-align: middle;
       padding-right: 20px;
       font-size: 18px;
       font-size: 1.125rem; }
-      .atl__top-bar__summary > div > p {
+      .atl__top-bar__summary__item > p {
         width: 100px;
         text-overflow: ellipsis;
         overflow: hidden;

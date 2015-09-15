@@ -13,7 +13,7 @@
 
         @mixin collapsed {
             padding-left: 40px;
-            padding-top: 0px;
+            padding-top: 10px;
             @include bp-w-sm {
                 padding-left: 20px;
             }

@@ -48,6 +48,13 @@ class Welcome extends React.Component {
 		$('<img>').attr({ src: imageSource }).load(() => {
 			this.setState({ hasImageLoaded: true });
 		});
+		this.clearHeaderStripColoring();
+	}
+
+	clearHeaderStripColoring() {
+		var App = this.props.App;
+		if (!App) { return; }
+		App.commands.execute('set:header:strip:color', {});
 	}
 
 }

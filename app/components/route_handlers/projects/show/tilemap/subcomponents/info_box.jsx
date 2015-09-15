@@ -31,19 +31,8 @@ class InfoBox extends Static {
 	getTitleBarBackgroundStyle() {
 		var project = this.props.project,
 			img = this.state.image,
-			style;
-		if (img) {
-			// console.log(project.getImageUrl());
-			// console.log(img.getUrl());
-			style = {
-				'backgroundImage': img.getUrl()
-			};
-		} else {
-			style = {
-				'backgroundColor': 'rgba(50, 50, 50, 0.1)'
-			};
-		}
-		return style;
+			imgUrl = img ? img.getUrl() : project.getImageUrl();
+		return imgUrl ? { 'backgroundImage': imgUrl } : { 'backgroundColor': 'rgba(50, 50, 50, 0.1)' };
 	}
 
 	renderTitleBarContent() {
@@ -51,7 +40,7 @@ class InfoBox extends Static {
 			<div className="atl__title-bar__content">
 				<h1 className='title'>{ this.getTitle() }</h1>
 				<ul>
-					{ this.renderWebsite() }
+					{ this.renderWebsiteLink() }
 				</ul>
 			</div>
 		);
@@ -108,18 +97,20 @@ class InfoBox extends Static {
 	}
 
 	close(e) {
-		var $el, App, transitionEventName;
+		var $el, App, transitionEventName, items;
+		items = this.props.project.get('data').items;
 		e.preventDefault();
 		transitionEventName = this.getTransitionEventName();
 		$el = $(React.findDOMNode(this.refs.main));
 		$el.on(transitionEventName, () => {
-			App.vent.trigger('item:deactivate');
+			delete items.active;
 			$el.off(transitionEventName);
+			var App = this.props.App;
+			if (!App) { return; }
+			App.commands.execute('set:header:strip:color', {});
+			App.commands.execute('update:tilemap');
 		});
-		this.props.setUiState({
-			isInfoBoxActive: false
-		});
-		return App = this.props.App;
+		this.props.setUiState({ isInfoBoxActive: false });
 	}
 
 
@@ -162,10 +153,15 @@ class InfoBox extends Static {
 		}
 	}
 
-	renderWebsite() {
+	renderWebsiteLink() {
+		var project = this.props.project;
+		if (!project) { return; }
+		var activeItem = project.get('data').items.active;
+		if (!activeItem) { return; }
+		var url = activeItem.get('website') || activeItem.get('state_website') || '/';
 		return (
 			<li>
-				<a className="icon-button" href="#" target="_blank">
+				<a className="icon-button" href={url}>
 					<div className="icon-button__icon bg-img-link--black"></div>
 					<div className="icon-button__text">Website</div>
 				</a>
@@ -209,28 +205,38 @@ class InfoBox extends Static {
 	}
 
 	ensureActiveItemContent() {
+
 		var App, activeItem, html, infoBoxVar, project, variables;
 		project = this.props.project;
 		App = this.props.App;
+
 		activeItem = this.props.activeItem;
 		if ((activeItem == null) || (activeItem.get('info_box_content') != null)) {
 			return;
 		}
+
 		variables = project.get('data').variables;
 		infoBoxVar = variables.filter(function(variable) {
 			return variable.get('infobox_order') != null;
 		});
-		infoBoxVar.sort(function(a, b) {
-			return a.get('infobox_order') > b.get('infobox_order');
+
+		infoBoxVar = infoBoxVar.sort(function(a, b) {
+			return (a.get('infobox_order') - b.get('infobox_order'));
 		});
+
+		console.log(infoBoxVar);
+
 		html = "";
 		infoBoxVar.forEach((function(_this) {
 			return function(variable) {
-			  return html += "<h1>" + (variable.get('display_title')) + "</h1>" + (variable.getFormattedField(activeItem));
+			  return html += "<h1>" + (variable.get('display_title')) + "</h1>" + (variable.getFormattedField(activeItem, 'markdown'));
 			};
 		})(this));
+
 		activeItem.set('info_box_content', html);
+
 		return activeItem.setHtmlToc('info_box_content');
+
 	}
 
 }
