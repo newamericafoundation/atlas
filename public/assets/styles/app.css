@@ -905,9 +905,6 @@ th {
   -webkit-font-smoothing: antialiased;
   font-weight: normal; }
 
-::-webkit-scrollbar {
-  display: none; }
-
 @media print {
   * {
     overflow: visible !important; } }
@@ -5072,9 +5069,9 @@ td, th {
     .atl__map-control {
       top: 105px; } }
   .atl__map-control__button {
-    width: 25px;
-    height: 25px;
-    margin-bottom: 12.5px;
+    width: 20px;
+    height: 20px;
+    margin-bottom: 10px;
     cursor: pointer;
     opacity: 0.7; }
     .atl__map-control__button:hover {
@@ -5188,7 +5185,7 @@ td, th {
     width: 100%;
     height: 100%;
     margin: 0;
-    padding: 25px; }
+    padding: 27.5px; }
   .atl__side-bar__icon {
     width: 75px;
     height: 75px;

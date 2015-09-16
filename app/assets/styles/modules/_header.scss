@@ -54,6 +54,9 @@
 		height: 100%;
 		padding-top: 1px;
 
+		// override general icon-size for main header logo
+		$icon-size: 25px;
+
 		a, div {
 			width: $icon-size;
 			height: $icon-size;

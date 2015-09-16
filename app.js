@@ -2,7 +2,6 @@ require('babel/register');
 
 var express = require('express'),
 	passport = require('passport'),
-	cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     session = require('express-session'),
@@ -37,7 +36,6 @@ app.set('view engine', 'jade');
 app.get([ '*.js' ], require('./app/middleware/serve_gzip.js'));
 app.use(express.static('public'));
 
-app.use(cookieParser());
 app.use(methodOverride());
 
 dbConnector.then(function(db) {
@@ -46,17 +44,15 @@ dbConnector.then(function(db) {
 	app.use(session({
 		collection: 'atlas_sessions',
 	    secret: 'Super_Big_Secret',
-	    resave: false,
+	    resave: true,
 	    store: new MongoStore({ db: db }),
-	    saveUninitialized: false
+	    cookie: { maxAge: 1 * 3600 },
+	    saveUninitialized: true
 	}));
 
 	// Initialize passport.
 	app.use(passport.initialize());
-	app.use(passport.session({
-	    resave: false,
-	    saveUninitialized: false
-	}));
+	app.use(passport.session());
 
 	// Use router (see ./app/routes directory).
 	app.use(router);
