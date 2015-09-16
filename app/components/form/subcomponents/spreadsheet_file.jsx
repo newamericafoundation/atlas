@@ -1,9 +1,18 @@
 import React from 'react';
 import Base from './base.jsx';
+import Loading from './../../general/loading.jsx';
 
 class SpreadsheetFile extends Base {
 
+	constructor(props) {
+		super(props);
+		this.state = {
+			isParserLoaded: false
+		};
+	}
+
 	render() {
+		if (!this.state.isParserLoaded) { return (<Loading />); }
 		return (
 			<div className='form__wrapper'>
 				<label for={this.props.id}>{ this.props.labelText }</label>
@@ -19,6 +28,12 @@ class SpreadsheetFile extends Base {
 				/>
 			</div>
 		);
+	}
+
+	componentDidMount() {
+		$().ensureScript('XLSX', '/assets/vendor/js-xlsx-standalone.js', () => {
+			this.setState({ isParserLoaded: true });
+		});
 	}
 
 	parseWorkBook(workbook) {

@@ -18,7 +18,7 @@ import ProjectsDelete from './../components/route_handlers/projects/delete/root.
 var routes = (
 	<Route handler={Layout}>
 
-		<Route name='welcome' path='welcome' params={{a: 'b'}} handler={Welcome} />
+		<Route name='welcome' path='welcome' handler={Welcome} />
 		<Redirect from='/' to='welcome' />
 
 		<Route path='projects'>

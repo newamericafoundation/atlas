@@ -1,5 +1,6 @@
 import React from 'react';
 import Base from './base.jsx';
+import Loading from './../../general/loading.jsx';
 
 class CKEditor extends Base {
 
@@ -16,7 +17,7 @@ class CKEditor extends Base {
 				<textarea
 					name={this.props.id}
 					id={this.props.id}
-					disabled={!this.props.Enabled}
+					disabled={!this.props.isEnabled}
 					value={this.props.initialValue}
 					placeholder={this.props.placeholder} 
 				/>

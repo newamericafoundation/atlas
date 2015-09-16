@@ -60,6 +60,7 @@ gulp.task('dev', () => {
             'bower_components/**/*', 
             'spec/**/*', 
             'db/**/*',
+            'public/**/*',
             'app/components/**/*', // monitored by watchify
             'app/models/**/*' // monitored by watchify
         ],
