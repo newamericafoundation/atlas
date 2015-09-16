@@ -32,18 +32,20 @@ class Header extends React.Component {
 					<h1 className="header__main__site-name">ATLAS</h1>
 					<p className="header__main__title"></p>
 				</div>
-				<HeaderNavCircles {...this.props} />
+				{ this.renderAuth() }
+				{ (false) ? <HeaderNavCircles {...this.props} /> : null }
 				<div className="header__strip" style={stripStyle} />
 			</div>
 		);
 	}
 
 	renderAuth() {
-		if (this.props.user == null) { return; }
+		var researcher = window.researcher;
+		if (!researcher) { return; }
 		return (
 			<div className="header__auth">
-				<img src={this.getUserPhotoUrl()}></img>
-				<p>{ this.getUserDisplayName() }</p>
+				<img src={researcher.image.url} alt='Researcher Photo'></img>
+				<p>{ `Hi, ${researcher.name.givenName}!` }</p>
 			</div>
 		);
 	}

@@ -9,14 +9,4 @@ describe('image.Model', function() {
 
 	var model;
 
-	describe('url', function() {
-
-		it('creates url by concatenating name to root url', function() {
-			var urlRoot = '/api/v1/images';
-			model = new image.Model({ name: 'picture' });
-			assert.equal(model.url(), '/api/v1/images?name=picture');
-		});
-
-	});
-
 });

@@ -1,18 +1,15 @@
 #atl__map { 
 	overflow: hidden;
-	@include transition(all, 0.75s);
-	@media print {
-		display: none;
-	}
-
+	@media print { display: none; }
 	.atl--help &:after {
 		content: ""; 
 		display: block; 
 		position: fixed; 
-		top: 0; 
-		left: 0; 
-		height: 100%; 
-		width: 100%; 
+		top: 0;
+		left: 0;
+		height: 100%;
+		width: 100%;
+		@include transition(all, 0.75s);
 		background-color: rgba(0,0,0,0.5);
 	}
 }

@@ -114,5 +114,18 @@ describe('variable.Model', function() {
             }]);
         });
 
+        it('builds filter including negative numbers', function() {
+            model.set('numerical_filter_dividers', '-100|-50|150');
+            assert.deepEqual(model.getNumericalFilter(), [{
+                min: -100,
+                max: -50,
+                value: 'Between -100 and -50'
+            }, {
+                min: -50,
+                max: 150,
+                value: 'Between -50 and 150'
+            }]);
+        });
+
     });
 });

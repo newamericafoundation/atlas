@@ -18,12 +18,16 @@ var formatters = {
 	    if (typeof numeral === "undefined" || numeral === null) {
 	        return v;
 	    }
-	    formatter = v > 99999 ? '(0a)' : '(0)';
+	    formatter = v > 99999 ? '0.0a' : '0.0';
 	    return numeral(v).format(formatter);
 	},
 
 	percent: function(v) {
-	    return v + '%';
+	    return formatters.number(v) + '%';
+	},
+
+	percentage: function(v) {
+		return formatters.percent(v);
 	},
 
 	html: function(html) {
@@ -32,15 +36,6 @@ var formatters = {
 	    $html.find('a').attr('target', '_blank');
 	    newHtml = $('<div></div>').append($html.clone()).html();
 	    return newHtml;
-	},
-
-	atlasArray: function(atlasArray) {
-	    var arr;
-	    arr = atlasArray.split("|");
-	    arr = _.map(arr, function(item) {
-	        return item.trim();
-	    });
-	    return arr;
 	},
 
 	removeLineBreaks: function(string) {
@@ -64,11 +59,6 @@ var formatters = {
 	        html = marked(string);
 	    }
 	    return html;
-	},
-
-	// deprecated
-	mdToHtml: function(string) {
-	    return this.markdown(string);
 	}
 
 };

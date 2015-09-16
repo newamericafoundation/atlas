@@ -8,10 +8,15 @@
 	height: $top-bar-height;
 	width: $top-bar-height;
 
-	@extend %bg-img-dropdown-down--off-white;
-	background-size: 35% 35%;
-	background-position: 50% 50%;
-	background-repeat: no-repeat;
+	&__toggler {
+		position: absolute;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		svg {
+			fill: map-get($palette, off-white);
+		}
+	}
 
 	cursor: pointer;
 
@@ -21,19 +26,19 @@
 
 	&:hover, &--active { 
 		overflow: visible;
-		@extend %bg-img-dropdown-up--off-white;
 	}
 
 	padding-top: $top-bar-height;
 
 	@include bp-expand-menu {
-		background: none;
-		background-repeat: no-repeat;
-		width: auto;
 		padding-top: 0;
+		width: auto;
+		&__toggler {
+			display: none;
+		}
 	}
 
-	z-index: 11000;
+	z-index: 200;
 
 	&__title {
 		position: absolute;
@@ -47,17 +52,19 @@
 		overflow: visible;
 	}
 
-	&__icon {
-
-		width:  $side-bar-width;
-		height: $side-bar-width;
-
+	&__icon, &__toggler {
 		& > * {
 			width: 100%;
 			height: 100%;
 			margin: 0;
 			padding: $side-bar-width / 2 - $icon-size / 2;
 		}
+	}
+
+	&__icon {
+
+		width:  $side-bar-width;
+		height: $side-bar-width;
 
 		position: relative;
 		float: left;

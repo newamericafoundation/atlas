@@ -193,13 +193,7 @@ exports.Model = base.Model.extend({
      * returns {boolean} - Whether madatory fields exist
      */
     exists: function() {
-        var json, key, keyCount;
-        keyCount = 0;
-        json = this.toJSON();
-        if (json.id == null) { return false; }
-        for (key in json) {
-            keyCount += 1;
-        }
+        var keyCount = Object.keys(this.toJSON()).length;
         return (keyCount > 1);
     },
 

@@ -10,9 +10,8 @@ describe('filter tree', function() {
     beforeEach(function() {
 
         obj = {
-            activeIndex: 0,
             variables: [{
-                variable_id: 'origin',
+                variable: new Backbone.Model({ id: 'origin' }),
                 _isActive: true,
                 options: [{
                     value: 'ethiopia',
@@ -25,8 +24,8 @@ describe('filter tree', function() {
                     _isActive: true
                 }]
             }, {
-                variable_id: 'roast',
-                _isActive: true,
+                variable: new Backbone.Model({ id: 'roast' }),
+                _isActive: false,
                 options: [{
                     value: 'dark',
                     _isActive: true
@@ -44,7 +43,7 @@ describe('filter tree', function() {
     describe('constructor', function() {
 
         it('builds nested structure', function() {
-            assert.equal(filterTree.children[0].get('variable_id'), 'origin');
+            assert.equal(filterTree.children[0].get('variable').get('id'), 'origin');
         });
 
         it('builds double nested structure', function() {

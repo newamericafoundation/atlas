@@ -16,6 +16,8 @@ import classNames from 'classnames';
  * };
  */
 
+import { DropdownUp, DropdownDown } from './icons.jsx';
+
 class SideBar extends React.Component {
 
 	constructor(props) {
@@ -28,11 +30,18 @@ class SideBar extends React.Component {
 
 	render() {
 		return (
-			<div className={ this.getClass() } onClick={ this.toggle.bind(this) }>
+			<div className={ this.getClass() }>
+				<div className="atl__side-bar__toggler" onClick={ this.toggle.bind(this) }>
+					{ this.renderDropdownIcon() }
+				</div>
 				<div className="atl__side-bar__title">{ this.state['hoveredButtonTitle'] }</div>
 				{ this.renderButtons() }
 			</div>
 		);
+	}
+
+	renderDropdownIcon() {
+		return this.state.isActive ? <DropdownUp /> : <DropdownDown />;
 	}
 
 	getClass() {

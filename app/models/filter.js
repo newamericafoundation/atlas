@@ -1,4 +1,5 @@
 var base = require('./base.js'),
+    _ = require('underscore'),
     formatters = require('./../utilities/formatters.js'),
     baseComposite = require('./base_composite.js');
 
@@ -77,6 +78,7 @@ var LocalBaseModel = baseComposite.Model.extend({
     getFriendlySiblingIndex: function(n) {
         var i = this.getSiblingIndex(),
             max = this.getSiblingCountIncludingSelf();
+        if (max === 1) { return 1; }
         return Math.round(i * (n - 1) / (max - 1) + 1);
     },
 
@@ -93,9 +95,7 @@ exports.FilterValue = LocalBaseModel.extend({
 
     test: function(d, options) {
         var j, key, len, res, val, value;
-        if (d == null) {
-            return false;
-        }
+        if (d == null) { return false; }
         if ((!this.get('_isActive')) && (!((options != null) && options.ignoreState))) {
             return false;
         }
@@ -103,7 +103,7 @@ exports.FilterValue = LocalBaseModel.extend({
         key = this.parent.get('variable').get('id');
         value = d[key];
         if (!_.isArray(value)) {
-            value = [value];
+            value = [ value ];
         }
         for (j = 0, len = value.length; j < len; j++) {
             val = value[j];
@@ -290,10 +290,10 @@ exports.FilterTree = LocalBaseModel.extend({
         var maxIndex, valueIndeces;
         valueIndeces = this.getValueIndeces(model);
         maxIndex = this.getValueCountOnActiveKey();
+        console.log('before');
+        if (maxIndex === 1) { return [ 1 ]; }
         return valueIndeces.map(function(valIndex) {
-            var friendlyIndex;
-            friendlyIndex = Math.round(valIndex * (scaleMax - 1) / (maxIndex - 1) + 1);
-            return friendlyIndex;
+            return Math.round(valIndex * (scaleMax - 1) / (maxIndex - 1) + 1);
         });
     }
 

@@ -7,41 +7,8 @@ var assert = require('assert'),
 
 describe('project.Model', function() {
 
-
 	var pm,
 		model = new project.Model();
-
-
-	describe('url', function() {
-
-		it('creates url by concatenating atlas url to root url', function() {
-			var urlRoot = '/api/v1/projects';
-			pm = new project.Model({ atlas_url: 'folder/subfolder' });
-			assert.equal(pm.url(), '/api/v1/projects?atlas_url=folder/subfolder');
-		});
-
-	});
-
-
-	describe('exists', function() {
-
-		it('returns true if project has mandatory fields', function() {
-			pm = new project.Model({ id: 1, a: 'first', b: 'second' });
-			assert.equal(pm.exists(), true);
-		});
-
-		it('returns false if project is missing id', function() {
-			pm = new project.Model({ a: 'first', b: 'second' });
-			assert.equal(pm.exists(), false);
-		});
-
-		it('returns false if project only has one key', function() {
-			pm = new project.Model({ id: 1 });
-			assert.equal(pm.exists(), false);
-		});
-
-	});
-
 
 	describe('isRelatedTo', function() {
 

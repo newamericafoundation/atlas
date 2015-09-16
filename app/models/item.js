@@ -294,34 +294,50 @@ exports.Collection = base.Collection.extend({
 	
 	/** 
 	 * Gets lists of values for a given key.
-	 * @param {string} key - Any key in models.
+	 * @param {string|object} key|variable - Key or variable model instance.
 	 * @returns {array} valueList - List of values for specified key.
 	 */
-	getValueList: function(key) {
-		var j, l, len, len1, model, ref, val, value, valueList;
-		valueList = [];
-		ref = this.models;
-		for (j = 0, len = ref.length; j < len; j++) {
-			model = ref[j];
-			value = model.get(key);
+	getValueList: function(variableOrKey) {
+		var key = (variableOrKey.get) ? variableOrKey.get('id') : variableOrKey,
+			variable = (variableOrKey.get) ? variableOrKey : null,
+			valueList = [];
+
+		this.models.forEach((model) => {
+			var value = model.get(key);
 			if (_.isArray(value)) {
-				for (l = 0, len1 = value.length; l < len1; l++) {
-					val = value[l];
-					if (indexOf.call(valueList, val) < 0) {
+				value.forEach((val) => {
+					if (valueList.indexOf(val) < 0) {
 						valueList.push(val);
 					}
-				}
+				});
 			} else {
-				if (indexOf.call(valueList, value) < 0) {
+				if (valueList.indexOf(value) < 0) {
 					valueList.push(value);
 				}
 			}
+		});
+
+		// Sort value list if there is a value_order array set on the variable.
+		if (variable && variable.get('value_order')) {
+			let valueOrderArray = variable.get('value_order').split('|').map((s) => { return s.trim(); });
+			console.log(valueOrderArray);
+			valueList = valueList.sort((val_1, val_2) => {
+				var index_1 = valueOrderArray.indexOf(val_1);
+				var index_2 = valueOrderArray.indexOf(val_2);
+				// If the value is not present in the value_order array, place it at the end of the list.
+				if (index_1 < 0) { index_1 = 1000; }
+				if (index_2 < 0) { index_2 = 1000; }
+				return (index_1 - index_2);
+			});
 		}
+
 		return valueList;
 	},
 	
 	/** TODO: Gets value list sorted by frequency in the data. */
-	getSortedValueList: function(key) {},
+	getSortedValueList: function(key) {
+
+	},
 	
 	/** 
 	 * Assumes the model has a latitude and longitude fields.

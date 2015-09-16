@@ -29,6 +29,7 @@ resources.forEach(function(resource) {
 router.get([ '/', 'welcome', '/menu', '*' ], (req, res) => {
 	var opt = fingerprintManifest;
 	opt.user = req.user;
+	console.log(req.user);
 	res.render('index.jade', opt);
 });
 

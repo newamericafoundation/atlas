@@ -53,6 +53,13 @@ exports.Model = base.Model.extend({
      */
     getNumericalFilter: function(formatter) {
 
+        var filterFloat = function (value) {
+            if(/^(\-|\+)?([0-9]+(\.[0-9]+)?|Infinity)$/
+              .test(value))
+              return Number(value);
+          return NaN;
+        }
+
         var i, len, numericalFilter, values,
             numericalDividers = this.get('numerical_filter_dividers');
 
@@ -61,13 +68,14 @@ exports.Model = base.Model.extend({
         }
 
         values = _.map(numericalDividers.split('|'), function(member, index) {
+            member = member.trim();
             if (member === "") {
                 if (index === 0) {
                     return -1000000000;
                 }
                 return +1000000000;
             }
-            return parseInt(member, 10);
+            return filterFloat(member);
         });
 
         numericalFilter = [];

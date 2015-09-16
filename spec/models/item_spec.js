@@ -180,9 +180,28 @@ describe('item.Collection', function() {
 			modelData2 = { id: 2, title: 'B' },
 			modelData3 = { id: 3, title: 'A' };
 
-		it('creates array of values for specified key in collection of models', function() {
+		it('gets value list if a key string is passed', function() {
 			var ic = new item.Collection([ modelData1, modelData2, modelData3 ]);
 			assert.deepEqual(ic.getValueList('title'), [ 'C', 'B', 'A' ]);
+		});
+
+		it('gets value list if a variable instance is passed', function() {
+			var ic = new item.Collection([ modelData1, modelData2, modelData3 ]);
+			assert.deepEqual(ic.getValueList(new Backbone.Model({ id: 'title'})), [ 'C', 'B', 'A' ]);
+		});
+
+		// extra whitespaces are introduced in value_order to test trim
+
+		it('sorts value list if a value_order array is present on the variable', function() {
+			var ic = new item.Collection([ modelData1, modelData2, modelData3 ]),
+				variable = new Backbone.Model({ id: 'title', 'value_order': 'A |B|C' });
+			assert.deepEqual(ic.getValueList(variable), [ 'A', 'B', 'C' ]);
+		});
+
+		it('if a value is missing from the value order array, place it at the end', function() {
+			var ic = new item.Collection([ modelData1, modelData2, modelData3 ]),
+				variable = new Backbone.Model({ id: 'title', 'value_order': 'B|  C' });
+			assert.deepEqual(ic.getValueList(variable), [ 'B', 'C', 'A' ]);
 		});
 
 	});
