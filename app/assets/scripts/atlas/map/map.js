@@ -1,14 +1,14 @@
-this.Atlas.module('Map', function(Map) {
+window.Map = {};
 
-    this.startWithParent = false;
+(function(Map) {
 
-    this.on('start', function() {
+    Map.start = function() {
         return this.Controller.show();
-    });
+    };
 
-    this.on('stop', function() {
+    Map.stop = function() {
         return this.Controller.destroy();
-    });
+    };
 
     Map.Controller = {
 
@@ -56,7 +56,7 @@ this.Atlas.module('Map', function(Map) {
         getStateBaseGeoData: function(next) {
 
             var data;
-            data = Map.props.App['us-states-10m'];
+            data = Atlas['us-states-10m'];
             if (data != null) {
                 return next(data);
             }
@@ -65,7 +65,7 @@ this.Atlas.module('Map', function(Map) {
                 url: '/data/us-states-10m.js',
                 dataType: 'script',
                 success: function() {
-                    return next(Map.props.App['us-states-10m']);
+                    return next(Atlas['us-states-10m']);
                 }
             });
 
@@ -82,4 +82,4 @@ this.Atlas.module('Map', function(Map) {
         
     };
 
-});
+} (window.Map));

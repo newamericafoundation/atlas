@@ -1,5 +1,3 @@
-@Atlas.module "Map", (Map) ->
-
 	class Map.PindropOverlayView extends Map.OverlayBaseView
 
         renderSvgContainer: () ->

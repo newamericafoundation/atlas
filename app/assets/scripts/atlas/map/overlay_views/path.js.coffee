@@ -1,5 +1,3 @@
-@Atlas.module "Map", (Map) ->
-
     # view constructor written using the module pattern (function returning an object, without a new keyword)
     class Map.PathOverlayView extends Map.OverlayBaseView
 

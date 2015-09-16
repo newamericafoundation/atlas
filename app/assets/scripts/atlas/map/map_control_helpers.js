@@ -1,6 +1,5 @@
-this.Atlas.module('Map', function(Map) {
 
-  	return Map.control = {
+  	Map.control = {
 
 	    // Centers map on specified target specified as latitude-longitude array.
 	    // @param {Array} latLng - Latitude-longitude array for centering.
@@ -79,5 +78,3 @@ this.Atlas.module('Map', function(Map) {
 	    }
 
 	};
-
-});

@@ -1,5 +1,3 @@
-@Atlas.module 'Map', (Map) ->
-
 	# This is a custom view constructor that uses d3 and Mapbox to render graphics.
 	class Map.RootView
 

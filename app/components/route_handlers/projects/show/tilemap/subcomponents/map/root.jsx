@@ -23,18 +23,17 @@ class Map extends React.Component {
 	}
 
 	componentDidMount() {
-		var App = this.props.App;
-		if (App == null) { return; }
-		App.Map.props = {
+		var Map = window.Map;
+		Map.props = {
 			App: this.props.App,
 			project: this.props.project,
 			uiState: this.props.uiState,
 			setUiState: this.props.setUiState,
 			setMap: this.setMap.bind(this)
 		};
-		App.Map.colors = colors;
-		App.Map.svgPaths = svgPaths;
-		App.Map.start();
+		Map.colors = colors;
+		Map.svgPaths = svgPaths;
+		Map.start();
 	}
 
 	// Set Mapbox map instance. On the component state.
@@ -43,19 +42,14 @@ class Map extends React.Component {
 	}
 
 	componentWillUnmount() {
-		var App = this.props.App;
-		if (App == null) { return; }
-		App.Map.props = {};
-		App.Map.stop();
+		var Map = window.Map;
+		Map.props = {};
+		Map.stop();
 	}
 
 	componentDidUpdate() {
-		var App = this.props.App;
-		if (App == null) { return; }
-		if (App.Map.overlayView) {
-			App.Map.overlayView.update();
-		} else {
-		}
+		var Map = window.Map;
+		if (Map.overlayView) { Map.overlayView.update(); }
 	}
 
 }

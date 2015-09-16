@@ -1,9 +1,7 @@
-@Atlas.module "Map", (Map) ->
-
     # overlay view layers inherit from this object
-	class Map.OverlayBaseView extends Marionette.Object
+	class Map.OverlayBaseView
 
-        initialize: (options) ->
+        constructor: (options) ->
             options ?= {}
             # @map = options.map
             Map.props.App.reqres.setHandler('item:map:position', (item) => @getItemMapPosition(item))

@@ -236,17 +236,17 @@ if (!Array.prototype.map) {
   };
 }
 window.Atlas = new Marionette.Application();
-this.Atlas.module('Map', function(Map) {
+window.Map = {};
 
-    this.startWithParent = false;
+(function(Map) {
 
-    this.on('start', function() {
+    Map.start = function() {
         return this.Controller.show();
-    });
+    };
 
-    this.on('stop', function() {
+    Map.stop = function() {
         return this.Controller.destroy();
-    });
+    };
 
     Map.Controller = {
 
@@ -294,7 +294,7 @@ this.Atlas.module('Map', function(Map) {
         getStateBaseGeoData: function(next) {
 
             var data;
-            data = Map.props.App['us-states-10m'];
+            data = Atlas['us-states-10m'];
             if (data != null) {
                 return next(data);
             }
@@ -303,7 +303,7 @@ this.Atlas.module('Map', function(Map) {
                 url: '/data/us-states-10m.js',
                 dataType: 'script',
                 success: function() {
-                    return next(Map.props.App['us-states-10m']);
+                    return next(Atlas['us-states-10m']);
                 }
             });
 
@@ -320,10 +320,9 @@ this.Atlas.module('Map', function(Map) {
         
     };
 
-});
-this.Atlas.module('Map', function(Map) {
+} (window.Map));
 
-  	return Map.control = {
+  	Map.control = {
 
 	    // Centers map on specified target specified as latitude-longitude array.
 	    // @param {Array} latLng - Latitude-longitude array for centering.
@@ -402,281 +401,266 @@ this.Atlas.module('Map', function(Map) {
 	    }
 
 	};
-
-});
 (function() {
-  this.Atlas.module('Map', function(Map) {
-    return Map.RootView = (function() {
-      function RootView(options) {
-        this.el = options.el;
-        this.elId = this.el.substr(1);
-        this.$el = $(this.el);
-        _.extend(this, Backbone.Events);
-        this;
+  Map.RootView = (function() {
+    function RootView(options) {
+      this.el = options.el;
+      this.elId = this.el.substr(1);
+      this.$el = $(this.el);
+      _.extend(this, Backbone.Events);
+      this;
+    }
+
+    RootView.prototype._getZoomLevel = function() {
+      var width;
+      width = this.$el.width();
+      if (width > 1350) {
+        return 5;
       }
+      if (width > 700) {
+        return 4;
+      }
+      return 3;
+    };
 
-      RootView.prototype._getZoomLevel = function() {
-        var width;
-        width = this.$el.width();
-        if (width > 1350) {
-          return 5;
-        }
-        if (width > 700) {
-          return 4;
-        }
-        return 3;
-      };
-
-      RootView.prototype._setupMap = function() {
-        var zoomLevel;
-        zoomLevel = this._getZoomLevel();
-        this.map.setView([37.6, -95.665], zoomLevel);
-        this.map.scrollWheelZoom.disable();
-        _.extend(this.map, Map.control);
-        this.map.ignoreNextClick = false;
-        this.map.on('dragend', (function(_this) {
-          return function(e) {
-            var items;
-            items = Map.props.project.get('data').items;
-            if (e.distance > 15 && (items.hovered != null)) {
-              return _this.map.ignoreNextClick = true;
-            }
-          };
-        })(this));
-        return Map.map = this.map;
-      };
-
-      RootView.prototype.getMapOptions = function() {
-        return {
-          attributionControl: true,
-          zoomControl: false,
-          inertia: false
+    RootView.prototype._setupMap = function() {
+      var zoomLevel;
+      zoomLevel = this._getZoomLevel();
+      this.map.setView([37.6, -95.665], zoomLevel);
+      this.map.scrollWheelZoom.disable();
+      _.extend(this.map, Map.control);
+      this.map.ignoreNextClick = false;
+      this.map.on('dragend', (function(_this) {
+        return function(e) {
+          var items;
+          items = Map.props.project.get('data').items;
+          if (e.distance > 15 && (items.hovered != null)) {
+            return _this.map.ignoreNextClick = true;
+          }
         };
+      })(this));
+      return Map.map = this.map;
+    };
+
+    RootView.prototype.getMapOptions = function() {
+      return {
+        attributionControl: true,
+        zoomControl: false,
+        inertia: false
       };
+    };
 
-      RootView.prototype.render = function() {
-        L.mapbox.accessToken = 'pk.eyJ1Ijoicm9zc3ZhbmRlcmxpbmRlIiwiYSI6ImRxc0hRR28ifQ.XwCYSPHrGbRvofTV-CIUqw';
-        this.map = L.mapbox.map(this.elId, 'rossvanderlinde.874ab107', this.getMapOptions());
-        Map.props.setMap(this.map);
-        this._setupMap();
-        this.hideAttribution();
-        return this;
-      };
+    RootView.prototype.render = function() {
+      L.mapbox.accessToken = 'pk.eyJ1Ijoicm9zc3ZhbmRlcmxpbmRlIiwiYSI6ImRxc0hRR28ifQ.XwCYSPHrGbRvofTV-CIUqw';
+      this.map = L.mapbox.map(this.elId, 'rossvanderlinde.874ab107', this.getMapOptions());
+      Map.props.setMap(this.map);
+      this._setupMap();
+      this.hideAttribution();
+      return this;
+    };
 
-      RootView.prototype.hideAttribution = function() {
-        return $('.leaflet-control-attribution').hide();
-      };
+    RootView.prototype.hideAttribution = function() {
+      return $('.leaflet-control-attribution').hide();
+    };
 
-      RootView.prototype.destroy = function() {
-        if (this.map == null) {
-          return;
-        }
-        this.map.clearAllEventListeners();
-        this.map.remove();
-        return this;
-      };
+    RootView.prototype.destroy = function() {
+      if (this.map == null) {
+        return;
+      }
+      this.map.clearAllEventListeners();
+      this.map.remove();
+      return this;
+    };
 
-      return RootView;
+    return RootView;
 
-    })();
-  });
+  })();
 
 }).call(this);
 
 (function() {
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  this.Atlas.module("Map", function(Map) {
-    return Map.OverlayBaseView = (function(superClass) {
-      extend(OverlayBaseView, superClass);
-
-      function OverlayBaseView() {
-        return OverlayBaseView.__super__.constructor.apply(this, arguments);
+  Map.OverlayBaseView = (function() {
+    function OverlayBaseView(options) {
+      if (options == null) {
+        options = {};
       }
+      Map.props.App.reqres.setHandler('item:map:position', (function(_this) {
+        return function(item) {
+          return _this.getItemMapPosition(item);
+        };
+      })(this));
+      this;
+    }
 
-      OverlayBaseView.prototype.initialize = function(options) {
-        if (options == null) {
-          options = {};
-        }
-        Map.props.App.reqres.setHandler('item:map:position', (function(_this) {
-          return function(item) {
-            return _this.getItemMapPosition(item);
-          };
-        })(this));
-        return this;
-      };
-
-      OverlayBaseView.prototype.setHeaderStripColor = function() {
-        var indeces, project;
-        project = Map.props.project;
-        indeces = project.getFriendlyIndeces();
-        if (indeces.length > 0) {
-          return Map.props.App.commands.execute('set:header:strip:color', {
-            color: Map.colors.toRgb(indeces[0] - 1)
-          });
-        } else {
-          return Map.props.App.commands.execute('set:header:strip:color', 'none');
-        }
-      };
-
-      OverlayBaseView.prototype.getItemMapPosition = function(item) {
-        var feature, identityPath, latLong, longLatArrayCentroid, map;
-        identityPath = d3.geo.path().projection(function(d) {
-          return d;
+    OverlayBaseView.prototype.setHeaderStripColor = function() {
+      var indeces, project;
+      project = Map.props.project;
+      indeces = project.getFriendlyIndeces();
+      if (indeces.length > 0) {
+        return Map.props.App.commands.execute('set:header:strip:color', {
+          color: Map.colors.toRgb(indeces[0] - 1)
         });
-        feature = this.getFeatureByModel(item);
-        longLatArrayCentroid = identityPath.centroid(feature);
-        latLong = L.latLng(longLatArrayCentroid[1], longLatArrayCentroid[0]);
-        map = Map.map;
-        return map.latLngToContainerPoint(latLong);
-      };
+      } else {
+        return Map.props.App.commands.execute('set:header:strip:color', 'none');
+      }
+    };
 
-      OverlayBaseView.prototype.updateAnimated = function() {
-        var $el;
-        $el = $('.leaflet-overlay-pane');
-        return $el.stop().animate({
-          opacity: 0
-        }, 750, 'swing', (function(_this) {
-          return function() {
-            _this.update();
-            return $el.animate({
-              opacity: 1
-            }, 750);
-          };
-        })(this));
-      };
+    OverlayBaseView.prototype.getItemMapPosition = function(item) {
+      var feature, identityPath, latLong, longLatArrayCentroid, map;
+      identityPath = d3.geo.path().projection(function(d) {
+        return d;
+      });
+      feature = this.getFeatureByModel(item);
+      longLatArrayCentroid = identityPath.centroid(feature);
+      latLong = L.latLng(longLatArrayCentroid[1], longLatArrayCentroid[0]);
+      map = Map.map;
+      return map.latLngToContainerPoint(latLong);
+    };
 
-      OverlayBaseView.prototype.onFeatureMouseOut = function(feature) {
-        var items, project;
-        project = Map.props.project;
-        items = project.get('data').items;
-        items.setHovered(-1);
-        this.setHeaderStripColor();
-        return Map.props.App.commands.execute('update:tilemap');
-      };
+    OverlayBaseView.prototype.updateAnimated = function() {
+      var $el;
+      $el = $('.leaflet-overlay-pane');
+      return $el.stop().animate({
+        opacity: 0
+      }, 750, 'swing', (function(_this) {
+        return function() {
+          _this.update();
+          return $el.animate({
+            opacity: 1
+          }, 750);
+        };
+      })(this));
+    };
 
-      OverlayBaseView.prototype.onFeatureMouseOver = function(feature) {
-        var items, model, project;
-        if (this.bringFeatureToFront != null) {
-          this.bringFeatureToFront(feature);
-        }
-        project = Map.props.project;
-        items = project.get('data').items;
-        model = feature._model != null ? feature._model : feature.id;
-        items.setHovered(model);
-        this.setHeaderStripColor();
-        return Map.props.App.commands.execute('update:tilemap');
-      };
+    OverlayBaseView.prototype.onFeatureMouseOut = function(feature) {
+      var items, project;
+      project = Map.props.project;
+      items = project.get('data').items;
+      items.setHovered(-1);
+      this.setHeaderStripColor();
+      return Map.props.App.commands.execute('update:tilemap');
+    };
 
-      OverlayBaseView.prototype.onFeatureClick = function(feature) {
-        var items, model, project;
-        if ((Map.map != null) && Map.map.ignoreNextClick) {
-          Map.map.ignoreNextClick = false;
-          return;
-        }
-        if (d3.event.stopPropagation != null) {
-          d3.event.stopPropagation();
-        }
-        model = feature._model;
-        project = Map.props.project;
-        items = project.get('data').items;
-        items.setActive(model);
-        Map.props.setUiState({
-          isInfoBoxActive: true
-        });
+    OverlayBaseView.prototype.onFeatureMouseOver = function(feature) {
+      var items, model, project;
+      if (this.bringFeatureToFront != null) {
+        this.bringFeatureToFront(feature);
+      }
+      project = Map.props.project;
+      items = project.get('data').items;
+      model = feature._model != null ? feature._model : feature.id;
+      items.setHovered(model);
+      this.setHeaderStripColor();
+      return Map.props.App.commands.execute('update:tilemap');
+    };
+
+    OverlayBaseView.prototype.onFeatureClick = function(feature) {
+      var items, model, project;
+      if ((Map.map != null) && Map.map.ignoreNextClick) {
         Map.map.ignoreNextClick = false;
-        return this.activeFeature = feature;
-      };
+        return;
+      }
+      if (d3.event.stopPropagation != null) {
+        d3.event.stopPropagation();
+      }
+      model = feature._model;
+      project = Map.props.project;
+      items = project.get('data').items;
+      items.setActive(model);
+      Map.props.setUiState({
+        isInfoBoxActive: true
+      });
+      Map.map.ignoreNextClick = false;
+      return this.activeFeature = feature;
+    };
 
-      OverlayBaseView.prototype.onRender = function() {
-        return $('.loading-icon').remove();
-      };
+    OverlayBaseView.prototype.onRender = function() {
+      return $('.loading-icon').remove();
+    };
 
-      OverlayBaseView.prototype.onMapClick = function(e) {
-        if (this.activeFeature != null) {
-          this.activeFeature = void 0;
-          return Map.props.App.vent.trigger('item:deactivate');
+    OverlayBaseView.prototype.onMapClick = function(e) {
+      if (this.activeFeature != null) {
+        this.activeFeature = void 0;
+        return Map.props.App.vent.trigger('item:deactivate');
+      }
+    };
+
+    OverlayBaseView.prototype.getFeatureByModel = function(model) {
+      var feature, i, len, ref;
+      ref = this.collection.features;
+      for (i = 0, len = ref.length; i < len; i++) {
+        feature = ref[i];
+        if (feature._model === model) {
+          return feature;
         }
-      };
+      }
+    };
 
-      OverlayBaseView.prototype.getFeatureByModel = function(model) {
-        var feature, i, len, ref;
-        ref = this.collection.features;
-        for (i = 0, len = ref.length; i < len; i++) {
-          feature = ref[i];
-          if (feature._model === model) {
-            return feature;
-          }
-        }
-      };
+    OverlayBaseView.prototype.getFeatureDisplayState = function(feature) {
+      var display, filter, model, searchTerm;
+      if (Map.props.uiState == null) {
+        return;
+      }
+      display = Map.props.uiState.display;
+      filter = Map.props.project.get('data').filter;
+      searchTerm = Map.props.App.reqres.request('search:term');
+      model = feature._model;
+      if (model != null) {
+        return model.getDisplayState(filter, searchTerm, display);
+      }
+    };
 
-      OverlayBaseView.prototype.getFeatureDisplayState = function(feature) {
-        var display, filter, model, searchTerm;
-        if (Map.props.uiState == null) {
-          return;
-        }
-        display = Map.props.uiState.display;
-        filter = Map.props.project.get('data').filter;
-        searchTerm = Map.props.App.reqres.request('search:term');
-        model = feature._model;
-        if (model != null) {
-          return model.getDisplayState(filter, searchTerm, display);
-        }
-      };
+    OverlayBaseView.prototype.getFill = function(feature) {
+      var filter, id, valueIndeces;
+      filter = Map.props.project.get('data').filter;
+      valueIndeces = filter.getFriendlyIndeces(feature._model, 15);
+      if ((valueIndeces == null) || valueIndeces.length === 0) {
+        return;
+      }
+      if (valueIndeces.length === 1) {
+        return Map.colors.toRgb(valueIndeces[0] - 1);
+      }
+      id = Map.props.App.reqres.request('get:pattern:id', valueIndeces);
+      return "url(#stripe-pattern-" + id + ")";
+    };
 
-      OverlayBaseView.prototype.getFill = function(feature) {
-        var filter, id, valueIndeces;
-        filter = Map.props.project.get('data').filter;
-        valueIndeces = filter.getFriendlyIndeces(feature._model, 15);
-        if ((valueIndeces == null) || valueIndeces.length === 0) {
-          return;
-        }
-        if (valueIndeces.length === 1) {
-          return Map.colors.toRgb(valueIndeces[0] - 1);
-        }
-        id = Map.props.App.reqres.request('get:pattern:id', valueIndeces);
-        return "url(#stripe-pattern-" + id + ")";
-      };
+    OverlayBaseView.prototype._areBoundsFinite = function(bounds) {
+      return isFinite(bounds[0][0]) && isFinite(bounds[0][1]) && isFinite(bounds[1][0]) && isFinite(bounds[1][1]);
+    };
 
-      OverlayBaseView.prototype._areBoundsFinite = function(bounds) {
-        return isFinite(bounds[0][0]) && isFinite(bounds[0][1]) && isFinite(bounds[1][0]) && isFinite(bounds[1][1]);
-      };
+    OverlayBaseView.prototype.resizeContainer = function(geoJson, path, extraExpansion) {
+      var bottomRight, bounds, topLeft;
+      bounds = path.bounds(geoJson);
+      if (this._areBoundsFinite(bounds)) {
+        bounds[0][0] -= extraExpansion;
+        bounds[0][1] -= extraExpansion;
+        bounds[1][0] += extraExpansion;
+        bounds[1][1] += extraExpansion;
+        topLeft = bounds[0];
+        bottomRight = bounds[1];
+        this.svg.attr({
+          'width': bottomRight[0] - topLeft[0],
+          'height': bottomRight[1] - topLeft[1] + 50
+        });
+        this.svg.style({
+          'left': topLeft[0] + 'px',
+          'top': topLeft[1] + 'px'
+        });
+        return this.g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+      }
+    };
 
-      OverlayBaseView.prototype.resizeContainer = function(geoJson, path, extraExpansion) {
-        var bottomRight, bounds, topLeft;
-        bounds = path.bounds(geoJson);
-        if (this._areBoundsFinite(bounds)) {
-          bounds[0][0] -= extraExpansion;
-          bounds[0][1] -= extraExpansion;
-          bounds[1][0] += extraExpansion;
-          bounds[1][1] += extraExpansion;
-          topLeft = bounds[0];
-          bottomRight = bounds[1];
-          this.svg.attr({
-            'width': bottomRight[0] - topLeft[0],
-            'height': bottomRight[1] - topLeft[1] + 50
-          });
-          this.svg.style({
-            'left': topLeft[0] + 'px',
-            'top': topLeft[1] + 'px'
-          });
-          return this.g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
-        }
-      };
+    OverlayBaseView.prototype.destroy = function() {
+      this.stopListening();
+      this.g.selectAll('path').remove();
+      this.g.remove();
+      this.svg.remove();
+      return this;
+    };
 
-      OverlayBaseView.prototype.destroy = function() {
-        this.stopListening();
-        this.g.selectAll('path').remove();
-        this.g.remove();
-        this.svg.remove();
-        return this;
-      };
+    return OverlayBaseView;
 
-      return OverlayBaseView;
-
-    })(Marionette.Object);
-  });
+  })();
 
 }).call(this);
 
@@ -684,262 +668,258 @@ this.Atlas.module('Map', function(Map) {
   var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
-  this.Atlas.module("Map", function(Map) {
-    return Map.PathOverlayView = (function(superClass) {
-      var getProjectedPoint;
+  Map.PathOverlayView = (function(superClass) {
+    var getProjectedPoint;
 
-      extend(PathOverlayView, superClass);
+    extend(PathOverlayView, superClass);
 
-      function PathOverlayView() {
-        return PathOverlayView.__super__.constructor.apply(this, arguments);
-      }
+    function PathOverlayView() {
+      return PathOverlayView.__super__.constructor.apply(this, arguments);
+    }
 
-      PathOverlayView.prototype.bringFeatureToFront = function(feature) {
-        return this.g.selectAll('path').sort(function(a, b) {
-          if (a.id !== feature.id) {
-            return -1;
-          }
-          return +1;
-        });
-      };
-
-      PathOverlayView.prototype.renderSvgContainer = function() {
-        this.svg = d3.select(this.map.getPanes().overlayPane).append('svg').attr('class', 'deethree');
-        return this.g = this.svg.append('g').attr('class', 'leaflet-zoom-hide');
-      };
-
-      PathOverlayView.prototype.render = function() {
-        var self;
-        if (this.renderSvgContainer != null) {
-          this.renderSvgContainer();
+    PathOverlayView.prototype.bringFeatureToFront = function(feature) {
+      return this.g.selectAll('path').sort(function(a, b) {
+        if (a.id !== feature.id) {
+          return -1;
         }
-        this.geoJson = this.collection;
-        self = this;
-        this.g.selectAll('path').data(this.geoJson.features).enter().append('path').on('mouseover', this.onFeatureMouseOver.bind(this)).on('mouseout', this.onFeatureMouseOut.bind(this)).on('click', function(d) {
-          if (d3.event.defaultPrevented) {
-            return;
-          }
-          return self.onFeatureClick(d);
-        });
-        this.update();
-        this.onRender();
-        this.map.on('viewreset', this.update.bind(this));
-        this.map.on('click', this.onMapClick.bind(this));
-        return this;
-      };
+        return +1;
+      });
+    };
 
+    PathOverlayView.prototype.renderSvgContainer = function() {
+      this.svg = d3.select(this.map.getPanes().overlayPane).append('svg').attr('class', 'deethree');
+      return this.g = this.svg.append('g').attr('class', 'leaflet-zoom-hide');
+    };
+
+    PathOverlayView.prototype.render = function() {
+      var self;
+      if (this.renderSvgContainer != null) {
+        this.renderSvgContainer();
+      }
+      this.geoJson = this.collection;
+      self = this;
+      this.g.selectAll('path').data(this.geoJson.features).enter().append('path').on('mouseover', this.onFeatureMouseOver.bind(this)).on('mouseout', this.onFeatureMouseOut.bind(this)).on('click', function(d) {
+        if (d3.event.defaultPrevented) {
+          return;
+        }
+        return self.onFeatureClick(d);
+      });
+      this.update();
+      this.onRender();
+      this.map.on('viewreset', this.update.bind(this));
+      this.map.on('click', this.onMapClick.bind(this));
+      return this;
+    };
+
+    getProjectedPoint = function(long, lat) {
+      return this.map.latLngToLayerPoint(new L.LatLng(lat, long));
+    };
+
+    PathOverlayView.prototype.getPath = function() {
+      var path, projectPoint, self, transform;
+      self = this;
       getProjectedPoint = function(long, lat) {
-        return this.map.latLngToLayerPoint(new L.LatLng(lat, long));
+        return self.map.latLngToLayerPoint(new L.LatLng(lat, long));
       };
-
-      PathOverlayView.prototype.getPath = function() {
-        var path, projectPoint, self, transform;
-        self = this;
-        getProjectedPoint = function(long, lat) {
-          return self.map.latLngToLayerPoint(new L.LatLng(lat, long));
-        };
-        projectPoint = function(long, lat) {
-          var point;
-          point = getProjectedPoint(long, lat);
-          this.stream.point(point.x, point.y);
-          return this;
-        };
-        transform = d3.geo.transform({
-          point: projectPoint
-        });
-        path = d3.geo.path().projection(transform);
-        return path;
-      };
-
-      PathOverlayView.prototype.update = function() {
-        var geoJson, path;
-        path = this.getPath();
-        geoJson = this.collection;
-        this.g.selectAll('path').attr({
-          'class': (function(_this) {
-            return function(feature) {
-              var cls, displayState;
-              displayState = _this.getFeatureDisplayState(feature);
-              cls = 'map-region map-region__element';
-              if (displayState != null) {
-                cls += " map-region--" + displayState;
-              }
-              return cls;
-            };
-          })(this),
-          'd': path,
-          'fill': this.getFill.bind(this)
-        });
-        this.resizeContainer(geoJson, path, 0);
+      projectPoint = function(long, lat) {
+        var point;
+        point = getProjectedPoint(long, lat);
+        this.stream.point(point.x, point.y);
         return this;
       };
+      transform = d3.geo.transform({
+        point: projectPoint
+      });
+      path = d3.geo.path().projection(transform);
+      return path;
+    };
 
-      return PathOverlayView;
-
-    })(Map.OverlayBaseView);
-  });
-
-}).call(this);
-
-(function() {
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  this.Atlas.module("Map", function(Map) {
-    return Map.PindropOverlayView = (function(superClass) {
-      extend(PindropOverlayView, superClass);
-
-      function PindropOverlayView() {
-        return PindropOverlayView.__super__.constructor.apply(this, arguments);
-      }
-
-      PindropOverlayView.prototype.renderSvgContainer = function() {
-        this.svg = d3.select(Map.map.getPanes().overlayPane).append('svg').attr('class', 'deethree');
-        return this.g = this.svg.append('g').attr('class', 'leaflet-zoom-hide');
-      };
-
-      PindropOverlayView.prototype.setMapEventListeners = function() {
-        Map.map.on('viewreset', this.update.bind(this));
-        return Map.map.on('click', this.onMapClick.bind(this));
-      };
-
-      PindropOverlayView.prototype.render = function() {
-        var pindrop;
-        if (this.renderSvgContainer != null) {
-          this.renderSvgContainer();
-        }
-        this.shape = Map.svgPaths.shapes.pindrop;
-        pindrop = [
-          {
-            path: this.shape.paths.slice_1_of_2,
-            className: 'map-pin__1-of-2'
-          }, {
-            path: this.shape.paths.slice_2_of_2,
-            className: 'map-pin__2-of-2'
-          }, {
-            path: this.shape.paths.slice_1_of_3,
-            className: 'map-pin__1-of-3'
-          }, {
-            path: this.shape.paths.slice_2_of_3_a,
-            className: 'map-pin__2-of-3'
-          }, {
-            path: this.shape.paths.slice_2_of_3_b,
-            className: 'map-pin__2-of-3'
-          }, {
-            path: this.shape.paths.slice_3_of_3,
-            className: 'map-pin__3-of-3'
-          }, {
-            path: this.shape.paths.outer,
-            className: 'map-pin__outer'
-          }, {
-            path: this.shape.paths.inner,
-            className: 'map-pin__inner'
-          }
-        ];
-        this.g.selectAll('g').data(this.collection.features).enter().append('g').attr({
-          'class': 'map-pin'
-        }).on('mouseover', this.onFeatureMouseOver.bind(this)).on('mouseout', this.onFeatureMouseOut.bind(this)).on('click', this.onFeatureClick.bind(this)).selectAll('path').data(pindrop).enter().append('path').attr({
-          'd': function(d) {
-            return d.path;
-          },
-          'class': function(d) {
-            return d.className;
-          }
-        });
-        this.update();
-        this.onRender();
-        return this.setMapEventListeners();
-      };
-
-      PindropOverlayView.prototype.getFills = function(feature) {
-        var filter, valueIndeces;
-        filter = Map.props.project.get('data').filter;
-        valueIndeces = filter.getFriendlyIndeces(feature._model, 15);
-        if ((valueIndeces == null) || valueIndeces.length === 0) {
-          return;
-        }
-        return valueIndeces.map(function(valueIndex) {
-          return Map.colors.toRgb(valueIndex - 1);
-        });
-      };
-
-      PindropOverlayView.prototype.update = function() {
-        var getIndecesFromClassName, getProjectedPoint, path, projectPoint, self, transform;
-        getProjectedPoint = function(long, lat) {
-          return Map.map.latLngToLayerPoint(new L.LatLng(lat, long));
-        };
-        projectPoint = function(long, lat) {
-          var point;
-          point = getProjectedPoint(long, lat);
-          this.stream.point(point.x, point.y);
-          return this;
-        };
-        getIndecesFromClassName = function(cls) {
-          var indeces;
-          indeces = cls.split('__')[1].split('-');
-          if (indeces[2] != null) {
-            indeces = indeces = [parseInt(indeces[0], 10), parseInt(indeces[2], 10)];
-            return indeces;
-          }
-        };
-        transform = d3.geo.transform({
-          point: projectPoint
-        });
-        path = d3.geo.path().projection(transform);
-        self = this;
-        this.g.selectAll('g').attr({
-          transform: function(d) {
-            var coord, pt, x, y;
-            coord = d.geometry.coordinates;
-            pt = getProjectedPoint(coord[0], coord[1]);
-            x = pt.x - self.shape.dim.width / 2;
-            y = pt.y - self.shape.dim.height;
-            return "translate(" + x + "," + y + ")";
-          },
-          "class": function(feature) {
+    PathOverlayView.prototype.update = function() {
+      var geoJson, path;
+      path = this.getPath();
+      geoJson = this.collection;
+      this.g.selectAll('path').attr({
+        'class': (function(_this) {
+          return function(feature) {
             var cls, displayState;
-            displayState = self.getFeatureDisplayState(feature);
-            cls = 'map-pin map-pin__element';
+            displayState = _this.getFeatureDisplayState(feature);
+            cls = 'map-region map-region__element';
             if (displayState != null) {
-              cls += " map-pin--" + displayState;
+              cls += " map-region--" + displayState;
             }
             return cls;
-          }
-        }).selectAll('path').attr({
-          'class': function(d, i) {
-            var baseClass;
-            baseClass = 'map-pin__element';
-            return d.className + ' ' + baseClass;
-          },
-          'fill': function(d, i) {
-            var colorIndex, colors, indeces, parentFeature;
-            parentFeature = d3.select(this.parentNode).datum();
-            colors = self.getFills(parentFeature);
-            if (colors == null) {
-              return 'none';
-            }
-            indeces = getIndecesFromClassName(d.className);
-            if (indeces != null) {
-              if (colors.length === 1) {
-                return colors[0];
-              }
-              if (((colors.length === 2) && (indeces[1] === 2)) || ((colors.length === 3) && (indeces[1] === 3)) || (colors.length > 3)) {
-                colorIndex = indeces[0] - 1;
-                if (colors[colorIndex] != null) {
-                  return colors[colorIndex];
-                }
-              }
-            }
-            return 'none';
-          }
-        });
-        this.resizeContainer(this.collection, path, 100);
+          };
+        })(this),
+        'd': path,
+        'fill': this.getFill.bind(this)
+      });
+      this.resizeContainer(geoJson, path, 0);
+      return this;
+    };
+
+    return PathOverlayView;
+
+  })(Map.OverlayBaseView);
+
+}).call(this);
+
+(function() {
+  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  Map.PindropOverlayView = (function(superClass) {
+    extend(PindropOverlayView, superClass);
+
+    function PindropOverlayView() {
+      return PindropOverlayView.__super__.constructor.apply(this, arguments);
+    }
+
+    PindropOverlayView.prototype.renderSvgContainer = function() {
+      this.svg = d3.select(Map.map.getPanes().overlayPane).append('svg').attr('class', 'deethree');
+      return this.g = this.svg.append('g').attr('class', 'leaflet-zoom-hide');
+    };
+
+    PindropOverlayView.prototype.setMapEventListeners = function() {
+      Map.map.on('viewreset', this.update.bind(this));
+      return Map.map.on('click', this.onMapClick.bind(this));
+    };
+
+    PindropOverlayView.prototype.render = function() {
+      var pindrop;
+      if (this.renderSvgContainer != null) {
+        this.renderSvgContainer();
+      }
+      this.shape = Map.svgPaths.shapes.pindrop;
+      pindrop = [
+        {
+          path: this.shape.paths.slice_1_of_2,
+          className: 'map-pin__1-of-2'
+        }, {
+          path: this.shape.paths.slice_2_of_2,
+          className: 'map-pin__2-of-2'
+        }, {
+          path: this.shape.paths.slice_1_of_3,
+          className: 'map-pin__1-of-3'
+        }, {
+          path: this.shape.paths.slice_2_of_3_a,
+          className: 'map-pin__2-of-3'
+        }, {
+          path: this.shape.paths.slice_2_of_3_b,
+          className: 'map-pin__2-of-3'
+        }, {
+          path: this.shape.paths.slice_3_of_3,
+          className: 'map-pin__3-of-3'
+        }, {
+          path: this.shape.paths.outer,
+          className: 'map-pin__outer'
+        }, {
+          path: this.shape.paths.inner,
+          className: 'map-pin__inner'
+        }
+      ];
+      this.g.selectAll('g').data(this.collection.features).enter().append('g').attr({
+        'class': 'map-pin'
+      }).on('mouseover', this.onFeatureMouseOver.bind(this)).on('mouseout', this.onFeatureMouseOut.bind(this)).on('click', this.onFeatureClick.bind(this)).selectAll('path').data(pindrop).enter().append('path').attr({
+        'd': function(d) {
+          return d.path;
+        },
+        'class': function(d) {
+          return d.className;
+        }
+      });
+      this.update();
+      this.onRender();
+      return this.setMapEventListeners();
+    };
+
+    PindropOverlayView.prototype.getFills = function(feature) {
+      var filter, valueIndeces;
+      filter = Map.props.project.get('data').filter;
+      valueIndeces = filter.getFriendlyIndeces(feature._model, 15);
+      if ((valueIndeces == null) || valueIndeces.length === 0) {
+        return;
+      }
+      return valueIndeces.map(function(valueIndex) {
+        return Map.colors.toRgb(valueIndex - 1);
+      });
+    };
+
+    PindropOverlayView.prototype.update = function() {
+      var getIndecesFromClassName, getProjectedPoint, path, projectPoint, self, transform;
+      getProjectedPoint = function(long, lat) {
+        return Map.map.latLngToLayerPoint(new L.LatLng(lat, long));
+      };
+      projectPoint = function(long, lat) {
+        var point;
+        point = getProjectedPoint(long, lat);
+        this.stream.point(point.x, point.y);
         return this;
       };
+      getIndecesFromClassName = function(cls) {
+        var indeces;
+        indeces = cls.split('__')[1].split('-');
+        if (indeces[2] != null) {
+          indeces = indeces = [parseInt(indeces[0], 10), parseInt(indeces[2], 10)];
+          return indeces;
+        }
+      };
+      transform = d3.geo.transform({
+        point: projectPoint
+      });
+      path = d3.geo.path().projection(transform);
+      self = this;
+      this.g.selectAll('g').attr({
+        transform: function(d) {
+          var coord, pt, x, y;
+          coord = d.geometry.coordinates;
+          pt = getProjectedPoint(coord[0], coord[1]);
+          x = pt.x - self.shape.dim.width / 2;
+          y = pt.y - self.shape.dim.height;
+          return "translate(" + x + "," + y + ")";
+        },
+        "class": function(feature) {
+          var cls, displayState;
+          displayState = self.getFeatureDisplayState(feature);
+          cls = 'map-pin map-pin__element';
+          if (displayState != null) {
+            cls += " map-pin--" + displayState;
+          }
+          return cls;
+        }
+      }).selectAll('path').attr({
+        'class': function(d, i) {
+          var baseClass;
+          baseClass = 'map-pin__element';
+          return d.className + ' ' + baseClass;
+        },
+        'fill': function(d, i) {
+          var colorIndex, colors, indeces, parentFeature;
+          parentFeature = d3.select(this.parentNode).datum();
+          colors = self.getFills(parentFeature);
+          if (colors == null) {
+            return 'none';
+          }
+          indeces = getIndecesFromClassName(d.className);
+          if (indeces != null) {
+            if (colors.length === 1) {
+              return colors[0];
+            }
+            if (((colors.length === 2) && (indeces[1] === 2)) || ((colors.length === 3) && (indeces[1] === 3)) || (colors.length > 3)) {
+              colorIndex = indeces[0] - 1;
+              if (colors[colorIndex] != null) {
+                return colors[colorIndex];
+              }
+            }
+          }
+          return 'none';
+        }
+      });
+      this.resizeContainer(this.collection, path, 100);
+      return this;
+    };
 
-      return PindropOverlayView;
+    return PindropOverlayView;
 
-    })(Map.OverlayBaseView);
-  });
+  })(Map.OverlayBaseView);
 
 }).call(this);
