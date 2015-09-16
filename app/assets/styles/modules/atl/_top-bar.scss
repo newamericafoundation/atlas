@@ -2,7 +2,15 @@
 
 	z-index: 6;
 
-	@include animation(fadeinwithdelay 1.5s);
+	// @include animation(fadeinwithdelay 1.5s);
+
+	display: block;
+	@include bp-unstack-map-settings-bar {
+		display: none;
+	}
+	.atl--collapsed & {
+		display: block;
+	}
 
 	position: absolute;
 	top: 0;
@@ -11,24 +19,9 @@
 
 	padding-left: 0;
 
-	@include bp-unstack-map-settings-bar {
-		padding-left: $atl-settings-bar-width;
-	}
-
-	.atl--collapsed & {
-		padding-left: 0;
-	}
-
 	&__title {
 		display: inline-block;
 		float: left;
-		@include bp-unstack-map-settings-bar {
-			display: none;
-			.atl--collapsed & {
-				display: block;
-			}
-		}
-
 		padding: 0 0 0 15px;
 		margin: 0;
 		height: 100%;

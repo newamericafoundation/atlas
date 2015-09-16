@@ -16,8 +16,8 @@
 
 	&__close {
 		position: absolute;
-		top: 40px;
-		right: 40px;
+		top: 25px;
+		right: 25px;
 		width: 25px;
 		height: 25px;
 		svg {
@@ -46,6 +46,7 @@
 	@mixin expanded() {
 		top: 0;
 		left: $atl-settings-bar-width;
+		border-left: 2px solid map-get(map-get($palette, grey), light);
 	}
 
 	@include collapsed;

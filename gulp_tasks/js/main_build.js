@@ -15,9 +15,9 @@ gulp.task('js-build', [ 'js-clean-build', 'js-build-source', 'js-build-vendor', 
             'public/assets/scripts/partials/component.js'
         ])
         .pipe(concat('app.js'))
+        .pipe(gulp.dest('public/assets/scripts/build'))
         .pipe(config.production ? util.noop() : gulp.dest('public/assets/scripts/build'))
         .pipe(config.production ? uglify() : util.noop())
-        .pipe(config.production ? util.noop() : gulp.dest('spec/site')) // copy client-side scripts to spec folder
         .pipe(rev())
         .pipe(config.production ? gzip() : util.noop())
         .pipe(gulp.dest('public/assets/scripts/build'))

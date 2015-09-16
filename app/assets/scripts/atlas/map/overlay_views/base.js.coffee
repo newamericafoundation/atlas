@@ -130,7 +130,7 @@
 
         # Destroy overlay view along with all event listeners.
         destroy: () ->
-            @stopListening()
+            @stopListening() if @stopListening?
             @g.selectAll('path').remove()
             @g.remove()
             @svg.remove()

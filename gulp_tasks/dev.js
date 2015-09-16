@@ -5,6 +5,8 @@ import notify from 'gulp-notify';
 import path from 'path';
 import env from './../../secrets/atlas.json';
 
+import config from './config.js';
+
 // A list of development tasks and when they should run.
 var devTasks = [
 
@@ -45,7 +47,7 @@ var buildTaskList = function(changedFiles) {
     return tasks;
 };
 
-env.NODE_ENV = 'development';
+env.NODE_ENV = config.production ? 'production' : 'development';
 
 // Development environment.
 gulp.task('dev', () => {

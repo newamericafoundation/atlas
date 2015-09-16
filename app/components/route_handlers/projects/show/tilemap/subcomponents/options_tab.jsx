@@ -7,9 +7,9 @@ class OptionsTab extends React.Component {
 	render() {
 		return (
 			<div className='atl__options-tab'>
-				<div className='atl__options-tab__close'>
+				<a href='#' className='atl__options-tab__close' onClick={ this.close.bind(this) }>
 					<No />
-				</div>
+				</a>
 				<div className='atl__options-tab__content'>
 					<ul>
 						{ this.renderKeyGroups() }
@@ -17,6 +17,11 @@ class OptionsTab extends React.Component {
 				</div>
 			</div>
 		);
+	}
+
+	close(e) {
+		e.preventDefault();
+		this.props.setUiState({ isOptionsTabActive: false });
 	}
 
 	renderKeyGroups() {

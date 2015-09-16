@@ -44,7 +44,7 @@ exports.Model = base.Model.extend({
             formComponentProps: {
                 id: 'atlas_url',
                 labelText: 'Atlas Url',
-                hint: '',
+                hint: 'The Url the project will live under, such as atlas.newamerica.org/my-pretty-url',
                 placeholder: 'Enter Atlas Url'
             }
         },
@@ -57,6 +57,17 @@ exports.Model = base.Model.extend({
                 labelText: 'Author',
                 hint: '',
                 placeholder: 'Enter Author'
+            }
+        },
+
+        {
+            id: 'short_description',
+            formComponentName: 'Text',
+            formComponentProps: {
+                id: 'short_description',
+                labelText: 'Short description',
+                hint: '',
+                placeholder: 'Enter Short Description'
             }
         },
 
@@ -103,7 +114,7 @@ exports.Model = base.Model.extend({
                 id: 'project_template_id',
                 foreignCollection: new projectTemplate.Collection(),
                 labelText: 'Project Template',
-                hint: 'Determines how data is displayed, e.g. Explainer'
+                hint: 'The template will determine the way your project is visualized - select from below:'
             },
             foreignModelName: 'ProjectTemplate'
         },
@@ -114,7 +125,7 @@ exports.Model = base.Model.extend({
             formComponentProps: {
                 id: 'tags',
                 labelText: 'Tags',
-                hint: 'Tags'
+                hint: 'Enter tags separated by commas:'
             }
         },
 
@@ -144,7 +155,7 @@ exports.Model = base.Model.extend({
             formComponentProps: {
                 id: 'image',
                 labelText: 'Image File',
-                hint: ''
+                hint: 'Size limit: 3MB.'
             }
         },
 
