@@ -9,13 +9,13 @@ function getDbUrl() {
 
 export default new Promise((resolve, reject) => {
 
-	MongoClient.connect(getDbUrl(), (err, database) => {
+	MongoClient.connect(getDbUrl(), (err, db) => {
 		if (err) {
 			console.log('Unable to connect to the database.');
 			return reject(err); 
 		}
 		console.log('Successfully connected to database.');
-		resolve(database);
+		resolve(db);
 	});
 
 });

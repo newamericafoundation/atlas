@@ -28,7 +28,7 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(obj, done) {
     var model = new researcher.Model({ id: obj.id });
     model.getRetrievePromise().then((model) => {
-        console.log('deserealized successfully');
+        // console.log('deserealized successfully');
         done(null, model.toClientJSON());
     }, () => { console.log('could not deserialize'); });
 });

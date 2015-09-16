@@ -6,12 +6,12 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     session = require('express-session'),
-	router = require('./app/routes/index'),
-	fs = require('fs'),
-	json2csv = require('nice-json2csv'),
-	project = require('./app/models/project.js');
+    connectMongo = require('connect-mongo'),
+    dbConnector = require('./db/connector.js'),
+	router = require('./app/routes/index');
 
 var app = express(),
+	MongoStore = connectMongo(session),
 	env = app.get('env'),
 	port = process.env.PORT || 8081;
 
@@ -39,24 +39,32 @@ app.use(express.static('public'));
 
 app.use(cookieParser());
 app.use(methodOverride());
-app.use(session({ 
-    secret: 'Super_Big_Secret',
-    resave: false,
-    saveUninitialized: false
-}));
 
-// Initialize passport.
-app.use(passport.initialize());
-app.use(passport.session({
-    resave: false,
-    saveUninitialized: false
-}));
+dbConnector.then(function(db) {
+	
+	// Initialize session with database storage.
+	app.use(session({
+		collection: 'atlas_sessions',
+	    secret: 'Super_Big_Secret',
+	    resave: false,
+	    store: new MongoStore({ db: db }),
+	    saveUninitialized: false
+	}));
 
-// Use router (see ./app/routes directory).
-app.use(router);
+	// Initialize passport.
+	app.use(passport.initialize());
+	app.use(passport.session({
+	    resave: false,
+	    saveUninitialized: false
+	}));
 
-// Start server.
-app.listen(port, function(err) { 
-	if(err) { return console.log(err); }
-	console.log('Listening on port ' + port + '.');
+	// Use router (see ./app/routes directory).
+	app.use(router);
+
+	// Start server.
+	app.listen(port, function(err) { 
+		if(err) { return console.log(err); }
+		console.log('Listening on port ' + port + '.');
+	});
+
 });
