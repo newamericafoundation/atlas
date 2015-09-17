@@ -44,16 +44,19 @@ dbConnector.then(function(db) {
 	// Initialize session with database storage.
 	app.use(session({
 	    secret: 'Super_Big_Secret',
-	    resave: true,
+	    resave: false,
 	    // store: new MongoStore({ db: db }),
 	    // cookie: { maxAge: 1 * 3600 },
 	    // collection: 'atlas_sessions',
-	    saveUninitialized: true
+	    saveUninitialized: false
 	}));
 
 	// Initialize passport.
 	app.use(passport.initialize());
-	app.use(passport.session());
+	app.use(passport.session({
+		resave: false,
+		saveUninitialized: false
+	}));
 
 	// Use router (see ./app/routes directory).
 	app.use(router);
