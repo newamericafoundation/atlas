@@ -44,11 +44,11 @@ dbConnector.then(function(db) {
 	// Initialize session with database storage.
 	app.use(session({
 	    secret: 'Super_Big_Secret',
-	    resave: false,
+	    resave: true,
 	    // store: new MongoStore({ db: db }),
 	    // cookie: { maxAge: 1 * 3600 },
 	    // collection: 'atlas_sessions',
-	    saveUninitialized: false
+	    saveUninitialized: true
 	}));
 
 	// Initialize passport.
