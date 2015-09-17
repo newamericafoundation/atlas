@@ -16,10 +16,10 @@ import showMiddleware from './../../../middleware/crud/show.js';
 //var currentAuthMiddleware = (process.NODE_ENV === 'production') ? authMiddleware.ensureAuthenticated : authMiddleware.ensureNothing;
 var currentAuthMiddleware = authMiddleware.ensureAuthenticated;
 
-var shouldDisplayDraftProjects = function(req) {
+var shouldHideDraftProjects = function(req) {
 	// Unsafe setting to test back-end while in development, skipping the auth step which is required at each server restart.
-	//return ((req.isAuthenticated()) || (process.env.NODE_ENV === 'development'));
-	return (req.isAuthenticated());
+	//return ((!req.isAuthenticated()) && (process.env.NODE_ENV !== 'development'));
+	return (!req.isAuthenticated());
 };
 
 var router = express.Router();
@@ -44,7 +44,7 @@ router.get([ '/', '/image' ], function(req, res) {
 		specialQueryParams = complexQuery.specialQuery,
 		fields;
 
-	if (shouldDisplayDraftProjects(req)) {
+	if (shouldHideDraftProjects(req)) {
 		queryParams.is_live = "Yes";
 	}
 
@@ -103,7 +103,7 @@ router.post('/print', function(req, res) {
 		fileName = queryParams.atlas_url || 'file',
 		fields = { data: 1, atlas_url: 1 };
 
-	if (shouldDisplayDraftProjects(req)) {
+	if (shouldHideDraftProjects(req)) {
 		queryParams.is_live = "Yes";
 	}
 
