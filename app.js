@@ -39,6 +39,7 @@ app.use(express.static('public'));
 
 app.use(methodOverride());
 
+
 dbConnector.then(function(db) {
 	
 	// Initialize session with database storage.
