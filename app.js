@@ -43,11 +43,11 @@ dbConnector.then(function(db) {
 	
 	// Initialize session with database storage.
 	app.use(session({
-		collection: 'atlas_sessions',
 	    secret: 'Super_Big_Secret',
 	    resave: false,
-	    store: new MongoStore({ db: db }),
-	    cookie: { maxAge: 1 * 3600 },
+	    // store: new MongoStore({ db: db }),
+	    // cookie: { maxAge: 1 * 3600 },
+	    // collection: 'atlas_sessions',
 	    saveUninitialized: false
 	}));
 
