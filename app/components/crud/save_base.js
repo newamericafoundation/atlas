@@ -27,10 +27,9 @@ class SaveBaseModal extends Modal {
 	}
 
 	renderContent() {
-		if(this.props.status === 'success') {
-			return this.renderSuccessContent();
-		}
-		return this.renderFailureContent();
+		if(this.props.status === 'success') { return this.renderSuccessContent(); }
+		if(this.props.status === 'failure') { return this.renderFailureContent(); }
+		return this.renderPendingContent();
 	}
 
 	renderSuccessContent() {
@@ -53,6 +52,14 @@ class SaveBaseModal extends Modal {
 				<ul>
 					<li><a className='link' onClick={this.reactivateForm.bind(this)} href='/'>Keep Editing</a></li>
 				</ul>
+			</div>
+		);
+	}
+
+	renderPendingContent() {
+		return (
+			<div>
+				<p className='title'>Saving...</p>
 			</div>
 		);
 	}
