@@ -18,18 +18,21 @@ class TopBar extends React.Component {
 					{ this.renderTimeline() }
 					<div className="atl__top-bar__title"><div><p>{ this.props.project.get('title') }</p></div></div>
 					<div className="atl__top-bar__summary">
-						<div className="atl__top-bar__summary__item"><p>{ this.getName() }</p></div>
-						<div className="atl__top-bar__summary__item"><p>{ this.getValue() }</p></div>
-						<div className="atl__top-bar__summary__item">
-							<div className='button button--active'>
-								<p>{ this.getKey() }</p>
-							</div>
-						</div>
+						
+						
 						<div className="atl__top-bar__summary__item">
 							<div className='button' onClick={ this.toggleOptionsTab.bind(this) }>
 								<MoreIcon />
 							</div>
 						</div>
+						<div className="atl__top-bar__summary__item">
+							<div className='button button--active'>
+								<p>{ this.getKey() }</p>
+							</div>
+						</div>
+						<div className="atl__top-bar__summary__item"><p>{ this.getValue() }</p></div>
+						<div className="atl__top-bar__summary__item"><p>{ this.getName() }</p></div>
+						
 					</div>
 				</div>
 			</div>

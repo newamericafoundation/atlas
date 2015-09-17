@@ -29,15 +29,23 @@
 	padding-left: 0;
 
 	&__title, &__summary {
-
+		
+		float: none;
+		@include bp-expand-menu {
+			display: inline;
+		}
+		height: $top-bar-height;
 	}
 
 	&__title {
-		display: inline;
-		float: left;
+
+		display: block;
 		padding: 0 0 0 25px;
 		margin: 0;
-		height: $top-bar-height;
+
+		@include bp-expand-menu {
+			float: left;
+		}
 
 		div {
 			height: 100%;
@@ -57,34 +65,41 @@
 
 	&__summary {
 
-		height: $top-bar-height;
-
-		display: block;
+		display: inline;
 		width: 100%;
-		clear: both;
-	
+
 		@include bp-expand-menu {
 			display: inline;
 			float: right;
-			width: 400px;
+			max-width: 600px;
+			width: auto;
+		}
+
+		.button {
+			margin-top: 0px;
 		}
 
 		&__item {
-			float: left;
+			float: right;
 			height: $top-bar-height;
 			text-align: center;
 			min-width: 30px;
 			padding-right: 20px;
 			@include font-size(18px);
 
-			&:first-child > p {
+			@include bp-expand-menu {
+				padding-top: 23px;
+				height: auto;
+			}
+
+			&:last-child > p {
 				font-family: 'SimplonNorm-Bold-WebS';
 			}
 
-			& > p, & > .button {
-				vertical-align: middle;
+			& > p {
+				padding: 4px 0 0 0;
+				margin: 0;
 			}
-
 		}
 
 	}

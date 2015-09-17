@@ -5049,9 +5049,6 @@ td, th {
   right: 25px;
   position: absolute;
   z-index: 8; }
-  @media only screen and (min-width: 800px) {
-    .atl__map-control {
-      top: 105px; } }
   .atl__map-control__button {
     width: 20px;
     height: 20px;
@@ -5071,8 +5068,8 @@ td, th {
   text-align: center;
   white-space: nowrap;
   position: fixed;
-  right: 80px;
-  bottom: 95px; }
+  right: 70px;
+  bottom: 80px; }
   .leaflet-container .leaflet-control-attribution a, .leaflet-container .leaflet-control-attribution p {
     white-space: nowrap; }
   .leaflet-container .leaflet-control-attribution a {
@@ -5080,10 +5077,6 @@ td, th {
     opacity: 0.7; }
     .leaflet-container .leaflet-control-attribution a:hover {
       opacity: 1; }
-  @media only screen and (min-width: 800px) {
-    .leaflet-container .leaflet-control-attribution {
-      top: 160px;
-      bottom: auto; } }
 
 .deethree {
   overflow: visible; }
@@ -5348,7 +5341,7 @@ td, th {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.95); }
+  background-color: rgba(0, 0, 0, 0.92); }
   .atl__search input {
     height: 160px;
     padding: 30px;
@@ -5361,9 +5354,12 @@ td, th {
     top: 25px;
     right: 25px;
     width: 20px;
-    height: 20px; }
+    height: 20px;
+    opacity: 0.7; }
     .atl__search__close svg {
       fill: #fffaef; }
+    .atl__search__close:hover {
+      opacity: 1; }
 
 .atl__help {
   padding: 20px;
@@ -5456,12 +5452,19 @@ td, th {
     @media only screen and (min-width: 900px) {
       .atl__top-bar__content {
         height: 75px; } }
-  .atl__top-bar__title {
-    display: inline;
-    float: left;
-    padding: 0 0 0 25px;
-    margin: 0;
+  .atl__top-bar__title, .atl__top-bar__summary {
+    float: none;
     height: 75px; }
+    @media only screen and (min-width: 900px) {
+      .atl__top-bar__title, .atl__top-bar__summary {
+        display: inline; } }
+  .atl__top-bar__title {
+    display: block;
+    padding: 0 0 0 25px;
+    margin: 0; }
+    @media only screen and (min-width: 900px) {
+      .atl__top-bar__title {
+        float: left; } }
     .atl__top-bar__title div {
       height: 100%;
       display: table; }
@@ -5475,27 +5478,33 @@ td, th {
         font-size: 20px;
         font-size: 1.25rem; }
   .atl__top-bar__summary {
-    height: 75px;
-    display: block;
-    width: 100%;
-    clear: both; }
+    display: inline;
+    width: 100%; }
     @media only screen and (min-width: 900px) {
       .atl__top-bar__summary {
         display: inline;
         float: right;
-        width: 400px; } }
+        max-width: 600px;
+        width: auto; } }
+    .atl__top-bar__summary .button {
+      margin-top: 0px; }
     .atl__top-bar__summary__item {
-      float: left;
+      float: right;
       height: 75px;
       text-align: center;
       min-width: 30px;
       padding-right: 20px;
       font-size: 18px;
       font-size: 1.125rem; }
-      .atl__top-bar__summary__item:first-child > p {
+      @media only screen and (min-width: 900px) {
+        .atl__top-bar__summary__item {
+          padding-top: 23px;
+          height: auto; } }
+      .atl__top-bar__summary__item:last-child > p {
         font-family: 'SimplonNorm-Bold-WebS'; }
-      .atl__top-bar__summary__item > p, .atl__top-bar__summary__item > .button {
-        vertical-align: middle; }
+      .atl__top-bar__summary__item > p {
+        padding: 4px 0 0 0;
+        margin: 0; }
   .atl__top-bar__icons {
     float: left;
     display: inline;
@@ -5537,8 +5546,8 @@ td, th {
     position: absolute;
     top: 25px;
     right: 25px;
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
     opacity: 0.7; }
     .atl__options-tab__close svg {
       fill: #fffaef; }

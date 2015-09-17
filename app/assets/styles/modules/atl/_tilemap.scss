@@ -19,10 +19,6 @@
 	bottom: 30px;
 	right:  25px;
 
-	@include bp-unstack-map-settings-bar {		
-		top: $top-bar-height + 30px;
-	}
-
 	position: absolute;
 	
 	z-index: 8;
@@ -41,12 +37,8 @@
 .leaflet-container .leaflet-control-attribution {
 	@include attribution-box;
 	position: fixed;
-	right: 80px;
-	bottom: 95px;
-	@include bp-unstack-map-settings-bar {
-		top: $top-bar-height + 85px;
-		bottom: auto;
-	}
+	right: 70px;
+	bottom: 80px;
 }
 
 @mixin overlay-highlighted--region() {
