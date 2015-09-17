@@ -1,4 +1,4 @@
-export default function(project, isResearcherAuthenticated) {
+export default function(project, isResearcherAuthenticated, isCollapsedDueToOverflow) {
 
 	var atlas_url = (project) ? (project.get('atlas_url')) : '';
 	var id = (project) ? (project.get('id')) : '';
@@ -9,30 +9,26 @@ export default function(project, isResearcherAuthenticated) {
 			title: 'Explore Atlas',
 			contentType: 'inner-link',
 			url: '/menu',
-			reactIconName: 'Grid',
-			isToggleable: false 
+			reactIconNames: [ 'Grid' ]
 		},
 		{ 
 			title: 'Collapse/Expand',
 			contentType: 'button',
 			clickMessage: 'toggle-collapsed-state', 
-			reactIconName: 'Contract', 
-			activeReactIconName: 'Expand', 
-			isToggleable: false 
+			reactIconNames: [ 'Contract', 'Expand' ],
+			isHidden: isCollapsedDueToOverflow
 		},
 		{ 
 			title: 'Help',
 			contentType: 'button',
 			clickMessage: 'toggle-help', 
-			reactIconName: 'Help', 
-			isToggleable: false 
+			reactIconNames: [ 'Help' ]
 		},
 		{ 
 			title: 'Print',
 			contentType: 'button',
 			clickMessage: 'print',
-			reactIconName: 'Print', 
-			isToggleable: false 
+			reactIconNames: [ 'Print' ]
 		},
 		{ 
 			title: 'Download Data',
@@ -40,13 +36,12 @@ export default function(project, isResearcherAuthenticated) {
 			hiddenInputKey: 'atlas_url',
 			hiddenInputValue: atlas_url,
 			url: '/api/v1/projects/print',
-			reactIconName: 'Download',
-			isToggleable: false
+			reactIconNames: [ 'Download' ]
 		},
 		{ 
 			title: 'Search',
 			contentType: 'button',
-			reactIconName: 'Search',
+			reactIconNames: [ 'Search' ],
 			clickMessage: 'toggle-search-bar'
 		}
 
@@ -57,13 +52,13 @@ export default function(project, isResearcherAuthenticated) {
 			title: 'Edit Project',
 			contentType: 'inner-link',
 			url: `/projects/${id}/edit`,
-			reactIconName: 'Build'
+			reactIconNames: [ 'Build' ]
 		},
 		{
 			title: 'Delete Project',
 			contentType: 'inner-link',
 			url: `/projects/${id}/delete`,
-			reactIconName: 'Trash'
+			reactIconNames: [ 'Trash' ]
 		}
 	];
 

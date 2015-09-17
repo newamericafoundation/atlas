@@ -52,8 +52,8 @@ class SettingsBar extends React.Component {
 		this.heights.window = $(window).height();
 		totalHeight = this.getTotalHeight();
 		isCollapsed = totalHeight > this.heights.window;
-		if (this.props.uiState.isCollapsed !== isCollapsed) {
-			this.props.setUiState({ isCollapsed: isCollapsed });
+		if (this.props.uiState.isCollapsedDueToOverflow !== isCollapsed) {
+			this.props.setUiState({ isCollapsedDueToOverflow: isCollapsed });
 		}
 	}
 

@@ -47,25 +47,41 @@ var buildTaskList = function(changedFiles) {
     return tasks;
 };
 
-env.NODE_ENV = config.production ? 'production' : 'development';
+var envName = config.production ? 'production' : 'development';
+
+env.NODE_ENV = envName;
+
+var ignore = {
+    'development': [ 
+        'node_modules/**/*', 
+        'bower_components/**/*', 
+        'spec/**/*', 
+        'db/**/*',
+        'public/**/*',
+        'app/components/**/*', // monitored by watchify
+        'app/models/**/*' // monitored by watchify
+    ],
+    'production': [
+        'app/**/*'
+    ]
+};
+
+var ext = {
+    'development': 'js jade scss coffee',
+    'production': ''
+};
 
 // Development environment.
 gulp.task('dev', () => {
-    liveReload.listen();
+
+    if(env === 'development') { liveReload.listen(); }
+
     gulp.start('bundle-watch');
     nodemon({
         script: './app.js',
         env: env,
-        ext: 'js jade scss coffee',
-        ignore: [ 
-            'node_modules/**/*', 
-            'bower_components/**/*', 
-            'spec/**/*', 
-            'db/**/*',
-            'public/**/*',
-            'app/components/**/*', // monitored by watchify
-            'app/models/**/*' // monitored by watchify
-        ],
+        ext: ext[envName],
+        ignore: ignore[envName],
         tasks: buildTaskList
     })
     .on('restart', () => { 

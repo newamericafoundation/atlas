@@ -20,7 +20,7 @@ class Show extends React.Component {
 				searchTerm: '',
 				isSearchBarActive: false,
 				itemsDisplayMode: 'map',
-				isCollapsed: false, // depends on screen size
+				isCollapsedDueToOverflow: false, // depends on screen size
 				isCollapsedMaster: false, // master toggle
 				isInfoBoxActive: false, // stores whether the info box is active
 				isInfoBoxNarrow: false, // stores whether the info box is narrow
@@ -69,7 +69,7 @@ class Show extends React.Component {
 	}
 
 	getButtons() {
-		return buttonsDataGenerator(this.state.project, window.isResearcherAuthenticated);
+		return buttonsDataGenerator(this.state.project, window.isResearcherAuthenticated, this.state.ui.isCollapsedDueToOverflow);
 	}
 
 	getClassName() {
@@ -82,7 +82,7 @@ class Show extends React.Component {
 		// boolean classnames
 		cls = classNames({
 			'atl': true,
-			'atl--collapsed': (this.state.ui.isCollapsedMaster) || (!this.state.ui.isCollapsedMaster && this.state.ui.isCollapsed),
+			'atl--collapsed': (this.state.ui.isCollapsedMaster) || (!this.state.ui.isCollapsedMaster && this.state.ui.isCollapsedDueToOverflow),
 			'atl__info-box--active': this.state.ui.isInfoBoxActive,
 			'atl__info-box--narrow': data && (data.variables.getInfoBoxVariableCount() < 2)
 		});

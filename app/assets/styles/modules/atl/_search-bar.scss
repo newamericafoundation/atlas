@@ -8,9 +8,13 @@
 	background-color: rgba(0, 0, 0, 0.92);
 	
 	input {
-		height: 160px;
 		padding: 30px;
-		@include font-size(80px);
+		height: 60px;
+		@include font-size(40px);
+		@include bp-expand-menu {
+			height: 100px;
+			@include font-size(80px);
+		}
 		font-family: 'Platform Web';
 		color: map-get($palette, off-white);
 	}

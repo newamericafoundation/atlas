@@ -15,7 +15,7 @@ var buttons = [
 		title: 'Explore Atlas',
 		contentType: 'inner-link',
 		url: '/menu',
-		reactIconName: 'Grid',
+		reactIconNames: [ 'Grid' ],
 		isToggleable: false 
 	}
 ];

@@ -15,7 +15,7 @@ var defaultButtons = [
 		contentType: 'outer-link',
 		method: 'comment',
 		url: 'mailto:atlas@newamerica.org',
-		reactIconName: 'Comment', 
+		reactIconNames: [ 'Comment' ], 
 		isToggleable: false 
 	}
 ];

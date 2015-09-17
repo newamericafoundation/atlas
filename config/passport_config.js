@@ -4,7 +4,7 @@ import researcher from './../app/models/researcher.js';
 import express from 'express';
 
 var getCallbackUrl = function() {
-    var env = express().get('env');
+    var env = process.env.NODE_ENV;
     var urlBase = (env === 'development') ? '127.0.0.1:8081' : 'atlas.newamerica.org';
     return 'http://' + urlBase + '/auth/google/callback';
 };

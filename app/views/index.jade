@@ -17,10 +17,12 @@ block content
 		script(src='/assets/scripts/partials/source.js')
 		script(src='/assets/scripts/partials/component.js')
 	- }
+
 	script(type='text/javascript').
 		$(function() { 
 			Comp.start();
 		});
+
 	- if (user || (process.env.NODE_ENV === 'development')) {
 		script(type='text/javascript').
 			window.isResearcherAuthenticated = true;

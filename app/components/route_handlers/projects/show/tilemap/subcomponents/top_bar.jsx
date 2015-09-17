@@ -21,13 +21,11 @@ class TopBar extends React.Component {
 						
 						
 						<div className="atl__top-bar__summary__item">
-							<div className='button' onClick={ this.toggleOptionsTab.bind(this) }>
-								<MoreIcon />
-							</div>
-						</div>
-						<div className="atl__top-bar__summary__item">
 							<div className='button button--active'>
 								<p>{ this.getKey() }</p>
+							</div>
+							<div className='button' onClick={ this.toggleOptionsTab.bind(this) }>
+								<MoreIcon />
 							</div>
 						</div>
 						<div className="atl__top-bar__summary__item"><p>{ this.getValue() }</p></div>

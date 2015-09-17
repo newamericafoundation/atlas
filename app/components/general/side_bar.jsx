@@ -62,6 +62,7 @@ class SideBar extends React.Component {
 	renderButtons() {
 		if (this.props.buttons == null) { return; }
 		var list = this.props.buttons.map((options, i) => {
+			if (options.isHidden) { return; }
 			return (
 				<SideBarButton 
 					{...this.props}
@@ -150,7 +151,8 @@ class SideBarButton extends React.Component {
 	}
 
 	getIconComp() {
-		return Icons[this.props.options.reactIconName];
+		var iconName = this.props.options.reactIconNames[0] || 'Build';
+		return Icons[iconName];
 	}
 
 	handleClick() {

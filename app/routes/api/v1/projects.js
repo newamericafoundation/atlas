@@ -12,7 +12,9 @@ import newMiddleware from  './../../../middleware/crud/new.js';
 import updateMiddleware from './../../../middleware/crud/update.js';
 import showMiddleware from './../../../middleware/crud/show.js';
 
-var currentAuthMiddleware = (process.NODE_ENV === 'production') ? authMiddleware.ensureAuthenticated : authMiddleware.ensureNothing;
+// Unsafe setting to test back-end while in development, skipping the auth step which is required at each server restart.
+//var currentAuthMiddleware = (process.NODE_ENV === 'production') ? authMiddleware.ensureAuthenticated : authMiddleware.ensureNothing;
+var currentAuthMiddleware = authMiddleware.ensureAuthenticated;
 
 var router = express.Router();
 
@@ -70,32 +72,11 @@ router.get([ '/', '/image' ], function(req, res) {
 
 });
 
-// router.get('/:id', (req, res) => {
-
-// 	var id = req.params.id;
-
-// 	return dbConnector.then((db) => {
-// 		var cursor = db.collection('projects').find({ _id: new ObjectID(id) });
-// 		cursor.toArray((err, data) => {
-// 			if (err) { 
-// 				console.dir(err);
-// 				return res.json({});
-// 			}
-// 			var datum = data[0];
-// 			if(datum && datum._id) {
-// 				datum.id = datum._id;
-// 				delete datum._id;
-// 			}
-// 			res.json(datum);
-// 		});
-// 	}, (err) => { console.dir(err); return res.json({}); });
-
-// });
-
 router.get('/:id', showMiddleware.bind(this, { dbCollectionName: 'projects' }), (req, res) => {
 	res.json(req.dbResponse);
 });
 
+// authenticated requests
 router.post('/:id/edit', currentAuthMiddleware, updateMiddleware.bind(this, { dbCollectionName: 'projects' }), (req, res) => {
 	res.json(req.dbResponse);
 });
