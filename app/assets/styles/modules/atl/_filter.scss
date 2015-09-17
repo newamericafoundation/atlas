@@ -38,11 +38,16 @@
         display: none;
         @include bp-unstack-map-settings-bar { display: block; }
         .atl--collapsed & { display: none; }
-        & > p {
-            @include font-size(16px);
-            font-family: 'MetaSerifWeb-Book'; 
-            opacity: 0.7;
+
+        &__heading {
+            & > p {
+                @include font-size(16px);
+                font-family: 'MetaSerifWeb-Book'; 
+                opacity: 0.7;
+            }
         }
+        
+
         a {
             @include link;
             @include font-size(16px);

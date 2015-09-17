@@ -5,6 +5,8 @@ import Icons from './../../../../../general/icons.jsx';
 
 import * as colors from './../../../../../utilities/colors.js';
 
+import * as formatters from './../../../../../../utilities/formatters.js';
+
 class Filter extends React.Component {
 
 	constructor(props) {
@@ -26,6 +28,10 @@ class Filter extends React.Component {
 					<Help position='right' text='Select the variable you want to filter by.' id='filter-keys' />
 				</div>
 				<div className="atl__filter__values">
+					<div className='atl__filter__values__heading'
+						dangerouslySetInnerHTML={{ __html: this.getKeyDescriptionHtml() }}
+					>
+					</div>
 					<ul>
 						{ this.renderValues() }
 					</ul>
@@ -62,6 +68,16 @@ class Filter extends React.Component {
 				<FilterKey App={this.props.App} filterKey={key} key={i} />
 			);
 		});
+	}
+
+	getKeyDescriptionHtml() {
+		var keys = this.props.filter.children,
+			activeKey = this.props.filter.getActiveChild();
+		
+		if (activeKey) {
+			let longDescription = activeKey.get('variable').get('long_description');
+			return formatters.markdown(longDescription);
+		}
 	}
 
 	renderValues() {
