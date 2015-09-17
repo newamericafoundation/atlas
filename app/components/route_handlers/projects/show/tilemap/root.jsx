@@ -6,6 +6,7 @@ import SettingsBar from './subcomponents/settings_bar.jsx';
 import Popup from './subcomponents/popup.jsx';
 import InfoBox from './subcomponents/info_box.jsx';
 import List from './subcomponents/list.jsx';
+import Search from './subcomponents/search.jsx';
 import OptionsTab from './subcomponents/options_tab.jsx';
 
 class Tilemap extends React.Component {
@@ -18,9 +19,9 @@ class Tilemap extends React.Component {
 				<TopBar {...this.props} />			
 				<SettingsBar {...this.props} />
 				<Popup {...this.props} />
+				{ this.props.uiState.isSearchBarActive ? <Search {...this.props} /> : null }
 				<InfoBox {...this.props} activeItem={ this.getActiveItem() } />
 				{ this.renderOptionsTab() }
-				{ this.renderBaseLayer() }
 			</div>
 		);
 	}
@@ -47,13 +48,6 @@ class Tilemap extends React.Component {
 		} else {
 			return (<List {...this.props} />);
 		}
-	}
-
-	renderBaseLayer() {
-		return;
-		return (
-			<div className="atl__base-layer" />
-		);
 	}
 
 	getActiveItem() {

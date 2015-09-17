@@ -11,6 +11,59 @@
 
 }).call(this);
 
+(function() {
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+    }
+  });
+
+}).call(this);
+
+(function() {
+  $.fn.ensureScript = function(globalName, path, next) {
+    if (window[globalName] != null) {
+      return next();
+    }
+    return $.ajax({
+      url: path,
+      contentType: 'text/javascript; charset=utf-8',
+      dataType: 'script',
+      success: next
+    });
+  };
+
+}).call(this);
+
+(function() {
+  $.fn.extend({
+    toggleModifierClass: function(baseClass, modifiers, modifierSign) {
+      var $el, className, i, j, len, modifier, newClass, newModifier;
+      if (modifierSign == null) {
+        modifierSign = '--';
+      }
+      $el = $(this);
+      if (!(modifiers instanceof Array)) {
+        modifiers = modifiers[0];
+      }
+      for (i = j = 0, len = modifiers.length; j < len; i = ++j) {
+        modifier = modifiers[i];
+        className = baseClass + modifierSign + modifier;
+        if ($el.hasClass(className)) {
+          $el.removeClass(className);
+          newModifier = (modifiers[i + 1] != null ? modifiers[i + 1] : modifiers[0]);
+          if ((newModifier !== modifier) && (newModifier !== '')) {
+            newClass = baseClass + modifierSign + newModifier;
+            return $el.addClass(newClass);
+          }
+        }
+      }
+      return $el.addClass(baseClass + modifierSign + modifiers[0]);
+    }
+  });
+
+}).call(this);
+
 if (!Function.prototype.bind) {
   Function.prototype.bind = function(oThis) {
     if (typeof this !== 'function') {
@@ -182,59 +235,6 @@ if (!Array.prototype.map) {
     return A;
   };
 }
-(function() {
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-    }
-  });
-
-}).call(this);
-
-(function() {
-  $.fn.ensureScript = function(globalName, path, next) {
-    if (window[globalName] != null) {
-      return next();
-    }
-    return $.ajax({
-      url: path,
-      contentType: 'text/javascript; charset=utf-8',
-      dataType: 'script',
-      success: next
-    });
-  };
-
-}).call(this);
-
-(function() {
-  $.fn.extend({
-    toggleModifierClass: function(baseClass, modifiers, modifierSign) {
-      var $el, className, i, j, len, modifier, newClass, newModifier;
-      if (modifierSign == null) {
-        modifierSign = '--';
-      }
-      $el = $(this);
-      if (!(modifiers instanceof Array)) {
-        modifiers = modifiers[0];
-      }
-      for (i = j = 0, len = modifiers.length; j < len; i = ++j) {
-        modifier = modifiers[i];
-        className = baseClass + modifierSign + modifier;
-        if ($el.hasClass(className)) {
-          $el.removeClass(className);
-          newModifier = (modifiers[i + 1] != null ? modifiers[i + 1] : modifiers[0]);
-          if ((newModifier !== modifier) && (newModifier !== '')) {
-            newClass = baseClass + modifierSign + newModifier;
-            return $el.addClass(newClass);
-          }
-        }
-      }
-      return $el.addClass(baseClass + modifierSign + modifiers[0]);
-    }
-  });
-
-}).call(this);
-
 window.Atlas = new Marionette.Application();
 window.Map = {};
 
@@ -597,16 +597,15 @@ window.Map = {};
     };
 
     OverlayBaseView.prototype.getFeatureDisplayState = function(feature) {
-      var display, filter, model, searchTerm;
+      var filter, model, searchTerm;
       if (Map.props.uiState == null) {
         return;
       }
-      display = Map.props.uiState.display;
       filter = Map.props.project.get('data').filter;
-      searchTerm = Map.props.App.reqres.request('search:term');
+      searchTerm = Map.props.uiState.searchTerm;
       model = feature._model;
       if (model != null) {
-        return model.getDisplayState(filter, searchTerm, display);
+        return model.getDisplayState(filter, searchTerm);
       }
     };
 

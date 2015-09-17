@@ -1,44 +1,38 @@
 import React from 'react';
 import classNames from 'classnames';
+import { No } from './../../../../../general/icons.jsx';
 
 class Search extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {
-			searchTerm: ''
-		};
 	}
 
 	render() {
 		return (
 			<div className='atl__search'>
-				<input type='text' placeholder='Search Project' onChange={ this.setSearchTerm.bind(this) } />
+				<a href='#' className='atl__search__close' onClick={ this.close.bind(this) }>
+					<No />
+				</a>
+				<form onSubmit={ this.close.bind(this) }>
+					<input 
+						type='text' 
+						placeholder='Search Project' 
+						value={ this.props.uiState.searchTerm }
+						onChange={ this.setSearchTerm.bind(this) } 
+					/>
+				</form>
 			</div>
 		);
 	}
-
-	componentWillMount() {
-		var App = this.props.App;
-		if (App == null) { return; }
-		App.reqres.setHandler('search:term', () => { 
-			return this.state.searchTerm; 
-		});
-	}
-
-	componentWillUnmount() {
-		var App = this.props.App;
-		if (App == null) { return; }
-		App.reqres.removeHandler('search:term');
-	}
 	
 	setSearchTerm(e) {
-		this.setState({ searchTerm: e.target.value }, () => {
-			var App;
-			App = this.props.App;
-			if (App == null) { return; }
-			App.commands.execute('update:tilemap');
-		});
+		this.props.setUiState({ searchTerm: e.target.value });
+	}
+
+	close(e) {
+		if (e) { e.preventDefault(); }
+		this.props.setUiState({ isSearchBarActive: false });
 	}
 
 }

@@ -56,7 +56,7 @@ class Filter extends React.Component {
 		var keys = this.props.filter.children,
 			activeKey = this.props.filter.getActiveChild(),
 			index = keys.indexOf(activeKey),
-			neighborHood = this.props.filter.getActiveChildNeighborhood(1);
+			neighborHood = this.props.filter.getActiveChildNeighborhood(0);
 		return neighborHood.map((key, i) => {
 			return (
 				<FilterKey App={this.props.App} filterKey={key} key={i} />

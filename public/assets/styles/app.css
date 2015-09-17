@@ -4458,22 +4458,6 @@ td, th {
           position: fixed;
           left: 45px;
           top: 95px; } }
-  .atl--filter-display .atl__search {
-    display: none; }
-  .atl--search-display .atl__filter {
-    display: none; }
-  .atl--search-display .atl__legend {
-    display: none; }
-  .atl__search {
-    max-width: 450px;
-    opacity: 0.8;
-    padding: 20px 20px; }
-    .atl--collapsed .atl__search {
-      padding: 0;
-      position: absolute;
-      left: 40px;
-      top: 75px;
-      width: 350px; }
   .atl__main {
     position: relative;
     top: 0;
@@ -5329,30 +5313,6 @@ td, th {
   .atl__info-box--narrow .atl__content-bar {
     padding-left: 0; }
 
-.atl__base-layer {
-  display: none;
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-  height: 200px;
-  background: -moz-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.53) 100%);
-  /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(255, 255, 255, 0)), color-stop(100%, rgba(0, 0, 0, 0.53)));
-  /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.53) 100%);
-  /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.53) 100%);
-  /* Opera 11.10+ */
-  background: -ms-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.53) 100%);
-  /* IE10+ */
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.53) 100%);
-  /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#87000000',GradientType=0 );
-  /* IE6-9 */ }
-  @media only screen and (min-width: 800px) {
-    .atl__base-layer {
-      display: block; } }
-
 .atl__settings-bar {
   z-index: 7;
   width: 100%;
@@ -5380,6 +5340,30 @@ td, th {
       width: 360px;
       top: 0;
       height: 100%; } }
+
+.atl__search {
+  z-index: 12;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.95); }
+  .atl__search input {
+    height: 160px;
+    padding: 30px;
+    font-size: 80px;
+    font-size: 5rem;
+    font-family: 'Platform Web';
+    color: #fffaef; }
+  .atl__search__close {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    width: 20px;
+    height: 20px; }
+    .atl__search__close svg {
+      fill: #fffaef; }
 
 .atl__help {
   padding: 20px;
@@ -5454,23 +5438,30 @@ td, th {
 
 .atl__top-bar {
   z-index: 6;
-  display: block;
+  display: inline-block;
   position: absolute;
   top: 0;
   width: 100%;
-  height: 75px;
   padding-left: 0; }
   @media only screen and (min-width: 800px) {
     .atl__top-bar {
       display: none; } }
   .atl--collapsed .atl__top-bar {
-    display: block; }
+    display: inline-block; }
+  .atl__top-bar__content {
+    position: relative;
+    width: 100%;
+    height: 150px;
+    transition: all 0.2s; }
+    @media only screen and (min-width: 900px) {
+      .atl__top-bar__content {
+        height: 75px; } }
   .atl__top-bar__title {
-    display: inline-block;
+    display: inline;
     float: left;
-    padding: 0 0 0 15px;
+    padding: 0 0 0 25px;
     margin: 0;
-    height: 100%; }
+    height: 75px; }
     .atl__top-bar__title div {
       height: 100%;
       display: table; }
@@ -5481,15 +5472,30 @@ td, th {
         padding: 0;
         font-family: 'Platform Web';
         text-transform: uppercase;
-        font-size: 24px;
-        font-size: 1.5rem; }
-  .atl__top-bar__content {
-    position: relative;
+        font-size: 20px;
+        font-size: 1.25rem; }
+  .atl__top-bar__summary {
+    height: 75px;
+    display: block;
     width: 100%;
-    height: 100%;
-    transition: all 0.2s; }
-    .atl__top-bar__content > * {
-      height: 100%; }
+    clear: both; }
+    @media only screen and (min-width: 900px) {
+      .atl__top-bar__summary {
+        display: inline;
+        float: right;
+        width: 400px; } }
+    .atl__top-bar__summary__item {
+      float: left;
+      height: 75px;
+      text-align: center;
+      min-width: 30px;
+      padding-right: 20px;
+      font-size: 18px;
+      font-size: 1.125rem; }
+      .atl__top-bar__summary__item:first-child > p {
+        font-family: 'SimplonNorm-Bold-WebS'; }
+      .atl__top-bar__summary__item > p, .atl__top-bar__summary__item > .button {
+        vertical-align: middle; }
   .atl__top-bar__icons {
     float: left;
     display: inline;
@@ -5514,23 +5520,6 @@ td, th {
         top: -12px;
         width: 45px;
         height: 25px; }
-  .atl__top-bar__summary {
-    float: right;
-    display: table; }
-    .atl__top-bar__summary__item {
-      text-align: center;
-      min-width: 30px;
-      display: table-cell;
-      vertical-align: middle;
-      padding-right: 20px;
-      font-size: 18px;
-      font-size: 1.125rem; }
-      .atl__top-bar__summary__item > p {
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap; }
-      .atl__top-bar__summary__item:first-child p {
-        font-family: 'SimplonNorm-Bold-WebS'; }
 
 .atl__options-tab {
   position: absolute;

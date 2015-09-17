@@ -3,7 +3,6 @@ import classNames from 'classnames';
 
 import Headline from './headline.jsx';
 import DisplayToggle from './display_toggle.jsx';
-import Search from './search.jsx';
 import Filter from './filter.jsx';
 
 class SettingsBar extends React.Component {
@@ -25,8 +24,6 @@ class SettingsBar extends React.Component {
 		return (
 			<div className='atl__settings-bar' ref='root'>
 				<Headline {...this.props} cacheHeight={ this.cacheHeight.bind(this, 'headline') } />
-				<DisplayToggle {...this.props} />
-				<Search {...this.props} />
 				<Filter {...this.props} cacheHeight={ this.cacheHeight.bind(this, 'filter') } filter={ this.getFilter() } />
 			</div>
 		);

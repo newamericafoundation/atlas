@@ -42,6 +42,12 @@ export default function(project, isResearcherAuthenticated) {
 			url: '/api/v1/projects/print',
 			reactIconName: 'Download',
 			isToggleable: false
+		},
+		{ 
+			title: 'Search',
+			contentType: 'button',
+			reactIconName: 'Search',
+			clickMessage: 'toggle-search-bar'
 		}
 
 	];

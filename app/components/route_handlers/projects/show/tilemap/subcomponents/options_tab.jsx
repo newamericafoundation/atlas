@@ -26,12 +26,19 @@ class OptionsTab extends React.Component {
 
 	renderKeyGroups() {
 		var keys = this.props.filter.children;
-		var groups = _.groupBy(keys, (key) => { return key.get('variable').get('group_name') || 'Unsorted Variables'; });
-		return Object.keys(groups).map((groupName) => {
+		var groups = _.groupBy(keys, (key) => { return key.get('variable').get('group_name') || 'Other Variables'; });
+		var groupNames = Object.keys(groups).sort((name_1, name_2) => {
+			var index_1 = (name_1 === 'Other Variables') ? 1000 : name_1.charCodeAt(0);
+			var index_2 = (name_2 === 'Other Variables') ? 1000 : name_2.charCodeAt(0);
+			return index_1 - index_2;
+
+		});
+		var areVariablesGrouped = (groupNames.length > 1);
+		return groupNames.map((groupName) => {
 			var group = groups[groupName];
 			return (
 				<li>
-					<p className='title'>{ groupName }</p>
+					{ areVariablesGrouped ? (<p className='title'>{ groupName }</p>) : null }
 					<ul>
 						{ this.renderKeys(group) }
 					</ul>

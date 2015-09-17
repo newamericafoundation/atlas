@@ -38,7 +38,7 @@ class Slider extends React.Component {
             step: 1,
             slide: (e, ui) => {
                 this.setState({ valueIndex: ui.value });
-                this.props.setUiState({ currentSpecifier: this.getSliderValueText() });
+                this.props.setUiState({ specifier: this.getSliderValueText() });
             }
         });
         this.setSliderValueText();

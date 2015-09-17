@@ -24,5 +24,9 @@ block content
 	- if (user || (process.env.NODE_ENV === 'development')) {
 		script(type='text/javascript').
 			window.isResearcherAuthenticated = true;
+	- }
+
+	- if (user) {
+		script(type='text/javascript').
 			window.researcher = !{JSON.stringify(user)};
 	- }

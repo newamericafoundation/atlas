@@ -84,12 +84,11 @@
         # Returns display state of a feature.
         getFeatureDisplayState: (feature) ->
             return unless Map.props.uiState?
-            display = Map.props.uiState.display
             filter = Map.props.project.get('data').filter
-            searchTerm = Map.props.App.reqres.request 'search:term'
+            searchTerm = Map.props.uiState.searchTerm
             model = feature._model
             if model?
-                return model.getDisplayState(filter, searchTerm, display)
+                return model.getDisplayState(filter, searchTerm)
 
         # Get feature fill.
         # @param {object} feature

@@ -290,7 +290,6 @@ exports.FilterTree = LocalBaseModel.extend({
         var maxIndex, valueIndeces;
         valueIndeces = this.getValueIndeces(model);
         maxIndex = this.getValueCountOnActiveKey();
-        console.log('before');
         if (maxIndex === 1) { return [ 1 ]; }
         return valueIndeces.map(function(valIndex) {
             return Math.round(valIndex * (scaleMax - 1) / (maxIndex - 1) + 1);

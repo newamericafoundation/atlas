@@ -167,58 +167,20 @@ exports.Model = base.Model.extend({
 	 * @param {}
 	 * @returns {string} displayState - Element of [ 'neutral', 'highlighted', 'inactive' ]
 	 */
-	getDisplayState: function(filter, searchTerm, currentDisplayMode) {
+	getDisplayState: function(filter, searchTerm) {
 
 		var filterIndeces, valueHoverIndex, isFiltered;
 
-		if (currentDisplayMode === 'filter') {
+		if (!this.matchesSearchTerm(searchTerm)) { return 'inactive'; }
 
-			filterIndeces = filter.getValueIndeces(this);
-			valueHoverIndex = filter.state.valueHoverIndex;
-			isFiltered = (filterIndeces.length > 0);
-
-			if (!isFiltered) { return 'inactive'; }
-
-			if (filterIndeces.indexOf(valueHoverIndex) > -1) {
-				return 'highlighted';
-			}
-
-			return;
-
+		filterIndeces = filter.getValueIndeces(this);
+		valueHoverIndex = filter.state.valueHoverIndex;
+		isFiltered = (filterIndeces.length > 0);
+		if (!isFiltered) { return 'inactive'; }
+		if (filterIndeces.indexOf(valueHoverIndex) > -1) {
+			return 'highlighted';
 		}
-
-		if (this.matchesSearchTerm(searchTerm)) { return 'neutral'; }
-		return 'inactive';
-
-	},
-
-	/** 
-	 * Returns layer classnames to be applied on the model.
-	 * Classnames consist of group classes and element classes.
-	 * Group classes specifiy generic styles such as highlighted, inactive, neutral.
-	 * Element classes style components of the graphics corresponding to the item. E.g. map-pin dividers
-	 * @param {object} filter - Filter object.
-	 * @param {object} valueHoverIndex - Index of hovered value.
-	 * @param {string} searchTerm
-	 * @param {string} baseClass - Base class.
-	 * @param {} currentDisplayMode
-	 * @returns {object} layerClasses - Object with three keys: group, element base, and elements (array)
-	 */
-	getLayerClasses: function(filter, searchTerm, baseClass, currentDisplayMode) {
-
-		var filterIndeces, layerClasses, displayState;
-
-		if (baseClass == null) { baseClass = 'map-region'; }
-
-		layerClasses = {
-			group: baseClass,
-			elementBase: baseClass + '__element'
-		};
-
-		displayState = this.getDisplayState(filter, searchTerm, currentDisplayMode);
-		if (displayState != null) { layerClasses.group += (' ' + baseClass + '--' + displayState); }
-
-		return layerClasses;
+		return;
 
 	},
 	
@@ -230,9 +192,8 @@ exports.Model = base.Model.extend({
 	matchesSearchTerm: function(searchTerm) {
 		var name;
 		name = this.get('name');
-		if (searchTerm == null || searchTerm.toLowerCase == null) { return false; }
-		if (name == null || name.toLowerCase == null) { return false; }
-		if (searchTerm === "") { return true; }
+		if (!searchTerm || searchTerm === "") { return true; }
+		if (!name) { return false; }
 		name = name.toLowerCase();
 		searchTerm = searchTerm.toLowerCase();
 		if (name === "") { return false; }

@@ -16,8 +16,9 @@ class Show extends React.Component {
 		super(props);
 		this.state = {
 			ui: {
-				currentSpecifier: '2012', // if time-dependent data is visualized, this field holds the active specifier, such as the year
-				display: 'filter', // display type, e.g. filter or search
+				specifier: '2012', // if time-dependent data is visualized, this field holds the active specifier, such as the year
+				searchTerm: '',
+				isSearchBarActive: false,
 				itemsDisplayMode: 'map',
 				isCollapsed: false, // depends on screen size
 				isCollapsedMaster: false, // master toggle
@@ -38,14 +39,13 @@ class Show extends React.Component {
 	}
 
 	render() {
-		
 		return (
 			<div className={ this.getClassName() }>
 				<SideBar 
 					App={ this.props.App } 
 					project={ this.state.project } 
-					uiState={ this.state.ui }
 					sendMessageToParent={ this.handleMessageFromButtons.bind(this) }
+					uiState={ this.state.ui }
 					setUiState={ this.setUiState.bind(this) }
 					buttons={ this.getButtons() }
 				/>
@@ -55,8 +55,8 @@ class Show extends React.Component {
 	}
 
 	handleMessageFromButtons(message) {
-		if (message === 'delete-project') {
-			console.log('deleting project');
+		if (message === 'toggle-search-bar') {
+			this.setUiState({ isSearchBarActive: !this.state.ui.isSearchBarActive });
 		} else if (message === 'toggle-collapsed-state') {
 			this.state.ui.isCollapsedMaster = !this.state.ui.isCollapsedMaster;
 			this.forceUpdate();
@@ -87,10 +87,6 @@ class Show extends React.Component {
 			'atl__info-box--narrow': data && (data.variables.getInfoBoxVariableCount() < 2)
 		});
 
-		// custom classnames
-		cls += ` atl--${this.state.ui.display}-display`;
-		// if (project != null) { cls += ' atl--' + project.get('project_template_name').toLowerCase(); }
-		
 		return cls;
 
 	}
