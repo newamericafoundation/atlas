@@ -17,6 +17,7 @@ var app = express(),
 // Configure passport. Must run before initializing passport on the app instance.
 require('./config/passport_config.js');
 
+
 // require('./app/assets/images/utilities/icon_parser.js');
 
 // Basic configuration.
