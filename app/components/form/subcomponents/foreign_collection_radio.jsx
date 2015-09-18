@@ -22,7 +22,7 @@ class ForeignCollectionRadio extends Base {
 			var option = foreignModel.get('id'),
 				isChecked = this.isOptionChecked(option, i);
 			return (
-				<div className='form__radio'>
+				<div className='form__radio' key={i}>
 					<input 
 						type='radio' 
 						name={this.props.id}

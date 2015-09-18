@@ -4,11 +4,11 @@ import Base from './base.jsx';
 class ImageFile extends Base {
 
 	render() {
-		console.log(this.props.initialValue);
 		return (
 			<div className='form__wrapper'>
 
 				<label>{ this.props.labelText }</label>
+				{ this.renderThumbnail() }
 				<p className='form__hint'>{ this.props.hint }</p>
 				<input 
 					ref='input' 
@@ -23,8 +23,14 @@ class ImageFile extends Base {
 		);
 	}
 
-	getDisplayStyle() {
-		
+	renderThumbnail() {
+		var encoded = this.props.initialValue;
+		if (encoded) {
+			encoded = encoded.replace(/(\r\n|\n|\r)/gm, '');
+			return (
+				<div style={{ width: '100%', paddingTop: '75%', backgroundSize: 'cover', backgroundImage: ("url('data:image/png;base64," + encoded + "')") }} />
+			);
+		}
 	}
 
 	saveDataOnParent(e) {

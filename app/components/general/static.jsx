@@ -15,7 +15,7 @@ class Static extends React.Component {
 	}
 
 	render() {
-		var style = { 'overflow-y': 'scroll' };
+		var style = { 'overflowY': 'scroll' };
 		return (
 			<div className='atl__main' style={style} onScroll={ this.setStickyPageNav.bind(this) }>
 				{ this.renderTitleBar(this.getTitleBarType()) }

@@ -16,6 +16,7 @@ class SpreadsheetFile extends Base {
 		return (
 			<div className='form__wrapper'>
 				<label for={this.props.id}>{ this.props.labelText }</label>
+				{ this.renderSummary() }
 				<p className='form__hint'>{ this.props.hint }</p>
 				<input 
 					ref='input' 
@@ -28,6 +29,14 @@ class SpreadsheetFile extends Base {
 				/>
 			</div>
 		);
+	}
+
+	renderSummary() {
+		if (this.props.initialValue) {
+			return (
+				<p>Data currently available.</p>
+			);
+		}
 	}
 
 	componentDidMount() {

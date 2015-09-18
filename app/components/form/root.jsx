@@ -68,13 +68,14 @@ class Form extends React.Component {
 	}
 
 	renderFormComponents() {
-		return this.props.model.fields.map((field) => {
+		return this.props.model.fields.map((field, i) => {
 			var FormComp = Subcomponents[field.formComponentName] || Subcomponents.Text,
 				id = field.formComponentProps.id,
 				props = field.formComponentProps || {};
 			return (
 				<FormComp 
 					{...props}
+					key={i}
 					isEnabled={this.props.isEnabled}
 					saveDataOnParent={this.saveDataFromChild.bind(this)}
 					initialValue={this.props.model.get(id)}
