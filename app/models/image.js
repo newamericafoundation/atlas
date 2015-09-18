@@ -2,6 +2,8 @@ var base = require('./base.js');
 
 exports.Model = base.Model.extend({
 	
+	name: 'image',
+
 	defaults: {
 
 		name: 'image',
@@ -45,6 +47,12 @@ exports.Model = base.Model.extend({
         }
 
 	],
+
+	urlRoot: '/api/v1/images',
+
+	getEditUrl: function() {
+		return `/images/${this.get('id')}/edit`;
+	},
 
 	/**
 	 * Recognize and process server response.

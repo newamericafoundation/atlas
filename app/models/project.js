@@ -150,10 +150,10 @@ exports.Model = base.Model.extend({
         },
 
         {
-            id: 'image',
+            id: 'encoded_image',
             formComponentName: 'ImageFile',
             formComponentProps: {
-                id: 'image',
+                id: 'encoded_image',
                 labelText: 'Image File',
                 hint: 'Size limit: 3MB.'
             }

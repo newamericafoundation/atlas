@@ -2,11 +2,9 @@ import React from 'react';
 import { Link } from 'react-router';
 import classNames from 'classnames';
 
-import project from './../../models/project.js';
-
 import SaveBase from './save_base.js';
 
-class New extends SaveBase {
+class NewBase extends SaveBase {
 
 	constructor(props) {
 		super(props);
@@ -16,8 +14,9 @@ class New extends SaveBase {
 	}
 
 	componentWillMount() {
+		var Model = this.getResourceConstructor();
 		if (!this.state.model) {
-			this.setState({ model: new project.Model() });
+			this.setState({ model: new Model() });
 		}
 	}
 
@@ -36,7 +35,7 @@ class New extends SaveBase {
 	}
 
 	getSubmitButtonText() {
-		return 'Create Project';
+		return `Create ${this.getResourceName()}`;
 	}
 
 	saveModel(formData) {
@@ -51,6 +50,8 @@ class New extends SaveBase {
 			model.beforeSave();
 		}
 
+		model.set('created_at', new Date().toISOString());
+
 		// While pending, save form data using the instance method on the model.
 		model.getClientSavePromise().then((res) => {
 			console.log(res);
@@ -64,4 +65,4 @@ class New extends SaveBase {
 
 }
 
-export default New;
+export default NewBase;

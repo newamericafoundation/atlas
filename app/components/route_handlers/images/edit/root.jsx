@@ -1,18 +1,11 @@
 import React from 'react';
 import EditBase from './../../../crud/edit_base.js';
 
-import project from './../../../../models/project.js';
+import image from './../../../../models/image.js';
 
 class Edit extends EditBase {
-
-	getResourceName() {
-		return 'project';
-	}
-
-	getResourceConstructor() {
-		return project.Model;
-	}
-
+	getResourceName() { return 'image'; }
+	getResourceConstructor() { return image.Model; }
 }
 
 Edit.contextTypes = {

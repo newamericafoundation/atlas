@@ -38,11 +38,31 @@ class SaveBaseModal extends Modal {
 			<div>
 				<p className='title'>Save successful</p>
 				<ul>
-					<li><Link className='link' to={this.props.model.getEditUrl()}>{ `Edit ${name}` }</Link></li>
-					<li><Link className='link' to={this.props.model.getViewUrl()}>{ `View ${name}` }</Link></li>
+					{ this.renderLinks() }
 				</ul>
 			</div>
 		);
+	}
+
+	renderLinks() {
+		var urls = [ 
+			{ name: 'edit', url: this.props.model.getEditUrl() }, 
+			{ name: 'view', url: this.props.model.getViewUrl() } 
+		];
+		return urls.map((url, i) => {
+			if (!url.url) { return; }
+			return (
+				<li key={i}>
+					<a className='link' href={url.url}>
+						{ `${url.name} ${this.getResourceName()}` }
+					</a>
+				</li>
+			);
+		});
+	}
+
+	getResourceName() {
+		return 'resource';
 	}
 
 	renderFailureContent() {
@@ -158,7 +178,7 @@ class SaveBase extends Static {
 	renderPageNavContent() {
 		return (
 			<div>
-				<p>Project project project</p>
+				<p>Later on, we can put things here that help navigate the entry form.</p>
 			</div>
 		);
 	}

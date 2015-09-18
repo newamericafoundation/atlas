@@ -103,6 +103,14 @@ var Model = Backbone.Model.extend({
 
 	},
 
+	getViewUrl: function() {
+		return null;
+	},
+
+	getEditUrl: function() {
+		return null;
+	},
+
 	/** 
 	 * Recognize and process data.
 	 * @param {object} data - Data as key-value pairs.

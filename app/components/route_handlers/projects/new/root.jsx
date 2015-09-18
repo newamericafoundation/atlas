@@ -1,55 +1,16 @@
 import React from 'react';
-import { Link } from 'react-router';
-import classNames from 'classnames';
+import NewBase from './../../../crud/new_base.js';
 
 import project from './../../../../models/project.js';
 
-import SaveBase from './../../../crud/save_base.js';
+class New extends NewBase {
 
-class New extends SaveBase {
-
-	constructor(props) {
-		super(props);
-		this.state = {
-			saveResponseStatus: undefined
-		};
+	getResourceName() {
+		return 'project';
 	}
 
-	componentWillMount() {
-		if (!this.state.model) {
-			this.setState({ model: new project.Model() });
-		}
-	}
-
-	getCrudMethodName() {
-		return 'new';
-	}
-
-	getSubmitButtonText() {
-		return 'Create Project';
-	}
-
-	saveModel(formData) {
-
-		var model = this.state.model;
-
-		// Set status to pending.
-		this.setState({ saveResponseStatus: 'pending' });
-
-		// Call before save method on the model.
-		if (model.beforeSave) {
-			model.beforeSave();
-		}
-
-		// While pending, save form data using the instance method on the model.
-		model.getClientSavePromise().then((res) => {
-			console.log(res);
-			res = JSON.parse(res);
-			model.set('id', res.id);
-			this.setState({ saveResponseStatus: res.status });
-		}, (err) => { this.setState({ saveResponseStatus: 'error' }); 
-		});
-
+	getResourceConstructor() {
+		return project.Model;
 	}
 
 }
