@@ -165,7 +165,7 @@ exports.Model = base.Model.extend({
             formComponentProps: {
                 id: 'image_credit',
                 labelText: 'Image Credit',
-                hint: "Single URL or Markdown, e.g. 'Image supplied by [Image Corporation](http://www.imgcrp.com)':",
+                hint: "Single URL or Markdown, e.g. '[Shutterstock](http://www.shutterstock.com/imageurl)'",
                 placeholder: 'Image Credit'
             }
         }

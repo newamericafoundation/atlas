@@ -1,7 +1,14 @@
-var express = require('express'),
-	router = express.Router(),
-	base = require('../../../models/base'),
-	dbConnector = require('./../../../../db/connector');
+import express from 'express';
+import base from './../../../models/base.js';
+import dbConnector from './../../../../db/connector';
+
+import authMiddleware from './../../../middleware/auth.js';
+import deleteMiddleware from './../../../middleware/crud/delete.js';
+import newMiddleware from  './../../../middleware/crud/new.js';
+import updateMiddleware from './../../../middleware/crud/update.js';
+import showMiddleware from './../../../middleware/crud/show.js';
+
+var router = express.router();
 
 router.get('/', function(req, res) {
 
