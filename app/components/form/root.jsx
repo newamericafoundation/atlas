@@ -39,10 +39,13 @@ class Form extends React.Component {
 		// If the data field is an array, add value to array if not already added.
 		// Otherwise, replace old data.
 		if (_.isArray(oldValue)) {
-			if (oldValue.indexOf(newValue) === -1) {
+			let index = oldValue.indexOf(newValue);
+			if (index < 0) {
 				oldValue.push(newValue);
-				model.set(key, oldValue);
+			} else {
+				oldValue.splice(index, 1);
 			}
+			model.set(key, oldValue);
 		} else {
 			model.set(key, newValue);
 		}
