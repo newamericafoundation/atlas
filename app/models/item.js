@@ -175,11 +175,15 @@ exports.Model = base.Model.extend({
 
 		filterIndeces = filter.getValueIndeces(this);
 		valueHoverIndex = filter.state.valueHoverIndex;
+
 		isFiltered = (filterIndeces.length > 0);
+
 		if (!isFiltered) { return 'inactive'; }
+
 		if (filterIndeces.indexOf(valueHoverIndex) > -1) {
 			return 'highlighted';
 		}
+
 		return;
 
 	},
