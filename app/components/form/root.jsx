@@ -33,21 +33,21 @@ class Form extends React.Component {
 
 		var model = this.props.model,
 			key = childData.id,
-			oldValue = this.props.model.get(key),
-			newValue = childData.value;
+			currentValue = this.props.model.get(key),
+			incomingValue = childData.value;
 
-		// If the data field is an array, add value to array if not already added.
-		// Otherwise, replace old data.
-		if (_.isArray(oldValue)) {
-			let index = oldValue.indexOf(newValue);
+		// If the data field is an array, add the incoming value if the array does not contain it but remove it if it does.
+		// This behavior is specific to the ForeignCollectionCheckBox subcomponent.
+		if (_.isArray(currentValue)) {
+			let index = currentValue.indexOf(incomingValue);
 			if (index < 0) {
-				oldValue.push(newValue);
+				currentValue.push(incomingValue);
 			} else {
-				oldValue.splice(index, 1);
+				currentValue.splice(index, 1);
 			}
-			model.set(key, oldValue);
+			model.set(key, currentValue);
 		} else {
-			model.set(key, newValue);
+			model.set(key, incomingValue);
 		}
 
 		this.forceUpdate();

@@ -1,31 +1,80 @@
 .floorplans {
+
     background: none;
     padding: 0;
+    position: relative;
+
     &__floor {
         width: 100%;
         height: 400px;
         display: block;
         margin: auto;
     }
+
     &__outer-wall {
         stroke: black;
         stroke-width: 0.8px;
         fill: none;
         z-index: 1;
     }
+
     &__rooms {
         z-index: 0;
     }
+
     &__room {
+
+        $grey: lighten(map-get(map-get($palette, grey), light), 40);
+        $green: map-get($palette, naf-green);
+
         stroke-width: 0.05px;
-        stroke: map-get($palette, naf-green);
-        fill: map-palette(map-get($palette, grey), base);
-        opacity: 0.2;
+
+        stroke: $grey;
+        fill: $grey;
+
+        opacity: 0.55;
         cursor: pointer;
-        &:hover,
-        &--active {
+
+        &:hover, &--active {
             opacity: 1;
-            fill: map-get($palette, naf-green);
         }
+
+        &--public {
+            fill: $green;
+            stroke: $green;
+        }
+
     }
+
+    &__tooltip {
+
+        position: absolute;
+
+        background-color: rgba(0, 0, 0, 0.05);
+
+        display: flex;
+
+        top: 120px;
+        right: 10px;
+        // border: 4px solid map-get(map-get($palette, grey), base);
+        width: 170px;
+        padding: 10px;
+        height: 170px;
+        border-radius: 100%;
+        text-align: center;
+
+        & > div { margin: auto; }
+
+        h1 { 
+            @include font-size(24px);
+            margin: 5px;
+        }
+
+        p {
+            margin: 5px;
+            @include font-size(16px);
+        }
+
+    }
+
 }
