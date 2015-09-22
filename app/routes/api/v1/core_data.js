@@ -1,22 +1,19 @@
 var express = require('express'),
 	router = express.Router(),
 	fs = require('fs'),
-	coreDatum = require('./../../../models/core_datum'),
-	dbConnector = require('./../../../../db/connector');
+	coreDatum = require('./../../../models/core_datum');
 
 router.get('/', function(req, res, next) {
 	var query = req.query;
 
-	return dbConnector.then(function(db) {
+	var db = req.db;
 
-		var collection = db.collection('core_data');
-		var cursor = collection.find({});
+	var collection = db.collection('core_data');
+	var cursor = collection.find({});
 
-		cursor.toArray(function(err, items) {
-			if(err) { return console.dir(err); }
-			res.json(coreDatum.Collection.prototype.parse(items));
-		});
-
+	cursor.toArray(function(err, items) {
+		if(err) { return console.dir(err); }
+		res.json(coreDatum.Collection.prototype.parse(items));
 	});
 
 });

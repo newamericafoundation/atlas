@@ -11,12 +11,11 @@ var express = require('express'),
 
 var app = express(),
 	MongoStore = connectMongo(session),
-	env = app.get('env'),
+	env = process.env.NODE_ENV,
 	port = process.env.PORT || 8081;
 
 // Configure passport. Must run before initializing passport on the app instance.
 require('./config/passport_config.js');
-
 
 // require('./app/assets/images/utilities/icon_parser.js');
 
@@ -39,7 +38,6 @@ app.use(express.static('public'));
 
 app.use(methodOverride());
 
-
 dbConnector.then(function(db) {
 	
 	// Initialize session with database storage.
@@ -60,6 +58,11 @@ dbConnector.then(function(db) {
 		resave: false,
 		saveUninitialized: false
 	}));
+
+	app.use(function(req, res, next) {
+		req.db = db;
+		next();
+	});
 
 	// Use router (see ./app/routes directory).
 	app.use(router);

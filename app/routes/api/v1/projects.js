@@ -3,10 +3,10 @@ import bodyParser from 'body-parser';
 import csv from 'csv';
 import project from './../../../models/project.js';
 import base from './../../../models/base.js';
-import dbConnector from './../../../../db/connector';
 import { ObjectID } from 'mongodb';
 
 import authMiddleware from './../../../middleware/auth.js';
+
 import deleteMiddleware from './../../../middleware/crud/delete.js';
 import newMiddleware from  './../../../middleware/crud/new.js';
 import updateMiddleware from './../../../middleware/crud/update.js';
@@ -58,23 +58,21 @@ router.get([ '/', '/image' ], function(req, res) {
 		fields = { encoded_image: 1, image_credit: 1, atlas_url: 1 };
 	}
 
-	return dbConnector.then(function(db) {
+	var db = req.db;
 
-		db.collection('projects').find(queryParams, fields).toArray((err, models) => {
-			if (err) { return console.dir(err); }
-			models = base.Collection.prototype.parse(models);
-			var coll = new project.Collection(models);
+	db.collection('projects').find(queryParams, fields).toArray((err, models) => {
+		if (err) { return console.dir(err); }
+		models = base.Collection.prototype.parse(models);
+		var coll = new project.Collection(models);
 
-			// Get related models.
-			if (specialQueryParams == null) {
-				return res.json(coll.toJSON());
-			} else {
-				return res.json(coll.related_to(specialQueryParams.related_to));
-			}
+		// Get related models.
+		if (specialQueryParams == null) {
+			return res.json(coll.toJSON());
+		} else {
+			return res.json(coll.related_to(specialQueryParams.related_to));
+		}
 
-		});
-
-	}, (err) => { console.dir(err); return res.json([]); });
+	});
 
 });
 
@@ -107,19 +105,17 @@ router.post('/print', function(req, res) {
 		queryParams.is_live = "Yes";
 	}
 
-	return dbConnector.then(function(db) {
+	var db = req.db;
 
-		var cursor = db.collection('projects').find(queryParams, fields);
+	var cursor = db.collection('projects').find(queryParams, fields);
 
-		cursor.toArray(function(err, models) {
-			if (err) { console.dir(err); }
-			if ((models[0]) && (models[0].data) && (models[0].data.items)) {
-				return res.csv(models[0].data.items, fileName + '.csv');
-			}
-			res.send();
-		});
-
-	}, (err) => { console.dir(err); return res.json([]); });
+	cursor.toArray(function(err, models) {
+		if (err) { console.dir(err); }
+		if ((models[0]) && (models[0].data) && (models[0].data.items)) {
+			return res.csv(models[0].data.items, fileName + '.csv');
+		}
+		res.send();
+	});
 
 });
 
