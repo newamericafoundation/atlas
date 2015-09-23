@@ -57,4 +57,15 @@
 		
 	}
 
+	&__quick-links {
+		position: absolute;
+		top: 12.5px;
+		left: 22.5px;
+		svg { fill: map-get($palette, off-white); }
+		.icon-button__text {
+			font-family: 'SimplonNorm-Regular-WebS';
+			// @include font-size(15px);
+		}
+	}
+
 }

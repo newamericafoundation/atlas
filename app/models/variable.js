@@ -61,7 +61,10 @@ exports.Model = base.Model.extend({
         }
 
         var i, len, numericalFilter, values,
-            numericalDividers = this.get('numerical_filter_dividers');
+            numericalDividers = this.get('numerical_filter_dividers'),
+            numericalAliases = this.get('numerical_filter_aliases');
+
+        numericalAliases = numericalAliases ? numericalAliases.split('|') : [];
 
         if (formatter == null) {
             formatter = formatters['number'];
@@ -82,7 +85,7 @@ exports.Model = base.Model.extend({
 
         for (i = 0, len = values.length; i < (len - 1); i += 1) {
             numericalFilter.push(
-                this.getNumericalFilterValue(values[i], values[i + 1], formatter)
+                this.getNumericalFilterValue(values[i], values[i + 1], formatter, numericalAliases[i])
             );
         }
 
@@ -97,16 +100,21 @@ exports.Model = base.Model.extend({
      * @param {function} formatter - Formatter function.
      * @returns {object}
      */
-    getNumericalFilterValue: function(min, max, formatter) {
+    getNumericalFilterValue: function(min, max, formatter, value) {
         var filterValue, maxDisplay, minDisplay;
-        filterValue = {
-            min: min,
-            max: max
-        };
+
+        filterValue = { min: min, max: max };
+
         minDisplay = min;
         maxDisplay = max;
         minDisplay = formatter(minDisplay);
         maxDisplay = formatter(maxDisplay);
+
+        if (value) {
+            filterValue.value = value;
+            return filterValue;
+        }
+
         if (min === -1000000000) {
             filterValue.value = "Less than " + maxDisplay;
         } else if (max === +1000000000) {
@@ -114,6 +122,7 @@ exports.Model = base.Model.extend({
         } else {
             filterValue.value = "Between " + minDisplay + " and " + maxDisplay;
         }
+
         return filterValue;
     }
 

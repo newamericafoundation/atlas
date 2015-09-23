@@ -62,6 +62,11 @@ dbConnector.then(function(db) {
 		saveUninitialized: false
 	}));
 
+	app.use(function(req, res, next) {
+		req.db = db;
+		next();
+	});
+
 	// Use router (see ./app/routes directory).
 	app.use(router);
 

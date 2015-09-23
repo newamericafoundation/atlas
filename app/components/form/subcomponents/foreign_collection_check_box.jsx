@@ -55,6 +55,7 @@ class ForeignCollectionCheckBox extends Base {
 	}
 
 	saveDataOnParent(e) {
+		console.log(e.target.value);
 		this.props.saveDataOnParent({
 			id: this.props.id,
 			value: e.target.value

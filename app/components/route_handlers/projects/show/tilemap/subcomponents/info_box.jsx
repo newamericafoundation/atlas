@@ -163,7 +163,8 @@ class InfoBox extends Static {
 		if (!project) { return; }
 		var activeItem = project.get('data').items.active;
 		if (!activeItem) { return; }
-		var url = activeItem.get('website') || activeItem.get('state_website') || '/';
+		var url = activeItem.get('website') || activeItem.get('state_website');
+		if (!url) { return; }
 		return (
 			<li>
 				<a className="icon-button" href={url}>

@@ -16,7 +16,7 @@ exports.Model = base.Model.extend({
     defaults: {
         'title': 'New Project',
         'author': '',
-        'tags': 'a,b,c,d',
+        'tags': '',
         'is_section_overview': 'No',
         'is_live': 'No',
         'project_template_id': '0',

@@ -9432,7 +9432,7 @@ return jQuery;
 		 * @param  {object} result
 		 * @return {mixed}
 		 */
-		get_field = function(name, result) {
+		get_field  = function(name, result) {
 			if (name === '$score') return result.score;
 			return self.items[result.id][name];
 		};
@@ -9602,8 +9602,8 @@ return jQuery;
 		if (typeof a === 'number' && typeof b === 'number') {
 			return a > b ? 1 : (a < b ? -1 : 0);
 		}
-		a = asciifold(String(a || ''));
-		b = asciifold(String(b || ''));
+		a = String(a || '').toLowerCase();
+		b = String(b || '').toLowerCase();
 		if (a > b) return 1;
 		if (b > a) return -1;
 		return 0;
@@ -9636,43 +9636,20 @@ return jQuery;
 	};
 
 	var DIACRITICS = {
-		'a': '[aÀÁÂÃÄÅàáâãäåĀāąĄ]',
+		'a': '[aÀÁÂÃÄÅàáâãäåĀā]',
 		'c': '[cÇçćĆčČ]',
 		'd': '[dđĐďĎ]',
-		'e': '[eÈÉÊËèéêëěĚĒēęĘ]',
+		'e': '[eÈÉÊËèéêëěĚĒē]',
 		'i': '[iÌÍÎÏìíîïĪī]',
-		'l': '[lłŁ]',
-		'n': '[nÑñňŇńŃ]',
+		'n': '[nÑñňŇ]',
 		'o': '[oÒÓÔÕÕÖØòóôõöøŌō]',
 		'r': '[rřŘ]',
-		's': '[sŠšśŚ]',
+		's': '[sŠš]',
 		't': '[tťŤ]',
 		'u': '[uÙÚÛÜùúûüůŮŪū]',
 		'y': '[yŸÿýÝ]',
-		'z': '[zŽžżŻźŹ]'
+		'z': '[zŽž]'
 	};
-
-	var asciifold = (function() {
-		var i, n, k, chunk;
-		var foreignletters = '';
-		var lookup = {};
-		for (k in DIACRITICS) {
-			if (DIACRITICS.hasOwnProperty(k)) {
-				chunk = DIACRITICS[k].substring(2, DIACRITICS[k].length - 1);
-				foreignletters += chunk;
-				for (i = 0, n = chunk.length; i < n; i++) {
-					lookup[chunk.charAt(i)] = k;
-				}
-			}
-		}
-		var regexp = new RegExp('[' +  foreignletters + ']', 'g');
-		return function(str) {
-			return str.replace(regexp, function(foreignletter) {
-				return lookup[foreignletter];
-			}).toLowerCase();
-		};
-	})();
-
 
 	// export
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -9819,8 +9796,8 @@ return jQuery;
 }));
 
 /**
- * selectize.js (v0.12.1)
- * Copyright (c) 2013–2015 Brian Reavis & contributors
+ * selectize.js (v0.11.2)
+ * Copyright (c) 2013 Brian Reavis & contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
  * file except in compliance with the License. You may obtain a copy of the License at:
@@ -9941,8 +9918,6 @@ return jQuery;
 	var TAG_SELECT    = 1;
 	var TAG_INPUT     = 2;
 	
-	// for now, android support in general is too spotty to support validity
-	var SUPPORTS_VALIDITY_API = !/android/i.test(window.navigator.userAgent) && !!document.createElement('form').validity;
 	
 	var isset = function(object) {
 		return typeof object !== 'undefined';
@@ -10027,6 +10002,25 @@ return jQuery;
 			fn.apply(self, arguments);
 			return result;
 		};
+	};
+	
+	/**
+	 * Builds a hash table out of an array of
+	 * objects, using the specified `key` within
+	 * each object.
+	 *
+	 * @param {string} key
+	 * @param {mixed} objects
+	 */
+	var build_hash_table = function(key, objects) {
+		if (!$.isArray(objects)) return objects;
+		var i, n, table = {};
+		for (i = 0, n = objects.length; i < n; i++) {
+			if (objects[i].hasOwnProperty(key)) {
+				table[objects[i][key]] = objects[i];
+			}
+		}
+		return table;
 	};
 	
 	/**
@@ -10276,10 +10270,8 @@ return jQuery;
 	
 		// setup default state
 		$.extend(self, {
-			order            : 0,
 			settings         : settings,
 			$input           : $input,
-			tabIndex         : $input.attr('tabindex') || '',
 			tagType          : input.tagName.toLowerCase() === 'select' ? TAG_SELECT : TAG_INPUT,
 			rtl              : /rtl/i.test(dir),
 	
@@ -10321,20 +10313,12 @@ return jQuery;
 		self.sifter = new Sifter(this.options, {diacritics: settings.diacritics});
 	
 		// build options table
-		if (self.settings.options) {
-			for (i = 0, n = self.settings.options.length; i < n; i++) {
-				self.registerOption(self.settings.options[i]);
-			}
-			delete self.settings.options;
-		}
+		$.extend(self.options, build_hash_table(settings.valueField, settings.options));
+		delete self.settings.options;
 	
 		// build optgroup table
-		if (self.settings.optgroups) {
-			for (i = 0, n = self.settings.optgroups.length; i < n; i++) {
-				self.registerOptionGroup(self.settings.optgroups[i]);
-			}
-			delete self.settings.optgroups;
-		}
+		$.extend(self.optgroups, build_hash_table(settings.optgroupValueField, settings.optgroups));
+		delete self.settings.optgroups;
 	
 		// option-dependent defaults
 		self.settings.mode = self.settings.mode || (self.settings.maxItems === 1 ? 'single' : 'multi');
@@ -10379,15 +10363,17 @@ return jQuery;
 			var inputMode;
 			var timeout_blur;
 			var timeout_focus;
+			var tab_index;
 			var classes;
 			var classes_plugins;
 	
 			inputMode         = self.settings.mode;
+			tab_index         = $input.attr('tabindex') || '';
 			classes           = $input.attr('class') || '';
 	
 			$wrapper          = $('<div>').addClass(settings.wrapperClass).addClass(classes).addClass(inputMode);
 			$control          = $('<div>').addClass(settings.inputClass).addClass('items').appendTo($wrapper);
-			$control_input    = $('<input type="text" autocomplete="off" />').appendTo($control).attr('tabindex', $input.is(':disabled') ? '-1' : self.tabIndex);
+			$control_input    = $('<input type="text" autocomplete="off" />').appendTo($control).attr('tabindex', tab_index);
 			$dropdown_parent  = $(settings.dropdownParent || $wrapper);
 			$dropdown         = $('<div>').addClass(settings.dropdownClass).addClass(inputMode).hide().appendTo($dropdown_parent);
 			$dropdown_content = $('<div>').addClass(settings.dropdownContentClass).appendTo($dropdown);
@@ -10414,12 +10400,6 @@ return jQuery;
 				$control_input.attr('placeholder', settings.placeholder);
 			}
 	
-			// if splitOn was not passed in, construct it from the delimiter to allow pasting universally
-			if (!self.settings.splitOn && self.settings.delimiter) {
-				var delimiterEscaped = self.settings.delimiter.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-				self.settings.splitOn = new RegExp('\\s*' + delimiterEscaped + '+\\s*');
-			}
-	
 			if ($input.attr('autocorrect')) {
 				$control_input.attr('autocorrect', $input.attr('autocorrect'));
 			}
@@ -10435,7 +10415,7 @@ return jQuery;
 			self.$dropdown_content = $dropdown_content;
 	
 			$dropdown.on('mouseenter', '[data-selectable]', function() { return self.onOptionHover.apply(self, arguments); });
-			$dropdown.on('mousedown click', '[data-selectable]', function() { return self.onOptionSelect.apply(self, arguments); });
+			$dropdown.on('mousedown', '[data-selectable]', function() { return self.onOptionSelect.apply(self, arguments); });
 			watchChildEvent($control, 'mousedown', '*:not(input)', function() { return self.onItemSelect.apply(self, arguments); });
 			autoGrow($control_input);
 	
@@ -10475,7 +10455,7 @@ return jQuery;
 					}
 					// blur on click outside
 					if (!self.$control.has(e.target).length && e.target !== self.$control[0]) {
-						self.blur(e.target);
+						self.blur();
 					}
 				}
 			});
@@ -10504,7 +10484,7 @@ return jQuery;
 			}
 	
 			// feature detect for the validation API
-			if (SUPPORTS_VALIDITY_API) {
+			if ($input[0].validity) {
 				$input.on('invalid' + eventNS, function(e) {
 					e.preventDefault();
 					self.isInvalid = true;
@@ -10570,23 +10550,18 @@ return jQuery;
 		 */
 		setupCallbacks: function() {
 			var key, fn, callbacks = {
-				'initialize'      : 'onInitialize',
-				'change'          : 'onChange',
-				'item_add'        : 'onItemAdd',
-				'item_remove'     : 'onItemRemove',
-				'clear'           : 'onClear',
-				'option_add'      : 'onOptionAdd',
-				'option_remove'   : 'onOptionRemove',
-				'option_clear'    : 'onOptionClear',
-				'optgroup_add'    : 'onOptionGroupAdd',
-				'optgroup_remove' : 'onOptionGroupRemove',
-				'optgroup_clear'  : 'onOptionGroupClear',
-				'dropdown_open'   : 'onDropdownOpen',
-				'dropdown_close'  : 'onDropdownClose',
-				'type'            : 'onType',
-				'load'            : 'onLoad',
-				'focus'           : 'onFocus',
-				'blur'            : 'onBlur'
+				'initialize'     : 'onInitialize',
+				'change'         : 'onChange',
+				'item_add'       : 'onItemAdd',
+				'item_remove'    : 'onItemRemove',
+				'clear'          : 'onClear',
+				'option_add'     : 'onOptionAdd',
+				'option_remove'  : 'onOptionRemove',
+				'option_clear'   : 'onOptionClear',
+				'dropdown_open'  : 'onDropdownOpen',
+				'dropdown_close' : 'onDropdownClose',
+				'type'           : 'onType',
+				'load'           : 'onLoad'
 			};
 	
 			for (key in callbacks) {
@@ -10659,6 +10634,7 @@ return jQuery;
 			this.$input.trigger('change');
 		},
 	
+	
 		/**
 		 * Triggered on <input> paste.
 		 *
@@ -10669,17 +10645,6 @@ return jQuery;
 			var self = this;
 			if (self.isFull() || self.isInputHidden || self.isLocked) {
 				e.preventDefault();
-			} else {
-				// If a regex or string is included, this will split the pasted
-				// input and create Items for each separate value
-				if (self.settings.splitOn) {
-					setTimeout(function() {
-						var splitInput = $.trim(self.$control_input.val() || '').split(self.settings.splitOn);
-						for (var i = 0, n = splitInput.length; i < n; i++) {
-							self.createItem(splitInput[i]);
-						}
-					}, 0);
-				}
 			}
 		},
 	
@@ -10692,7 +10657,7 @@ return jQuery;
 		onKeyPress: function(e) {
 			if (this.isLocked) return e && e.preventDefault();
 			var character = String.fromCharCode(e.keyCode || e.which);
-			if (this.settings.create && this.settings.mode === 'multi' && character === this.settings.delimiter) {
+			if (this.settings.create && character === this.settings.delimiter) {
 				this.createItem();
 				e.preventDefault();
 				return false;
@@ -10724,11 +10689,7 @@ return jQuery;
 					}
 					break;
 				case KEY_ESC:
-					if (self.isOpen) {
-						e.preventDefault();
-						e.stopPropagation();
-						self.close();
-					}
+					self.close();
 					return;
 				case KEY_N:
 					if (!e.ctrlKey || e.altKey) break;
@@ -10755,8 +10716,8 @@ return jQuery;
 				case KEY_RETURN:
 					if (self.isOpen && self.$activeOption) {
 						self.onOptionSelect({currentTarget: self.$activeOption});
-						e.preventDefault();
 					}
+					e.preventDefault();
 					return;
 				case KEY_LEFT:
 					self.advanceSelection(-1, e);
@@ -10767,12 +10728,7 @@ return jQuery;
 				case KEY_TAB:
 					if (self.settings.selectOnTab && self.isOpen && self.$activeOption) {
 						self.onOptionSelect({currentTarget: self.$activeOption});
-	
-						// Default behaviour is to jump to the next field, we only want this
-						// if the current field doesn't accept any more entries
-						if (!self.isFull()) {
-							e.preventDefault();
-						}
+						e.preventDefault();
 					}
 					if (self.settings.create && self.createItem()) {
 						e.preventDefault();
@@ -10836,8 +10792,8 @@ return jQuery;
 		 */
 		onFocus: function(e) {
 			var self = this;
-			var wasFocused = self.isFocused;
 	
+			self.isFocused = true;
 			if (self.isDisabled) {
 				self.blur();
 				e && e.preventDefault();
@@ -10845,10 +10801,7 @@ return jQuery;
 			}
 	
 			if (self.ignoreFocus) return;
-			self.isFocused = true;
 			if (self.settings.preload === 'focus') self.onSearchChange('');
-	
-			if (!wasFocused) self.trigger('focus');
 	
 			if (!self.$activeItems.length) {
 				self.showInput();
@@ -10863,43 +10816,31 @@ return jQuery;
 		 * Triggered on <input> blur.
 		 *
 		 * @param {object} e
-		 * @param {Element} dest
+		 * @returns {boolean}
 		 */
-		onBlur: function(e, dest) {
+		onBlur: function(e) {
 			var self = this;
-			if (!self.isFocused) return;
 			self.isFocused = false;
+			if (self.ignoreFocus) return;
 	
-			if (self.ignoreFocus) {
-				return;
-			} else if (!self.ignoreBlur && document.activeElement === self.$dropdown_content[0]) {
-				// necessary to prevent IE closing the dropdown when the scrollbar is clicked
+			// necessary to prevent IE closing the dropdown when the scrollbar is clicked
+			if (!self.ignoreBlur && document.activeElement === self.$dropdown_content[0]) {
 				self.ignoreBlur = true;
 				self.onFocus(e);
+	
 				return;
 			}
 	
-			var deactivate = function() {
-				self.close();
-				self.setTextboxValue('');
-				self.setActiveItem(null);
-				self.setActiveOption(null);
-				self.setCaret(self.items.length);
-				self.refreshState();
-	
-				// IE11 bug: element still marked as active
-				(dest || document.body).focus();
-	
-				self.ignoreFocus = false;
-				self.trigger('blur');
-			};
-	
-			self.ignoreFocus = true;
 			if (self.settings.create && self.settings.createOnBlur) {
-				self.createItem(null, false, deactivate);
-			} else {
-				deactivate();
+				self.createItem(false);
 			}
+	
+			self.close();
+			self.setTextboxValue('');
+			self.setActiveItem(null);
+			self.setActiveOption(null);
+			self.setCaret(self.items.length);
+			self.refreshState();
 		},
 	
 		/**
@@ -10931,20 +10872,14 @@ return jQuery;
 	
 			$target = $(e.currentTarget);
 			if ($target.hasClass('create')) {
-				self.createItem(null, function() {
-					if (self.settings.closeAfterSelect) {
-						self.close();
-					}
-				});
+				self.createItem();
 			} else {
 				value = $target.attr('data-value');
 				if (typeof value !== 'undefined') {
 					self.lastQuery = null;
 					self.setTextboxValue('');
 					self.addItem(value);
-					if (self.settings.closeAfterSelect) {
-						self.close();
-					} else if (!self.settings.hideSelected && e.type && /mouse/.test(e.type)) {
+					if (!self.settings.hideSelected && e.type && /mouse/.test(e.type)) {
 						self.setActiveOption(self.getOption(value));
 					}
 				}
@@ -10977,7 +10912,7 @@ return jQuery;
 		 */
 		load: function(fn) {
 			var self = this;
-			var $wrapper = self.$wrapper.addClass(self.settings.loadingClass);
+			var $wrapper = self.$wrapper.addClass('loading');
 	
 			self.loading++;
 			fn.apply(self, [function(results) {
@@ -10987,7 +10922,7 @@ return jQuery;
 					self.refreshOptions(self.isFocused && !self.isInputHidden);
 				}
 				if (!self.loading) {
-					$wrapper.removeClass(self.settings.loadingClass);
+					$wrapper.removeClass('loading');
 				}
 				self.trigger('load', results);
 			}]);
@@ -11028,12 +10963,10 @@ return jQuery;
 		 *
 		 * @param {mixed} value
 		 */
-		setValue: function(value, silent) {
-			var events = silent ? [] : ['change'];
-	
-			debounce_events(this, events, function() {
-				this.clear(silent);
-				this.addItems(value, silent);
+		setValue: function(value) {
+			debounce_events(this, ['change'], function() {
+				this.clear();
+				this.addItems(value);
 			});
 		},
 	
@@ -11177,7 +11110,11 @@ return jQuery;
 		},
 	
 		/**
-		 * Gives the control focus.
+		 * Gives the control focus. If "trigger" is falsy,
+		 * focus handlers won't be fired--causing the focus
+		 * to happen silently in the background.
+		 *
+		 * @param {boolean} trigger
 		 */
 		focus: function() {
 			var self = this;
@@ -11193,12 +11130,9 @@ return jQuery;
 	
 		/**
 		 * Forces the control out of focus.
-		 *
-		 * @param {Element} dest
 		 */
-		blur: function(dest) {
-			this.$control_input[0].blur();
-			this.onBlur(null, dest);
+		blur: function() {
+			this.$control_input.trigger('blur');
 		},
 	
 		/**
@@ -11225,7 +11159,7 @@ return jQuery;
 			var settings = this.settings;
 			var sort = settings.sortField;
 			if (typeof sort === 'string') {
-				sort = [{field: sort}];
+				sort = {field: sort};
 			}
 	
 			return {
@@ -11312,7 +11246,15 @@ return jQuery;
 	
 			// render and group available options individually
 			groups = {};
-			groups_order = [];
+	
+			if (self.settings.optgroupOrder) {
+				groups_order = self.settings.optgroupOrder;
+				for (i = 0; i < groups_order.length; i++) {
+					groups[groups_order[i]] = [];
+				}
+			} else {
+				groups_order = [];
+			}
 	
 			for (i = 0; i < n; i++) {
 				option      = self.options[results.items[i].id];
@@ -11331,15 +11273,6 @@ return jQuery;
 					}
 					groups[optgroup].push(option_html);
 				}
-			}
-	
-			// sort optgroups
-			if (this.settings.lockOptgroupOrder) {
-				groups_order.sort(function(a, b) {
-					var a_order = self.optgroups[a].$order || 0;
-					var b_order = self.optgroups[b].$order || 0;
-					return a_order - b_order;
-				});
 			}
 	
 			// render optgroup headers & join groups
@@ -11420,10 +11353,10 @@ return jQuery;
 		 *
 		 *   this.addOption(data)
 		 *
-		 * @param {object|array} data
+		 * @param {object} data
 		 */
 		addOption: function(data) {
-			var i, n, value, self = this;
+			var i, n, optgroup, value, self = this;
 	
 			if ($.isArray(data)) {
 				for (i = 0, n = data.length; i < n; i++) {
@@ -11432,40 +11365,13 @@ return jQuery;
 				return;
 			}
 	
-			if (value = self.registerOption(data)) {
-				self.userOptions[value] = true;
-				self.lastQuery = null;
-				self.trigger('option_add', value, data);
-			}
-		},
+			value = hash_key(data[self.settings.valueField]);
+			if (typeof value !== 'string' || self.options.hasOwnProperty(value)) return;
 	
-		/**
-		 * Registers an option to the pool of options.
-		 *
-		 * @param {object} data
-		 * @return {boolean|string}
-		 */
-		registerOption: function(data) {
-			var key = hash_key(data[this.settings.valueField]);
-			if (!key || this.options.hasOwnProperty(key)) return false;
-			data.$order = data.$order || ++this.order;
-			this.options[key] = data;
-			return key;
-		},
-	
-		/**
-		 * Registers an option group to the pool of option groups.
-		 *
-		 * @param {object} data
-		 * @return {boolean|string}
-		 */
-		registerOptionGroup: function(data) {
-			var key = hash_key(data[this.settings.optgroupValueField]);
-			if (!key) return false;
-	
-			data.$order = data.$order || ++this.order;
-			this.optgroups[key] = data;
-			return key;
+			self.userOptions[value] = true;
+			self.options[value] = data;
+			self.lastQuery = null;
+			self.trigger('option_add', value, data);
 		},
 	
 		/**
@@ -11476,32 +11382,8 @@ return jQuery;
 		 * @param {object} data
 		 */
 		addOptionGroup: function(id, data) {
-			data[this.settings.optgroupValueField] = id;
-			if (id = this.registerOptionGroup(data)) {
-				this.trigger('optgroup_add', id, data);
-			}
-		},
-	
-		/**
-		 * Removes an existing option group.
-		 *
-		 * @param {string} id
-		 */
-		removeOptionGroup: function(id) {
-			if (this.optgroups.hasOwnProperty(id)) {
-				delete this.optgroups[id];
-				this.renderCache = {};
-				this.trigger('optgroup_remove', id);
-			}
-		},
-	
-		/**
-		 * Clears all existing option groups.
-		 */
-		clearOptionGroups: function() {
-			this.optgroups = {};
-			this.renderCache = {};
-			this.trigger('optgroup_clear');
+			this.optgroups[id] = data;
+			this.trigger('optgroup_add', id, data);
 		},
 	
 		/**
@@ -11515,7 +11397,7 @@ return jQuery;
 		updateOption: function(value, data) {
 			var self = this;
 			var $item, $item_new;
-			var value_new, index_item, cache_items, cache_options, order_old;
+			var value_new, index_item, cache_items, cache_options;
 	
 			value     = hash_key(value);
 			value_new = hash_key(data[self.settings.valueField]);
@@ -11525,8 +11407,6 @@ return jQuery;
 			if (!self.options.hasOwnProperty(value)) return;
 			if (typeof value_new !== 'string') throw new Error('Value must be set in option data');
 	
-			order_old = self.options[value].$order;
-	
 			// update references
 			if (value_new !== value) {
 				delete self.options[value];
@@ -11535,7 +11415,6 @@ return jQuery;
 					self.items.splice(index_item, 1, value_new);
 				}
 			}
-			data.$order = data.$order || order_old;
 			self.options[value_new] = data;
 	
 			// invalidate render cache
@@ -11559,7 +11438,7 @@ return jQuery;
 				$item.replaceWith($item_new);
 			}
 	
-			// invalidate last query because we might have updated the sortField
+			//invalidate last query because we might have updated the sortField
 			self.lastQuery = null;
 	
 			// update dropdown contents
@@ -11572,9 +11451,8 @@ return jQuery;
 		 * Removes a single option.
 		 *
 		 * @param {string} value
-		 * @param {boolean} silent
 		 */
-		removeOption: function(value, silent) {
+		removeOption: function(value) {
 			var self = this;
 			value = hash_key(value);
 	
@@ -11587,7 +11465,7 @@ return jQuery;
 			delete self.options[value];
 			self.lastQuery = null;
 			self.trigger('option_remove', value);
-			self.removeItem(value, silent);
+			self.removeItem(value);
 		},
 	
 		/**
@@ -11669,13 +11547,12 @@ return jQuery;
 		 * at the current caret position.
 		 *
 		 * @param {string} value
-		 * @param {boolean} silent
 		 */
-		addItems: function(values, silent) {
+		addItems: function(values) {
 			var items = $.isArray(values) ? values : [values];
 			for (var i = 0, n = items.length; i < n; i++) {
 				this.isPending = (i < n - 1);
-				this.addItem(items[i], silent);
+				this.addItem(items[i]);
 			}
 		},
 	
@@ -11684,12 +11561,9 @@ return jQuery;
 		 * at the current caret position.
 		 *
 		 * @param {string} value
-		 * @param {boolean} silent
 		 */
-		addItem: function(value, silent) {
-			var events = silent ? [] : ['change'];
-	
-			debounce_events(this, events, function() {
+		addItem: function(value) {
+			debounce_events(this, ['change'], function() {
 				var $item, $option, $options;
 				var self = this;
 				var inputMode = self.settings.mode;
@@ -11702,7 +11576,7 @@ return jQuery;
 				}
 	
 				if (!self.options.hasOwnProperty(value)) return;
-				if (inputMode === 'single') self.clear(silent);
+				if (inputMode === 'single') self.clear();
 				if (inputMode === 'multi' && self.isFull()) return;
 	
 				$item = $(self.render('item', self.options[value]));
@@ -11735,7 +11609,7 @@ return jQuery;
 	
 					self.updatePlaceholder();
 					self.trigger('item_add', value, $item);
-					self.updateOriginalInput({silent: silent});
+					self.updateOriginalInput();
 				}
 			});
 		},
@@ -11746,7 +11620,7 @@ return jQuery;
 		 *
 		 * @param {string} value
 		 */
-		removeItem: function(value, silent) {
+		removeItem: function(value) {
 			var self = this;
 			var $item, i, idx;
 	
@@ -11764,7 +11638,7 @@ return jQuery;
 				self.items.splice(i, 1);
 				self.lastQuery = null;
 				if (!self.settings.persist && self.userOptions.hasOwnProperty(value)) {
-					self.removeOption(value, silent);
+					self.removeOption(value);
 				}
 	
 				if (i < self.caretPos) {
@@ -11773,9 +11647,9 @@ return jQuery;
 	
 				self.refreshState();
 				self.updatePlaceholder();
-				self.updateOriginalInput({silent: silent});
+				self.updateOriginalInput();
 				self.positionDropdown();
-				self.trigger('item_remove', value, $item);
+				self.trigger('item_remove', value);
 			}
 		},
 	
@@ -11787,29 +11661,18 @@ return jQuery;
 		 * Once this completes, it will be added
 		 * to the item list.
 		 *
-		 * @param {string} value
-		 * @param {boolean} [triggerDropdown]
-		 * @param {function} [callback]
 		 * @return {boolean}
 		 */
-		createItem: function(input, triggerDropdown) {
+		createItem: function(triggerDropdown) {
 			var self  = this;
+			var input = $.trim(self.$control_input.val() || '');
 			var caret = self.caretPos;
-			input = input || $.trim(self.$control_input.val() || '');
+			if (!self.canCreate(input)) return false;
+			self.lock();
 	
-			var callback = arguments[arguments.length - 1];
-			if (typeof callback !== 'function') callback = function() {};
-	
-			if (typeof triggerDropdown !== 'boolean') {
+			if (typeof triggerDropdown === 'undefined') {
 				triggerDropdown = true;
 			}
-	
-			if (!self.canCreate(input)) {
-				callback();
-				return false;
-			}
-	
-			self.lock();
 	
 			var setup = (typeof self.settings.create === 'function') ? this.settings.create : function(input) {
 				var data = {};
@@ -11821,16 +11684,15 @@ return jQuery;
 			var create = once(function(data) {
 				self.unlock();
 	
-				if (!data || typeof data !== 'object') return callback();
+				if (!data || typeof data !== 'object') return;
 				var value = hash_key(data[self.settings.valueField]);
-				if (typeof value !== 'string') return callback();
+				if (typeof value !== 'string') return;
 	
 				self.setTextboxValue('');
 				self.addOption(data);
 				self.setCaret(caret);
 				self.addItem(value);
 				self.refreshOptions(triggerDropdown && self.settings.mode !== 'single');
-				callback(data);
 			});
 	
 			var output = setup.apply(this, [input, create]);
@@ -11848,7 +11710,9 @@ return jQuery;
 			this.lastQuery = null;
 	
 			if (this.isSetup) {
-				this.addItem(this.items);
+				for (var i = 0; i < this.items.length; i++) {
+					this.addItem(this.items);
+				}
 			}
 	
 			this.refreshState();
@@ -11908,15 +11772,13 @@ return jQuery;
 		 * Refreshes the original <select> or <input>
 		 * element to reflect the current state.
 		 */
-		updateOriginalInput: function(opts) {
-			var i, n, options, label, self = this;
-			opts = opts || {};
+		updateOriginalInput: function() {
+			var i, n, options, self = this;
 	
 			if (self.tagType === TAG_SELECT) {
 				options = [];
 				for (i = 0, n = self.items.length; i < n; i++) {
-					label = self.options[self.items[i]][self.settings.labelField] || '';
-					options.push('<option value="' + escape_html(self.items[i]) + '" selected="selected">' + escape_html(label) + '</option>');
+					options.push('<option value="' + escape_html(self.items[i]) + '" selected="selected"></option>');
 				}
 				if (!options.length && !this.$input.attr('multiple')) {
 					options.push('<option value="" selected="selected"></option>');
@@ -11928,9 +11790,7 @@ return jQuery;
 			}
 	
 			if (self.isSetup) {
-				if (!opts.silent) {
-					self.trigger('change', self.$input.val());
-				}
+				self.trigger('change', self.$input.val());
 			}
 		},
 	
@@ -12005,10 +11865,8 @@ return jQuery;
 		/**
 		 * Resets / clears all selected items
 		 * from the control.
-		 *
-		 * @param {boolean} silent
 		 */
-		clear: function(silent) {
+		clear: function() {
 			var self = this;
 	
 			if (!self.items.length) return;
@@ -12018,7 +11876,7 @@ return jQuery;
 			self.setCaret(0);
 			self.setActiveItem(null);
 			self.updatePlaceholder();
-			self.updateOriginalInput({silent: silent});
+			self.updateOriginalInput();
 			self.refreshState();
 			self.showInput();
 			self.trigger('clear');
@@ -12229,7 +12087,6 @@ return jQuery;
 		disable: function() {
 			var self = this;
 			self.$input.prop('disabled', true);
-			self.$control_input.prop('disabled', true).prop('tabindex', -1);
 			self.isDisabled = true;
 			self.lock();
 		},
@@ -12241,7 +12098,6 @@ return jQuery;
 		enable: function() {
 			var self = this;
 			self.$input.prop('disabled', false);
-			self.$control_input.prop('disabled', false).prop('tabindex', self.tabIndex);
 			self.isDisabled = false;
 			self.unlock();
 		},
@@ -12292,7 +12148,7 @@ return jQuery;
 			var html = '';
 			var cache = false;
 			var self = this;
-			var regex_tag = /^[\t \r\n]*<([a-z][a-z0-9\-_]*(?:\:[a-z][a-z0-9\-_]*)?)/i;
+			var regex_tag = /^[\t ]*<([a-z][a-z0-9\-_]*(?:\:[a-z][a-z0-9\-_]*)?)/i;
 	
 			if (templateName === 'option' || templateName === 'item') {
 				value = hash_key(data[self.settings.valueField]);
@@ -12370,12 +12226,8 @@ return jQuery;
 	
 	Selectize.count = 0;
 	Selectize.defaults = {
-		options: [],
-		optgroups: [],
-	
 		plugins: [],
 		delimiter: ',',
-		splitOn: null, // regexp or string for splitting up values from a paste command
 		persist: true,
 		diacritics: true,
 		create: false,
@@ -12390,11 +12242,9 @@ return jQuery;
 		selectOnTab: false,
 		preload: false,
 		allowEmptyOption: false,
-		closeAfterSelect: false,
 	
 		scrollDuration: 60,
 		loadThrottle: 300,
-		loadingClass: 'loading',
 	
 		dataAttr: 'data-data',
 		optgroupField: 'optgroup',
@@ -12402,7 +12252,7 @@ return jQuery;
 		labelField: 'text',
 		optgroupLabelField: 'label',
 		optgroupValueField: 'value',
-		lockOptgroupOrder: false,
+		optgroupOrder: null,
 	
 		sortField: '$order',
 		searchField: ['text'],
@@ -12419,23 +12269,20 @@ return jQuery;
 		copyClassesToDropdown: true,
 	
 		/*
-		load                 : null, // function(query, callback) { ... }
-		score                : null, // function(search) { ... }
-		onInitialize         : null, // function() { ... }
-		onChange             : null, // function(value) { ... }
-		onItemAdd            : null, // function(value, $item) { ... }
-		onItemRemove         : null, // function(value) { ... }
-		onClear              : null, // function() { ... }
-		onOptionAdd          : null, // function(value, data) { ... }
-		onOptionRemove       : null, // function(value) { ... }
-		onOptionClear        : null, // function() { ... }
-		onOptionGroupAdd     : null, // function(id, data) { ... }
-		onOptionGroupRemove  : null, // function(id) { ... }
-		onOptionGroupClear   : null, // function() { ... }
-		onDropdownOpen       : null, // function($dropdown) { ... }
-		onDropdownClose      : null, // function($dropdown) { ... }
-		onType               : null, // function(str) { ... }
-		onDelete             : null, // function(values) { ... }
+		load            : null, // function(query, callback) { ... }
+		score           : null, // function(search) { ... }
+		onInitialize    : null, // function() { ... }
+		onChange        : null, // function(value) { ... }
+		onItemAdd       : null, // function(value, $item) { ... }
+		onItemRemove    : null, // function(value) { ... }
+		onClear         : null, // function() { ... }
+		onOptionAdd     : null, // function(value, data) { ... }
+		onOptionRemove  : null, // function(value) { ... }
+		onOptionClear   : null, // function() { ... }
+		onDropdownOpen  : null, // function($dropdown) { ... }
+		onDropdownClose : null, // function($dropdown) { ... }
+		onType          : null, // function(str) { ... }
+		onDelete        : null, // function(values) { ... }
 		*/
 	
 		render: {
@@ -12467,27 +12314,19 @@ return jQuery;
 		 * @param {object} settings_element
 		 */
 		var init_textbox = function($input, settings_element) {
-			var i, n, values, option;
+			var i, n, values, option, value = $.trim($input.val() || '');
+			if (!settings.allowEmptyOption && !value.length) return;
 	
-			var data_raw = $input.attr(attr_data);
+			values = value.split(settings.delimiter);
+			for (i = 0, n = values.length; i < n; i++) {
+				option = {};
+				option[field_label] = values[i];
+				option[field_value] = values[i];
 	
-			if (!data_raw) {
-				var value = $.trim($input.val() || '');
-				if (!settings.allowEmptyOption && !value.length) return;
-				values = value.split(settings.delimiter);
-				for (i = 0, n = values.length; i < n; i++) {
-					option = {};
-					option[field_label] = values[i];
-					option[field_value] = values[i];
-					settings_element.options.push(option);
-				}
-				settings_element.items = values;
-			} else {
-				settings_element.options = JSON.parse(data_raw);
-				for (i = 0, n = settings_element.options.length; i < n; i++) {
-					settings_element.items.push(settings_element.options[i][field_value]);
-				}
+				settings_element.options[values[i]] = option;
 			}
+	
+			settings_element.items = values;
 		};
 	
 		/**
@@ -12499,7 +12338,6 @@ return jQuery;
 		var init_select = function($input, settings_element) {
 			var i, n, tagName, $children, order = 0;
 			var options = settings_element.options;
-			var optionsMap = {};
 	
 			var readData = function($el) {
 				var data = attr_data && $el.attr(attr_data);
@@ -12510,36 +12348,37 @@ return jQuery;
 			};
 	
 			var addOption = function($option, group) {
+				var value, option;
+	
 				$option = $($option);
 	
-				var value = hash_key($option.attr('value'));
-				if (!value && !settings.allowEmptyOption) return;
+				value = $option.attr('value') || '';
+				if (!value.length && !settings.allowEmptyOption) return;
 	
 				// if the option already exists, it's probably been
 				// duplicated in another optgroup. in this case, push
 				// the current group to the "optgroup" property on the
 				// existing option so that it's rendered in both places.
-				if (optionsMap.hasOwnProperty(value)) {
+				if (options.hasOwnProperty(value)) {
 					if (group) {
-						var arr = optionsMap[value][field_optgroup];
-						if (!arr) {
-							optionsMap[value][field_optgroup] = group;
-						} else if (!$.isArray(arr)) {
-							optionsMap[value][field_optgroup] = [arr, group];
+						if (!options[value].optgroup) {
+							options[value].optgroup = group;
+						} else if (!$.isArray(options[value].optgroup)) {
+							options[value].optgroup = [options[value].optgroup, group];
 						} else {
-							arr.push(group);
+							options[value].optgroup.push(group);
 						}
 					}
 					return;
 				}
 	
-				var option             = readData($option) || {};
+				option                 = readData($option) || {};
 				option[field_label]    = option[field_label] || $option.text();
 				option[field_value]    = option[field_value] || value;
 				option[field_optgroup] = option[field_optgroup] || group;
 	
-				optionsMap[value] = option;
-				options.push(option);
+				option.$order = ++order;
+				options[value] = option;
 	
 				if ($option.is(':selected')) {
 					settings_element.items.push(value);
@@ -12556,7 +12395,7 @@ return jQuery;
 					optgroup = readData($optgroup) || {};
 					optgroup[field_optgroup_label] = id;
 					optgroup[field_optgroup_value] = id;
-					settings_element.optgroups.push(optgroup);
+					settings_element.optgroups[id] = optgroup;
 				}
 	
 				$options = $('option', $optgroup);
@@ -12591,8 +12430,8 @@ return jQuery;
 	
 			var settings_element = {
 				'placeholder' : placeholder,
-				'options'     : [],
-				'optgroups'   : [],
+				'options'     : {},
+				'optgroups'   : {},
 				'items'       : []
 			};
 	
@@ -12607,9 +12446,6 @@ return jQuery;
 	};
 	
 	$.fn.selectize.defaults = Selectize.defaults;
-	$.fn.selectize.support = {
-		validity: SUPPORTS_VALIDITY_API
-	};
 	
 	
 	Selectize.define('drag_drop', function(options) {
@@ -12852,7 +12688,7 @@ return jQuery;
 			return option[this.settings.labelField];
 		};
 	
-		this.onKeyDown = (function() {
+		this.onKeyDown = (function(e) {
 			var original = self.onKeyDown;
 			return function(e) {
 				var index, option;
@@ -12872,7 +12708,6 @@ return jQuery;
 			};
 		})();
 	});
-	
 
 	return Selectize;
 }));
@@ -14425,7 +14260,7 @@ return jQuery;
   }
 }.call(this));
 
-//     Backbone.js 1.2.3
+//     Backbone.js 1.2.1
 
 //     (c) 2010-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 //     Backbone may be freely distributed under the MIT license.
@@ -14468,10 +14303,10 @@ return jQuery;
   var previousBackbone = root.Backbone;
 
   // Create a local reference to a common array method we'll want to use later.
-  var slice = Array.prototype.slice;
+  var slice = [].slice;
 
   // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '1.2.3';
+  Backbone.VERSION = '1.2.1';
 
   // For Backbone's purposes, jQuery, Zepto, Ender, or My Library (kidding) owns
   // the `$` variable.
@@ -14495,13 +14330,8 @@ return jQuery;
   // form param named `model`.
   Backbone.emulateJSON = false;
 
-  // Proxy Backbone class methods to Underscore functions, wrapping the model's
-  // `attributes` object or collection's `models` array behind the scenes.
-  //
-  // collection.filter(function(model) { return model.get('age') > 10 });
-  // collection.each(this.addView);
-  //
-  // `Function#apply` can be slow so we use the method's arg count, if we know it.
+  // Proxy Underscore methods to a Backbone class' prototype using a
+  // particular attribute as the data argument
   var addMethod = function(length, method, attribute) {
     switch (length) {
       case 1: return function() {
@@ -14511,10 +14341,10 @@ return jQuery;
         return _[method](this[attribute], value);
       };
       case 3: return function(iteratee, context) {
-        return _[method](this[attribute], cb(iteratee, this), context);
+        return _[method](this[attribute], iteratee, context);
       };
       case 4: return function(iteratee, defaultVal, context) {
-        return _[method](this[attribute], cb(iteratee, this), defaultVal, context);
+        return _[method](this[attribute], iteratee, defaultVal, context);
       };
       default: return function() {
         var args = slice.call(arguments);
@@ -14529,26 +14359,12 @@ return jQuery;
     });
   };
 
-  // Support `collection.sortBy('attr')` and `collection.findWhere({id: 1})`.
-  var cb = function(iteratee, instance) {
-    if (_.isFunction(iteratee)) return iteratee;
-    if (_.isObject(iteratee) && !instance._isModel(iteratee)) return modelMatcher(iteratee);
-    if (_.isString(iteratee)) return function(model) { return model.get(iteratee); };
-    return iteratee;
-  };
-  var modelMatcher = function(attrs) {
-    var matcher = _.matches(attrs);
-    return function(model) {
-      return matcher(model.attributes);
-    };
-  };
-
   // Backbone.Events
   // ---------------
 
   // A module that can be mixed in to *any object* in order to provide it with
-  // a custom event channel. You may bind a callback to an event with `on` or
-  // remove with `off`; `trigger`-ing an event fires all callbacks in
+  // custom events. You may bind with `on` or remove with `off` callback
+  // functions to an event; `trigger`-ing an event fires all callbacks in
   // succession.
   //
   //     var object = {};
@@ -14563,25 +14379,26 @@ return jQuery;
 
   // Iterates over the standard `event, callback` (as well as the fancy multiple
   // space-separated events `"change blur", callback` and jQuery-style event
-  // maps `{event: callback}`).
-  var eventsApi = function(iteratee, events, name, callback, opts) {
+  // maps `{event: callback}`), reducing them by manipulating `memo`.
+  // Passes a normalized single event name and callback, as well as any
+  // optional `opts`.
+  var eventsApi = function(iteratee, memo, name, callback, opts) {
     var i = 0, names;
     if (name && typeof name === 'object') {
       // Handle event maps.
       if (callback !== void 0 && 'context' in opts && opts.context === void 0) opts.context = callback;
       for (names = _.keys(name); i < names.length ; i++) {
-        events = eventsApi(iteratee, events, names[i], name[names[i]], opts);
+        memo = iteratee(memo, names[i], name[names[i]], opts);
       }
     } else if (name && eventSplitter.test(name)) {
-      // Handle space separated event names by delegating them individually.
+      // Handle space separated event names.
       for (names = name.split(eventSplitter); i < names.length; i++) {
-        events = iteratee(events, names[i], callback, opts);
+        memo = iteratee(memo, names[i], callback, opts);
       }
     } else {
-      // Finally, standard events.
-      events = iteratee(events, name, callback, opts);
+      memo = iteratee(memo, name, callback, opts);
     }
-    return events;
+    return memo;
   };
 
   // Bind an event to a `callback` function. Passing `"all"` will bind
@@ -14590,7 +14407,8 @@ return jQuery;
     return internalOn(this, name, callback, context);
   };
 
-  // Guard the `listening` argument from the public API.
+  // An internal use `on` function, used to guard the `listening` argument from
+  // the public API.
   var internalOn = function(obj, name, callback, context, listening) {
     obj._events = eventsApi(onApi, obj._events || {}, name, callback, {
         context: context,
@@ -14607,8 +14425,7 @@ return jQuery;
   };
 
   // Inversion-of-control versions of `on`. Tell *this* object to listen to
-  // an event in another object... keeping track of what it's listening to
-  // for easier unbinding later.
+  // an event in another object... keeping track of what it's listening to.
   Events.listenTo =  function(obj, name, callback) {
     if (!obj) return this;
     var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
@@ -14676,6 +14493,7 @@ return jQuery;
 
   // The reducing API that removes a callback from the `events` object.
   var offApi = function(events, name, callback, options) {
+    // No events to consider.
     if (!events) return;
 
     var i = 0, listening;
@@ -14730,9 +14548,9 @@ return jQuery;
   };
 
   // Bind an event to only be triggered a single time. After the first time
-  // the callback is invoked, its listener will be removed. If multiple events
-  // are passed in using the space-separated syntax, the handler will fire
-  // once for each event, not once for a combination of all events.
+  // the callback is invoked, it will be removed. When multiple events are
+  // passed in using the space-separated syntax, the event will fire once for every
+  // event you passed in, not once for a combination of all events
   Events.once =  function(name, callback, context) {
     // Map the event into a `{event: once}` object.
     var events = eventsApi(onceMap, {}, name, callback, _.bind(this.off, this));
@@ -14920,6 +14738,9 @@ return jQuery;
       var changed = this.changed;
       var prev    = this._previousAttributes;
 
+      // Check for changes of `id`.
+      if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
+
       // For each `set` attribute, update or delete the current value.
       for (var attr in attrs) {
         val = attrs[attr];
@@ -14931,9 +14752,6 @@ return jQuery;
         }
         unset ? delete current[attr] : current[attr] = val;
       }
-
-      // Update the `id`.
-      this.id = this.get(this.idAttribute);
 
       // Trigger all relevant attribute changes.
       if (!silent) {
@@ -15157,8 +14975,7 @@ return jQuery;
 
   });
 
-  // Underscore methods that we want to implement on the Model, mapped to the
-  // number of arguments they take.
+  // Underscore methods that we want to implement on the Model.
   var modelMethods = { keys: 1, values: 1, pairs: 1, invert: 1, pick: 0,
       omit: 0, chain: 1, isEmpty: 1 };
 
@@ -15191,16 +15008,6 @@ return jQuery;
   var setOptions = {add: true, remove: true, merge: true};
   var addOptions = {add: true, remove: false};
 
-  // Splices `insert` into `array` at index `at`.
-  var splice = function(array, insert, at) {
-    at = Math.min(Math.max(at, 0), array.length);
-    var tail = Array(array.length - at);
-    var length = insert.length;
-    for (var i = 0; i < tail.length; i++) tail[i] = array[i + at];
-    for (i = 0; i < length; i++) array[i + at] = insert[i];
-    for (i = 0; i < tail.length; i++) array[i + length + at] = tail[i];
-  };
-
   // Define the Collection's inheritable methods.
   _.extend(Collection.prototype, Events, {
 
@@ -15223,9 +15030,7 @@ return jQuery;
       return Backbone.sync.apply(this, arguments);
     },
 
-    // Add a model, or list of models to the set. `models` may be Backbone
-    // Models or raw JavaScript objects to be converted to Models, or any
-    // combination of the two.
+    // Add a model, or list of models to the set.
     add: function(models, options) {
       return this.set(models, _.extend({merge: false}, options, addOptions));
     },
@@ -15245,88 +15050,83 @@ return jQuery;
     // already exist in the collection, as necessary. Similar to **Model#set**,
     // the core operation for updating the data contained by the collection.
     set: function(models, options) {
-      if (models == null) return;
-
       options = _.defaults({}, options, setOptions);
       if (options.parse && !this._isModel(models)) models = this.parse(models, options);
-
       var singular = !_.isArray(models);
-      models = singular ? [models] : models.slice();
-
+      models = singular ? (models ? [models] : []) : models.slice();
+      var id, model, attrs, existing, sort;
       var at = options.at;
       if (at != null) at = +at;
       if (at < 0) at += this.length + 1;
-
-      var set = [];
-      var toAdd = [];
-      var toRemove = [];
-      var modelMap = {};
-
-      var add = options.add;
-      var merge = options.merge;
-      var remove = options.remove;
-
-      var sort = false;
       var sortable = this.comparator && (at == null) && options.sort !== false;
       var sortAttr = _.isString(this.comparator) ? this.comparator : null;
+      var toAdd = [], toRemove = [], modelMap = {};
+      var add = options.add, merge = options.merge, remove = options.remove;
+      var order = !sortable && add && remove ? [] : false;
+      var orderChanged = false;
 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
-      var model;
       for (var i = 0; i < models.length; i++) {
-        model = models[i];
+        attrs = models[i];
 
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
-        var existing = this.get(model);
-        if (existing) {
-          if (merge && model !== existing) {
-            var attrs = this._isModel(model) ? model.attributes : model;
+        if (existing = this.get(attrs)) {
+          if (remove) modelMap[existing.cid] = true;
+          if (merge && attrs !== existing) {
+            attrs = this._isModel(attrs) ? attrs.attributes : attrs;
             if (options.parse) attrs = existing.parse(attrs, options);
             existing.set(attrs, options);
-            if (sortable && !sort) sort = existing.hasChanged(sortAttr);
-          }
-          if (!modelMap[existing.cid]) {
-            modelMap[existing.cid] = true;
-            set.push(existing);
+            if (sortable && !sort && existing.hasChanged(sortAttr)) sort = true;
           }
           models[i] = existing;
 
         // If this is a new, valid model, push it to the `toAdd` list.
         } else if (add) {
-          model = models[i] = this._prepareModel(model, options);
-          if (model) {
-            toAdd.push(model);
-            this._addReference(model, options);
-            modelMap[model.cid] = true;
-            set.push(model);
-          }
+          model = models[i] = this._prepareModel(attrs, options);
+          if (!model) continue;
+          toAdd.push(model);
+          this._addReference(model, options);
         }
+
+        // Do not add multiple models with the same `id`.
+        model = existing || model;
+        if (!model) continue;
+        id = this.modelId(model.attributes);
+        if (order && (model.isNew() || !modelMap[id])) {
+          order.push(model);
+
+          // Check to see if this is actually a new model at this index.
+          orderChanged = orderChanged || !this.models[i] || model.cid !== this.models[i].cid;
+        }
+
+        modelMap[id] = true;
       }
 
-      // Remove stale models.
+      // Remove nonexistent models if appropriate.
       if (remove) {
-        for (i = 0; i < this.length; i++) {
-          model = this.models[i];
-          if (!modelMap[model.cid]) toRemove.push(model);
+        for (var i = 0; i < this.length; i++) {
+          if (!modelMap[(model = this.models[i]).cid]) toRemove.push(model);
         }
         if (toRemove.length) this._removeModels(toRemove, options);
       }
 
       // See if sorting is needed, update `length` and splice in new models.
-      var orderChanged = false;
-      var replace = !sortable && add && remove;
-      if (set.length && replace) {
-        orderChanged = this.length != set.length || _.some(this.models, function(model, index) {
-          return model !== set[index];
-        });
-        this.models.length = 0;
-        splice(this.models, set, 0);
-        this.length = this.models.length;
-      } else if (toAdd.length) {
+      if (toAdd.length || orderChanged) {
         if (sortable) sort = true;
-        splice(this.models, toAdd, at == null ? this.length : at);
-        this.length = this.models.length;
+        this.length += toAdd.length;
+        if (at != null) {
+          for (var i = 0; i < toAdd.length; i++) {
+            this.models.splice(at + i, 0, toAdd[i]);
+          }
+        } else {
+          if (order) this.models.length = 0;
+          var orderedModels = order || toAdd;
+          for (var i = 0; i < orderedModels.length; i++) {
+            this.models.push(orderedModels[i]);
+          }
+        }
       }
 
       // Silently sort the collection if appropriate.
@@ -15334,10 +15134,10 @@ return jQuery;
 
       // Unless silenced, it's time to fire all appropriate add/sort events.
       if (!options.silent) {
-        for (i = 0; i < toAdd.length; i++) {
-          if (at != null) options.index = at + i;
-          model = toAdd[i];
-          model.trigger('add', model, this, options);
+        var addOpts = at != null ? _.clone(options) : options;
+        for (var i = 0; i < toAdd.length; i++) {
+          if (at != null) addOpts.index = at + i;
+          (model = toAdd[i]).trigger('add', model, this, addOpts);
         }
         if (sort || orderChanged) this.trigger('sort', this, options);
         if (toAdd.length || toRemove.length) this.trigger('update', this, options);
@@ -15406,7 +15206,10 @@ return jQuery;
     // Return models with matching attributes. Useful for simple cases of
     // `filter`.
     where: function(attrs, first) {
-      return this[first ? 'find' : 'filter'](attrs);
+      var matches = _.matches(attrs);
+      return this[first ? 'find' : 'filter'](function(model) {
+        return matches(model.attributes);
+      });
     },
 
     // Return the first model with matching attributes. Useful for simple cases
@@ -15419,19 +15222,16 @@ return jQuery;
     // normal circumstances, as the set will maintain sort order as each item
     // is added.
     sort: function(options) {
-      var comparator = this.comparator;
-      if (!comparator) throw new Error('Cannot sort a set without a comparator');
+      if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
       options || (options = {});
 
-      var length = comparator.length;
-      if (_.isFunction(comparator)) comparator = _.bind(comparator, this);
-
       // Run sort based on type of `comparator`.
-      if (length === 1 || _.isString(comparator)) {
-        this.models = this.sortBy(comparator);
+      if (_.isString(this.comparator) || this.comparator.length === 1) {
+        this.models = this.sortBy(this.comparator, this);
       } else {
-        this.models.sort(comparator);
+        this.models.sort(_.bind(this.comparator, this));
       }
+
       if (!options.silent) this.trigger('sort', this, options);
       return this;
     },
@@ -15520,6 +15320,7 @@ return jQuery;
     },
 
     // Internal method called by both remove and set.
+    // Returns removed models, or false if nothing is removed.
     _removeModels: function(models, options) {
       var removed = [];
       for (var i = 0; i < models.length; i++) {
@@ -15589,15 +15390,28 @@ return jQuery;
   // right here:
   var collectionMethods = { forEach: 3, each: 3, map: 3, collect: 3, reduce: 4,
       foldl: 4, inject: 4, reduceRight: 4, foldr: 4, find: 3, detect: 3, filter: 3,
-      select: 3, reject: 3, every: 3, all: 3, some: 3, any: 3, include: 3, includes: 3,
-      contains: 3, invoke: 0, max: 3, min: 3, toArray: 1, size: 1, first: 3,
+      select: 3, reject: 3, every: 3, all: 3, some: 3, any: 3, include: 2,
+      contains: 2, invoke: 0, max: 3, min: 3, toArray: 1, size: 1, first: 3,
       head: 3, take: 3, initial: 3, rest: 3, tail: 3, drop: 3, last: 3,
       without: 0, difference: 0, indexOf: 3, shuffle: 1, lastIndexOf: 3,
-      isEmpty: 1, chain: 1, sample: 3, partition: 3, groupBy: 3, countBy: 3,
-      sortBy: 3, indexBy: 3};
+      isEmpty: 1, chain: 1, sample: 3, partition: 3 };
 
   // Mix in each Underscore method as a proxy to `Collection#models`.
   addUnderscoreMethods(Collection, collectionMethods, 'models');
+
+  // Underscore methods that take a property name as an argument.
+  var attributeMethods = ['groupBy', 'countBy', 'sortBy', 'indexBy'];
+
+  // Use attributes instead of properties.
+  _.each(attributeMethods, function(method) {
+    if (!_[method]) return;
+    Collection.prototype[method] = function(value, context) {
+      var iterator = _.isFunction(value) ? value : function(model) {
+        return model.get(value);
+      };
+      return _[method](this.models, iterator, context);
+    };
+  });
 
   // Backbone.View
   // -------------
@@ -15622,7 +15436,7 @@ return jQuery;
   // Cached regex to split keys for `delegate`.
   var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
-  // List of view options to be set as properties.
+  // List of view options to be merged as properties.
   var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'];
 
   // Set up all inheritable **Backbone.View** properties and methods.
@@ -15966,7 +15780,7 @@ return jQuery;
   // falls back to polling.
   var History = Backbone.History = function() {
     this.handlers = [];
-    this.checkUrl = _.bind(this.checkUrl, this);
+    _.bindAll(this, 'checkUrl');
 
     // Ensure that `History` can be used outside of the browser.
     if (typeof window !== 'undefined') {
@@ -16059,7 +15873,7 @@ return jQuery;
       this.options          = _.extend({root: '/'}, this.options, options);
       this.root             = this.options.root;
       this._wantsHashChange = this.options.hashChange !== false;
-      this._hasHashChange   = 'onhashchange' in window && (document.documentMode === void 0 || document.documentMode > 7);
+      this._hasHashChange   = 'onhashchange' in window;
       this._useHashChange   = this._wantsHashChange && this._hasHashChange;
       this._wantsPushState  = !!this.options.pushState;
       this._hasPushState    = !!(this.history && this.history.pushState);
@@ -16178,7 +15992,7 @@ return jQuery;
       // If the root doesn't match, no routes can match either.
       if (!this.matchRoot()) return false;
       fragment = this.fragment = this.getFragment(fragment);
-      return _.some(this.handlers, function(handler) {
+      return _.any(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
           handler.callback(fragment);
           return true;
@@ -16322,7 +16136,7 @@ return jQuery;
 
 // MarionetteJS (Backbone.Marionette)
 // ----------------------------------
-// v2.4.3
+// v2.4.2
 //
 // Copyright (c)2015 Derick Bailey, Muted Solutions, LLC.
 // Distributed under MIT license
@@ -16360,7 +16174,7 @@ return jQuery;
   /* istanbul ignore next */
   // Backbone.BabySitter
   // -------------------
-  // v0.1.10
+  // v0.1.7
   //
   // Copyright (c)2015 Derick Bailey, Muted Solutions, LLC.
   // Distributed under MIT license
@@ -16489,7 +16303,7 @@ return jQuery;
       // return the public API
       return Container;
     }(Backbone, _);
-    Backbone.ChildViewContainer.VERSION = "0.1.10";
+    Backbone.ChildViewContainer.VERSION = "0.1.7";
     Backbone.ChildViewContainer.noConflict = function() {
       Backbone.ChildViewContainer = previousChildViewContainer;
       return this;
@@ -16500,7 +16314,7 @@ return jQuery;
   /* istanbul ignore next */
   // Backbone.Wreqr (Backbone.Marionette)
   // ----------------------------------
-  // v1.3.5
+  // v1.3.3
   //
   // Copyright (c)2015 Derick Bailey, Muted Solutions, LLC.
   // Distributed under MIT license
@@ -16510,7 +16324,7 @@ return jQuery;
     "use strict";
     var previousWreqr = Backbone.Wreqr;
     var Wreqr = Backbone.Wreqr = {};
-    Backbone.Wreqr.VERSION = "1.3.5";
+    Backbone.Wreqr.VERSION = "1.3.3";
     Backbone.Wreqr.noConflict = function() {
       Backbone.Wreqr = previousWreqr;
       return this;
@@ -16811,7 +16625,7 @@ return jQuery;
 
   var Marionette = Backbone.Marionette = {};
 
-  Marionette.VERSION = '2.4.3';
+  Marionette.VERSION = '2.4.2';
 
   Marionette.noConflict = function() {
     root.Marionette = previousMarionette;
@@ -17051,8 +16865,6 @@ return jQuery;
   // re-rendered.
   
   Marionette.MonitorDOMRefresh = function(view) {
-    if (view._isDomRefreshMonitored) { return; }
-    view._isDomRefreshMonitored = true;
   
     // track when the view has been shown in the DOM,
     // using a Marionette.Region (or by other means of triggering "show")
@@ -17070,7 +16882,9 @@ return jQuery;
     // Trigger the "dom:refresh" event and corresponding "onDomRefresh" method
     function triggerDOMRefresh() {
       if (view._isShown && view._isRendered && Marionette.isNodeAttached(view.el)) {
-        Marionette.triggerMethodOn(view, 'dom:refresh', view);
+        if (_.isFunction(view.triggerMethod)) {
+          view.triggerMethod('dom:refresh');
+        }
       }
     }
   
@@ -17411,7 +17225,6 @@ return jQuery;
       }
   
       this._ensureViewIsIntact(view);
-      Marionette.MonitorDOMRefresh(view);
   
       var showOptions     = options || {};
       var isDifferentView = view !== this.currentView;
@@ -17456,8 +17269,7 @@ return jQuery;
         // to the currentView since once a view has been destroyed
         // we can not reuse it.
         view.once('destroy', this.empty, this);
-  
-        this._renderView(view);
+        view.render();
   
         view._parent = this;
   
@@ -17525,16 +17337,6 @@ return jQuery;
       return _.union([view], _.result(view, '_getNestedViews') || []);
     },
   
-    _renderView: function(view) {
-      if (!view.supportsRenderLifecycle) {
-        Marionette.triggerMethodOn(view, 'before:render', view);
-      }
-      view.render();
-      if (!view.supportsRenderLifecycle) {
-        Marionette.triggerMethodOn(view, 'render', view);
-      }
-    },
-  
     _ensureElement: function() {
       if (!_.isObject(this.el)) {
         this.$el = this.getEl(this.el);
@@ -17587,8 +17389,7 @@ return jQuery;
     empty: function(options) {
       var view = this.currentView;
   
-      var emptyOptions = options || {};
-      var preventDestroy  = !!emptyOptions.preventDestroy;
+      var preventDestroy = Marionette._getValue(options, 'preventDestroy', this);
       // If there is no view in the region
       // we should not remove anything
       if (!view) { return; }
@@ -17614,22 +17415,15 @@ return jQuery;
     // on the view (if showing a raw Backbone view or a Marionette View)
     _destroyView: function() {
       var view = this.currentView;
-      if (view.isDestroyed) { return; }
   
-      if (!view.supportsDestroyLifecycle) {
-        Marionette.triggerMethodOn(view, 'before:destroy', view);
-      }
-      if (view.destroy) {
+      if (view.destroy && !view.isDestroyed) {
         view.destroy();
-      } else {
+      } else if (view.remove) {
         view.remove();
   
         // appending isDestroyed to raw Backbone View allows regions
         // to throw a ViewDestroyedError for this view
         view.isDestroyed = true;
-      }
-      if (!view.supportsDestroyLifecycle) {
-        Marionette.triggerMethodOn(view, 'destroy', view);
       }
     },
   
@@ -17638,10 +17432,6 @@ return jQuery;
     // and will not replace the current HTML for the `el`
     // of the region.
     attachView: function(view) {
-      if (this.currentView) {
-        delete this.currentView._parent;
-      }
-      view._parent = this;
       this.currentView = view;
       return this;
     },
@@ -17933,15 +17723,16 @@ return jQuery;
     // using a template-loader plugin as described here:
     // https://github.com/marionettejs/backbone.marionette/wiki/Using-marionette-with-requirejs
     loadTemplate: function(templateId, options) {
-      var $template = Backbone.$(templateId);
+      var template = Backbone.$(templateId).html();
   
-      if (!$template.length) {
+      if (!template || template.length === 0) {
         throw new Marionette.Error({
           name: 'NoTemplateError',
           message: 'Could not find template: "' + templateId + '"'
         });
       }
-      return $template.html();
+  
+      return template;
     },
   
     // Pre-compile the template before caching it. Override
@@ -17986,11 +17777,9 @@ return jQuery;
   // The core view class that other Marionette views extend from.
   Marionette.View = Backbone.View.extend({
     isDestroyed: false,
-    supportsRenderLifecycle: true,
-    supportsDestroyLifecycle: true,
   
     constructor: function(options) {
-      this.render = _.bind(this.render, this);
+      _.bindAll(this, 'render');
   
       options = Marionette._getValue(options, this);
   
@@ -18210,13 +17999,14 @@ return jQuery;
     // Internal method to create an event handler for a given `triggerDef` like
     // 'click:foo'
     _buildViewTrigger: function(triggerDef) {
+      var hasOptions = _.isObject(triggerDef);
   
-      var options = _.defaults({}, triggerDef, {
+      var options = _.defaults({}, (hasOptions ? triggerDef : {}), {
         preventDefault: true,
         stopPropagation: true
       });
   
-      var eventName = _.isObject(triggerDef) ? options.event : triggerDef;
+      var eventName = hasOptions ? options.event : triggerDef;
   
       return function(e) {
         if (e) {
@@ -18279,16 +18069,15 @@ return jQuery;
       // invoke triggerMethod on parent view
       var eventPrefix = Marionette.getOption(layoutView, 'childViewEventPrefix');
       var prefixedEventName = eventPrefix + ':' + eventName;
-      var callArgs = [this].concat(args);
   
-      Marionette._triggerMethod(layoutView, prefixedEventName, callArgs);
+      Marionette._triggerMethod(layoutView, [prefixedEventName, this].concat(args));
   
       // call the parent view's childEvents handler
       var childEvents = Marionette.getOption(layoutView, 'childEvents');
       var normalizedChildEvents = layoutView.normalizeMethods(childEvents);
   
-      if (normalizedChildEvents && _.isFunction(normalizedChildEvents[eventName])) {
-        normalizedChildEvents[eventName].apply(layoutView, callArgs);
+      if (!!normalizedChildEvents && _.isFunction(normalizedChildEvents[eventName])) {
+        normalizedChildEvents[eventName].apply(layoutView, [this].concat(args));
       }
     },
   
@@ -18562,12 +18351,11 @@ return jQuery;
   
     // Handle a child added to the collection
     _onCollectionAdd: function(child, collection, opts) {
-      // `index` is present when adding with `at` since BB 1.2; indexOf fallback for < 1.2
-      var index = opts.at !== undefined && (opts.index || collection.indexOf(child));
-  
-      // When filtered or when there is no initial index, calculate index.
-      if (this.getOption('filter') || index === false) {
-        index = _.indexOf(this._filteredSortedModels(index), child);
+      var index;
+      if (opts.at !== undefined) {
+        index = opts.at;
+      } else {
+        index = _.indexOf(this._filteredSortedModels(), child);
       }
   
       if (this._shouldAddChild(child, index)) {
@@ -18707,7 +18495,7 @@ return jQuery;
         this.triggerMethod('render:collection', this);
   
         // If we have shown children and none have passed the filter, show the empty view
-        if (this.children.isEmpty() && this.getOption('filter')) {
+        if (this.children.isEmpty()) {
           this.showEmptyView();
         }
       }
@@ -18726,22 +18514,18 @@ return jQuery;
     },
   
     // Allow the collection to be sorted by a custom view comparator
-    _filteredSortedModels: function(addedAt) {
+    _filteredSortedModels: function() {
+      var models;
       var viewComparator = this.getViewComparator();
-      var models = this.collection.models;
-      addedAt = Math.min(Math.max(addedAt, 0), models.length - 1);
   
       if (viewComparator) {
-        var addedModel;
-        // Preserve `at` location, even for a sorted view
-        if (addedAt) {
-          addedModel = models[addedAt];
-          models = models.slice(0, addedAt).concat(models.slice(addedAt + 1));
+        if (_.isString(viewComparator) || viewComparator.length === 1) {
+          models = this.collection.sortBy(viewComparator, this);
+        } else {
+          models = _.clone(this.collection.models).sort(_.bind(viewComparator, this));
         }
-        models = this._sortModelsBy(models, viewComparator);
-        if (addedModel) {
-          models.splice(addedAt, 0, addedModel);
-        }
+      } else {
+        models = this.collection.models;
       }
   
       // Filter after sorting in case the filter uses the index
@@ -18752,18 +18536,6 @@ return jQuery;
       }
   
       return models;
-    },
-  
-    _sortModelsBy: function(models, comparator) {
-      if (typeof comparator === 'string') {
-        return _.sortBy(models, function(model) {
-          return model.get(comparator);
-        }, this);
-      } else if (comparator.length === 1) {
-        return _.sortBy(models, comparator, this);
-      } else {
-        return models.sort(_.bind(comparator, this));
-      }
     },
   
     // Internal method to show an empty view in place of
@@ -18826,27 +18598,30 @@ return jQuery;
       // Proxy emptyView events
       this.proxyChildEvents(view);
   
-      view.once('render', function() {
-        // trigger the 'before:show' event on `view` if the collection view has already been shown
-        if (this._isShown) {
-          Marionette.triggerMethodOn(view, 'before:show', view);
-        }
+      // trigger the 'before:show' event on `view` if the collection view has already been shown
+      if (this._isShown) {
+        Marionette.triggerMethodOn(view, 'before:show', view);
+      }
   
-        // Trigger `before:attach` following `render` to avoid adding logic and event triggers
-        // to public method `renderChildView()`.
-        if (canTriggerAttach && this._triggerBeforeAttach) {
-          nestedViews = this._getViewAndNested(view);
-          this._triggerMethodMany(nestedViews, this, 'before:attach');
-        }
-      }, this);
-  
-      // Store the `emptyView` like a `childView` so we can properly remove and/or close it later
+      // Store the `emptyView` like a `childView` so we can properly
+      // remove and/or close it later
       this.children.add(view);
+  
+      // Trigger `before:attach` following `render` to avoid adding logic and event triggers
+      // to public method `renderChildView()`.
+      if (canTriggerAttach && this._triggerBeforeAttach) {
+        nestedViews = [view].concat(view._getNestedViews());
+        view.once('render', function() {
+          this._triggerMethodMany(nestedViews, this, 'before:attach');
+        }, this);
+      }
+  
+      // Render it and show it
       this.renderChildView(view, this._emptyViewIndex);
   
       // Trigger `attach`
       if (canTriggerAttach && this._triggerAttach) {
-        nestedViews = this._getViewAndNested(view);
+        nestedViews = [view].concat(view._getNestedViews());
         this._triggerMethodMany(nestedViews, this, 'attach');
       }
       // call the 'show' method if the collection view has already been shown
@@ -18927,27 +18702,28 @@ return jQuery;
       // set up the child view event forwarding
       this.proxyChildEvents(view);
   
-      view.once('render', function() {
-        // trigger the 'before:show' event on `view` if the collection view has already been shown
-        if (this._isShown && !this.isBuffering) {
-          Marionette.triggerMethodOn(view, 'before:show', view);
-        }
-  
-        // Trigger `before:attach` following `render` to avoid adding logic and event triggers
-        // to public method `renderChildView()`.
-        if (canTriggerAttach && this._triggerBeforeAttach) {
-          nestedViews = this._getViewAndNested(view);
-          this._triggerMethodMany(nestedViews, this, 'before:attach');
-        }
-      }, this);
+      // trigger the 'before:show' event on `view` if the collection view has already been shown
+      if (this._isShown && !this.isBuffering) {
+        Marionette.triggerMethodOn(view, 'before:show', view);
+      }
   
       // Store the child view itself so we can properly remove and/or destroy it later
       this.children.add(view);
+  
+      // Trigger `before:attach` following `render` to avoid adding logic and event triggers
+      // to public method `renderChildView()`.
+      if (canTriggerAttach && this._triggerBeforeAttach) {
+        nestedViews = [view].concat(view._getNestedViews());
+        view.once('render', function() {
+          this._triggerMethodMany(nestedViews, this, 'before:attach');
+        }, this);
+      }
+  
       this.renderChildView(view, index);
   
       // Trigger `attach`
       if (canTriggerAttach && this._triggerAttach) {
-        nestedViews = this._getViewAndNested(view);
+        nestedViews = [view].concat(view._getNestedViews());
         this._triggerMethodMany(nestedViews, this, 'attach');
       }
       // Trigger `show`
@@ -18958,13 +18734,7 @@ return jQuery;
   
     // render the child view
     renderChildView: function(view, index) {
-      if (!view.supportsRenderLifecycle) {
-        Marionette.triggerMethodOn(view, 'before:render', view);
-      }
       view.render();
-      if (!view.supportsRenderLifecycle) {
-        Marionette.triggerMethodOn(view, 'render', view);
-      }
       this.attachHtml(this, view, index);
       return view;
     },
@@ -18972,9 +18742,7 @@ return jQuery;
     // Build a `childView` for a model in the collection.
     buildChildView: function(child, ChildViewClass, childViewOptions) {
       var options = _.extend({model: child}, childViewOptions);
-      var childView = new ChildViewClass(options);
-      Marionette.MonitorDOMRefresh(childView);
-      return childView;
+      return new ChildViewClass(options);
     },
   
     // Remove the child view and destroy it.
@@ -18982,30 +18750,25 @@ return jQuery;
     // later views in the collection in order to keep
     // the children in sync with the collection.
     removeChildView: function(view) {
-      if (!view) { return view; }
   
-      this.triggerMethod('before:remove:child', view);
+      if (view) {
+        this.triggerMethod('before:remove:child', view);
   
-      if (!view.supportsDestroyLifecycle) {
-        Marionette.triggerMethodOn(view, 'before:destroy', view);
+        // call 'destroy' or 'remove', depending on which is found
+        if (view.destroy) {
+          view.destroy();
+        } else if (view.remove) {
+          view.remove();
+        }
+  
+        delete view._parent;
+        this.stopListening(view);
+        this.children.remove(view);
+        this.triggerMethod('remove:child', view);
+  
+        // decrement the index of views after this one
+        this._updateIndices(view, false);
       }
-      // call 'destroy' or 'remove', depending on which is found
-      if (view.destroy) {
-        view.destroy();
-      } else {
-        view.remove();
-      }
-      if (!view.supportsDestroyLifecycle) {
-        Marionette.triggerMethodOn(view, 'destroy', view);
-      }
-  
-      delete view._parent;
-      this.stopListening(view);
-      this.children.remove(view);
-      this.triggerMethod('remove:child', view);
-  
-      // decrement the index of views after this one
-      this._updateIndices(view, false);
   
       return view;
     },
@@ -19154,11 +18917,6 @@ return jQuery;
   
     _getImmediateChildren: function() {
       return _.values(this.children._views);
-    },
-  
-    _getViewAndNested: function(view) {
-      // This will not fail on Backbone.View which does not have #_getNestedViews.
-      return [view].concat(_.result(view, '_getNestedViews') || []);
     },
   
     getViewComparator: function() {
@@ -19857,7 +19615,7 @@ return jQuery;
       this.submodules = {};
       _.extend(this, options);
       this._initChannel();
-      Marionette.Object.apply(this, arguments);
+      Marionette.Object.call(this, options);
     },
   
     // Command execution, facilitated by Backbone.Wreqr.Commands
@@ -25861,6 +25619,10 @@ ChartistHtml.ChartManager.prototype = {
 		if(!self._isRendered) {
 			chart = new Chartist[chartType]('.' + chartClass, this.data, opt.options, opt.responsiveOptions);
 		}
+
+		chart.on('draw', function(context) {
+			// console.log(context);
+		});
 
 		chart.on('created', function() {
 			if(!self._isRendered) {
