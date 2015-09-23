@@ -1,69 +1,3 @@
-(function() {
-  if (typeof ChartistHtml !== "undefined" && ChartistHtml !== null) {
-    ChartistHtml.config.baseClass = "atlas-chart";
-    ChartistHtml.config.colorSpectrum = ['#85026A', '#019fde'];
-    ChartistHtml.config.tooltipTemplate = function(data) {
-      return "<div><h1>" + data.label + "</h1><p>" + data.value + "</p></div>";
-    };
-    ChartistHtml.config.chartOptions.bar.options.base.seriesBarDistance = 28;
-    ChartistHtml.config.labelOffsetCoefficient = 5;
-  }
-
-}).call(this);
-
-(function() {
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-    }
-  });
-
-}).call(this);
-
-(function() {
-  $.fn.ensureScript = function(globalName, path, next) {
-    if (window[globalName] != null) {
-      return next();
-    }
-    return $.ajax({
-      url: path,
-      contentType: 'text/javascript; charset=utf-8',
-      dataType: 'script',
-      success: next
-    });
-  };
-
-}).call(this);
-
-(function() {
-  $.fn.extend({
-    toggleModifierClass: function(baseClass, modifiers, modifierSign) {
-      var $el, className, i, j, len, modifier, newClass, newModifier;
-      if (modifierSign == null) {
-        modifierSign = '--';
-      }
-      $el = $(this);
-      if (!(modifiers instanceof Array)) {
-        modifiers = modifiers[0];
-      }
-      for (i = j = 0, len = modifiers.length; j < len; i = ++j) {
-        modifier = modifiers[i];
-        className = baseClass + modifierSign + modifier;
-        if ($el.hasClass(className)) {
-          $el.removeClass(className);
-          newModifier = (modifiers[i + 1] != null ? modifiers[i + 1] : modifiers[0]);
-          if ((newModifier !== modifier) && (newModifier !== '')) {
-            newClass = baseClass + modifierSign + newModifier;
-            return $el.addClass(newClass);
-          }
-        }
-      }
-      return $el.addClass(baseClass + modifierSign + modifiers[0]);
-    }
-  });
-
-}).call(this);
-
 if (!Function.prototype.bind) {
   Function.prototype.bind = function(oThis) {
     if (typeof this !== 'function') {
@@ -235,6 +169,72 @@ if (!Array.prototype.map) {
     return A;
   };
 }
+(function() {
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+    }
+  });
+
+}).call(this);
+
+(function() {
+  $.fn.ensureScript = function(globalName, path, next) {
+    if (window[globalName] != null) {
+      return next();
+    }
+    return $.ajax({
+      url: path,
+      contentType: 'text/javascript; charset=utf-8',
+      dataType: 'script',
+      success: next
+    });
+  };
+
+}).call(this);
+
+(function() {
+  $.fn.extend({
+    toggleModifierClass: function(baseClass, modifiers, modifierSign) {
+      var $el, className, i, j, len, modifier, newClass, newModifier;
+      if (modifierSign == null) {
+        modifierSign = '--';
+      }
+      $el = $(this);
+      if (!(modifiers instanceof Array)) {
+        modifiers = modifiers[0];
+      }
+      for (i = j = 0, len = modifiers.length; j < len; i = ++j) {
+        modifier = modifiers[i];
+        className = baseClass + modifierSign + modifier;
+        if ($el.hasClass(className)) {
+          $el.removeClass(className);
+          newModifier = (modifiers[i + 1] != null ? modifiers[i + 1] : modifiers[0]);
+          if ((newModifier !== modifier) && (newModifier !== '')) {
+            newClass = baseClass + modifierSign + newModifier;
+            return $el.addClass(newClass);
+          }
+        }
+      }
+      return $el.addClass(baseClass + modifierSign + modifiers[0]);
+    }
+  });
+
+}).call(this);
+
+(function() {
+  if (typeof ChartistHtml !== "undefined" && ChartistHtml !== null) {
+    ChartistHtml.config.baseClass = "atlas-chart";
+    ChartistHtml.config.colorSpectrum = ['#85026A', '#019fde'];
+    ChartistHtml.config.tooltipTemplate = function(data) {
+      return "<div><h1>" + data.label + "</h1><p>" + data.value + "</p></div>";
+    };
+    ChartistHtml.config.chartOptions.bar.options.base.seriesBarDistance = 28;
+    ChartistHtml.config.labelOffsetCoefficient = 5;
+  }
+
+}).call(this);
+
 window.Atlas = new Marionette.Application();
 window.Map = {};
 

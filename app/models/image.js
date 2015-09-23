@@ -48,7 +48,7 @@ exports.Model = base.Model.extend({
 
 	],
 
-	urlRoot: '/api/v1/images',
+	apiUrlRoot: '/api/v1/images',
 
 	getEditUrl: function() {
 		return `/images/${this.get('id')}/edit`;

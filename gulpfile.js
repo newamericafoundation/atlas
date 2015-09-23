@@ -11,3 +11,5 @@ require('./gulp_tasks/deploy.js');
 require('./gulp_tasks/devops.js');
 
 require('./gulp_tasks/default.js');
+
+require('./gulp_tasks/extract_boilerplate.js');

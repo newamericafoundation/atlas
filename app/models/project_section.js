@@ -4,7 +4,7 @@ var _ = require('underscore'),
 	seed = require('./../../db/seeds/project_sections.json');
 
 exports.Model = baseFilter.Model.extend({
-	urlRoot: '/api/v1/project_sections'
+	apiUrlRoot: '/api/v1/project_sections'
 });
 
 exports.Collection = baseFilter.Collection.extend({
@@ -15,7 +15,7 @@ exports.Collection = baseFilter.Collection.extend({
 
 	model: exports.Model,
 
-	url: '/api/v1/project_sections',
+	apiUrl: '/api/v1/project_sections',
 
 	hasSingleActiveChild: false,
 

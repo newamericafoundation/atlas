@@ -4,10 +4,13 @@ module.exports = {
 
     production: !!util.env.production,
 
-    core: [
+    boilerplate: [
 
-    	'./app/middleware',
+    	'./app.js',
+
+    	'./app/middleware/**/*',
     	'./app/assets/scripts/polyfills/**/*',
+    	'./app/models/base_crud.js',
 
     	'./db/connector.js',
     	'./db/batch_modifier',

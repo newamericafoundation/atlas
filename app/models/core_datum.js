@@ -5,7 +5,7 @@ var _ = require('underscore'),
 
 exports.Model = base.Model.extend({
 	
-	urlRoot: '/api/v1/core_data',
+	apiUrlRoot: '/api/v1/core_data',
 	
 	/** 
 	 * Fetches core data model url by name key 

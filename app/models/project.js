@@ -8,7 +8,6 @@ var _ = require('underscore'),
     variable = require('./variable.js'),
     item = require('./item.js');
 
-
 exports.Model = base.Model.extend({
 
     name: 'project',
@@ -172,7 +171,7 @@ exports.Model = base.Model.extend({
 
     ],
 
-    urlRoot: '/api/v1/projects',
+    apiUrlRoot: '/api/v1/projects',
 
     /** API queries that need to be handled custom. For every key, there is a this.is_#{key} method that filters a model. */
     customQueryKeys: ['related_to'],
