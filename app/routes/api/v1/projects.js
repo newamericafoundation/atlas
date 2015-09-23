@@ -11,6 +11,7 @@ import deleteMiddleware from './../../../middleware/crud/delete.js';
 import newMiddleware from  './../../../middleware/crud/new.js';
 import updateMiddleware from './../../../middleware/crud/update.js';
 import showMiddleware from './../../../middleware/crud/show.js';
+import indexMiddleware from './../../../middleware/crud/index.js';
 
 // Unsafe setting to test back-end while in development, skipping the auth step which is required at each server restart.
 //var currentAuthMiddleware = (process.NODE_ENV === 'production') ? authMiddleware.ensureAuthenticated : authMiddleware.ensureNothing;
@@ -75,6 +76,10 @@ router.get([ '/', '/image' ], function(req, res) {
 	});
 
 });
+
+// router.get('/', indexMiddleware.bind(this, { dbCollectionName: 'projects' }), (req, res) => {
+// 	res.json(req.dbResponse);
+// });
 
 router.get('/:id', showMiddleware.bind(this, { dbCollectionName: 'projects' }), (req, res) => {
 	res.json(req.dbResponse);

@@ -12,6 +12,9 @@ module.exports = {
     	'./app/assets/scripts/polyfills/**/*',
     	'./app/models/base_crud.js',
 
+    	'./app/components/crud/**/*',
+    	'./app/components/form/**/*',
+
     	'./db/connector.js',
     	'./db/batch_modifier',
 
@@ -41,6 +44,8 @@ module.exports = {
 		    // bower scripts
 		    vendor: [
 		        './bower_components/jquery/dist/jquery.js',
+		        // './bower_components/q/q.js',
+		        // './bower_components/qajax/src/qajax.js',
 		        './bower_components/selectize/dist/js/standalone/selectize.js',
 		        './bower_components/underscore/underscore.js',
 		        './bower_components/backbone/backbone.js',

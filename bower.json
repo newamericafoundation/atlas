@@ -14,22 +14,23 @@
     "spec"
   ],
   "dependencies": {
-    "jquery": "~2.1.4",
-    "normalize.css": "3.0.2",
     "backbone": "~1.2.1",
-    "marionette": "~2.4.2",
-    "d3": "3.5.5",
-    "mapbox.js": "~2.1.9",
-    "topojson": "~1.6.19",
-    "jquery-mousewheel": "~3.1.12",
     "chartist": "~0.8.3",
     "chartist-html": "~0.1.2",
+    "ckeditor": "~4.5.3",
+    "d3": "3.5.5",
+    "jquery": "~2.1.4",
+    "jquery-mousewheel": "~3.1.12",
+    "js-xlsx": "~0.8.0",
+    "leaflet": "~0.7.3",
+    "mapbox.js": "~2.1.9",
+    "marionette": "~2.4.2",
+    "normalize.css": "3.0.2",
+    "numeral": "~1.5.3",
+    "qajax": "~0.2.4",
     "selectize": "~0.12.0",
     "selectize-scss": "~0.8.9",
-    "leaflet": "~0.7.3",
-    "underscore": "~1.8.3",
-    "ckeditor": "~4.5.3",
-    "js-xlsx": "~0.8.0",
-    "numeral": "~1.5.3"
+    "topojson": "~1.6.19",
+    "underscore": "~1.8.3"
   }
 }
