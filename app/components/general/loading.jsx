@@ -5,10 +5,8 @@ class Loading extends React.Component {
 
 	render() {
 		return (
-			<div className='loading-icon'>
-				<div>
-					Loading...
-				</div>
+			<div className='loader'>
+				<img src="/assets/images/spinner.gif" />
 			</div>
 		);
 	}

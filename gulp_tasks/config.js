@@ -4,6 +4,18 @@ module.exports = {
 
     production: !!util.env.production,
 
+    core: [
+
+    	'./app/middleware',
+    	'./app/assets/scripts/polyfills/**/*',
+
+    	'./db/connector.js',
+    	'./db/batch_modifier',
+
+    	'./public/assets/styles/app.css'
+
+    ],
+
     source: {
 
     	js: {
@@ -39,6 +51,7 @@ module.exports = {
 
 		    // main application code
 		    source: [
+		    	'./app/assets/scripts/polyfills/**/*',
 		        './app/assets/scripts/config/**/*',
 		        './app/assets/scripts/atlas/atlas.js',
 		        './app/assets/scripts/atlas/map/map.js',

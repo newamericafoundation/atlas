@@ -89,13 +89,18 @@ class Project extends React.Component {
 	}
 
 	render() {
-		var project;
+		var project, cls;
 		if (!this.isVisible()) {
 			return (<div/>);
 		}
 		project = this.props.project;
+		cls = classNames({
+			'atl__project': true,
+			'atl__project--explainer': (project.get('project_template_id') === '1'),
+			'atl__project--overview': (project.get('is_section_overview') === 'Yes')
+		});
 		return (
-			<Link className={ "atl__project " + this.getModifierClasses() } onMouseEnter={ this.applyBackgroundColor.bind(this) } onMouseLeave={ this.removeBackgroundColor.bind(this) } onClick={ this.launch.bind(this) } to={ '/' + project.get('atlas_url') }>
+			<Link className={ cls } onMouseEnter={ this.applyBackgroundColor.bind(this) } onMouseLeave={ this.removeBackgroundColor.bind(this) } onClick={ this.launch.bind(this) } to={ '/' + project.get('atlas_url') }>
 				<div className="atl__project__background" style={this.getBackgroundStyle()} >
 					<div className="center--content">
 						<p className="atl__project__background__initials">{ this.getInitials() }</p>
@@ -143,19 +148,6 @@ class Project extends React.Component {
 		if (title == null) { return ''; }
 		initials = (title.substring(0, 1) + title.substring(1, 2).toLowerCase());
 		return initials;
-	}
-
-	getModifierClasses() {
-		var classes = [],
-			project = this.props.project;
-		if (project.get('project_template_id') === '1') {
-			classes.push('atl__project--explainer');
-		}
-		if (project.get('is_section_overview') === 'Yes') {
-			classes.push('atl__project--overview');
-		}
-		if (classes.length === 0) { return ''; }
-		return classes.join(' ');
 	}
 
 	isVisible() {

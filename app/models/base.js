@@ -2,13 +2,8 @@ import * as Backbone from 'backbone';
 import * as _ from 'underscore';
 import $ from 'jquery';
 import marked from 'marked';
-// import Qajax from 'qajax';
 
 var Model = Backbone.Model.extend({
-
-	defaults: {
-
-	},
 
 	/*
 	 * Returns a fetch promise. Project ID must be set for this to work.

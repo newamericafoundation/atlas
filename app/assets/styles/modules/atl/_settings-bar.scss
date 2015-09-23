@@ -2,13 +2,26 @@
 
 	z-index: 7;
 
-	// @include animation(fadeinwithdelay 1s);
-
 	width: 100%;
 	position: absolute;
 	overflow: visible;
 
 	top: 0;
+
+	&__item-summary {
+		padding: 0 20px;
+		display: block;
+		// overflow: hidden;
+		// height: 30px;
+		p {
+			&:first-child {
+				font-family: 'SimplonNorm-Bold-WebS';
+			}
+			// display: inline-block;
+			margin: 0;
+			padding: 5px;
+		}
+	}
 
 	opacity: 1;
 	transition: 0.2s; 

@@ -2,8 +2,9 @@ import React from 'react';
 import classNames from 'classnames';
 import Slider from './../../../../../general/slider.jsx';
 import Icons from './../../../../../general/icons.jsx';
+import OverviewBase from './overview_base.jsx';
 
-class TopBar extends React.Component {
+class TopBar extends OverviewBase {
 
 	constructor(props) {
 		super(props);
@@ -54,37 +55,6 @@ class TopBar extends React.Component {
 				<Slider {...this.props} values={[ '2003', '2004', '2005', '2006' ]} />
 			</div>
 		);
-	}
-
-	getName() {
-		var hoveredItem = this.getHoveredItem();
-		if (hoveredItem == null) { return ''; }
-		return hoveredItem.get('name');
-	}
-
-	getValue() {
-		var hoveredItem = this.getHoveredItem(),
-			filter = this.getFilter(),
-			filterActiveChild = filter.getActiveChild(),
-			varId;
-		if (!hoveredItem || !filter || !filterActiveChild) { return; }
-		varId = filter.getActiveChild().get('variable').get('id');
-		return hoveredItem.get(varId);
-	}
-
-	getKey() {
-		var filter = this.getFilter(),
-			filterActiveChild = filter.getActiveChild();
-		if (!filterActiveChild) { return ''; }
-		return filterActiveChild.get('variable').get('display_title');
-	}
-
-	getHoveredItem() {
-		return this.props.project.get('data').items.hovered;
-	}
-
-	getFilter() {
-		return this.props.project.get('data').filter;
 	}
 
 	getBackgroundColorClass() {

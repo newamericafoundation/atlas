@@ -5,7 +5,9 @@ import Headline from './headline.jsx';
 import DisplayToggle from './display_toggle.jsx';
 import Filter from './filter.jsx';
 
-class SettingsBar extends React.Component {
+import OverviewBase from './overview_base.jsx';
+
+class SettingsBar extends OverviewBase {
 
 	constructor(props) {
 		super(props);
@@ -24,6 +26,12 @@ class SettingsBar extends React.Component {
 		return (
 			<div className='atl__settings-bar' ref='root'>
 				<Headline {...this.props} cacheHeight={ this.cacheHeight.bind(this, 'headline') } />
+				{
+				// <div className='atl__settings-bar__item-summary'>
+				// 	<p>{ this.getName() }</p>
+				// 	<p>{ this.getValue() }</p>
+				// </div>
+				}
 				<Filter {...this.props} cacheHeight={ this.cacheHeight.bind(this, 'filter') } filter={ this.getFilter() } />
 			</div>
 		);
@@ -65,10 +73,6 @@ class SettingsBar extends React.Component {
 
 	getTotalHeight() {
 		return this.heights.headline + this.heights.filter + this.heights.header;
-	}
-
-	getFilter() {
-		return this.props.project.get('data').filter;
 	}
 
 }

@@ -256,7 +256,7 @@ window.Map = {};
 
         showMain: function() {
             Map.rootView = new Map.RootView({ el: '#atl__map' }).render();
-            this.$loading = $("<div class='loading-icon'><div>Loading...</div></div>");
+            this.$loading = $("<div class='loader'><img src='/assets/images/spinner.gif'></div>");
             $('.atl__main').append(this.$loading);
             return $().ensureScript('d3', '/assets/vendor/d3.min.js', this.showOverlay.bind(this));
         },

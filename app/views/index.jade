@@ -6,8 +6,8 @@ block content
 		- if (typeof reactOutput !== 'undefined') {
 			!= reactOutput
 		- } else {
-			div(class="loading-icon")
-				div Loading...
+			div(class="loader")
+				img(src="/assets/images/spinner.gif")
 		- }
 			
 	- if (process.env.NODE_ENV === 'production') {
@@ -18,11 +18,6 @@ block content
 		script(src='/assets/scripts/partials/component.js')
 	- }
 
-	script(type='text/javascript').
-		$(function() { 
-			Comp.start();
-		});
-
 	- if (user || (process.env.NODE_ENV === 'development')) {
 		script(type='text/javascript').
 			window.isResearcherAuthenticated = true;
@@ -32,3 +27,8 @@ block content
 		script(type='text/javascript').
 			window.researcher = !{JSON.stringify(user)};
 	- }
+
+	script(type='text/javascript').
+		$(function() { 
+			Comp.start();
+		});

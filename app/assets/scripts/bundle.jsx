@@ -15,10 +15,6 @@ function start() {
 	console.log('Hi, Mom!');
 
 	Router.run(routes, Router.HistoryLocation, (Root, state) => {
-		if (isFirstRoute) {
-			// fetch data for the first route to be rendered
-		}
-		isFirstRoute = false;
 		React.render(<Root App={global.Atlas} state={state} />, $('#site')[0]);
 	});
 };
