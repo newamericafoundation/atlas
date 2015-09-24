@@ -1,20 +1,19 @@
+'use strict';
+
 if (!Function.prototype.bind) {
-  Function.prototype.bind = function(oThis) {
+  Function.prototype.bind = function (oThis) {
     if (typeof this !== 'function') {
       // closest thing possible to the ECMAScript 5
       // internal IsCallable function
       throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
     }
 
-    var aArgs   = Array.prototype.slice.call(arguments, 1),
+    var aArgs = Array.prototype.slice.call(arguments, 1),
         fToBind = this,
-        fNOP    = function() {},
-        fBound  = function() {
-          return fToBind.apply(this instanceof fNOP
-                 ? this
-                 : oThis,
-                 aArgs.concat(Array.prototype.slice.call(arguments)));
-        };
+        fNOP = function fNOP() {},
+        fBound = function fBound() {
+      return fToBind.apply(this instanceof fNOP ? this : oThis, aArgs.concat(Array.prototype.slice.call(arguments)));
+    };
 
     fNOP.prototype = this.prototype;
     fBound.prototype = new fNOP();
@@ -24,9 +23,11 @@ if (!Function.prototype.bind) {
 }
 // Production steps of ECMA-262, Edition 5, 15.4.4.18
 // Reference: http://es5.github.io/#x15.4.4.18
+'use strict';
+
 if (!Array.prototype.forEach) {
 
-  Array.prototype.forEach = function(callback, thisArg) {
+  Array.prototype.forEach = function (callback, thisArg) {
 
     var T, k;
 
@@ -82,9 +83,11 @@ if (!Array.prototype.forEach) {
 }
 // Production steps of ECMA-262, Edition 5, 15.4.4.19
 // Reference: http://es5.github.io/#x15.4.4.19
+'use strict';
+
 if (!Array.prototype.map) {
 
-  Array.prototype.map = function(callback, thisArg) {
+  Array.prototype.map = function (callback, thisArg) {
 
     var T, A, k;
 
@@ -92,11 +95,11 @@ if (!Array.prototype.map) {
       throw new TypeError(' this is null or not defined');
     }
 
-    // 1. Let O be the result of calling ToObject passing the |this| 
+    // 1. Let O be the result of calling ToObject passing the |this|
     //    value as the argument.
     var O = Object(this);
 
-    // 2. Let lenValue be the result of calling the Get internal 
+    // 2. Let lenValue be the result of calling the Get internal
     //    method of O with the argument "length".
     // 3. Let len be ToUint32(lenValue).
     var len = O.length >>> 0;
@@ -112,8 +115,8 @@ if (!Array.prototype.map) {
       T = thisArg;
     }
 
-    // 6. Let A be a new array created as if by the expression new Array(len) 
-    //    where Array is the standard built-in constructor with that name and 
+    // 6. Let A be a new array created as if by the expression new Array(len)
+    //    where Array is the standard built-in constructor with that name and
     //    len is the value of len.
     A = new Array(len);
 
@@ -127,18 +130,18 @@ if (!Array.prototype.map) {
 
       // a. Let Pk be ToString(k).
       //   This is implicit for LHS operands of the in operator
-      // b. Let kPresent be the result of calling the HasProperty internal 
+      // b. Let kPresent be the result of calling the HasProperty internal
       //    method of O with argument Pk.
       //   This step can be combined with c
       // c. If kPresent is true, then
       if (k in O) {
 
-        // i. Let kValue be the result of calling the Get internal 
+        // i. Let kValue be the result of calling the Get internal
         //    method of O with argument Pk.
         kValue = O[k];
 
-        // ii. Let mappedValue be the result of calling the Call internal 
-        //     method of callback with T as the this value and argument 
+        // ii. Let mappedValue be the result of calling the Call internal
+        //     method of callback with T as the this value and argument
         //     list containing kValue, k, and O.
         mappedValue = callback.call(T, kValue, k, O);
 
@@ -169,30 +172,32 @@ if (!Array.prototype.map) {
     return A;
   };
 }
-(function() {
+"use strict";
+
+(function () {
   if (typeof ChartistHtml !== "undefined" && ChartistHtml !== null) {
     ChartistHtml.config.baseClass = "atlas-chart";
     ChartistHtml.config.colorSpectrum = ['#85026A', '#019fde'];
-    ChartistHtml.config.tooltipTemplate = function(data) {
+    ChartistHtml.config.tooltipTemplate = function (data) {
       return "<div><h1>" + data.label + "</h1><p>" + data.value + "</p></div>";
     };
     ChartistHtml.config.chartOptions.bar.options.base.seriesBarDistance = 28;
     ChartistHtml.config.labelOffsetCoefficient = 5;
   }
+}).call(undefined);
+'use strict';
 
-}).call(this);
-
-(function() {
+(function () {
   $.ajaxSetup({
     headers: {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
     }
   });
+}).call(undefined);
+'use strict';
 
-}).call(this);
-
-(function() {
-  $.fn.ensureScript = function(globalName, path, next) {
+(function () {
+  $.fn.ensureScript = function (globalName, path, next) {
     if (window[globalName] != null) {
       return next();
     }
@@ -203,12 +208,12 @@ if (!Array.prototype.map) {
       success: next
     });
   };
+}).call(undefined);
+'use strict';
 
-}).call(this);
-
-(function() {
+(function () {
   $.fn.extend({
-    toggleModifierClass: function(baseClass, modifiers, modifierSign) {
+    toggleModifierClass: function toggleModifierClass(baseClass, modifiers, modifierSign) {
       var $el, className, i, j, len, modifier, newClass, newModifier;
       if (modifierSign == null) {
         modifierSign = '--';
@@ -222,8 +227,8 @@ if (!Array.prototype.map) {
         className = baseClass + modifierSign + modifier;
         if ($el.hasClass(className)) {
           $el.removeClass(className);
-          newModifier = (modifiers[i + 1] != null ? modifiers[i + 1] : modifiers[0]);
-          if ((newModifier !== modifier) && (newModifier !== '')) {
+          newModifier = modifiers[i + 1] != null ? modifiers[i + 1] : modifiers[0];
+          if (newModifier !== modifier && newModifier !== '') {
             newClass = baseClass + modifierSign + newModifier;
             return $el.addClass(newClass);
           }
@@ -232,36 +237,38 @@ if (!Array.prototype.map) {
       return $el.addClass(baseClass + modifierSign + modifiers[0]);
     }
   });
-
-}).call(this);
+}).call(undefined);
+"use strict";
 
 window.Atlas = new Marionette.Application();
+'use strict';
+
 window.Map = {};
 
-(function(Map) {
+(function (Map) {
 
-    Map.start = function() {
+    Map.start = function () {
         return this.Controller.show();
     };
 
-    Map.stop = function() {
+    Map.stop = function () {
         return this.Controller.destroy();
     };
 
     Map.Controller = {
 
-        show: function() {
+        show: function show() {
             return $().ensureScript('L', '/assets/vendor/mapbox.js', this.showMain.bind(this));
         },
 
-        showMain: function() {
+        showMain: function showMain() {
             Map.rootView = new Map.RootView({ el: '#atl__map' }).render();
             this.$loading = $("<div class='loader'><img src='/assets/images/spinner.gif'></div>");
             $('.atl__main').append(this.$loading);
             return $().ensureScript('d3', '/assets/vendor/d3.min.js', this.showOverlay.bind(this));
         },
 
-        showOverlay: function() {
+        showOverlay: function showOverlay() {
 
             var View, itemType, items, launch;
             items = Map.props.project.get('data').items;
@@ -269,15 +276,13 @@ window.Map = {};
 
             var OverlayView = this.getOverlayViewConstructor(itemType);
 
-            launch = function(baseGeoData) {
-
-                console.log(baseGeoData);
+            launch = function (baseGeoData) {
 
                 var coll;
 
                 coll = items.getRichGeoJson(baseGeoData);
 
-                return coll.onReady(function() {
+                return coll.onReady(function () {
                     var overlayView = new OverlayView({
                         map: Map.map,
                         collection: coll
@@ -285,32 +290,30 @@ window.Map = {};
                     Map.overlayView = overlayView;
                     return overlayView.render();
                 });
-
             };
 
             this.getStateBaseGeoData(launch);
             return this;
-
         },
 
-        getOverlayViewConstructor: function(itemType) {
+        getOverlayViewConstructor: function getOverlayViewConstructor(itemType) {
 
-            if (itemType === 'state') { return Map.PathOverlayView; }
+            if (itemType === 'state') {
+                return Map.PathOverlayView;
+            }
             return Map.PindropOverlayView;
-
         },
 
-        getStateBaseGeoData: function(next) {
+        getStateBaseGeoData: function getStateBaseGeoData(next) {
 
             var shp = new M.shapeFile.Collection().models[0];
 
-            shp.getClientFetchPromise().then((data) => {
+            shp.getClientFetchPromise().then(function (data) {
                 next(data);
             });
-
         },
 
-        destroy: function() {
+        destroy: function destroy() {
             if (Map.overlayView != null) {
                 Map.overlayView.destroy();
             }
@@ -318,92 +321,94 @@ window.Map = {};
                 return Map.rootView.destroy();
             }
         }
-        
+
     };
+})(window.Map);
+"use strict";
 
-} (window.Map));
+Map.control = {
 
-  	Map.control = {
+		// Centers map on specified target specified as latitude-longitude array.
+		// @param {Array} latLng - Latitude-longitude array for centering.
+		// @param {number} widthRatio=0.5 - Relative horizontal position the map is centered to (0 -> left, 1 -> right).
+		// @param {number} heightRatio=0.5 - Relative vertical position the map is centered to (0 -> top, 1 -> bottom).
+		// @returns {object} this
+		center: function center(latLng, widthRatio, heightRatio) {
+				var map, mapSize, pt;
+				if (widthRatio == null) {
+						widthRatio = 0.5;
+				}
+				if (heightRatio == null) {
+						heightRatio = 0.5;
+				}
+				map = this;
+				pt = map.latLngToContainerPoint(latLng);
+				mapSize = map.getSize();
+				map.panBy([-mapSize.x * widthRatio + pt.x, -mapSize.y * heightRatio + pt.y], {
+						animate: true,
+						duration: 0.5
+				});
+				return this;
+		},
 
-	    // Centers map on specified target specified as latitude-longitude array.
-	    // @param {Array} latLng - Latitude-longitude array for centering.
-	    // @param {number} widthRatio=0.5 - Relative horizontal position the map is centered to (0 -> left, 1 -> right).
-	    // @param {number} heightRatio=0.5 - Relative vertical position the map is centered to (0 -> top, 1 -> bottom).
-	    // @returns {object} this
-	    center: function(latLng, widthRatio, heightRatio) {
-			var map, mapSize, pt;
-			if (widthRatio == null) {
-			  widthRatio = 0.5;
-			}
-			if (heightRatio == null) {
-			  heightRatio = 0.5;
-			}
-			map = this;
-			pt = map.latLngToContainerPoint(latLng);
-			mapSize = map.getSize();
-			map.panBy([-mapSize.x * widthRatio + pt.x, -mapSize.y * heightRatio + pt.y], {
-			  animate: true,
-			  duration: 0.5
-			});
-			return this;
-	    },
+		// Centers map on specified target specified as 2d point object.
+		// @param {Object} location - Pixel location object for centering - { x: .., y: .. }.
+		// @param {number} widthRatio=0.5 - Relative horizontal position the map is centered to (0 -> left, 1 -> right).
+		// @param {number} heightRatio=0.5 - Relative vertical position the map is centered to (0 -> top, 1 -> bottom).
+		// @returns {object} this
+		centerToPixel: function centerToPixel(location, widthRatio, heightRatio) {
+				var map, mapSize, pt;
+				if (widthRatio == null) {
+						widthRatio = 0.5;
+				}
+				if (heightRatio == null) {
+						heightRatio = 0.5;
+				}
+				map = this;
+				pt = location;
+				mapSize = map.getSize();
+				map.panBy([-mapSize.x * widthRatio + pt.x, -mapSize.y * heightRatio + pt.y], {
+						animate: true,
+						duration: 0.5
+				});
+				return this;
+		},
 
-	    // Centers map on specified target specified as 2d point object.
-	    // @param {Object} location - Pixel location object for centering - { x: .., y: .. }.
-	    // @param {number} widthRatio=0.5 - Relative horizontal position the map is centered to (0 -> left, 1 -> right).
-	    // @param {number} heightRatio=0.5 - Relative vertical position the map is centered to (0 -> top, 1 -> bottom).
-	    // @returns {object} this
-	    centerToPixel: function(location, widthRatio, heightRatio) {
-			var map, mapSize, pt;
-			if (widthRatio == null) {
-			  widthRatio = 0.5;
-			}
-			if (heightRatio == null) {
-			  heightRatio = 0.5;
-			}
-			map = this;
-			pt = location;
-			mapSize = map.getSize();
-			map.panBy([-mapSize.x * widthRatio + pt.x, -mapSize.y * heightRatio + pt.y], {
-			  animate: true,
-			  duration: 0.5
-			});
-			return this;
-	    },
+		// Returns view center.
+		// @returns {Array} latLng - Array of latitude and longitude.
+		getView: function getView() {
+				var ll, map;
+				map = this;
+				ll = map.getBounds().getCenter();
+				return [ll.lat, ll.lng];
+		},
 
-	    // Returns view center.
-	    // @returns {Array} latLng - Array of latitude and longitude.
-	    getView: function() {
-			var ll, map;
-			map = this;
-			ll = map.getBounds().getCenter();
-			return [ll.lat, ll.lng];
-	    },
+		// Changes zoom level, using map center as zoom center.
+		// @param {number} dZoom - Zoom differential.
+		// @returns {Array} this
+		changeZoom: function changeZoom(dZoom) {
+				var map, z;
+				map = this;
+				z = map.getZoom();
+				map.setView(map.getView(), z + dZoom);
+				return this;
+		},
 
-	    // Changes zoom level, using map center as zoom center.
-	    // @param {number} dZoom - Zoom differential.
-	    // @returns {Array} this
-	    changeZoom: function(dZoom) {
-			var map, z;
-			map = this;
-			z = map.getZoom();
-			map.setView(map.getView(), z + dZoom);
-			return this;
-	    },
+		// Sets zoom level, using map center as zoom center.
+		// @param {number} zoom - New zoom level.
+		// @returns {Array} this
+		setZoom: function setZoom(zoom) {
+				var map;
+				map = this;
+				map.setView(map.getView(), zoom);
+				return this;
+		}
 
-	    // Sets zoom level, using map center as zoom center.
-	    // @param {number} zoom - New zoom level.
-	    // @returns {Array} this
-	    setZoom: function(zoom) {
-			var map;
-			map = this;
-			map.setView(map.getView(), zoom);
-			return this;
-	    }
+};
+'use strict';
 
-	};
-(function() {
-  Map.RootView = (function() {
+(function () {
+  Map.RootView = (function () {
     function RootView(options) {
       this.el = options.el;
       this.elId = this.el.substr(1);
@@ -412,7 +417,7 @@ window.Map = {};
       this;
     }
 
-    RootView.prototype._getZoomLevel = function() {
+    RootView.prototype._getZoomLevel = function () {
       var width;
       width = this.$el.width();
       if (width > 1350) {
@@ -424,18 +429,18 @@ window.Map = {};
       return 3;
     };
 
-    RootView.prototype._setupMap = function() {
+    RootView.prototype._setupMap = function () {
       var zoomLevel;
       zoomLevel = this._getZoomLevel();
       this.map.setView([37.6, -95.665], zoomLevel);
       this.map.scrollWheelZoom.disable();
       _.extend(this.map, Map.control);
       this.map.ignoreNextClick = false;
-      this.map.on('dragend', (function(_this) {
-        return function(e) {
+      this.map.on('dragend', (function (_this) {
+        return function (e) {
           var items;
           items = Map.props.project.get('data').items;
-          if (e.distance > 15 && (items.hovered != null)) {
+          if (e.distance > 15 && items.hovered != null) {
             return _this.map.ignoreNextClick = true;
           }
         };
@@ -443,7 +448,7 @@ window.Map = {};
       return Map.map = this.map;
     };
 
-    RootView.prototype.getMapOptions = function() {
+    RootView.prototype.getMapOptions = function () {
       return {
         attributionControl: true,
         zoomControl: false,
@@ -451,7 +456,7 @@ window.Map = {};
       };
     };
 
-    RootView.prototype.render = function() {
+    RootView.prototype.render = function () {
       L.mapbox.accessToken = 'pk.eyJ1Ijoicm9zc3ZhbmRlcmxpbmRlIiwiYSI6ImRxc0hRR28ifQ.XwCYSPHrGbRvofTV-CIUqw';
       this.map = L.mapbox.map(this.elId, 'rossvanderlinde.874ab107', this.getMapOptions());
       Map.props.setMap(this.map);
@@ -460,11 +465,11 @@ window.Map = {};
       return this;
     };
 
-    RootView.prototype.hideAttribution = function() {
+    RootView.prototype.hideAttribution = function () {
       return $('.leaflet-control-attribution').hide();
     };
 
-    RootView.prototype.destroy = function() {
+    RootView.prototype.destroy = function () {
       if (this.map == null) {
         return;
       }
@@ -474,28 +479,27 @@ window.Map = {};
     };
 
     return RootView;
-
   })();
+}).call(undefined);
+'use strict';
 
-}).call(this);
-
-(function() {
-  Map.OverlayBaseView = (function() {
+(function () {
+  Map.OverlayBaseView = (function () {
     function OverlayBaseView(options) {
       if (options == null) {
         options = {};
       }
       this.map = options.map;
       this.collection = options.collection;
-      Map.props.App.reqres.setHandler('item:map:position', (function(_this) {
-        return function(item) {
+      Map.props.App.reqres.setHandler('item:map:position', (function (_this) {
+        return function (item) {
           return _this.getItemMapPosition(item);
         };
       })(this));
       this;
     }
 
-    OverlayBaseView.prototype.setHeaderStripColor = function() {
+    OverlayBaseView.prototype.setHeaderStripColor = function () {
       var indeces, project;
       project = Map.props.project;
       indeces = project.getFriendlyIndeces();
@@ -508,9 +512,9 @@ window.Map = {};
       }
     };
 
-    OverlayBaseView.prototype.getItemMapPosition = function(item) {
+    OverlayBaseView.prototype.getItemMapPosition = function (item) {
       var feature, identityPath, latLong, longLatArrayCentroid, map;
-      identityPath = d3.geo.path().projection(function(d) {
+      identityPath = d3.geo.path().projection(function (d) {
         return d;
       });
       feature = this.getFeatureByModel(item);
@@ -520,13 +524,13 @@ window.Map = {};
       return map.latLngToContainerPoint(latLong);
     };
 
-    OverlayBaseView.prototype.updateAnimated = function() {
+    OverlayBaseView.prototype.updateAnimated = function () {
       var $el;
       $el = $('.leaflet-overlay-pane');
       return $el.stop().animate({
         opacity: 0
-      }, 750, 'swing', (function(_this) {
-        return function() {
+      }, 750, 'swing', (function (_this) {
+        return function () {
           _this.update();
           return $el.animate({
             opacity: 1
@@ -535,7 +539,7 @@ window.Map = {};
       })(this));
     };
 
-    OverlayBaseView.prototype.onFeatureMouseOut = function(feature) {
+    OverlayBaseView.prototype.onFeatureMouseOut = function (feature) {
       var items, project;
       project = Map.props.project;
       items = project.get('data').items;
@@ -544,7 +548,7 @@ window.Map = {};
       return Map.props.App.commands.execute('update:tilemap');
     };
 
-    OverlayBaseView.prototype.onFeatureMouseOver = function(feature) {
+    OverlayBaseView.prototype.onFeatureMouseOver = function (feature) {
       var items, model, project;
       if (this.bringFeatureToFront != null) {
         this.bringFeatureToFront(feature);
@@ -557,9 +561,9 @@ window.Map = {};
       return Map.props.App.commands.execute('update:tilemap');
     };
 
-    OverlayBaseView.prototype.onFeatureClick = function(feature) {
+    OverlayBaseView.prototype.onFeatureClick = function (feature) {
       var items, model, project;
-      if ((Map.map != null) && Map.map.ignoreNextClick) {
+      if (Map.map != null && Map.map.ignoreNextClick) {
         Map.map.ignoreNextClick = false;
         return;
       }
@@ -577,18 +581,18 @@ window.Map = {};
       return this.activeFeature = feature;
     };
 
-    OverlayBaseView.prototype.onRender = function() {
+    OverlayBaseView.prototype.onRender = function () {
       return $('.loading-icon').remove();
     };
 
-    OverlayBaseView.prototype.onMapClick = function(e) {
+    OverlayBaseView.prototype.onMapClick = function (e) {
       if (this.activeFeature != null) {
         this.activeFeature = void 0;
         return Map.props.App.vent.trigger('item:deactivate');
       }
     };
 
-    OverlayBaseView.prototype.getFeatureByModel = function(model) {
+    OverlayBaseView.prototype.getFeatureByModel = function (model) {
       var feature, i, len, ref;
       ref = this.collection.features;
       for (i = 0, len = ref.length; i < len; i++) {
@@ -599,7 +603,7 @@ window.Map = {};
       }
     };
 
-    OverlayBaseView.prototype.getFeatureDisplayState = function(feature) {
+    OverlayBaseView.prototype.getFeatureDisplayState = function (feature) {
       var filter, model, searchTerm;
       if (Map.props.uiState == null) {
         return;
@@ -612,11 +616,11 @@ window.Map = {};
       }
     };
 
-    OverlayBaseView.prototype.getFill = function(feature) {
+    OverlayBaseView.prototype.getFill = function (feature) {
       var filter, id, valueIndeces;
       filter = Map.props.project.get('data').filter;
       valueIndeces = filter.getFriendlyIndeces(feature._model, 15);
-      if ((valueIndeces == null) || valueIndeces.length === 0) {
+      if (valueIndeces == null || valueIndeces.length === 0) {
         return;
       }
       if (valueIndeces.length === 1) {
@@ -626,11 +630,11 @@ window.Map = {};
       return "url(#stripe-pattern-" + id + ")";
     };
 
-    OverlayBaseView.prototype._areBoundsFinite = function(bounds) {
+    OverlayBaseView.prototype._areBoundsFinite = function (bounds) {
       return isFinite(bounds[0][0]) && isFinite(bounds[0][1]) && isFinite(bounds[1][0]) && isFinite(bounds[1][1]);
     };
 
-    OverlayBaseView.prototype.resizeContainer = function(geoJson, path, extraExpansion) {
+    OverlayBaseView.prototype.resizeContainer = function (geoJson, path, extraExpansion) {
       var bottomRight, bounds, topLeft;
       bounds = path.bounds(geoJson);
       if (this._areBoundsFinite(bounds)) {
@@ -652,7 +656,7 @@ window.Map = {};
       }
     };
 
-    OverlayBaseView.prototype.destroy = function() {
+    OverlayBaseView.prototype.destroy = function () {
       if (this.stopListening != null) {
         this.stopListening();
       }
@@ -663,16 +667,21 @@ window.Map = {};
     };
 
     return OverlayBaseView;
-
   })();
+}).call(undefined);
+'use strict';
 
-}).call(this);
+(function () {
+  var extend = function extend(child, parent) {
+    for (var key in parent) {
+      if (hasProp.call(parent, key)) child[key] = parent[key];
+    }function ctor() {
+      this.constructor = child;
+    }ctor.prototype = parent.prototype;child.prototype = new ctor();child.__super__ = parent.prototype;return child;
+  },
+      hasProp = ({}).hasOwnProperty;
 
-(function() {
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  Map.PathOverlayView = (function(superClass) {
+  Map.PathOverlayView = (function (superClass) {
     var getProjectedPoint;
 
     extend(PathOverlayView, superClass);
@@ -681,8 +690,8 @@ window.Map = {};
       return PathOverlayView.__super__.constructor.apply(this, arguments);
     }
 
-    PathOverlayView.prototype.bringFeatureToFront = function(feature) {
-      return this.g.selectAll('path').sort(function(a, b) {
+    PathOverlayView.prototype.bringFeatureToFront = function (feature) {
+      return this.g.selectAll('path').sort(function (a, b) {
         if (a.id !== feature.id) {
           return -1;
         }
@@ -690,19 +699,19 @@ window.Map = {};
       });
     };
 
-    PathOverlayView.prototype.renderSvgContainer = function() {
+    PathOverlayView.prototype.renderSvgContainer = function () {
       this.svg = d3.select(this.map.getPanes().overlayPane).append('svg').attr('class', 'deethree');
       return this.g = this.svg.append('g').attr('class', 'leaflet-zoom-hide');
     };
 
-    PathOverlayView.prototype.render = function() {
+    PathOverlayView.prototype.render = function () {
       var self;
       if (this.renderSvgContainer != null) {
         this.renderSvgContainer();
       }
       this.geoJson = this.collection;
       self = this;
-      this.g.selectAll('path').data(this.geoJson.features).enter().append('path').on('mouseover', this.onFeatureMouseOver.bind(this)).on('mouseout', this.onFeatureMouseOut.bind(this)).on('click', function(d) {
+      this.g.selectAll('path').data(this.geoJson.features).enter().append('path').on('mouseover', this.onFeatureMouseOver.bind(this)).on('mouseout', this.onFeatureMouseOut.bind(this)).on('click', function (d) {
         if (d3.event.defaultPrevented) {
           return;
         }
@@ -715,17 +724,17 @@ window.Map = {};
       return this;
     };
 
-    getProjectedPoint = function(long, lat) {
+    getProjectedPoint = function (long, lat) {
       return this.map.latLngToLayerPoint(new L.LatLng(lat, long));
     };
 
-    PathOverlayView.prototype.getPath = function() {
+    PathOverlayView.prototype.getPath = function () {
       var path, projectPoint, self, transform;
       self = this;
-      getProjectedPoint = function(long, lat) {
+      getProjectedPoint = function (long, lat) {
         return self.map.latLngToLayerPoint(new L.LatLng(lat, long));
       };
-      projectPoint = function(long, lat) {
+      projectPoint = function (long, lat) {
         var point;
         point = getProjectedPoint(long, lat);
         this.stream.point(point.x, point.y);
@@ -738,13 +747,13 @@ window.Map = {};
       return path;
     };
 
-    PathOverlayView.prototype.update = function() {
+    PathOverlayView.prototype.update = function () {
       var geoJson, path;
       path = this.getPath();
       geoJson = this.collection;
       this.g.selectAll('path').attr({
-        'class': (function(_this) {
-          return function(feature) {
+        'class': (function (_this) {
+          return function (feature) {
             var cls, displayState;
             displayState = _this.getFeatureDisplayState(feature);
             cls = 'map-region map-region__element';
@@ -762,72 +771,75 @@ window.Map = {};
     };
 
     return PathOverlayView;
-
   })(Map.OverlayBaseView);
+}).call(undefined);
+'use strict';
 
-}).call(this);
+(function () {
+  var extend = function extend(child, parent) {
+    for (var key in parent) {
+      if (hasProp.call(parent, key)) child[key] = parent[key];
+    }function ctor() {
+      this.constructor = child;
+    }ctor.prototype = parent.prototype;child.prototype = new ctor();child.__super__ = parent.prototype;return child;
+  },
+      hasProp = ({}).hasOwnProperty;
 
-(function() {
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  Map.PindropOverlayView = (function(superClass) {
+  Map.PindropOverlayView = (function (superClass) {
     extend(PindropOverlayView, superClass);
 
     function PindropOverlayView() {
       return PindropOverlayView.__super__.constructor.apply(this, arguments);
     }
 
-    PindropOverlayView.prototype.renderSvgContainer = function() {
+    PindropOverlayView.prototype.renderSvgContainer = function () {
       this.svg = d3.select(Map.map.getPanes().overlayPane).append('svg').attr('class', 'deethree');
       return this.g = this.svg.append('g').attr('class', 'leaflet-zoom-hide');
     };
 
-    PindropOverlayView.prototype.setMapEventListeners = function() {
+    PindropOverlayView.prototype.setMapEventListeners = function () {
       Map.map.on('viewreset', this.update.bind(this));
       return Map.map.on('click', this.onMapClick.bind(this));
     };
 
-    PindropOverlayView.prototype.render = function() {
+    PindropOverlayView.prototype.render = function () {
       var pindrop;
       if (this.renderSvgContainer != null) {
         this.renderSvgContainer();
       }
       this.shape = Map.svgPaths.shapes.pindrop;
-      pindrop = [
-        {
-          path: this.shape.paths.slice_1_of_2,
-          className: 'map-pin__1-of-2'
-        }, {
-          path: this.shape.paths.slice_2_of_2,
-          className: 'map-pin__2-of-2'
-        }, {
-          path: this.shape.paths.slice_1_of_3,
-          className: 'map-pin__1-of-3'
-        }, {
-          path: this.shape.paths.slice_2_of_3_a,
-          className: 'map-pin__2-of-3'
-        }, {
-          path: this.shape.paths.slice_2_of_3_b,
-          className: 'map-pin__2-of-3'
-        }, {
-          path: this.shape.paths.slice_3_of_3,
-          className: 'map-pin__3-of-3'
-        }, {
-          path: this.shape.paths.outer,
-          className: 'map-pin__outer'
-        }, {
-          path: this.shape.paths.inner,
-          className: 'map-pin__inner'
-        }
-      ];
+      pindrop = [{
+        path: this.shape.paths.slice_1_of_2,
+        className: 'map-pin__1-of-2'
+      }, {
+        path: this.shape.paths.slice_2_of_2,
+        className: 'map-pin__2-of-2'
+      }, {
+        path: this.shape.paths.slice_1_of_3,
+        className: 'map-pin__1-of-3'
+      }, {
+        path: this.shape.paths.slice_2_of_3_a,
+        className: 'map-pin__2-of-3'
+      }, {
+        path: this.shape.paths.slice_2_of_3_b,
+        className: 'map-pin__2-of-3'
+      }, {
+        path: this.shape.paths.slice_3_of_3,
+        className: 'map-pin__3-of-3'
+      }, {
+        path: this.shape.paths.outer,
+        className: 'map-pin__outer'
+      }, {
+        path: this.shape.paths.inner,
+        className: 'map-pin__inner'
+      }];
       this.g.selectAll('g').data(this.collection.features).enter().append('g').attr({
         'class': 'map-pin'
       }).on('mouseover', this.onFeatureMouseOver.bind(this)).on('mouseout', this.onFeatureMouseOut.bind(this)).on('click', this.onFeatureClick.bind(this)).selectAll('path').data(pindrop).enter().append('path').attr({
-        'd': function(d) {
-          return d.path;
+        'd': function d(_d) {
+          return _d.path;
         },
-        'class': function(d) {
+        'class': function _class(d) {
           return d.className;
         }
       });
@@ -836,30 +848,30 @@ window.Map = {};
       return this.setMapEventListeners();
     };
 
-    PindropOverlayView.prototype.getFills = function(feature) {
+    PindropOverlayView.prototype.getFills = function (feature) {
       var filter, valueIndeces;
       filter = Map.props.project.get('data').filter;
       valueIndeces = filter.getFriendlyIndeces(feature._model, 15);
-      if ((valueIndeces == null) || valueIndeces.length === 0) {
+      if (valueIndeces == null || valueIndeces.length === 0) {
         return;
       }
-      return valueIndeces.map(function(valueIndex) {
+      return valueIndeces.map(function (valueIndex) {
         return Map.colors.toRgb(valueIndex - 1);
       });
     };
 
-    PindropOverlayView.prototype.update = function() {
+    PindropOverlayView.prototype.update = function () {
       var getIndecesFromClassName, getProjectedPoint, path, projectPoint, self, transform;
-      getProjectedPoint = function(long, lat) {
+      getProjectedPoint = function (long, lat) {
         return Map.map.latLngToLayerPoint(new L.LatLng(lat, long));
       };
-      projectPoint = function(long, lat) {
+      projectPoint = function (long, lat) {
         var point;
         point = getProjectedPoint(long, lat);
         this.stream.point(point.x, point.y);
         return this;
       };
-      getIndecesFromClassName = function(cls) {
+      getIndecesFromClassName = function (cls) {
         var indeces;
         indeces = cls.split('__')[1].split('-');
         if (indeces[2] != null) {
@@ -873,7 +885,7 @@ window.Map = {};
       path = d3.geo.path().projection(transform);
       self = this;
       this.g.selectAll('g').attr({
-        transform: function(d) {
+        transform: function transform(d) {
           var coord, pt, x, y;
           coord = d.geometry.coordinates;
           pt = getProjectedPoint(coord[0], coord[1]);
@@ -881,7 +893,7 @@ window.Map = {};
           y = pt.y - self.shape.dim.height;
           return "translate(" + x + "," + y + ")";
         },
-        "class": function(feature) {
+        "class": function _class(feature) {
           var cls, displayState;
           displayState = self.getFeatureDisplayState(feature);
           cls = 'map-pin map-pin__element';
@@ -891,12 +903,12 @@ window.Map = {};
           return cls;
         }
       }).selectAll('path').attr({
-        'class': function(d, i) {
+        'class': function _class(d, i) {
           var baseClass;
           baseClass = 'map-pin__element';
           return d.className + ' ' + baseClass;
         },
-        'fill': function(d, i) {
+        'fill': function fill(d, i) {
           var colorIndex, colors, indeces, parentFeature;
           parentFeature = d3.select(this.parentNode).datum();
           colors = self.getFills(parentFeature);
@@ -908,7 +920,7 @@ window.Map = {};
             if (colors.length === 1) {
               return colors[0];
             }
-            if (((colors.length === 2) && (indeces[1] === 2)) || ((colors.length === 3) && (indeces[1] === 3)) || (colors.length > 3)) {
+            if (colors.length === 2 && indeces[1] === 2 || colors.length === 3 && indeces[1] === 3 || colors.length > 3) {
               colorIndex = indeces[0] - 1;
               if (colors[colorIndex] != null) {
                 return colors[colorIndex];
@@ -923,7 +935,5 @@ window.Map = {};
     };
 
     return PindropOverlayView;
-
   })(Map.OverlayBaseView);
-
-}).call(this);
+}).call(undefined);

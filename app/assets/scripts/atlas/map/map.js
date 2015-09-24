@@ -33,8 +33,6 @@ window.Map = {};
 
             launch = function(baseGeoData) {
 
-                console.log(baseGeoData);
-
                 var coll;
 
                 coll = items.getRichGeoJson(baseGeoData);
@@ -66,7 +64,7 @@ window.Map = {};
 
             var shp = new M.shapeFile.Collection().models[0];
 
-            shp.getClientFetchPromise().then((data) => {
+            shp.getClientFetchPromise().then(function(data) {
                 next(data);
             });
 

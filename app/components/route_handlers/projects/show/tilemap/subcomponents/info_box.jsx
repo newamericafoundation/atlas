@@ -232,8 +232,6 @@ class InfoBox extends Static {
 			return (a.get('infobox_order') - b.get('infobox_order'));
 		});
 
-		console.log(infoBoxVar);
-
 		html = "";
 		infoBoxVar.forEach((function(_this) {
 			return function(variable) {

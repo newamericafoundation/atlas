@@ -17,7 +17,7 @@ gulp.task('js-build', [ 'js-clean-build', 'js-build-source', 'js-build-vendor', 
         .pipe(concat('app.js'))
         .pipe(gulp.dest('public/assets/scripts/build'))
         .pipe(config.production ? util.noop() : gulp.dest('public/assets/scripts/build'))
-        .pipe(config.production ? uglify() : util.noop())
+        .pipe(config.production ? uglify().on('error', util.log) : util.noop())
         .pipe(rev())
         .pipe(config.production ? gzip() : util.noop())
         .pipe(gulp.dest('public/assets/scripts/build'))

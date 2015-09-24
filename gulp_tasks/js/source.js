@@ -10,7 +10,7 @@ import config from './../config.js';
 gulp.task('js-build-source', () => {
     return gulp.src(config.source.js.source)
         .pipe(gulpIf(/[.]coffee$/, coffee()))
-        // .pipe(gulpIf(/[.]js$/, babel()))
+        .pipe(gulpIf(/[.]js$/, babel()))
         .pipe(concat('source.js'))
         .pipe(gulp.dest('public/assets/scripts/partials'));
 });
