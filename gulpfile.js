@@ -13,3 +13,5 @@ require('./gulp_tasks/devops.js');
 require('./gulp_tasks/default.js');
 
 require('./gulp_tasks/extract_boilerplate.js');
+
+require('./gulp_tasks/geo.js');

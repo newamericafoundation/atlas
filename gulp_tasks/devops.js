@@ -6,6 +6,10 @@ import * as env from './../../secrets/atlas.json';
 //   (this prevents accidental commits to the repository)
 var pem_key_path = './../secrets/atlas.pem';
 
+function getShellUrl() {
+	`ec2-user@ec2-${ip.join('-')}.us-west-2.compute.amazonaws.com`;
+}
+
 // DB backup path on remote instance.
 var db_backup_remote = `${env['PRODUCTION_DB_URL']}:/db_backup/`;
 
