@@ -29,27 +29,34 @@ window.Map = {};
             items = Map.props.project.get('data').items;
             itemType = items.getItemType();
 
-            if (itemType === 'state') {
-                View = Map.PathOverlayView;
-            } else {
-                View = Map.PindropOverlayView;
-            }
+            var OverlayView = this.getOverlayViewConstructor(itemType);
 
             launch = function(baseGeoData) {
+
+                console.log(baseGeoData);
+
                 var coll;
                 coll = items.getRichGeoJson(baseGeoData);
                 return coll.onReady(function() {
-                    var overlayView;
-                    overlayView = new View();
-                    overlayView.map = Map.map;
-                    overlayView.collection = coll;
+                    var overlayView = new OverlayView({ 
+                        map: Map.map,
+                        collection: coll
+                    });
                     Map.overlayView = overlayView;
                     return overlayView.render();
                 });
+
             };
 
             this.getStateBaseGeoData(launch);
             return this;
+
+        },
+
+        getOverlayViewConstructor: function(itemType) {
+
+            if (itemType === 'state') { return Map.PathOverlayView; }
+            return Map.PindropOverlayView;
 
         },
 

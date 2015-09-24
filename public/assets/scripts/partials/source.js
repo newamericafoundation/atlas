@@ -170,19 +170,6 @@ if (!Array.prototype.map) {
   };
 }
 (function() {
-  if (typeof ChartistHtml !== "undefined" && ChartistHtml !== null) {
-    ChartistHtml.config.baseClass = "atlas-chart";
-    ChartistHtml.config.colorSpectrum = ['#85026A', '#019fde'];
-    ChartistHtml.config.tooltipTemplate = function(data) {
-      return "<div><h1>" + data.label + "</h1><p>" + data.value + "</p></div>";
-    };
-    ChartistHtml.config.chartOptions.bar.options.base.seriesBarDistance = 28;
-    ChartistHtml.config.labelOffsetCoefficient = 5;
-  }
-
-}).call(this);
-
-(function() {
   $.ajaxSetup({
     headers: {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
@@ -235,6 +222,19 @@ if (!Array.prototype.map) {
 
 }).call(this);
 
+(function() {
+  if (typeof ChartistHtml !== "undefined" && ChartistHtml !== null) {
+    ChartistHtml.config.baseClass = "atlas-chart";
+    ChartistHtml.config.colorSpectrum = ['#85026A', '#019fde'];
+    ChartistHtml.config.tooltipTemplate = function(data) {
+      return "<div><h1>" + data.label + "</h1><p>" + data.value + "</p></div>";
+    };
+    ChartistHtml.config.chartOptions.bar.options.base.seriesBarDistance = 28;
+    ChartistHtml.config.labelOffsetCoefficient = 5;
+  }
+
+}).call(this);
+
 window.Atlas = new Marionette.Application();
 window.Map = {};
 
@@ -267,27 +267,34 @@ window.Map = {};
             items = Map.props.project.get('data').items;
             itemType = items.getItemType();
 
-            if (itemType === 'state') {
-                View = Map.PathOverlayView;
-            } else {
-                View = Map.PindropOverlayView;
-            }
+            var OverlayView = this.getOverlayViewConstructor(itemType);
 
             launch = function(baseGeoData) {
+
+                console.log(baseGeoData);
+
                 var coll;
                 coll = items.getRichGeoJson(baseGeoData);
                 return coll.onReady(function() {
-                    var overlayView;
-                    overlayView = new View();
-                    overlayView.map = Map.map;
-                    overlayView.collection = coll;
+                    var overlayView = new OverlayView({ 
+                        map: Map.map,
+                        collection: coll
+                    });
                     Map.overlayView = overlayView;
                     return overlayView.render();
                 });
+
             };
 
             this.getStateBaseGeoData(launch);
             return this;
+
+        },
+
+        getOverlayViewConstructor: function(itemType) {
+
+            if (itemType === 'state') { return Map.PathOverlayView; }
+            return Map.PindropOverlayView;
 
         },
 
@@ -484,6 +491,8 @@ window.Map = {};
       if (options == null) {
         options = {};
       }
+      this.map = options.map;
+      this.collection = options.collection;
       Map.props.App.reqres.setHandler('item:map:position', (function(_this) {
         return function(item) {
           return _this.getItemMapPosition(item);

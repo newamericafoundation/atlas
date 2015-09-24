@@ -4,6 +4,8 @@
         constructor: (options) ->
             options ?= {}
             # @map = options.map
+            this.map = options.map;
+            this.collection = options.collection;
             Map.props.App.reqres.setHandler('item:map:position', (item) => @getItemMapPosition(item))
             @
 

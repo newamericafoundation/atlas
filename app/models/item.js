@@ -26,6 +26,7 @@ exports.Model = base.Model.extend({
 		this._processValues(data);
 		this._checkPindrop(data);
 		this._checkState(data);
+		this._checkCongressionalDistrict();
 		return data;
 	},
 	
@@ -107,6 +108,10 @@ exports.Model = base.Model.extend({
 		return {
 			recognized: false
 		};
+	},
+
+	_checkCongressionalDistrict: function(data) {
+		return data;
 	},
 	
 	/** 
@@ -357,7 +362,9 @@ exports.Collection = base.Collection.extend({
 			richGeoJson = new rgf.Collection();
 			setup = function(data) {
 				var feature, item, j, len, ref;
-				richGeoJson.features = topojson.feature(data, data.objects.states).features;
+				var geoJson = topojson.feature(data, data.objects.states);
+				console.log(geoJson);
+				richGeoJson.features = geoJson.features;
 				ref = richGeoJson.features;
 				for (j = 0, len = ref.length; j < len; j++) {
 					feature = ref[j];

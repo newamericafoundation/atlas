@@ -3,7 +3,7 @@ var express = require('express'),
 	json2csv = require('nice-json2csv');
 
 var router = express.Router();
-var resources = [ 'projects', 'project_sections', 'project_templates', 'core_data', 'images' ];
+var resources = [ 'projects', 'project_sections', 'project_templates', 'images' ];
 
 router.use(json2csv.expressDecorator);
 

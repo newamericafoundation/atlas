@@ -1,0 +1,19 @@
+[
+	{
+		"name": "us_states",
+		"fileName": "cb_2014_us_state_500k",
+		"url": "http://www2.census.gov/geo/tiger/GENZ2014/shp/cb_2014_us_state_500k.zip",
+		"properties": {
+			"id": "STATEFP"
+		}
+	},
+	{
+		"name": "us_congressional_districts",
+		"fileName": "cb_2014_us_cd114_500k",
+		"url": "http://www2.census.gov/geo/tiger/GENZ2014/shp/cb_2014_us_cd114_500k.zip",
+		"properties": {
+			"state_id": "STATEFP",
+			"id": "CD114FP"
+		}
+	}
+]
