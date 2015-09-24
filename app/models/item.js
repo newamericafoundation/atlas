@@ -362,14 +362,12 @@ exports.Collection = base.Collection.extend({
 			richGeoJson = new rgf.Collection();
 			setup = function(data) {
 				var feature, item, j, len, ref;
-				var geoJson = topojson.feature(data, data.objects.states);
-				console.log(geoJson);
-				richGeoJson.features = geoJson.features;
+				richGeoJson.features = baseGeoData.features;
 				ref = richGeoJson.features;
 				for (j = 0, len = ref.length; j < len; j++) {
 					feature = ref[j];
 					item = collection.findWhere({
-						id: feature.id
+						id: parseInt(feature.properties.id, 10)
 					});
 					feature._model = item;
 				}

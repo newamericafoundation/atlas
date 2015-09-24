@@ -12,9 +12,11 @@ var Model = base.Model.extend({
 
 		return new Promise((resolve, reject) => {
 
+			var url = `/data/${this.get('name')}.json`;
+
 			$.ajax({
 				type: 'get',
-				url: `/data/${this.get('name')}.json`,
+				url: url,
 				success: (data) => {
 					var geoJson = topojson.feature(data, data.objects[this.get('fileName')]);
 					return resolve(geoJson);

@@ -170,6 +170,19 @@ if (!Array.prototype.map) {
   };
 }
 (function() {
+  if (typeof ChartistHtml !== "undefined" && ChartistHtml !== null) {
+    ChartistHtml.config.baseClass = "atlas-chart";
+    ChartistHtml.config.colorSpectrum = ['#85026A', '#019fde'];
+    ChartistHtml.config.tooltipTemplate = function(data) {
+      return "<div><h1>" + data.label + "</h1><p>" + data.value + "</p></div>";
+    };
+    ChartistHtml.config.chartOptions.bar.options.base.seriesBarDistance = 28;
+    ChartistHtml.config.labelOffsetCoefficient = 5;
+  }
+
+}).call(this);
+
+(function() {
   $.ajaxSetup({
     headers: {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
@@ -222,19 +235,6 @@ if (!Array.prototype.map) {
 
 }).call(this);
 
-(function() {
-  if (typeof ChartistHtml !== "undefined" && ChartistHtml !== null) {
-    ChartistHtml.config.baseClass = "atlas-chart";
-    ChartistHtml.config.colorSpectrum = ['#85026A', '#019fde'];
-    ChartistHtml.config.tooltipTemplate = function(data) {
-      return "<div><h1>" + data.label + "</h1><p>" + data.value + "</p></div>";
-    };
-    ChartistHtml.config.chartOptions.bar.options.base.seriesBarDistance = 28;
-    ChartistHtml.config.labelOffsetCoefficient = 5;
-  }
-
-}).call(this);
-
 window.Atlas = new Marionette.Application();
 window.Map = {};
 
@@ -274,9 +274,11 @@ window.Map = {};
                 console.log(baseGeoData);
 
                 var coll;
+
                 coll = items.getRichGeoJson(baseGeoData);
+
                 return coll.onReady(function() {
-                    var overlayView = new OverlayView({ 
+                    var overlayView = new OverlayView({
                         map: Map.map,
                         collection: coll
                     });
@@ -300,18 +302,10 @@ window.Map = {};
 
         getStateBaseGeoData: function(next) {
 
-            var data;
-            data = Atlas['us-states-10m'];
-            if (data != null) {
-                return next(data);
-            }
+            var shp = new M.shapeFile.Collection().models[0];
 
-            return $.ajax({
-                url: '/data/us-states-10m.js',
-                dataType: 'script',
-                success: function() {
-                    return next(Atlas['us-states-10m']);
-                }
+            shp.getClientFetchPromise().then((data) => {
+                next(data);
             });
 
         },

@@ -36,9 +36,11 @@ window.Map = {};
                 console.log(baseGeoData);
 
                 var coll;
+
                 coll = items.getRichGeoJson(baseGeoData);
+
                 return coll.onReady(function() {
-                    var overlayView = new OverlayView({ 
+                    var overlayView = new OverlayView({
                         map: Map.map,
                         collection: coll
                     });
@@ -62,18 +64,10 @@ window.Map = {};
 
         getStateBaseGeoData: function(next) {
 
-            var data;
-            data = Atlas['us-states-10m'];
-            if (data != null) {
-                return next(data);
-            }
+            var shp = new M.shapeFile.Collection().models[0];
 
-            return $.ajax({
-                url: '/data/us-states-10m.js',
-                dataType: 'script',
-                success: function() {
-                    return next(Atlas['us-states-10m']);
-                }
+            shp.getClientFetchPromise().then((data) => {
+                next(data);
             });
 
         },

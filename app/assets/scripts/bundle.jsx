@@ -25,6 +25,10 @@ global.Comp = {
 	start: start
 };
 
-new shapeFile.Collection().models[0].getClientFetchPromise().then((data) => { console.log(data); })
+global.M = {
+	shapeFile: shapeFile
+}
+
+// new shapeFile.Collection().models[0].getClientFetchPromise().then((data) => { console.log(data); })
 
 export default start;
