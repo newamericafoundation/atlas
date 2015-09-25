@@ -100,7 +100,14 @@ class Project extends React.Component {
 			'atl__project--overview': (project.get('is_section_overview') === 'Yes')
 		});
 		return (
-			<Link className={ cls } onMouseEnter={ this.applyBackgroundColor.bind(this) } onMouseLeave={ this.removeBackgroundColor.bind(this) } onClick={ this.launch.bind(this) } to={ '/' + project.get('atlas_url') }>
+			<Link 
+				className={ cls } 
+				onMouseEnter={ this.applyBackgroundColor.bind(this) } 
+				onMouseLeave={ this.removeBackgroundColor.bind(this) } 
+				onClick={ this.launch.bind(this) } 
+				to={ '/' + project.get('atlas_url') }
+				data-id={project.get('id')} 
+			>
 				<div className="atl__project__background" style={this.getBackgroundStyle()} >
 					<div className="center--content">
 						<p className="atl__project__background__initials">{ this.getInitials() }</p>

@@ -26,7 +26,7 @@ resources.forEach(function(resource) {
 });
 
 // Main routes - routing done by client.
-router.get([ '/', '/menu', '/welcome', '/:atlas_url' ], (req, res) => {
+router.get([ '/', '/menu', '/welcome', '/:atlas_url', '*' ], (req, res) => {
 	var opt = fingerprintManifest;
 	opt.user = req.user;
 	console.log(req.user);

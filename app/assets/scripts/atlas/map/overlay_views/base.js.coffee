@@ -1,5 +1,5 @@
     # overlay view layers inherit from this object
-	class Map.OverlayBaseView
+	class Map.BaseOverlayView
 
         constructor: (options) ->
             options ?= {}

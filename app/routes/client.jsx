@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import Layout from './../components/layout.jsx';
 
 import Welcome from './../components/route_handlers/welcome/root.jsx';
+
 import ProjectsIndex from './../components/route_handlers/projects/index/root.jsx';
 import ProjectsShow from './../components/route_handlers/projects/show/root.jsx';
 import ProjectsNew from './../components/route_handlers/projects/new/root.jsx';
@@ -16,6 +17,7 @@ import ProjectsDelete from './../components/route_handlers/projects/delete/root.
 import ImagesIndex from  './../components/route_handlers/images/index/root.jsx';
 import ImagesNew from  './../components/route_handlers/images/new/root.jsx';
 import ImagesEdit from './../components/route_handlers/images/edit/root.jsx';
+import ImagesDelete from './../components/route_handlers/images/delete/root.jsx';
 
 
 // Main route definition.
@@ -35,7 +37,7 @@ var routes = (
 			<Route name='images_index' path='all' handler={ImagesIndex} />
 			<Route name='images_new' path='new' handler={ImagesNew} />
 			<Route name='images_edit' path=':id/edit' handler={ImagesEdit} />
-			{/* <Route name='images_delete' path=':id/delete' handler={ProjectsDelete} /> */}
+			<Route name='images_delete' path=':id/delete' handler={ImagesDelete} />
 		</Route>
 
 		<Route name='projects_index' path='menu' handler={ProjectsIndex} />

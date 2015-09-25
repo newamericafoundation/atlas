@@ -1,5 +1,5 @@
     # view constructor written using the module pattern (function returning an object, without a new keyword)
-    class Map.PathOverlayView extends Map.OverlayBaseView
+    class Map.PathOverlayView extends Map.BaseOverlayView
 
         # Brings feature to the top so its stroke is not covered by non-highlighted paths.
         bringFeatureToFront: (feature) ->

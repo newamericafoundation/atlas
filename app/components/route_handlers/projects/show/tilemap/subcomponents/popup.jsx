@@ -28,7 +28,7 @@ class Popup extends React.Component {
 	getModifierClass() {
 		var hoveredItem = this.getHoveredItem();
 		if (hoveredItem == null) { return ''; }
-		if(this.getHoveredItem().get('_itemType') === 'state') { return 'atl__popup--center'; }
+		if(this.getHoveredItem().get('_itemType') === 'pin') { return 'atl__popup--clear-middle'; }
 		return '';
 	}
 
@@ -56,12 +56,12 @@ class Popup extends React.Component {
 		App = this.props.App;
 		if (App == null) { return; }
 		hoveredItem = this.getHoveredItem();
-		if (hoveredItem == null) { return { display: 'none' }; }
+		if (hoveredItem == null) { return { visibility: 'hidden' }; }
 		position = App.reqres.request('item:map:position', hoveredItem);
 		return {
 			left: position.x,
 			top: position.y,
-			display: 'block',
+			visibility: 'visible',
 			type: hoveredItem.get('_itemType')
 		}
 	}

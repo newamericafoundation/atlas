@@ -26,7 +26,7 @@ gulp.task('geo-download', [ 'geo-clean' ], () => {
 });
 
 var shellTasks = shps.map((shp) => {
-	return `topojson -o temp/topojson/${shp.get('name')}.json -p ${shp.getRenameParam()} -q 1e6 -s 1e-8 temp/shp/${shp.get('fileName')}.shp`;
+	return `topojson -o temp/topojson/${shp.get('name')}.json -p ${shp.getRenameParam()} -q 1e6 -s 1e-7 temp/shp/${shp.get('fileName')}.shp`;
 });
 
 gulp.task('geo-convert-to-topojson', /* [ 'geo-download' ], */ shell.task(shellTasks));

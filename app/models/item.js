@@ -24,9 +24,11 @@ exports.Model = base.Model.extend({
 	 */
 	parse: function(data) {
 		this._processValues(data);
-		this._checkPindrop(data);
-		this._checkState(data);
-		this._checkCongressionalDistrict();
+
+		this._checkPin(data);
+		this._checkUsState(data);
+		this._checkUsCongressionalDistrict(data);
+
 		return data;
 	},
 	
@@ -59,26 +61,14 @@ exports.Model = base.Model.extend({
 	 * @param {object} data
 	 * @returns {object} - Validation summary object.
 	 */
-	_checkPindrop: function(data) {
+	_checkPin: function(data) {
 		var errors, foundLat, foundLong;
 		errors = [];
 		foundLat = this._findAndReplaceKey(data, 'lat', ['latitude', 'Latitude', 'lat', 'Lat']);
 		foundLong = this._findAndReplaceKey(data, 'long', ['longitude', 'Longitude', 'long', 'Long']);
 		if (foundLat && foundLong) {
-			data._itemType = 'pindrop';
-			return {
-				recognized: true,
-				errors: []
-			};
-		} else if (foundLat || foundLong) {
-			return {
-				recognized: true,
-				errors: ['Latitude or longitude not found.']
-			};
+			data._itemType = 'pin';
 		}
-		return {
-			recognized: false
-		};
 	},
 	
 	/** 
@@ -86,9 +76,8 @@ exports.Model = base.Model.extend({
 	 * @param {object} data
 	 * @returns {object} - Validation summary object.
 	 */
-	_checkState: function(data) {
-		var errors, stateData;
-		errors = [];
+	_checkUsState: function(data) {
+		var stateData;
 		if (data.name != null) {
 			stateData = _.where(states, {
 				name: data.name
@@ -96,21 +85,16 @@ exports.Model = base.Model.extend({
 			if ((stateData != null) && stateData.length > 0) {
 				data.id = stateData[0].id;
 				data.code = stateData[0].code;
-				data._itemType = 'state';
-			} else {
-				errors.push(data.name + ' not recognized as a state. Possibly a typo.');
+				data._itemType = 'us_state';
 			}
-			return {
-				recognized: true,
-				errors: errors
-			};
 		}
-		return {
-			recognized: false
-		};
 	},
 
-	_checkCongressionalDistrict: function(data) {
+	_checkUsCongressionalDistrict: function(data) {
+		if (data.cngdstcd != null) {
+			data.id = data.cngdstcd;
+			data._itemType = 'us_congressional_district';
+		}
 		return data;
 	},
 	
@@ -357,9 +341,15 @@ exports.Collection = base.Collection.extend({
 	
 	richGeoJsonBuilders: {
 
-		state: function(collection, baseGeoData) {
+
+
+		base: function(collection, baseGeoData, getFeatureId) {
+
+			console.log(this);
+
 			var data, richGeoJson, setup;
 			richGeoJson = new rgf.Collection();
+
 			setup = function(data) {
 				var feature, item, j, len, ref;
 				richGeoJson.features = baseGeoData.features;
@@ -373,11 +363,24 @@ exports.Collection = base.Collection.extend({
 				}
 				return richGeoJson.trigger('sync');
 			};
+
 			setup(baseGeoData);
 			return richGeoJson;
+
 		},
 
-		pindrop: function(collection) {
+		us_state: function(collection, baseGeoData) {
+			return this.base(collection, baseGeoData, (feature) => { return feature.properties.id; });
+		},
+
+		us_congressional_district: function(collection, baseGeoData) {
+			return this.base(collection, baseGeoData, (feature) => { 
+				var props = feature.properties;
+				return `${parseInt(props.state_id, 10)}${props.id}`; 
+			});
+		},
+
+		pin: function(collection) {
 			var item, j, len, ref, richGeoJson;
 			richGeoJson = new rgf.Collection();
 			ref = collection.models;

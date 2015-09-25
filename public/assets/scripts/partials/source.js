@@ -292,25 +292,28 @@ window.Map = {};
                 });
             };
 
-            this.getStateBaseGeoData(launch);
+            if (itemType === 'pin') {
+                launch();
+                return this;
+            }
+
+            console.log(itemType);
+
+            var shp = new M.shapeFile.Collection().findWhere({ name: itemType + 's' });
+
+            shp.getClientFetchPromise().then(function (data) {
+                launch(data);
+            });
+
             return this;
         },
 
         getOverlayViewConstructor: function getOverlayViewConstructor(itemType) {
 
-            if (itemType === 'state') {
-                return Map.PathOverlayView;
+            if (itemType === 'pin') {
+                return Map.PinOverlayView;
             }
-            return Map.PindropOverlayView;
-        },
-
-        getStateBaseGeoData: function getStateBaseGeoData(next) {
-
-            var shp = new M.shapeFile.Collection().models[0];
-
-            shp.getClientFetchPromise().then(function (data) {
-                next(data);
-            });
+            return Map.PathOverlayView;
         },
 
         destroy: function destroy() {
@@ -484,8 +487,8 @@ Map.control = {
 'use strict';
 
 (function () {
-  Map.OverlayBaseView = (function () {
-    function OverlayBaseView(options) {
+  Map.BaseOverlayView = (function () {
+    function BaseOverlayView(options) {
       if (options == null) {
         options = {};
       }
@@ -499,7 +502,7 @@ Map.control = {
       this;
     }
 
-    OverlayBaseView.prototype.setHeaderStripColor = function () {
+    BaseOverlayView.prototype.setHeaderStripColor = function () {
       var indeces, project;
       project = Map.props.project;
       indeces = project.getFriendlyIndeces();
@@ -512,7 +515,7 @@ Map.control = {
       }
     };
 
-    OverlayBaseView.prototype.getItemMapPosition = function (item) {
+    BaseOverlayView.prototype.getItemMapPosition = function (item) {
       var feature, identityPath, latLong, longLatArrayCentroid, map;
       identityPath = d3.geo.path().projection(function (d) {
         return d;
@@ -524,7 +527,7 @@ Map.control = {
       return map.latLngToContainerPoint(latLong);
     };
 
-    OverlayBaseView.prototype.updateAnimated = function () {
+    BaseOverlayView.prototype.updateAnimated = function () {
       var $el;
       $el = $('.leaflet-overlay-pane');
       return $el.stop().animate({
@@ -539,7 +542,7 @@ Map.control = {
       })(this));
     };
 
-    OverlayBaseView.prototype.onFeatureMouseOut = function (feature) {
+    BaseOverlayView.prototype.onFeatureMouseOut = function (feature) {
       var items, project;
       project = Map.props.project;
       items = project.get('data').items;
@@ -548,7 +551,7 @@ Map.control = {
       return Map.props.App.commands.execute('update:tilemap');
     };
 
-    OverlayBaseView.prototype.onFeatureMouseOver = function (feature) {
+    BaseOverlayView.prototype.onFeatureMouseOver = function (feature) {
       var items, model, project;
       if (this.bringFeatureToFront != null) {
         this.bringFeatureToFront(feature);
@@ -561,7 +564,7 @@ Map.control = {
       return Map.props.App.commands.execute('update:tilemap');
     };
 
-    OverlayBaseView.prototype.onFeatureClick = function (feature) {
+    BaseOverlayView.prototype.onFeatureClick = function (feature) {
       var items, model, project;
       if (Map.map != null && Map.map.ignoreNextClick) {
         Map.map.ignoreNextClick = false;
@@ -581,18 +584,18 @@ Map.control = {
       return this.activeFeature = feature;
     };
 
-    OverlayBaseView.prototype.onRender = function () {
+    BaseOverlayView.prototype.onRender = function () {
       return $('.loading-icon').remove();
     };
 
-    OverlayBaseView.prototype.onMapClick = function (e) {
+    BaseOverlayView.prototype.onMapClick = function (e) {
       if (this.activeFeature != null) {
         this.activeFeature = void 0;
         return Map.props.App.vent.trigger('item:deactivate');
       }
     };
 
-    OverlayBaseView.prototype.getFeatureByModel = function (model) {
+    BaseOverlayView.prototype.getFeatureByModel = function (model) {
       var feature, i, len, ref;
       ref = this.collection.features;
       for (i = 0, len = ref.length; i < len; i++) {
@@ -603,7 +606,7 @@ Map.control = {
       }
     };
 
-    OverlayBaseView.prototype.getFeatureDisplayState = function (feature) {
+    BaseOverlayView.prototype.getFeatureDisplayState = function (feature) {
       var filter, model, searchTerm;
       if (Map.props.uiState == null) {
         return;
@@ -616,7 +619,7 @@ Map.control = {
       }
     };
 
-    OverlayBaseView.prototype.getFill = function (feature) {
+    BaseOverlayView.prototype.getFill = function (feature) {
       var filter, id, valueIndeces;
       filter = Map.props.project.get('data').filter;
       valueIndeces = filter.getFriendlyIndeces(feature._model, 15);
@@ -630,11 +633,11 @@ Map.control = {
       return "url(#stripe-pattern-" + id + ")";
     };
 
-    OverlayBaseView.prototype._areBoundsFinite = function (bounds) {
+    BaseOverlayView.prototype._areBoundsFinite = function (bounds) {
       return isFinite(bounds[0][0]) && isFinite(bounds[0][1]) && isFinite(bounds[1][0]) && isFinite(bounds[1][1]);
     };
 
-    OverlayBaseView.prototype.resizeContainer = function (geoJson, path, extraExpansion) {
+    BaseOverlayView.prototype.resizeContainer = function (geoJson, path, extraExpansion) {
       var bottomRight, bounds, topLeft;
       bounds = path.bounds(geoJson);
       if (this._areBoundsFinite(bounds)) {
@@ -656,7 +659,7 @@ Map.control = {
       }
     };
 
-    OverlayBaseView.prototype.destroy = function () {
+    BaseOverlayView.prototype.destroy = function () {
       if (this.stopListening != null) {
         this.stopListening();
       }
@@ -666,7 +669,7 @@ Map.control = {
       return this;
     };
 
-    return OverlayBaseView;
+    return BaseOverlayView;
   })();
 }).call(undefined);
 'use strict';
@@ -771,7 +774,7 @@ Map.control = {
     };
 
     return PathOverlayView;
-  })(Map.OverlayBaseView);
+  })(Map.BaseOverlayView);
 }).call(undefined);
 'use strict';
 
@@ -785,24 +788,24 @@ Map.control = {
   },
       hasProp = ({}).hasOwnProperty;
 
-  Map.PindropOverlayView = (function (superClass) {
-    extend(PindropOverlayView, superClass);
+  Map.PinOverlayView = (function (superClass) {
+    extend(PinOverlayView, superClass);
 
-    function PindropOverlayView() {
-      return PindropOverlayView.__super__.constructor.apply(this, arguments);
+    function PinOverlayView() {
+      return PinOverlayView.__super__.constructor.apply(this, arguments);
     }
 
-    PindropOverlayView.prototype.renderSvgContainer = function () {
+    PinOverlayView.prototype.renderSvgContainer = function () {
       this.svg = d3.select(Map.map.getPanes().overlayPane).append('svg').attr('class', 'deethree');
       return this.g = this.svg.append('g').attr('class', 'leaflet-zoom-hide');
     };
 
-    PindropOverlayView.prototype.setMapEventListeners = function () {
+    PinOverlayView.prototype.setMapEventListeners = function () {
       Map.map.on('viewreset', this.update.bind(this));
       return Map.map.on('click', this.onMapClick.bind(this));
     };
 
-    PindropOverlayView.prototype.render = function () {
+    PinOverlayView.prototype.render = function () {
       var pindrop;
       if (this.renderSvgContainer != null) {
         this.renderSvgContainer();
@@ -848,7 +851,7 @@ Map.control = {
       return this.setMapEventListeners();
     };
 
-    PindropOverlayView.prototype.getFills = function (feature) {
+    PinOverlayView.prototype.getFills = function (feature) {
       var filter, valueIndeces;
       filter = Map.props.project.get('data').filter;
       valueIndeces = filter.getFriendlyIndeces(feature._model, 15);
@@ -860,7 +863,7 @@ Map.control = {
       });
     };
 
-    PindropOverlayView.prototype.update = function () {
+    PinOverlayView.prototype.update = function () {
       var getIndecesFromClassName, getProjectedPoint, path, projectPoint, self, transform;
       getProjectedPoint = function (long, lat) {
         return Map.map.latLngToLayerPoint(new L.LatLng(lat, long));
@@ -934,6 +937,6 @@ Map.control = {
       return this;
     };
 
-    return PindropOverlayView;
-  })(Map.OverlayBaseView);
+    return PinOverlayView;
+  })(Map.BaseOverlayView);
 }).call(undefined);

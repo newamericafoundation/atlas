@@ -6,6 +6,8 @@
  */
 .atl__popup {
 
+	display: block;
+
 	.atl__info-box--active &, .leaflet-dragging & { display: none; }
 
 	position: absolute;
@@ -36,7 +38,11 @@
 		&__logo {
 			position: absolute;
 			@include animation(bounce 0.7s linear infinite);
-			top: 15px;
+
+			top: 10px;
+			.atl__popup--clear-middle & { top: 15px; }
+
+			
 			left: 80px;
 			padding-top: 0;
 			width: 40px;
@@ -45,10 +51,6 @@
 			.hex-button__border { stroke: $c2; stroke-width: 6px; fill: none; }
 			.hex-button__down { fill: $c2; stroke: none; }
 
-			.atl__popup--center & {
-				top: 25px;
-			}
-
 		}
 
 		&__text {
@@ -56,7 +58,9 @@
 			border-radius: 6px;
 			padding: 13px 10px 10px 10px;
 			position: relative;
-			top: -105px;
+
+			top: -45px;
+			.atl__popup--clear-middle & { top: -105px; }
 
 			background-color: map-get(map-get($palette, grey), base);
 
@@ -69,8 +73,6 @@
 				vertical-align: bottom;
 				color: $c1;
 			}
-
-			.atl__popup--center & { top: -30px; }
 
 		}
 	}

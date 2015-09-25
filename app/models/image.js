@@ -54,6 +54,10 @@ exports.Model = base.Model.extend({
 		return `/images/${this.get('id')}/edit`;
 	},
 
+	getViewUrl: function() {
+		return '/';
+	},
+
 	/**
 	 * Recognize and process server response.
 	 * @param {object} resp - Server response.

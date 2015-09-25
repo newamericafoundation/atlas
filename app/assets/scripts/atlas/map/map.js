@@ -48,25 +48,27 @@ window.Map = {};
 
             };
 
-            this.getStateBaseGeoData(launch);
+            if (itemType === 'pin') {
+                launch();
+                return this;
+            }
+
+            console.log(itemType);
+
+            var shp = new M.shapeFile.Collection().findWhere({ name: `${itemType}s` });
+
+            shp.getClientFetchPromise().then((data) => {
+                launch(data);
+            });
+
             return this;
 
         },
 
         getOverlayViewConstructor: function(itemType) {
 
-            if (itemType === 'state') { return Map.PathOverlayView; }
-            return Map.PindropOverlayView;
-
-        },
-
-        getStateBaseGeoData: function(next) {
-
-            var shp = new M.shapeFile.Collection().models[0];
-
-            shp.getClientFetchPromise().then(function(data) {
-                next(data);
-            });
+            if (itemType === 'pin') { return Map.PinOverlayView; }
+            return Map.PathOverlayView;
 
         },
 
