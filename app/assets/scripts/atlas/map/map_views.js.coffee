@@ -28,7 +28,12 @@
 
 			@map.ignoreNextClick = false
 			# do not register a map item click event if it is fired due to a map drag end
+
+			@map.on 'dragstart', (e) => 
+				Map.props.setUiState { isMapDragged: true }
+
 			@map.on 'dragend', (e) =>
+				Map.props.setUiState { isMapDragged: false }
 				# use functionality only if there is sufficient drag
 				#   as Leaflet sometimes detects slightly imperfect clicks as drags
 				items = Map.props.project.get('data').items

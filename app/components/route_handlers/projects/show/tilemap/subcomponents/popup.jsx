@@ -5,6 +5,7 @@ class Popup extends React.Component {
 
 	render() {
 		var style = this.getStyle();
+		if (this.props.uiState.isMapDragged) { return <div />; }
 		return (
 			<div className={ 'atl__popup ' + this.getModifierClass() } style={ style }>
 				<div className="atl__popup__wrapper">
@@ -56,12 +57,11 @@ class Popup extends React.Component {
 		App = this.props.App;
 		if (App == null) { return; }
 		hoveredItem = this.getHoveredItem();
-		if (hoveredItem == null) { return { visibility: 'hidden' }; }
+		if (hoveredItem == null) { return; }
 		position = App.reqres.request('item:map:position', hoveredItem);
 		return {
 			left: position.x,
 			top: position.y,
-			visibility: 'visible',
 			type: hoveredItem.get('_itemType')
 		}
 	}

@@ -437,9 +437,19 @@ Map.control = {
       this.map.scrollWheelZoom.disable();
       _.extend(this.map, Map.control);
       this.map.ignoreNextClick = false;
+      this.map.on('dragstart', (function (_this) {
+        return function (e) {
+          return Map.props.setUiState({
+            isMapDragged: true
+          });
+        };
+      })(this));
       this.map.on('dragend', (function (_this) {
         return function (e) {
           var items;
+          Map.props.setUiState({
+            isMapDragged: false
+          });
           items = Map.props.project.get('data').items;
           if (e.distance > 15 && items.hovered != null) {
             return _this.map.ignoreNextClick = true;
@@ -546,7 +556,9 @@ Map.control = {
       items = project.get('data').items;
       items.setHovered(-1);
       this.setHeaderStripColor();
-      return Map.props.App.commands.execute('update:tilemap');
+      return Map.props.App.commands.execute('update:tilemap', {
+        ignoreMapItems: true
+      });
     };
 
     BaseOverlayView.prototype.onFeatureMouseOver = function (feature) {
@@ -559,7 +571,9 @@ Map.control = {
       model = feature._model != null ? feature._model : feature.id;
       items.setHovered(model);
       this.setHeaderStripColor();
-      return Map.props.App.commands.execute('update:tilemap');
+      return Map.props.App.commands.execute('update:tilemap', {
+        ignoreMapItems: true
+      });
     };
 
     BaseOverlayView.prototype.onFeatureClick = function (feature) {

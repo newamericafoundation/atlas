@@ -11,6 +11,13 @@ import OptionsTab from './subcomponents/options_tab.jsx';
 
 class Tilemap extends React.Component {
 	
+	constructor(props) {
+		super(props);
+		this.state = {
+			ignoreMapItemsOnUpdate: false
+		};
+	}
+
 	render() {
 		if (!this.isHealthy()) { return (<div className='bg-c-off-white'><p className='title'>Project data is invalid.</p></div>) }
 		return (
@@ -44,7 +51,7 @@ class Tilemap extends React.Component {
 
 	renderItems() {
 		if (this.props.uiState.itemsDisplayMode === 'map') {
-			return (<Map {...this.props} />);
+			return (<Map {...this.props} ignoreMapItemsOnUpdate={this.state.ignoreMapItemsOnUpdate} />);
 		} else {
 			return (<List {...this.props} />);
 		}
@@ -57,8 +64,10 @@ class Tilemap extends React.Component {
 	componentWillMount() {
 		var App = this.props.App;
 		if (App == null) { return; }
-		App.commands.setHandler('update:tilemap', () => {
-			this.forceUpdate();
+		App.commands.setHandler('update:tilemap', (args = {}) => {
+			// console.log(args);
+			this.setState({ ignoreMapItemsOnUpdate: args.ignoreMapItems });
+			// this.forceUpdate();
 		});
 	}
 

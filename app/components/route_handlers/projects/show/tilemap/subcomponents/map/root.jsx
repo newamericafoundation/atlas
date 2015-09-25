@@ -22,6 +22,10 @@ class Map extends React.Component {
 		);
 	}
 
+	shouldComponentUpdate(nextProps, nextState) {
+		return !nextProps.ignoreMapItemsOnUpdate;
+	}
+
 	componentDidMount() {
 		var Map = window.Map;
 		Map.props = {
@@ -49,7 +53,9 @@ class Map extends React.Component {
 
 	componentDidUpdate() {
 		var Map = window.Map;
-		if (Map.overlayView) { Map.overlayView.update(); }
+		if (!this.props.uiState.isMapDragged && Map.overlayView) { 
+			Map.overlayView.update(); 
+		}
 	}
 
 }

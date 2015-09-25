@@ -24,6 +24,7 @@ class Show extends React.Component {
 				isCollapsedMaster: false, // master toggle
 				isInfoBoxActive: false, // stores whether the info box is active
 				isInfoBoxNarrow: false, // stores whether the info box is narrow
+				isMapDragging: false,
 				isOptionsTabActive: false
 			}
 		};

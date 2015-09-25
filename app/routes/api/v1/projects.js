@@ -19,7 +19,7 @@ var currentAuthMiddleware = (process.NODE_ENV === 'production') ? authMiddleware
 
 var shouldHideDraftProjects = function(req) {
 	// Unsafe setting to test back-end while in development, skipping the auth step which is required at each server restart.
-	return ((!req.isAuthenticated()) && (process.env.NODE_ENV !== 'development'));
+	return (process.env.NODE_ENV === 'production') ? !req.isAuthenticated() : false;
 	// return (!req.isAuthenticated());
 };
 

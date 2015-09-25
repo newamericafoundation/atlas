@@ -41,7 +41,7 @@
             items = project.get('data').items
             items.setHovered -1
             @setHeaderStripColor()
-            Map.props.App.commands.execute('update:tilemap')
+            Map.props.App.commands.execute('update:tilemap', { ignoreMapItems: true })
 
         # Callback.
         onFeatureMouseOver: (feature) ->
@@ -52,7 +52,7 @@
             model = if feature._model? then feature._model else feature.id
             items.setHovered model
             @setHeaderStripColor()
-            Map.props.App.commands.execute('update:tilemap')
+            Map.props.App.commands.execute('update:tilemap', { ignoreMapItems: true })
 
         # Callback.
         onFeatureClick: (feature) ->

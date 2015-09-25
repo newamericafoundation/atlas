@@ -8,7 +8,7 @@
 
 	display: block;
 
-	.atl__info-box--active &, .leaflet-dragging & { display: none; }
+	.atl__info-box--active & { display: none; }
 
 	position: absolute;
 	width: 200px;
