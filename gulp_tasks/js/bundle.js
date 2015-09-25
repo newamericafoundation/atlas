@@ -19,7 +19,7 @@ var globalShim = browserifyGlobalShim.configure({
 var getBrowserifyBundler = (entries) => {
     var args = _.extend({ entries: entry }, watchify.args, { debug: true });
     var b = browserify(args);
-    b.transform(babelify);
+    b.transform(babelify.configure({ optional: [ 'runtime' ] }));
     b.transform(globalShim);
     return b;
 };
