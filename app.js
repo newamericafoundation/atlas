@@ -25,8 +25,8 @@ var env = process.env.NODE_ENV,
 require('./config/passport_config.js');
 
 // Basic configuration.
-app.use(bodyParser.json({ limit: '15mb' }));
-app.use(bodyParser.urlencoded({ extended: false, limit: '15mb', parameterLimit: 10000 }));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ extended: false, limit: '50mb', parameterLimit: 100000 }));
 
 app.set('views', __dirname + '/app/views');
 app.set('view engine', 'jade');
