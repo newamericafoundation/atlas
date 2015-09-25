@@ -8,17 +8,32 @@ import topojson from 'topojson';
 
 var Model = base.Model.extend({
 	
-	getClientFetchPromise: function() {
+	/*
+	 * Return promise resolved when GeoJson file is fetched and assembled from TopoJson.
+	 *
+	 */
+	getGeoJsonFetchPromise: function() {
+
+		// Store cache for geoJson data on the constructor.
+		Model.geoJsonCache = Model.geoJsonCache || {};
 
 		return new Promise((resolve, reject) => {
 
-			var url = `/data/${this.get('name')}.json`;
+			var name = this.get('name'),
+				url = `/data/${name}.json`;
+
+			// Resolve immediately if found on cache.
+			if (Model.geoJsonCache[name]) {
+				return resolve(Model.geoJsonCache[name]);
+			}
 
 			$.ajax({
 				type: 'get',
 				url: url,
 				success: (data) => {
 					var geoJson = topojson.feature(data, data.objects[this.get('fileName')]);
+					// Set on cache.
+					Model.geoJsonCache[name] = geoJson;
 					return resolve(geoJson);
 				},
 				error: (err) => {

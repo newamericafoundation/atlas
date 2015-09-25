@@ -299,7 +299,7 @@ window.Map = {};
 
             var shp = new M.shapeFile.Collection().findWhere({ name: itemType + 's' });
 
-            shp.getClientFetchPromise().then(function (data) {
+            shp.getGeoJsonFetchPromise().then(function (data) {
                 launch(data);
             });
 
@@ -307,7 +307,6 @@ window.Map = {};
         },
 
         getOverlayViewConstructor: function getOverlayViewConstructor(itemType) {
-
             if (itemType === 'pin') {
                 return Map.PinOverlayView;
             }

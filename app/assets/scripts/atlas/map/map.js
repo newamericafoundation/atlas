@@ -55,7 +55,7 @@ window.Map = {};
 
             var shp = new M.shapeFile.Collection().findWhere({ name: `${itemType}s` });
 
-            shp.getClientFetchPromise().then((data) => {
+            shp.getGeoJsonFetchPromise().then((data) => {
                 launch(data);
             });
 
@@ -64,10 +64,8 @@ window.Map = {};
         },
 
         getOverlayViewConstructor: function(itemType) {
-
             if (itemType === 'pin') { return Map.PinOverlayView; }
             return Map.PathOverlayView;
-
         },
 
         destroy: function() {
