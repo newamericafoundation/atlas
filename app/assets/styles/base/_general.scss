@@ -3,8 +3,11 @@
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     font-family: "SimplonNorm-Regular-WebS";
-    -webkit-font-smoothing: antialiased;
+
     font-weight: normal;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 ::-webkit-scrollbar {

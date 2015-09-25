@@ -33,9 +33,10 @@
 		display: inline-block;
 		margin: auto;
 
-		// .atl__popup--center & > div { float: left; }
-
 		&__logo {
+
+			display: block;
+
 			position: absolute;
 			@include animation(bounce 0.7s linear infinite);
 
