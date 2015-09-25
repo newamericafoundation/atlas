@@ -6,19 +6,19 @@ var formatters = {
 
 	currency: function(v) {
 	    var formatter;
-	    if (typeof numeral === "undefined" || numeral === null) {
-	        return v;
-	    }
+	    if (!numeral) { return v; }
 	    formatter = v > 999 ? '($0a)' : '($0)';
 	    return numeral(v).format(formatter);
 	},
 
 	number: function(v) {
 	    var formatter;
-	    if (typeof numeral === "undefined" || numeral === null) {
-	        return v;
-	    }
-	    formatter = v > 99999 ? '0.0a' : '0.0';
+	    if (!numeral) { return v; }
+	    if (v === parseInt(v, 10)) {
+	    	formatter = v > 99999 ? '0a' : '0';
+	    } else {
+		    formatter = v > 99999 ? '0.0a' : '0.0';
+		}
 	    return numeral(v).format(formatter);
 	},
 

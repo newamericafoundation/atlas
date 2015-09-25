@@ -14,13 +14,13 @@ import showMiddleware from './../../../middleware/crud/show.js';
 import indexMiddleware from './../../../middleware/crud/index.js';
 
 // Unsafe setting to test back-end while in development, skipping the auth step which is required at each server restart.
-//var currentAuthMiddleware = (process.NODE_ENV === 'production') ? authMiddleware.ensureAuthenticated : authMiddleware.ensureNothing;
-var currentAuthMiddleware = authMiddleware.ensureAuthenticated;
+var currentAuthMiddleware = (process.NODE_ENV === 'production') ? authMiddleware.ensureAuthenticated : authMiddleware.ensureNothing;
+// var currentAuthMiddleware = authMiddleware.ensureAuthenticated;
 
 var shouldHideDraftProjects = function(req) {
 	// Unsafe setting to test back-end while in development, skipping the auth step which is required at each server restart.
-	//return ((!req.isAuthenticated()) && (process.env.NODE_ENV !== 'development'));
-	return (!req.isAuthenticated());
+	return ((!req.isAuthenticated()) && (process.env.NODE_ENV !== 'development'));
+	// return (!req.isAuthenticated());
 };
 
 var router = express.Router();

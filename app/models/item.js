@@ -23,6 +23,12 @@ exports.Model = base.Model.extend({
 	 * @returns {object} data - Modified data.
 	 */
 	parse: function(data) {
+
+		if (data.Name && !data.name) {
+			data.name = data.Name;
+			delete data.Name;
+		}
+
 		this._processValues(data);
 
 		this._checkPin(data);
@@ -97,7 +103,7 @@ exports.Model = base.Model.extend({
 		}
 		return data;
 	},
-	
+
 	/** 
 	 * Get and format image name.
 	 * @returns {string} name - Lower-cased name without line breaks.
@@ -274,7 +280,6 @@ exports.Collection = base.Collection.extend({
 		// Sort value list if there is a value_order array set on the variable.
 		if (variable && variable.get('value_order')) {
 			let valueOrderArray = variable.get('value_order').split('|').map((s) => { return s.trim(); });
-			console.log(valueOrderArray);
 			valueList = valueList.sort((val_1, val_2) => {
 				var index_1 = valueOrderArray.indexOf(val_1);
 				var index_2 = valueOrderArray.indexOf(val_2);
@@ -345,8 +350,6 @@ exports.Collection = base.Collection.extend({
 
 		base: function(collection, baseGeoData, getFeatureId) {
 
-			console.log(this);
-
 			var data, richGeoJson, setup;
 			richGeoJson = new rgf.Collection();
 
@@ -356,8 +359,9 @@ exports.Collection = base.Collection.extend({
 				ref = richGeoJson.features;
 				for (j = 0, len = ref.length; j < len; j++) {
 					feature = ref[j];
+					let featureId = getFeatureId(feature);
 					item = collection.findWhere({
-						id: parseInt(feature.properties.id, 10)
+						id: featureId
 					});
 					feature._model = item;
 				}
@@ -370,13 +374,13 @@ exports.Collection = base.Collection.extend({
 		},
 
 		us_state: function(collection, baseGeoData) {
-			return this.base(collection, baseGeoData, (feature) => { return feature.properties.id; });
+			return this.base(collection, baseGeoData, (feature) => { return parseInt(feature.properties.id); });
 		},
 
 		us_congressional_district: function(collection, baseGeoData) {
 			return this.base(collection, baseGeoData, (feature) => { 
 				var props = feature.properties;
-				return `${parseInt(props.state_id, 10)}${props.id}`; 
+				return parseInt(`${parseInt(props.state_id, 10)}${props.id}`, 10); 
 			});
 		},
 

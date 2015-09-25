@@ -53,8 +53,6 @@ window.Map = {};
                 return this;
             }
 
-            console.log(itemType);
-
             var shp = new M.shapeFile.Collection().findWhere({ name: `${itemType}s` });
 
             shp.getClientFetchPromise().then((data) => {
