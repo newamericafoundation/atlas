@@ -56,7 +56,7 @@ passport.use(new OAuth2Strategy({
         model.getSavePromise().then(() => {
             //return done(null, model.toJSON());
             return done(null, model.toSessionJSON());
-        }, (err) => { return done(err, null); });
+        }, (err) => { return done(err); });
 
     }
 ));

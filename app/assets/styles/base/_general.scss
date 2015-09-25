@@ -23,8 +23,6 @@
 // Override normalize.css assignment - set manually with bold font-face files.
 b, optgroup, strong { font-weight: normal; }
 
-
-
 html, body {
     margin: 0;
     padding: 0;
@@ -38,10 +36,7 @@ img {
     height: 100%;
 }
 
-.wrapper {
-    background-color: map-get($palette, off-white);
-    &.atl-route--welcome_index { background-color: darken(map-get(map-get($palette, grey), base), 3); }
-}
+.wrapper, #site { background-color: map-get($palette, off-white); }
 
 ul {
     margin-top: 0;

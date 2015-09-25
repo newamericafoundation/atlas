@@ -20,6 +20,7 @@ class Welcome extends React.Component {
 		if (!this.state.hasImageLoaded) { return (<Loading />); }
 		return (
 			<div className="welcome fill-parent" style={ this.getRootVisibilityStyle() }>
+				<div className="welcome__background"></div>
 				<div className="welcome__terrain" style={ this.getBackgroundImageStyle() } /> 
 				<div className="welcome__title">
 					<h1 className="welcome__title__name">ATLAS</h1>

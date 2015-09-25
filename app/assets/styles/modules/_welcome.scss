@@ -98,17 +98,25 @@
 
 	}
 
+	&__background, &__terrain {
+		position: fixed;
+		pointer-events: none;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 0;
+	}
+
+	&__background {
+		background-color: darken(map-get(map-get($palette, grey), base), 3);
+	}
+
+	&__terrain {
+		background-size: cover;
+		background-position: 50% 50%;
+		opacity: 0.5;
+	}
+
 }
 
-.welcome__terrain {
-	background-size: cover;
-	background-position: 50% 50%;
-	opacity: 0.5;
-	position: fixed;
-	pointer-events: none;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	z-index: 0;
-}

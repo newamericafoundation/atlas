@@ -18,13 +18,9 @@ block content
 		script(src='/assets/scripts/partials/component.js')
 	- }
 
-	- if (user || (process.env.NODE_ENV === 'development')) {
+	- if (user || (process.env.NODE_ENV !== 'production')) {
 		script(type='text/javascript').
 			window.isResearcherAuthenticated = true;
-	- }
-
-	- if (user) {
-		script(type='text/javascript').
 			window.researcher = !{JSON.stringify(user)};
 	- }
 

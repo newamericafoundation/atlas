@@ -26,7 +26,7 @@ require('./config/passport_config.js');
 
 // Basic configuration.
 app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ extended: false, limit: '50mb', parameterLimit: 100000 }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb', parameterLimit: 100000 }));
 
 app.set('views', __dirname + '/app/views');
 app.set('view engine', 'jade');
@@ -47,7 +47,7 @@ dbConnector.then(function(db) {
 	app.use(session({
 	    secret: 'Super_Big_Secret',
 	    saveUninitialized: false,
-	    resave: false,
+	    resave: false//,
 	    // store: new MongoStore({ 
 	    // 	db: db
 	    // }),
