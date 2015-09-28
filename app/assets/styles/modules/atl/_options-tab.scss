@@ -31,9 +31,10 @@
 		margin: auto;
 		width: 90%;
 		max-width: 700px;
+
 	}
 
-	.button { margin: 3px; }
+	.button { margin: 0 3px; }
 
 	.title {
 		@include font-size(32px);
@@ -47,7 +48,7 @@
 
 	@mixin collapsed() {
 		left: 0;
-		top: $top-bar-height;
+		top: 2 * $top-bar-height + 15px;
 	}
 
 	@mixin expanded() {
@@ -56,12 +57,17 @@
 		border-left: 2px solid map-get(map-get($palette, grey), light);
 	}
 
+	@mixin collapsed-large-screen() {
+		top: $top-bar-height;
+		left: 0;
+	}
+
 	@include collapsed;
 
 	@include bp-unstack-map-settings-bar {
 		@include expanded;
 		.atl--collapsed & {
-			@include collapsed;
+			@include collapsed-large-screen;
 		}
 	}
 

@@ -5,9 +5,14 @@ class Popup extends React.Component {
 
 	render() {
 		var style = this.getStyle();
-		if (this.props.uiState.isMapDragged) { return <div />; }
+		var hoveredItem = this.getHoveredItem();
+		if (this.props.uiState.isMapDragged || !hoveredItem) { return <div />; }
+		var cls = classNames({
+			'atl__popup': true,
+			'atl__popup--clear-middle': (hoveredItem.get('_itemType') === 'pin')
+		});
 		return (
-			<div className={ 'atl__popup ' + this.getModifierClass() } style={ style }>
+			<div className={ cls } style={ style }>
 				<div className="atl__popup__wrapper">
 					<div className="atl__popup__content">
 						<div id="atl__popup__content__logo" className="atl__popup__content__logo">
@@ -24,13 +29,6 @@ class Popup extends React.Component {
 
 	getHoveredItem() {
 		return this.props.project.get('data').items.hovered;
-	}
-
-	getModifierClass() {
-		var hoveredItem = this.getHoveredItem();
-		if (hoveredItem == null) { return ''; }
-		if(this.getHoveredItem().get('_itemType') === 'pin') { return 'atl__popup--clear-middle'; }
-		return '';
 	}
 
 	getName() {

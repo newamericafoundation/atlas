@@ -24,16 +24,6 @@ class Model extends Backbone.Model {
 		return raw;
 	}
 
-	setEncryptedFieldSync(key, value) {
-		var salt = bcrypt.genSaltSync(10);
-		var hash = bcrypt.hashSync(value, salt);
-		this.set('encrypted_' + key, hash);
-	}
-
-	compareEncryptedFieldSync(key, value) {
-		return bcrypt.compareSync(value, this.get('encrypted_' + key));
-	}
-
 	toMongoJSON() {
 		var json = this.toJSON();
 		json._id = json.id;

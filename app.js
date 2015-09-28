@@ -8,6 +8,7 @@ require('babel/register');
 var express = require('express'),
 	passport = require('passport'),
     bodyParser = require('body-parser'),
+    cookieParser = require('cookie-parser'),
     methodOverride = require('method-override'),
     session = require('express-session'),
     connectMongo = require('connect-mongo'),
@@ -37,6 +38,7 @@ app.get([ '*.js' ], require('./app/middleware/serve_gzip.js'));
 app.use(express.static('public'));
 
 app.use(methodOverride());
+app.use(cookieParser());
 
 // Load custom configuration.
 require('./config/app/custom.js')(app);
@@ -47,18 +49,19 @@ dbConnector.then(function(db) {
 	app.use(session({
 	    secret: 'Super_Big_Secret',
 	    saveUninitialized: false,
-	    resave: false//,
-	    // store: new MongoStore({ 
-	    // 	db: db
-	    // }),
-	    // cookie: { maxAge: 1 * 3600 },
-	    // collection: 'atlas_sessions'
+	    resave: true,
+	    store: new MongoStore({ 
+	    	db: db,
+	    	collection: 'atlas_sessions',
+	    	stringify: false
+	    }),
+	    cookie: { maxAge: 1 * 3600 * 1000 }
 	}));
 
 	// Initialize passport.
 	app.use(passport.initialize());
 	app.use(passport.session({
-		resave: false,
+		resave: true,
 		saveUninitialized: false
 	}));
 
