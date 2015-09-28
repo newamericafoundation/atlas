@@ -1,12 +1,14 @@
 import React from 'react';
 import classNames from 'classnames';
 
-class Popup extends React.Component {
+import OverviewBase from './overview_base.jsx';
+
+class Popup extends OverviewBase {
 
 	render() {
 		var style = this.getStyle();
 		var hoveredItem = this.getHoveredItem();
-		if (this.props.uiState.isMapDragged || !hoveredItem) { return <div />; }
+		if (this.props.uiState.isMapDragged || !hoveredItem) { return null; }
 		var cls = classNames({
 			'atl__popup': true,
 			'atl__popup--clear-middle': (hoveredItem.get('_itemType') === 'pin')
@@ -20,21 +22,12 @@ class Popup extends React.Component {
 						</div>
 						<div className="atl__popup__content__text">
 							<p>{ this.getName() }</p>
+							<p>{ this.getValue() }</p>
 						</div>
 					</div>
 				</div>
 			</div>
 		);
-	}
-
-	getHoveredItem() {
-		return this.props.project.get('data').items.hovered;
-	}
-
-	getName() {
-		var hoveredItem = this.getHoveredItem();
-		if (hoveredItem == null) { return ''; }
-		return hoveredItem.get('name');
 	}
 
 	renderLogo() {

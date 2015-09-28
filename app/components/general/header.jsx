@@ -22,7 +22,7 @@ class Header extends React.Component {
 				<div className="header__corner">
 					<Link 
 						id="header__welcome-link" 
-						to="/welcome" 
+						to="/menu" 
 					>
 						<NafIcon />
 					</Link>

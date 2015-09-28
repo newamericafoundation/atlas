@@ -22,15 +22,15 @@ var env = process.env.NODE_ENV,
 	MongoStore = connectMongo(session),
 	port = process.env.PORT || 8081;
 
+app.set('views', __dirname + '/app/views');
+app.set('view engine', 'jade');
+
 // Configure passport. Must run before initializing passport on the app instance.
 require('./config/passport_config.js');
 
 // Basic configuration.
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb', parameterLimit: 100000 }));
-
-app.set('views', __dirname + '/app/views');
-app.set('view engine', 'jade');
 
 // GZip serving middleware must be declared before static folder declaration. 
 app.get([ '*.js' ], require('./app/middleware/serve_gzip.js'));

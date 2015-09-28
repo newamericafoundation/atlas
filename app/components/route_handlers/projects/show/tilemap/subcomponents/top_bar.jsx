@@ -29,9 +29,7 @@ class TopBar extends OverviewBase {
 								<MoreIcon />
 							</div>
 						</div>
-						<div className="atl__top-bar__summary__item"><p>{ this.getValue() }</p></div>
-						<div className="atl__top-bar__summary__item"><p>{ this.getName() }</p></div>
-						
+
 					</div>
 				</div>
 			</div>

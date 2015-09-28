@@ -9,7 +9,10 @@ class InfoBox extends Static {
 
 	constructor(props) {
 		super(props);
-		this.state.transitionEventNamespace = 0;
+		this.state = {
+			transitionEventNamespace: 0,
+			image: null
+		}
 	}
 
 	render() {
@@ -78,6 +81,10 @@ class InfoBox extends Static {
 		if (activeItem == null || activeItem.getImageName() !== this.state.image.get('name')) {
 			this.setImage();
 		}
+	}
+
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.uiState.isInfoBoxActive === false) { this.setState({ image: null }); }
 	}
 
 	getTitle() {
@@ -198,10 +205,10 @@ class InfoBox extends Static {
   	}
 
 	renderTocList() {
-		var renderedList, tocItems;
-		tocItems = this.getContent().toc;
-		if (!((tocItems != null) && (tocItems.map != null) && tocItems.length > 0)) { return; }
-		return renderedList = tocItems.map((item, i) => {
+		var tocItems = this.getContent().toc;
+		if (!tocItems) { return; }
+		if (!tocItems.length) { return; }
+		return tocItems.map((item, i) => {
 			return (
 				<li className={'toc-'+item.tagName} key={'toc-' + i}>
 					<a href={"#toc-"+item.id}>
@@ -212,32 +219,77 @@ class InfoBox extends Static {
 		});
 	}
 
+	getFilteredVariables(field) {
+
+		var project = this.props.project,
+			variables = project.get('data').variables,
+			filtered;
+
+		filtered = variables.filter((variable) => {
+			return !!variable.get(field);
+		});
+
+		filtered = filtered.sort(function(a, b) {
+			return (a.get(field) - b.get(field));
+		});
+
+		return filtered;
+
+	}
+
+	getSummaryContent() {
+
+		var activeItem, html, summaryVar;
+
+		activeItem = this.props.activeItem;
+
+		if (activeItem.get('summary') || activeItem.get('summarytable')) { return; }
+
+		summaryVar = this.getFilteredVariables('summary_order');
+
+		if (summaryVar.length === 0) { return; }
+
+		html = '<table>';
+
+		summaryVar.forEach((variable) => {
+			html += `
+				<tr>
+					<td>
+						${variable.get('display_title')}
+					</td>
+					<td>
+						${variable.getFormattedField(activeItem)}
+					</td>
+				</tr>
+			`;
+		});
+
+		html += '</table>';
+
+		return html;
+
+	}
+
 	ensureActiveItemContent() {
 
 		var App, activeItem, html, infoBoxVar, project, variables;
+
 		project = this.props.project;
 		App = this.props.App;
 
 		activeItem = this.props.activeItem;
-		if ((activeItem == null) || (activeItem.get('info_box_content') != null)) {
-			return;
-		}
 
-		variables = project.get('data').variables;
-		infoBoxVar = variables.filter(function(variable) {
-			return variable.get('infobox_order') != null;
+		var summaryContent = this.getSummaryContent();
+		html = summaryContent ? `<h1>Overview</h1>${summaryContent}` : '';
+
+		if (!activeItem) { return; }
+		if (activeItem.get('info_box_content')) { return; }
+
+		infoBoxVar = this.getFilteredVariables('infobox_order');
+
+		infoBoxVar.forEach((variable) => {
+			html += `<h1>${variable.get('display_title') || 'Overview'}</h1>${variable.getFormattedField(activeItem)}`;
 		});
-
-		infoBoxVar = infoBoxVar.sort(function(a, b) {
-			return (a.get('infobox_order') - b.get('infobox_order'));
-		});
-
-		html = "";
-		infoBoxVar.forEach((function(_this) {
-			return function(variable) {
-			  return html += "<h1>" + (variable.get('display_title')) + "</h1>" + (variable.getFormattedField(activeItem, 'markdown'));
-			};
-		})(this));
 
 		activeItem.set('info_box_content', html);
 

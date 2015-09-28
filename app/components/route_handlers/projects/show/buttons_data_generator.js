@@ -5,12 +5,12 @@ export default function(project, isResearcherAuthenticated, isCollapsedDueToOver
 
 	var publicButtons = [
 
-		{ 
-			title: 'Explore Atlas',
-			contentType: 'inner-link',
-			url: '/menu',
-			reactIconNames: [ 'Grid' ]
-		},
+		// { 
+		// 	title: 'Explore Atlas',
+		// 	contentType: 'inner-link',
+		// 	url: '/menu',
+		// 	reactIconNames: [ 'Grid' ]
+		// },
 		{ 
 			title: 'Collapse/Expand',
 			contentType: 'button',
