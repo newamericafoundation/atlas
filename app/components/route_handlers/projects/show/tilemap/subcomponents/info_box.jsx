@@ -10,8 +10,7 @@ class InfoBox extends Static {
 	constructor(props) {
 		super(props);
 		this.state = {
-			transitionEventNamespace: 0,
-			image: null
+			transitionEventNamespace: 0
 		}
 	}
 
@@ -39,7 +38,15 @@ class InfoBox extends Static {
 		var project = this.props.project,
 			img = this.state.image,
 			imgUrl = img ? img.getUrl() : project.getImageUrl();
-		return imgUrl ? { 'backgroundImage': imgUrl } : { 'backgroundColor': 'rgba(50, 50, 50, 0.1)' };
+		var activeItem = project.get('data').items.active;
+		
+		if (activeItem && activeItem.image) { 
+			return { 'backgroundImage': activeItem.image.getUrl() } 
+		}
+		if (project.getImageUrl()) { 
+			return { 'backgroundImage': project.getImageUrl() };
+		}
+		return { 'backgroundColor': 'rgba(50, 50, 50, 0.1)' };
 	}
 
 	renderTitleBarContent() {
@@ -83,17 +90,11 @@ class InfoBox extends Static {
 		}
 	}
 
-	componentWillReceiveProps(nextProps) {
-		if (nextProps.uiState.isInfoBoxActive === false) { this.setState({ image: null }); }
-	}
-
 	getTitle() {
 		var activeItem, project;
 		project = this.props.project;
 		activeItem = project.get('data').items.active;
-		if (activeItem != null) {
-			return activeItem.get('name');
-		}
+		if (activeItem != null) { return activeItem.get('name'); }
 		return project.get('title');
 	}
 
@@ -140,28 +141,28 @@ class InfoBox extends Static {
 	}
 
 	setImage() {
-		var activeItem, imageName, project,
-			coll;
+		var activeItem, imageName, project;
 
 		project = this.props.project;
-		if (project == null) { return; }
+		if (!project) { return; }
 
 		activeItem = project.get('data').items.active;
-		if (activeItem == null) { return; }
+		if (!activeItem) { return; }
 		
-		imageName = activeItem.getImageName();
-
-		if (imageName != null) {
-			coll = new image.Collection();
+		if (!activeItem.image) {
+			let imageName = activeItem.getImageName();
+			let coll = new image.Collection();
 			coll.getClientFetchPromise({ name: imageName })
 				.then((coll) => {
 					var img = coll.models[0];
-					if (img != null) {
-						this.setState({ image: img });
+					if (img) {
+						activeItem.image = img;
+						this.forceUpdate();
 					}
 				}
 			);
 		}
+
 	}
 
 	renderWebsiteLink() {
@@ -207,7 +208,7 @@ class InfoBox extends Static {
 	renderTocList() {
 		var tocItems = this.getContent().toc;
 		if (!tocItems) { return; }
-		if (!tocItems.length) { return; }
+		if (tocItems.length < 2) { return; }
 		return tocItems.map((item, i) => {
 			return (
 				<li className={'toc-'+item.tagName} key={'toc-' + i}>
@@ -288,7 +289,12 @@ class InfoBox extends Static {
 		infoBoxVar = this.getFilteredVariables('infobox_order');
 
 		infoBoxVar.forEach((variable) => {
-			html += `<h1>${variable.get('display_title') || 'Overview'}</h1>${variable.getFormattedField(activeItem)}`;
+			html += `
+				<h1>
+					${variable.get('display_title') || 'Overview'}
+				</h1>
+				${variable.getFormattedField(activeItem)}
+			`;
 		});
 
 		activeItem.set('info_box_content', html);
