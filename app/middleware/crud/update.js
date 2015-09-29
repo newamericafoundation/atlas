@@ -8,11 +8,10 @@ var updateMiddleware = (options, req, res, next) => {
 	// Delete id so that it is not set in the database (_id is already set).
 	delete resourceData.id;
 
-	var db = req.db;
+	var db = req.db,
+		dbCollection = db.collection(options.dbCollectionName);
 
-	var collection = db.collection(options.dbCollectionName);
-		
-	collection.update({ _id: new ObjectID(id) }, resourceData, (err, data) => {
+	dbCollection.update({ _id: new ObjectID(id) }, resourceData, (err, data) => {
 
 		if (err) {
 			console.dir(err);

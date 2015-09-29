@@ -3,12 +3,16 @@
 
 import { ObjectID } from 'mongodb';
 import _ from 'underscore';
+import helpers from './helpers/index.js';
 
 var indexMiddleware = (options, req, res, next) => {
 
-	var id = req.params.id;
+	var isAuthenticated = helpers.isReqAuthenticated(req);
 
-	var db = req.db;
+	var db = req.db,
+		dbCollection = db.collection(options.dbCollectionName);
+
+	var id = req.params.id;
 
 	var query = req.query || {},
 		queryFields,
@@ -29,8 +33,6 @@ var indexMiddleware = (options, req, res, next) => {
 		});
 
 	}
-
-	var isAuthenticated = req.isAuthenticated() || (process.env.NODE_ENV === 'development');
 
 	// If there are additional query parameters passed from the route calling the middleware, set those on the query.
 	if (options.authQuery && !isAuthenticated) {
@@ -55,7 +57,7 @@ var indexMiddleware = (options, req, res, next) => {
 
 	}
 
-	var cursor = db.collection(options.dbCollectionName).find(query, fields);
+	var cursor = dbCollection.find(query, fields);
 
 	cursor.toArray((err, data) => {
 
@@ -65,15 +67,7 @@ var indexMiddleware = (options, req, res, next) => {
 			return next();
 		}
 
-		// Replace _id's with id's.
-		if (data && _.isArray(data)) {
-			data.forEach((datum) => {
-				if(datum && datum._id) {
-					datum.id = datum._id;
-					delete datum._id;
-				}
-			});
-		}
+		helpers.replaceMongoId(data);
 
 		req.dbResponse = data;
 

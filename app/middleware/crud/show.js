@@ -4,9 +4,10 @@ var showMiddleware = (options, req, res, next) => {
 
 	var id = req.params.id;
 
-	var db = req.db;
+	var db = req.db,
+		dbCollection = db.collection(options.dbCollectionName);
 
-	var cursor = db.collection(options.dbCollectionName).find({ _id: new ObjectID(id) });
+	var cursor = dbCollection.find({ _id: new ObjectID(id) });
 
 	cursor.toArray((err, data) => {
 

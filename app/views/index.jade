@@ -19,10 +19,10 @@ block content
 		script(src='/assets/scripts/partials/component.js')
 	- }
 
-	- if (user || (process.env.NODE_ENV !== 'production')) {
+	- if (user || (process.env.NODE_ENV === 'development')) {
 		script(type='text/javascript').
 			window.isResearcherAuthenticated = true;
-			window.researcher = !{JSON.stringify(user)};
+			window.researcher = !{JSON.stringify(user || { image: { url: '' }, name: {} })};
 	- }
 
 	script(type='text/javascript').

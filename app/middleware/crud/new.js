@@ -2,13 +2,12 @@ import { ObjectID } from 'mongodb';
 
 var newMiddleware = (options, req, res, next) => {
 
-	var db = req.db;
-
-	var collection = db.collection(options.dbCollectionName);
+	var db = req.db,
+		dbCollection = db.collection(options.dbCollectionName);
 
 	var resourceData = JSON.parse(req.body.jsonString);
 
-	collection.insert(resourceData, (err, data) => {
+	dbCollection.insert(resourceData, (err, data) => {
 
 		if(err) { 
 			console.dir(err);

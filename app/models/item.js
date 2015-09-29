@@ -74,7 +74,6 @@ exports.Model = base.Model.extend({
 		if (foundLat && foundLong) {
 			data._itemType = 'pin';
 		}
-		console.log(data);
 		return data;
 	},
 	
