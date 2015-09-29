@@ -25,9 +25,7 @@ var shouldHideDraftProjects = function(req) {
 
 var router = express.Router();
 
-var authQuery = shouldHideDraftProjects() ? { is_live: 'Yes' } : null;
-
-router.get('/', indexMiddleware.bind(this, { dbCollectionName: 'projects', query: authQuery }), (req, res) => {
+router.get('/', indexMiddleware.bind(this, { dbCollectionName: 'projects', authQuery: { is_live: 'Yes' } }), (req, res) => {
 
 	var models = base.Collection.prototype.parse(req.dbResponse);
 
@@ -42,20 +40,20 @@ router.get('/', indexMiddleware.bind(this, { dbCollectionName: 'projects', query
 
 });
 
-router.get('/:id', showMiddleware.bind(this, { dbCollectionName: 'projects', query: authQuery }), (req, res) => {
+router.get('/:id', showMiddleware.bind(this, { dbCollectionName: 'projects', authQuery: { is_live: 'Yes' } }), (req, res) => {
 	res.json(req.dbResponse);
 });
 
 // authenticated requests
-router.post('/:id/edit', currentAuthMiddleware, updateMiddleware.bind(this, { dbCollectionName: 'projects', query: authQuery }), (req, res) => {
+router.post('/:id/edit', currentAuthMiddleware, updateMiddleware.bind(this, { dbCollectionName: 'projects', authQuery: { is_live: 'Yes' } }), (req, res) => {
 	res.json(req.dbResponse);
 });
 
-router.post('/new', currentAuthMiddleware, newMiddleware.bind(this, { dbCollectionName: 'projects', query: authQuery }), (req, res) => {
+router.post('/new', currentAuthMiddleware, newMiddleware.bind(this, { dbCollectionName: 'projects', authQuery: { is_live: 'Yes' } }), (req, res) => {
 	res.json(req.dbResponse);
 });
 
-router.delete('/:id', currentAuthMiddleware, deleteMiddleware.bind(this, { dbCollectionName: 'projects', query: authQuery }), (req, res) => {
+router.delete('/:id', currentAuthMiddleware, deleteMiddleware.bind(this, { dbCollectionName: 'projects', authQuery: { is_live: 'Yes' } }), (req, res) => {
 	res.json(req.dbResponse);
 });
 

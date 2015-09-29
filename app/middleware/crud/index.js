@@ -30,10 +30,12 @@ var indexMiddleware = (options, req, res, next) => {
 
 	}
 
+	var isAuthenticated = req.isAuthenticated() || (process.env.NODE_ENV === 'development');
+
 	// If there are additional query parameters passed from the route calling the middleware, set those on the query.
-	if (options.query) {
-		Object.keys(options.query).forEach((key) => {
-			query[key] = options.query[key];
+	if (options.authQuery && !isAuthenticated) {
+		Object.keys(options.authQuery).forEach((key) => {
+			query[key] = options.authQuery[key];
 		});
 	}
 
