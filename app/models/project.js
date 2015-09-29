@@ -475,8 +475,11 @@ exports.Collection = base.Collection.extend({
      */
     related_to: function(id) {
 
-        var referenceModel = this.findWhere({ id: id }),
-            resp;
+        var referenceModel, resp;
+
+        if (id == null) { return this.toJSON(); }
+
+        referenceModel =  this.findWhere({ id: id });
 
         if (referenceModel == null) { return []; }
 

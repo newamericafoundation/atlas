@@ -7,6 +7,10 @@ import image from './../../../../../../models/image.js';
 
 class InfoBox extends Static {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -14,6 +18,11 @@ class InfoBox extends Static {
 		}
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	render() {
 		var NoIcon = Icons.No;
 		return (
@@ -27,6 +36,11 @@ class InfoBox extends Static {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderTitleBarBackground() {
 		var style = this.getTitleBarBackgroundStyle();
 		return (
@@ -34,6 +48,11 @@ class InfoBox extends Static {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getTitleBarBackgroundStyle() {
 		var project = this.props.project,
 			img = this.state.image,
@@ -49,6 +68,11 @@ class InfoBox extends Static {
 		return { 'backgroundColor': 'rgba(50, 50, 50, 0.1)' };
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderTitleBarContent() {
 		return (
 			<div className="atl__title-bar__content">
@@ -60,6 +84,11 @@ class InfoBox extends Static {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderPageNavContent() {
 		return (
 			<div className="atl__toc">
@@ -71,6 +100,11 @@ class InfoBox extends Static {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderPageContent() {
 		var content = this.getContent();
 		return (
@@ -78,10 +112,40 @@ class InfoBox extends Static {
 		);
 	}
 
+
+	/*
+  	 * 
+  	 *
+  	 */
+	renderTocList() {
+		var tocItems = this.getContent().toc;
+		if (!tocItems) { return; }
+		if (tocItems.length < 2) { return; }
+		return tocItems.map((item, i) => {
+			return (
+				<li className={'toc-'+item.tagName} key={'toc-' + i}>
+					<a href={"#toc-"+item.id}>
+						{ item.content }
+					</a>
+				</li>
+			);
+		});
+	}
+
+
+	/*
+	 *
+	 *
+	 */
 	componentDidMount() {
 		this.setImage();
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	componentDidUpdate() {
 		var activeItem = (this.props.project) ? (this.props.project.get('data').items.active) : undefined;
 		if (this.state.image == null) { return this.setImage(); }
@@ -90,6 +154,11 @@ class InfoBox extends Static {
 		}
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getTitle() {
 		var activeItem, project;
 		project = this.props.project;
@@ -98,6 +167,11 @@ class InfoBox extends Static {
 		return project.get('title');
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getBodyHtml() {
 		var activeItem, project;
 		project = this.props.project;
@@ -108,6 +182,11 @@ class InfoBox extends Static {
 		return project.get('body_text');
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	close(e) {
 		var $el, App, transitionEventName, items;
 		items = this.props.project.get('data').items;
@@ -126,8 +205,10 @@ class InfoBox extends Static {
 	}
 
 
-	// Get a list of transition event names.
-	// Each event is namespaced with an incremental id so that the same events are not reattached over and over again.
+	/*
+	 * Get a list of transition event names.
+	 * Each event is namespaced with an incremental id so that the same events are not reattached over and over again.
+	 */
 	getTransitionEventName() {
 		var eventName, events;
 		events = ['webkitTransitionEnd', 'otransitionend', 'oTransitionEnd', 'msTransitionEnd', 'transitionend'];
@@ -140,7 +221,13 @@ class InfoBox extends Static {
 		return eventName;
 	}
 
+
+	/*
+	 * Fetch image related to the current active item.
+	 *
+	 */
 	setImage() {
+
 		var activeItem, imageName, project;
 
 		project = this.props.project;
@@ -151,6 +238,7 @@ class InfoBox extends Static {
 		
 		if (!activeItem.image) {
 			let imageName = activeItem.getImageName();
+			console.log(imageName);
 			let coll = new image.Collection();
 			coll.getClientFetchPromise({ name: imageName })
 				.then((coll) => {
@@ -165,6 +253,11 @@ class InfoBox extends Static {
 
 	}
 
+
+	/*
+	 * 
+	 *
+	 */
 	renderWebsiteLink() {
 		var LinkComp = Icons.Link;
 		var project = this.props.project;
@@ -185,6 +278,11 @@ class InfoBox extends Static {
 		);
 	}
 
+
+	/*
+	 * Get info box body and table of contents.
+	 *
+	 */
 	getContent() {
 		var activeItem, body, cntnt, project, toc;
 		body = '';
@@ -205,21 +303,11 @@ class InfoBox extends Static {
 		};
   	}
 
-	renderTocList() {
-		var tocItems = this.getContent().toc;
-		if (!tocItems) { return; }
-		if (tocItems.length < 2) { return; }
-		return tocItems.map((item, i) => {
-			return (
-				<li className={'toc-'+item.tagName} key={'toc-' + i}>
-					<a href={"#toc-"+item.id}>
-						{ item.content }
-					</a>
-				</li>
-			);
-		});
-	}
 
+  	/*
+  	 *
+  	 *
+  	 */
 	getFilteredVariables(field) {
 
 		var project = this.props.project,
@@ -238,6 +326,11 @@ class InfoBox extends Static {
 
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getSummaryContent() {
 
 		var activeItem, html, summaryVar;
@@ -271,6 +364,11 @@ class InfoBox extends Static {
 
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	ensureActiveItemContent() {
 
 		var App, activeItem, html, infoBoxVar, project, variables;

@@ -32,41 +32,41 @@ describe('item.Model', function() {
 	});
 
 
-	describe('_checkPindrop', function() {
+	describe('_checkPin', function() {
 
 		it('returns true with no errors if both lat and long keys exist', function() {
-			var parsedData = model._checkPindrop({ id: 1, Latitude: 145.678, Longitude: 36.879 });
-			assert.deepEqual(parsedData, { recognized: true, errors: [] });
+			var parsedData = model._checkPin({ id: 1, Latitude: 145.678, Longitude: 36.879 });
+			assert.deepEqual(parsedData._itemType, 'pin');
 		});
 
-		it('returns true with error message if either lat or long key exist', function() {
-			var parsedData = model._checkPindrop({ id: 1, Lat: 145.678 });
-			assert.deepEqual(parsedData, { recognized: true, errors: ['Latitude or longitude not found.'] });
+		it('returns false if either lat or long key are not present', function() {
+			var parsedData = model._checkPin({ id: 1, Lat: 145.678 });
+			assert.deepEqual(parsedData._itemType, undefined);
 		});
 
-		it('returns false if neither lat or long key exist', function() {
-			var parsedData = model._checkPindrop({ id: 1 });
-			assert.deepEqual(parsedData, { recognized: false });
+		it('returns false if neither lat or long key are present', function() {
+			var parsedData = model._checkPin({ id: 1 });
+			assert.deepEqual(parsedData._itemType, undefined);
 		});
 
 	});
 
 
-	describe('_checkState', function() {
+	describe('_checkUsState', function() {
 
 		it('returns true if state name is validated', function() {
-			var parsedData = model._checkState({ name: 'Michigan' });
-			assert.deepEqual(parsedData, { recognized: true, errors: [] });
+			var parsedData = model._checkUsState({ name: 'Michigan' });
+			assert.deepEqual(parsedData._itemType, 'us_state');
 		});
 
 		it('returns true with error message if state name is provided but not validated', function() {
-			var parsedData = model._checkState({ name: 'Michiga' });
-			assert.deepEqual(parsedData, { recognized: true, errors: ['Michiga not recognized as a state. Possibly a typo.'] });
+			var parsedData = model._checkUsState({ name: 'Michiga' });
+			assert.deepEqual(parsedData._itemType, undefined);
 		});
 
 		it('returns false if state name is not provided', function() {
-			var parsedData = model._checkState({ id: 4, Lat:  56.78, Long: 83.45 });
-			assert.deepEqual(parsedData, { recognized: false });
+			var parsedData = model._checkUsState({ id: 4, Lat:  56.78, Long: 83.45 });
+			assert.deepEqual(parsedData._itemType, undefined);
 		});
 
 	});
@@ -126,9 +126,9 @@ describe('item.Model', function() {
 
 	describe('getDisplayState', function() {
 
-		it('assigns map-region as baseClass if baseClass param is null', function() {
+		it('returns inactive if search term is not matched', function() {
 			var im = new item.Model({ id: 2, name: 'Name' });
-			assert.equal(im.getDisplayState({}, 'am', 'search'), 'neutral');
+			assert.equal(im.getDisplayState({ test: function() { return true; } }, 'xs'), 'inactive');
 		});
 
 	});

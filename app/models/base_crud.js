@@ -115,15 +115,47 @@ var Collection = Backbone.Collection.extend({
 	
 	model: Model,
 
+	buildQueryString: function(query) {
+
+		var queryString = '';
+
+		if (query == null || Object.keys(query).length === 0) { return null; }
+
+		for (let key in query) {
+			let value = query[key];
+			queryString += `${key}=${value}&`
+		}
+
+		return queryString.slice(0, -1);
+
+	},
+
+	buildFieldString: function(fields) {
+
+		var fieldString = 'fields=';
+
+		if (fields == null || Object.keys(fields).length === 0) { return null; }
+
+		for (let key in fields) {
+			let value = fields[key];
+			fieldString += `${ value === 1 ? '' : '-' }${key},`;
+		}
+
+		return fieldString.slice(0, -1);
+
+	},
+
 	// Fetch instances on the client.
 	// TODO: customize to include a req object.
-	getClientFetchPromise: function(query) {
+	getClientFetchPromise: function(query, fields) {
 
-		var isQueried = (query != null);
+		var isCompleteQuery = (query != null && fields == null);
+
+		var queryString = '?' + (this.buildQueryString(query) || '') + '&' + (this.buildFieldString(fields) || '');
 
 		return new Promise((resolve, reject) => {
 
-			if (!isQueried) {
+			if (!isCompleteQuery) {
 
 				// Small, seeded collections are resolved immediately.
 				if (this.dbSeed) {
@@ -139,14 +171,14 @@ var Collection = Backbone.Collection.extend({
 
 			}
 
-			var url = this.apiUrl + this.buildQueryString(query);
+			var url = this.apiUrl + queryString;
 
 			$.ajax({
 				url: url,
 				type: 'get',
 				success: (data) => {
 					// Set database cache.
-					if (!isQueried) { this.dbCache = data; }
+					if (!isCompleteQuery) { this.dbCache = data; }
 					this.reset(data);
 					resolve(this);
 				},

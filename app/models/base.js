@@ -91,7 +91,7 @@ var Model = baseCrud.Model.extend({
 		var found, i, kf, len;
 		found = false;
 		if (keyFormatList == null) {
-			keyFormatList = [standardKey]; 
+			keyFormatList = [ standardKey ]; 
 		}
 		for (i = 0, len = keyFormatList.length; i < len; i++) {
 			kf = keyFormatList[i];
@@ -264,23 +264,6 @@ var Collection = baseCrud.Collection.extend({
 				customQueryParams[key] = value;
 			}
 		}
-	},
-
-	buildQueryString: function(query) {
-
-		var queryString = '?';
-
-		if (query == null) { return ''; }
-
-		for (let key in query) {
-			let value = query[key];
-			queryString += `${key}=${value}&`
-		}
-
-		queryString = queryString.slice(0, -1);
-
-		return queryString;
-
 	},
 
 	/**

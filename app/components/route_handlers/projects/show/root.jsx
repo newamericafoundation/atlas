@@ -126,7 +126,12 @@ class Show extends React.Component {
 
 		new project.Collection()
 			.getClientFetchPromise({ 
-				related_to: prj.get('id') 
+				related_to: prj.get('id'),
+				special_query_params: 'related_to'
+			}, {
+				data: 0,
+				body_text: 0,
+				encoded_image: 0
 			})
 			.then((coll) => {
 				this.setState({ related: coll });
@@ -140,9 +145,7 @@ class Show extends React.Component {
 		var atlas_url = this.getAtlasUrl();
 
 		new project.Collection()
-			.getClientFetchPromise({ 
-				atlas_url: atlas_url 
-			})
+			.getClientFetchPromise({ atlas_url: atlas_url })
 			.then((coll) => {
 				var project = coll.models[0];
 				if (project && project.exists()) {

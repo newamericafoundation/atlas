@@ -49,7 +49,7 @@ class Index extends Static {
 	}
 
 	fetchImages() {
-		new image.Collection().getClientFetchPromise().then((coll) => {
+		new image.Collection().getClientFetchPromise({}, { encoded: 0 }).then((coll) => {
 			this.setState({ images: coll });
 		});
 	}

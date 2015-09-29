@@ -25,76 +25,37 @@ var shouldHideDraftProjects = function(req) {
 
 var router = express.Router();
 
-// Separated query parameters into regular queries and specialty ones.
-//   related_to specialty query specifies the id of the project the 
-//   one in question is related to. This is done by comparing tags.
-var processQueryParameters = function(queryParameters) {
-	var res = { query: queryParameters },
-		related_to = queryParameters.related_to;
-	if (related_to) {
-		res.specialQuery = { related_to: related_to };
-		delete res.query.related_to;
-	}
-	return res;
-};
+var authQuery = shouldHideDraftProjects() ? { is_live: 'Yes' } : null;
 
-router.get([ '/', '/image' ], function(req, res) {
+router.get('/', indexMiddleware.bind(this, { dbCollectionName: 'projects', query: authQuery }), (req, res) => {
 
-	var complexQuery = processQueryParameters(req.query),
-		queryParams = complexQuery.query,
-		specialQueryParams = complexQuery.specialQuery,
-		fields;
+	var models = base.Collection.prototype.parse(req.dbResponse);
 
-	if (shouldHideDraftProjects(req)) {
-		queryParams.is_live = "Yes";
-	}
+	var coll = new project.Collection(models);
 
-	if (req.url === '/') {
-		fields = { encoded_image: 0 };
-		if (queryParams.atlas_url == null) {
-			fields.data = 0;
-			fields.body_text = 0;
-		}
-	} else if (req.url === '/image') {
-		fields = { encoded_image: 1, image_credit: 1, atlas_url: 1 };
-	}
-
-	var db = req.db;
-
-	db.collection('projects').find(queryParams, fields).toArray((err, models) => {
-		if (err) { return console.dir(err); }
-		models = base.Collection.prototype.parse(models);
-		var coll = new project.Collection(models);
-
-		// Get related models.
-		if (specialQueryParams == null) {
-			return res.json(coll.toJSON());
-		} else {
-			return res.json(coll.related_to(specialQueryParams.related_to));
-		}
-
-	});
+	// Get related models.
+	if (req.special_query == null) {
+		return res.json(coll.toJSON());
+	} 
+	
+	return res.json(coll.related_to(req.special_query.related_to));
 
 });
 
-// router.get('/', indexMiddleware.bind(this, { dbCollectionName: 'projects' }), (req, res) => {
-// 	res.json(req.dbResponse);
-// });
-
-router.get('/:id', showMiddleware.bind(this, { dbCollectionName: 'projects' }), (req, res) => {
+router.get('/:id', showMiddleware.bind(this, { dbCollectionName: 'projects', query: authQuery }), (req, res) => {
 	res.json(req.dbResponse);
 });
 
 // authenticated requests
-router.post('/:id/edit', currentAuthMiddleware, updateMiddleware.bind(this, { dbCollectionName: 'projects' }), (req, res) => {
+router.post('/:id/edit', currentAuthMiddleware, updateMiddleware.bind(this, { dbCollectionName: 'projects', query: authQuery }), (req, res) => {
 	res.json(req.dbResponse);
 });
 
-router.post('/new', currentAuthMiddleware, newMiddleware.bind(this, { dbCollectionName: 'projects' }), (req, res) => {
+router.post('/new', currentAuthMiddleware, newMiddleware.bind(this, { dbCollectionName: 'projects', query: authQuery }), (req, res) => {
 	res.json(req.dbResponse);
 });
 
-router.delete('/:id', currentAuthMiddleware, deleteMiddleware.bind(this, { dbCollectionName: 'projects' }), (req, res) => {
+router.delete('/:id', currentAuthMiddleware, deleteMiddleware.bind(this, { dbCollectionName: 'projects', query: authQuery }), (req, res) => {
 	res.json(req.dbResponse);
 });
 

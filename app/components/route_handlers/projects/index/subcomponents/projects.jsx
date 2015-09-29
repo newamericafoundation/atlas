@@ -52,7 +52,7 @@ class Projects extends React.Component {
 		}
 
 		$.ajax({
-			url: 'api/v1/projects/image',
+			url: 'api/v1/projects?fields=atlas_url,encoded_image,image_credit',
 			type: 'get',
 			success: (data) => {
 				// filter projects that don't have an image.

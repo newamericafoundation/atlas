@@ -24,13 +24,13 @@ exports.Model = base.Model.extend({
 	 */
 	parse: function(data) {
 
+		// Protect for uppercase Name typo.
 		if (data.Name && !data.name) {
 			data.name = data.Name;
 			delete data.Name;
 		}
 
 		this._processValues(data);
-
 		this._checkPin(data);
 		this._checkUsState(data);
 		this._checkUsCongressionalDistrict(data);
@@ -68,13 +68,14 @@ exports.Model = base.Model.extend({
 	 * @returns {object} - Validation summary object.
 	 */
 	_checkPin: function(data) {
-		var errors, foundLat, foundLong;
-		errors = [];
+		var foundLat, foundLong;
 		foundLat = this._findAndReplaceKey(data, 'lat', ['latitude', 'Latitude', 'lat', 'Lat']);
 		foundLong = this._findAndReplaceKey(data, 'long', ['longitude', 'Longitude', 'long', 'Long']);
 		if (foundLat && foundLong) {
 			data._itemType = 'pin';
 		}
+		console.log(data);
+		return data;
 	},
 	
 	/** 
@@ -94,6 +95,7 @@ exports.Model = base.Model.extend({
 				data._itemType = 'us_state';
 			}
 		}
+		return data;
 	},
 
 	_checkUsCongressionalDistrict: function(data) {
@@ -223,7 +225,7 @@ exports.Collection = base.Collection.extend({
 	 */
 	setActive: function(activeModel) {
 		var id;
-		if ((_.isObject(activeModel)) && (indexOf.call(this.models, activeModel) >= 0)) {
+		if ((_.isObject(activeModel)) && (this.models.indexOf(activeModel) >= 0)) {
 			this.active = activeModel;
 		} else {
 			id = parseInt(activeModel, 10);
@@ -241,7 +243,7 @@ exports.Collection = base.Collection.extend({
 	 */
 	setHovered: function(hoveredModel) {
 		var id;
-		if ((_.isObject(hoveredModel)) && (indexOf.call(this.models, hoveredModel) >= 0)) {
+		if ((_.isObject(hoveredModel)) && (this.models.indexOf(hoveredModel) >= 0)) {
 			this.hovered = hoveredModel;
 		} else {
 			id = parseInt(hoveredModel, 10);

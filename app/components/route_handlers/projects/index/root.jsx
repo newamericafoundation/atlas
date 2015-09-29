@@ -67,7 +67,7 @@ class Index extends React.Component {
 
 	fetchProjects() {
 		var coll = new project.Collection()
-		coll.getClientFetchPromise().then((coll) => {
+		coll.getClientFetchPromise({  }, { data: 0, body_text: 0, encoded_image: 0 }).then((coll) => {
 			this.setState({ projects: coll });
 		});
 	}

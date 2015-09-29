@@ -39,7 +39,10 @@ class SettingsBar extends OverviewBase {
 	}
 
 	componentDidMount() {
+		// make sure overflow is checked even after render lags
 		setTimeout(this.checkOverflow.bind(this), 300);
+		setTimeout(this.checkOverflow.bind(this), 600);
+		setTimeout(this.checkOverflow.bind(this), 900);
 		// namespace resize event for convenient removal
 		$(window).on('resize.settings-bar-overflow', () => {
 			this.checkOverflow();
