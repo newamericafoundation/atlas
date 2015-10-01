@@ -37,6 +37,7 @@ describe('filter tree', function() {
         };
 
         filterTree = new filter.FilterTree(obj);
+        filterTree.makeComposite();
 
     });
 

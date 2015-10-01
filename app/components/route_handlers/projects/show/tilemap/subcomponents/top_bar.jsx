@@ -2,9 +2,9 @@ import React from 'react';
 import classNames from 'classnames';
 import Slider from './../../../../../general/slider.jsx';
 import Icons from './../../../../../general/icons.jsx';
-import OverviewBase from './overview_base.jsx';
+import Base from './base.jsx';
 
-class TopBar extends OverviewBase {
+class TopBar extends Base {
 
 	constructor(props) {
 		super(props);

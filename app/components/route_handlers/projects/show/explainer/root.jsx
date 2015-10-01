@@ -59,9 +59,7 @@ class Explainer extends Static {
 	}
 
 	componentDidMount() {
-		console.log(this.props.project);
 		this.buildAtlasCharts();
-		this.setThemeColor();
 	}
 
 	componentWillUnmount() {
@@ -93,16 +91,6 @@ class Explainer extends Static {
 		if (this.chartManager != null) {
 			this.chartManager.destroy();
 			delete this.chartManager;
-		}
-	}
-
-	setThemeColor() {
-		var App = this.props.App;
-		if (App == null) { return; }
-		var $bg = $(React.findDOMNode(this.refs['title-bar__background']));
-		var color = App.currentThemeColor;
-		if (color != null) {
-			$bg.css('background-color', color);
 		}
 	}
 

@@ -2,7 +2,9 @@ import React from 'react';
 import classNames from 'classnames';
 import { No } from './../../../../../general/icons.jsx';
 
-class OptionsTab extends React.Component {
+import Base from './base.jsx';
+
+class OptionsTab extends Base {
 
 	render() {
 		return (
@@ -51,7 +53,7 @@ class OptionsTab extends React.Component {
 	renderKeys(keys) {
 		return keys.map((key, i) => {
 			return (
-				<FilterKey App={this.props.App} filterKey={key} key={i} />
+				<FilterKey radio={this.props.radio} filterKey={key} key={i} />
 			);
 		});
 	}
@@ -79,10 +81,9 @@ class FilterKey extends React.Component {
 	}
 
 	toggle() {
-		var App = this.props.App;
+		var { radio } = this.props;
 		this.props.filterKey.clickToggle();
-		if (App == null) { return; }
-		App.commands.execute('update:tilemap');
+		radio.commands.execute('update:tilemap');
 	}
 
 }

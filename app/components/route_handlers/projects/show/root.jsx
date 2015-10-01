@@ -62,7 +62,7 @@ class Show extends React.Component {
 		var Comp = (this._isModelTilemap()) ? Tilemap : Explainer;
 		return (
 			<Comp
-				App={this.props.App} 
+				radio={this.props.radio} 
 				uiState={ this.state.ui } 
 				setUiState={ this.setUiState.bind(this) } 
 				project={ this.state.project } 

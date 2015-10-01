@@ -1,12 +1,16 @@
-var _ = require('underscore'),
-	Backbone = require('backbone'),
-	base = require('./base.js'),
-    formatters = require('./../utilities/formatters.js'),
-	$ = require('jquery');
+import _ from 'underscore';
+import Backbone from 'backbone';
+
+import base from './base.js';
+import formatters from './../utilities/formatters.js';
 
 
 exports.Model = base.Model.extend({
 
+    /*
+     * Parse spreadsheet data, lowercasing and underscore-joining all fields.
+     *
+     */
     parse: function(resp) {
         for(let key in resp) {
             let value = resp[key];
@@ -18,6 +22,7 @@ exports.Model = base.Model.extend({
         }
         return resp;
     },
+
 
     /*
      * If the variable is a filter variable, extract its properties.
@@ -33,6 +38,7 @@ exports.Model = base.Model.extend({
         };
     },
 
+
     /*
      * Return the field of an item corresponding to the variable, applying 
      * formatting as needed.
@@ -45,6 +51,7 @@ exports.Model = base.Model.extend({
         if (format == null || formatters[format] == null) { return rawField; }
         return formatters[format](rawField);
     },
+
 
 	/*
      * Set a numerical filter, splitting up |10|20|30| type numerical divider strings into
@@ -93,6 +100,7 @@ exports.Model = base.Model.extend({
 
     },
 
+
     /*
      * Returns single numerical filter value.
      * @param {number} min - Minimum value.
@@ -128,10 +136,16 @@ exports.Model = base.Model.extend({
 
 });
 
+
 exports.Collection = base.Collection.extend({
 
 	model: exports.Model,
 
+
+    /*
+     *
+     *
+     */
     getInfoBoxVariableCount: function() {
 
         var count = 0;
@@ -146,22 +160,29 @@ exports.Collection = base.Collection.extend({
 
     },
 
+
+    /*
+     *
+     *
+     */
     extractFilters: function() {
 
         var filters = [];
 
         this.models.forEach((model) => {
-
             var filter = model.extractFilter();
-
             if (filter) { filters.push(filter); }
-
         });
 
         return filters.sort((f1, f2) => { return (f1['filter_menu_order'] - f2['filter_menu_order']) });
 
     },
 
+
+    /*
+     *
+     *
+     */
     getFilterVariables: function() {
         var models;
         models = this.filter(function(item) {

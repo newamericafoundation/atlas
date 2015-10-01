@@ -2,7 +2,9 @@ import React from 'react';
 import classNames from 'classnames';
 import { No } from './../../../../../general/icons.jsx';
 
-class Search extends React.Component {
+import Base from './base.jsx';
+
+class Search extends Base {
 
 	/*
 	 *

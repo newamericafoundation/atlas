@@ -1,9 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import OverviewBase from './overview_base.jsx';
+import Base from './base.jsx';
 
-class Popup extends OverviewBase {
+class Popup extends Base {
 
 	render() {
 		var style = this.getStyle();
@@ -44,12 +44,11 @@ class Popup extends OverviewBase {
 	}
 
 	getStyle() {
+		var { radio } = this.props;
 		var hoveredItem, App, position;
-		App = this.props.App;
-		if (App == null) { return; }
 		hoveredItem = this.getHoveredItem();
 		if (hoveredItem == null) { return; }
-		position = App.reqres.request('item:map:position', hoveredItem);
+		position = radio.reqres.request('item:map:position', hoveredItem);
 		return {
 			left: position.x,
 			top: position.y,

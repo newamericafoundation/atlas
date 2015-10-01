@@ -4,6 +4,10 @@ var numeral = require('numeral'),
 
 var formatters = {
 
+	/*
+	 *
+	 *
+	 */
 	currency: function(v) {
 	    var formatter;
 	    if (!numeral) { return v; }
@@ -11,6 +15,11 @@ var formatters = {
 	    return numeral(v).format(formatter);
 	},
 
+
+	/*
+	 *
+	 *
+	 */
 	number: function(v) {
 	    var formatter;
 	    if (!numeral) { return v; }
@@ -22,14 +31,29 @@ var formatters = {
 	    return numeral(v).format(formatter);
 	},
 
+
+	/*
+	 *
+	 *
+	 */
 	percent: function(v) {
 	    return formatters.number(v) + '%';
 	},
 
+
+	/*
+	 *
+	 *
+	 */
 	percentage: function(v) {
 		return formatters.percent(v);
 	},
 
+
+	/*
+	 *
+	 *
+	 */
 	html: function(html) {
 	    var $html, newHtml;
 	    $html = $(html);
@@ -38,27 +62,53 @@ var formatters = {
 	    return newHtml;
 	},
 
+
+	/*
+	 *
+	 *
+	 */
 	removeLineBreaks: function(string) {
 	    string = String(string);
 	    return string.replace(/(\r\n|\n|\r)/gm, '');
 	},
 
+
+	/*
+	 *
+	 *
+	 */
 	removeSpaces: function(string) {
 	    string = String(string);
 	    return string.replace(/\s+/g, '');
 	},
 
+
+	/*
+	 * This method tailors to a single specific hyphenation need. Customize later if necessary.
+	 *
+	 */
 	hyphenate: function(string) {
 	    string = String(string);
 	    return string.replace('ommunication', 'ommuni-cation');
 	},
 
-	markdown: function(string) {
-	    var html;
-	    if (string != null) {
-	        html = marked(string);
-	    }
-	    return html;
+
+	/*
+	 * 
+	 *
+	 */
+	htmlWithToc: function(html) {
+		
+	},
+
+
+	/*
+	 * 
+	 *
+	 */
+	markdown: function(md) {
+		if (!md) { return; }
+		return marked(md);
 	}
 
 };

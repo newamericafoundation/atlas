@@ -147,8 +147,6 @@ class Pattern extends React.Component {
 	// TODO: this function needs to be provided as props to the parent component.
 	//   this will make the component more general.
 	getColor(colorCode) {
-		var App = this.props.App
-		if (App == null) { return; }
 		return colors.toRgb(colorCode - 1);
 	}
 

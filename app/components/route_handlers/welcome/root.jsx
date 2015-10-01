@@ -57,9 +57,8 @@ class Welcome extends React.Component {
 	}
 
 	clearHeaderStripColoring() {
-		var App = this.props.App;
-		if (!App) { return; }
-		App.commands.execute('set:header:strip:color', {});
+		var { radio } = this.props;
+		radio.commands.execute('set:header:strip:color', {});
 	}
 
 }

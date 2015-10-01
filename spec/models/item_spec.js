@@ -2,7 +2,8 @@ var assert = require('assert'),
 	_ = require('underscore'),
 	Backbone = require('backbone'),
 	$ = require('jquery'),
-	item = require('./../../app/models/item.js');
+	item = require('./../../app/models/item.js'),
+	variable = require('./../../app/models/variable.js');
 
 var indexOf = [].indexOf || function(item) {
 	for (var i = 0, l = this.length; i < l; i++) {
@@ -180,12 +181,7 @@ describe('item.Collection', function() {
 			modelData2 = { id: 2, title: 'B' },
 			modelData3 = { id: 3, title: 'A' };
 
-		it('gets value list if a key string is passed', function() {
-			var ic = new item.Collection([ modelData1, modelData2, modelData3 ]);
-			assert.deepEqual(ic.getValueList('title'), [ 'C', 'B', 'A' ]);
-		});
-
-		it('gets value list if a variable instance is passed', function() {
+		it('gets value list', function() {
 			var ic = new item.Collection([ modelData1, modelData2, modelData3 ]);
 			assert.deepEqual(ic.getValueList(new Backbone.Model({ id: 'title'})), [ 'C', 'B', 'A' ]);
 		});
@@ -194,7 +190,7 @@ describe('item.Collection', function() {
 
 		it('sorts value list if a value_order array is present on the variable', function() {
 			var ic = new item.Collection([ modelData1, modelData2, modelData3 ]),
-				variable = new Backbone.Model({ id: 'title', 'value_order': 'A |B|C' });
+				variable = new variable.Model({ id: 'title', 'value_order': 'A |B|C' });
 			assert.deepEqual(ic.getValueList(variable), [ 'A', 'B', 'C' ]);
 		});
 

@@ -3,11 +3,13 @@ import classNames from 'classnames';
 import Help from './../../../../../general/help.jsx';
 import Icons from './../../../../../general/icons.jsx';
 
+import Base from './base.jsx';
+
 import * as colors from './../../../../../utilities/colors.js';
 
 import * as formatters from './../../../../../../utilities/formatters.js';
 
-class Filter extends React.Component {
+class Filter extends Base {
 
 	constructor(props) {
 		super(props);
@@ -65,7 +67,7 @@ class Filter extends React.Component {
 			neighborHood = this.props.filter.getActiveChildNeighborhood(0);
 		return neighborHood.map((key, i) => {
 			return (
-				<FilterKey App={this.props.App} filterKey={key} key={i} />
+				<FilterKey radio={this.props.radio} filterKey={key} key={i} />
 			);
 		});
 	}
@@ -86,7 +88,7 @@ class Filter extends React.Component {
 		var values = activeChild.children;
 		return values.map((value, i) => {
 			return (
-				<FilterValue App={this.props.App} filterValue={value} key={i} />
+				<FilterValue radio={this.props.radio} filterValue={value} key={i} />
 			);
 		});
 	}
@@ -115,10 +117,9 @@ class FilterKey extends React.Component {
 	}
 
 	toggle() {
-		var App = this.props.App;
+		var { radio } = this.props;
 		this.props.filterKey.clickToggle();
-		if (App == null) { return; }
-		App.commands.execute('update:tilemap');
+		radio.commands.execute('update:tilemap');
 	}
 
 }
@@ -127,21 +128,24 @@ class FilterKey extends React.Component {
 class FilterValue extends React.Component {
 
 	render() {
-		var IconComp = Icons.Hex;
+		var IconComp = Icons.Hex,
+			className = classNames({
+				'toggle-button': true,
+				'toggle-button--inactive': !this.props.filterValue.isActive()
+			});
 		return (
-			<li className={ 'toggle-button ' + this.getModifierClass() } onClick={ this.toggle.bind(this) } onMouseEnter={ this.setHovered.bind(this) } onMouseLeave={ this.clearHovered.bind(this) } >
+			<li 
+				className={ className }
+				onClick={ this.toggle.bind(this) } 
+				onMouseEnter={ this.setHovered.bind(this) } 
+				onMouseLeave={ this.clearHovered.bind(this) } 
+			>
 				<IconComp className="toggle-button__icon" fillColor={this.getColor()} />
 				<div className="toggle-button__text">
 				   	<p>{ this.props.filterValue.get('value') }</p>
 				</div>
 			</li>
 		);
-	}
-
-	getModifierClass() {
-		var siblingsIncludingSelf = this.props.filterValue.parent.children
-		if (!this.props.filterValue.isActive()) { return 'toggle-button--inactive'; }
-		return '';
 	}
 
 	getColor() {
@@ -151,21 +155,20 @@ class FilterValue extends React.Component {
 	}
 
 	setHovered() {
-		var App, modelIndex, color;
-		App = this.props.App;
+		var { radio } = this.props;
+		var modelIndex, color;
 		modelIndex = this.getFilterValueIndex();
 		this.props.filterValue.parent.parent.state.valueHoverIndex = modelIndex;
-		App.commands.execute('update:tilemap');
+		radio.commands.execute('update:tilemap');
 		color = this.getColor();
-		App.commands.execute('set:header:strip:color', { color: color });
+		radio.commands.execute('set:header:strip:color', { color: color });
 	}
 
 	clearHovered() {
-		var App;
-		App = this.props.App;
+		var { radio } = this.props;
 		this.props.filterValue.parent.parent.state.valueHoverIndex = -1;
-		App.commands.execute('update:tilemap');
-		App.commands.execute('set:header:strip:color', 'none');
+		radio.commands.execute('update:tilemap');
+		radio.commands.execute('set:header:strip:color', 'none');
 	}
 
 	getFilterValueIndex() {
@@ -173,11 +176,9 @@ class FilterValue extends React.Component {
 	}
 
 	toggle() {
-		var App;
+		var { radio } = this.props;
 		this.props.filterValue.toggle();
-		App = this.props.App;
-		if (App == null) { return; }
-		App.commands.execute('update:tilemap');
+		radio.commands.execute('update:tilemap');
 	}
 
 }

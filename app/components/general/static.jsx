@@ -11,7 +11,9 @@ class Static extends React.Component {
 		super(props);
 		// Make sure there is a scrollTop state value on the subclass.
 		// Otherwise, setting sticky page layout will not work.
-		this.state = { scrollTop: 0 };
+		this.state = { 
+			scrollTop: 0
+		};
 	}
 
 	render() {
@@ -40,7 +42,7 @@ class Static extends React.Component {
 
 	renderTitleBarBackground() {
 		return (
-			<div className="atl__title-bar__background" ref='title-bar-background' />
+			<div className="atl__title-bar__background" ref='title-bar__background' style={{backgroundColor: this.props.radio.currentThemeColor}} />
 		);
 	}
 

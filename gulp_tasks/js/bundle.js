@@ -12,8 +12,7 @@ var entry = './app/assets/scripts/bundle.jsx';
 var globalShim = browserifyGlobalShim.configure({
     'jquery': '$',
     'underscore': '_',
-    'backbone': 'Backbone',
-    'topojson': 'topojson'
+    'backbone': 'Backbone'
 });
 
 var getBrowserifyBundler = (entries) => {

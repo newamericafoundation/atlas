@@ -5,9 +5,9 @@ import Headline from './headline.jsx';
 import DisplayToggle from './display_toggle.jsx';
 import Filter from './filter.jsx';
 
-import OverviewBase from './overview_base.jsx';
+import Base from './base.jsx';
 
-class SettingsBar extends OverviewBase {
+class SettingsBar extends Base {
 
 	constructor(props) {
 		super(props);
@@ -56,10 +56,7 @@ class SettingsBar extends OverviewBase {
 
 	// If content is overflowing, set global collapsed state.
 	checkOverflow() {
-		// console.log('checking overflow');
-		var totalHeight, isCollapsed,
-			App = this.props.App;
-		if (App == null) { return; }
+		var totalHeight, isCollapsed;
 		this.heights.window = $(window).height();
 		totalHeight = this.getTotalHeight();
 		isCollapsed = totalHeight > this.heights.window;

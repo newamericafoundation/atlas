@@ -74,9 +74,8 @@ class Header extends React.Component {
 	 *
 	 */
 	setStripHandler() {
-		var App = this.props.App;
-		if (App == null) { return; }
-		App.commands.setHandler('set:header:strip:color', (options) => {
+		var { radio } = this.props;
+		radio.commands.setHandler('set:header:strip:color', (options) => {
 			if (options.color) {
 				// reset class to original
 				this.setState({ stripColor: options.color });

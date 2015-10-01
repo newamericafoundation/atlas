@@ -69,8 +69,8 @@ exports.Model = base.Model.extend({
 	 */
 	_checkPin: function(data) {
 		var foundLat, foundLong;
-		foundLat = this._findAndReplaceKey(data, 'lat', ['latitude', 'Latitude', 'lat', 'Lat']);
-		foundLong = this._findAndReplaceKey(data, 'long', ['longitude', 'Longitude', 'long', 'Long']);
+		foundLat = this.findAndReplaceKey(data, 'lat', ['latitude', 'Latitude', 'lat', 'Lat']);
+		foundLong = this.findAndReplaceKey(data, 'long', ['longitude', 'Longitude', 'long', 'Long']);
 		if (foundLat && foundLong) {
 			data._itemType = 'pin';
 		}

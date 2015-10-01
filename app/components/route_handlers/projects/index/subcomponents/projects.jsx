@@ -14,6 +14,11 @@ class Projects extends React.Component {
 		};
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<div className="atl__projects">
@@ -22,6 +27,11 @@ class Projects extends React.Component {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderList() {
 		var projects = this.props.projects;
 		if (projects == null) { return; }
@@ -37,12 +47,22 @@ class Projects extends React.Component {
 		});
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	componentDidUpdate() {
 		var projects = this.props.projects;
 		if (projects == null) { return; }
 		this.ensureProjectImages();
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	ensureProjectImages() {
 		var projects = this.props.projects;
 		if (projects == null) { return; }
@@ -81,6 +101,10 @@ Projects.contextTypes = {
 
 class Project extends React.Component {
 	
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -88,6 +112,11 @@ class Project extends React.Component {
 		};
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	render() {
 		var project, cls;
 		if (!this.isVisible()) {
@@ -123,7 +152,13 @@ class Project extends React.Component {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderAttribution() {
+		return null;
 		var project = this.props.project,
 			imageCredit = project.get('image_credit'),
 			InfoComp = Icons.Info;
@@ -139,6 +174,11 @@ class Project extends React.Component {
 		)
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getBackgroundStyle() {
 		var project = this.props.project;
 		if (project == null || !this.props.shouldDisplayImage) { return; }
@@ -147,6 +187,10 @@ class Project extends React.Component {
 	}
 
 
+	/*
+	 *
+	 *
+	 */
 	getInitials() {
 		var project = this.props.project,
 			title, initials;
@@ -157,6 +201,11 @@ class Project extends React.Component {
 		return initials;
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	isVisible() {
 		var project = this.props.project,
 			projectSections = this.props.projectSections,
@@ -165,6 +214,11 @@ class Project extends React.Component {
 		return (projectSections.test(project, 'project_section') && projectTemplates.test(project, 'project_template'))
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	launch(e) {
 		var href;
 		href = this.props.project.get('atlas_url')
@@ -175,6 +229,11 @@ class Project extends React.Component {
 		radio.currentThemeColor = this.getColor().replace('0.8', '1.0');
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	applyBackgroundColor() {
 		var color;
 		color = this.getColor();
@@ -183,12 +242,22 @@ class Project extends React.Component {
 		radio.commands.execute('set:header:strip:color', { color: color });
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	removeBackgroundColor() {
 		this.setState({ highlightBackgroundColor: '' });
 		var { radio } = this.props;
 		radio.commands.execute('set:header:strip:color', 'none');
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getColor() {
 		var project, projects, index, color;
 		project = this.props.project;

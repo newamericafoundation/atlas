@@ -1,7 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
 
-class List extends React.Component {
+import Base from './base.jsx';
+
+class List extends Base {
 
 	render() {
 		return (

@@ -29,7 +29,7 @@ class Map extends React.Component {
 	componentDidMount() {
 		var Map = window.Map;
 		Map.props = {
-			App: this.props.App,
+			radio: this.props.radio,
 			project: this.props.project,
 			uiState: this.props.uiState,
 			setUiState: this.props.setUiState,

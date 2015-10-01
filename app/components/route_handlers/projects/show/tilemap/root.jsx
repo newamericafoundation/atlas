@@ -62,19 +62,15 @@ class Tilemap extends React.Component {
 	}
 
 	componentWillMount() {
-		var App = this.props.App;
-		if (App == null) { return; }
-		App.commands.setHandler('update:tilemap', (args = {}) => {
-			// console.log(args);
+		var { radio } = this.props;
+		radio.commands.setHandler('update:tilemap', (args = {}) => {
 			this.setState({ ignoreMapItemsOnUpdate: args.ignoreMapItems });
-			// this.forceUpdate();
 		});
 	}
 
 	componentWillUnmount() {
-		var App = this.props.App;
-		if (App == null) { return; }
-		App.commands.removeHandler('update:tilemap');
+		var { radio } = this.props;
+		radio.commands.removeHandler('update:tilemap');
 	}
 
 }

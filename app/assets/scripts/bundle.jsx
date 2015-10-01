@@ -4,7 +4,7 @@ import React from 'react';
 import Router from 'react-router';
 
 import Backbone from 'backbone';
-import 'marionette';
+import 'backbone.wreqr';
 
 import { Route, RouteHandler, Redirect } from 'react-router';
 
@@ -14,10 +14,22 @@ import shapeFile from './../../models/shape_file.js';
 
 import routes from './../../routes/client.jsx';
 
+/*
+ * Create radio object with the same fields as a Marionette Application object.
+ * This is a temporary setup to support the Marionette transition.
+ */
+function createRadio() {
+	var radio = {};
+	radio.vent = new Backbone.Wreqr.EventAggregator();
+	radio.reqres = new Backbone.Wreqr.RequestResponse();
+	radio.commands = new Backbone.Wreqr.Commands();
+	return radio;
+}
+
 function start() {
 	var isFirstRoute = true;
 
-	var radio = new Backbone.Marionette.Application();
+	var radio = createRadio();
 
 	// Developer signature :).
 	console.log('Hi, Mom!');
@@ -34,7 +46,5 @@ global.Comp = {
 global.M = {
 	shapeFile: shapeFile
 }
-
-// new shapeFile.Collection().models[0].getClientFetchPromise().then((data) => { console.log(data); })
 
 export default start;

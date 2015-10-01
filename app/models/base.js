@@ -13,12 +13,14 @@ var Model = baseCrud.Model.extend({
 		return null;
 	},
 
+
 	/*
 	 * Customize on subclass.
 	 */
 	getEditUrl: function() {
 		return null;
 	},
+
 
 	/*
 	 * Custom get function, accommodating a suffix, e.g. status_2012.
@@ -31,6 +33,7 @@ var Model = baseCrud.Model.extend({
 		if (suffix == null) { return getFnc.apply(this, [ field ]); }
 		return getFnc.apply(this, [ field + '_' + suffix ]);
 	},
+
 
 	/**
 	 * Adds fields of a foreign collection, referenced by a foreign id within the model.
@@ -76,6 +79,7 @@ var Model = baseCrud.Model.extend({
 
 	},
 	
+
 	/**
 	 * Finds and replaces key.
 	 * @param {object} data - Data as key-value pairs.
@@ -83,7 +87,7 @@ var Model = baseCrud.Model.extend({
 	 * @param {array} keyFormatList - List of possible keys, e.g. [latitude, lat, Latitude] for latitude.
 	 * @returns {boolean} found - Whether the key is found in the data.
 	 */
-	_findAndReplaceKey: function(data, standardKey, keyFormatList) {
+	findAndReplaceKey: function(data, standardKey, keyFormatList) {
 		var found, i, kf, len;
 		found = false;
 		if (keyFormatList == null) {
@@ -170,6 +174,7 @@ var Model = baseCrud.Model.extend({
 var Collection = baseCrud.Collection.extend({
 	
 	model: Model,
+
 
 	/**
 	 * Recognize and process server response by applying the corresponding model's parse method.

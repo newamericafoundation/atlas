@@ -2,12 +2,14 @@ import React from 'react';
 import classNames from 'classnames';
 import Icons from './../../../../../general/icons.jsx';
 
+import Base from './base.jsx';
+
 var buttons = [
 	{ name: 'filter', iconName: 'Filter' }, 
 	{ name: 'search', iconName: 'Search' }
 ];
 
-class DisplayToggle extends React.Component {
+class DisplayToggle extends Base {
 
 	render() {
 		return (

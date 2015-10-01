@@ -1,7 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
 
-class Headline extends React.Component {
+import Base from './base.jsx';
+
+class Headline extends Base {
 
 	constructor(props) {
 		super(props);

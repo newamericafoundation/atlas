@@ -5,6 +5,8 @@ import Icons from './../../../../../general/icons.jsx';
 
 import image from './../../../../../../models/image.js';
 
+import Base from './base.jsx';
+
 class InfoBox extends Static {
 
 	/*
@@ -196,7 +198,8 @@ class InfoBox extends Static {
 	 *
 	 */
 	close(e) {
-		var $el, App, transitionEventName, items;
+		var { radio } = this.props;
+		var $el, transitionEventName, items;
 		items = this.props.project.get('data').items;
 		e.preventDefault();
 		transitionEventName = this.getTransitionEventName();
@@ -204,10 +207,8 @@ class InfoBox extends Static {
 		$el.on(transitionEventName, () => {
 			delete items.active;
 			$el.off(transitionEventName);
-			var App = this.props.App;
-			if (!App) { return; }
-			App.commands.execute('set:header:strip:color', {});
-			App.commands.execute('update:tilemap');
+			radio.commands.execute('set:header:strip:color', {});
+			radio.commands.execute('update:tilemap');
 		});
 		this.props.setUiState({ isInfoBoxActive: false });
 	}
@@ -377,10 +378,10 @@ class InfoBox extends Static {
 	 */
 	ensureActiveItemContent() {
 
-		var App, activeItem, html, infoBoxVar, project, variables;
+		var { radio } = this.props;
+		var activeItem, html, infoBoxVar, project, variables;
 
 		project = this.props.project;
-		App = this.props.App;
 
 		activeItem = this.props.activeItem;
 
