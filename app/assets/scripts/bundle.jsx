@@ -4,7 +4,6 @@ import React from 'react';
 import Router from 'react-router';
 
 import Backbone from 'backbone';
-import 'backbone.wreqr';
 
 import { Route, RouteHandler, Redirect } from 'react-router';
 
