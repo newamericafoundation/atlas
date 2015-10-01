@@ -295,8 +295,6 @@ exports.Model = base.Model.extend({
             data.variables = new variable.Collection(data.variables);
             data.items = new item.Collection(data.items, { parse: true });
             this.buildFilterTree();
-            console.log(data.variables);
-            console.log(data.filter);
         }
     },
 
