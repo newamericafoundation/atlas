@@ -12,9 +12,14 @@ class Model extends Backbone.Model {
 		super(options);
 	}
 
+
+	/*
+	 *
+	 */
 	isDomainAuthorized() {
 		return ([ 'newamerica.org', 'opentechinstitute.org', 'wiredcraft.com' ].indexOf(this.get('domain')) > -1);
 	}
+
 
 	parse(raw) {
 		if (raw._id) {
@@ -24,6 +29,7 @@ class Model extends Backbone.Model {
 		return raw;
 	}
 
+
 	toMongoJSON() {
 		var json = this.toJSON();
 		json._id = json.id;
@@ -31,11 +37,13 @@ class Model extends Backbone.Model {
 		return json;
 	}
 
+
 	toSessionJSON() {
 		return {
 			id: this.get('id')
 		};
 	}
+
 
 	toClientJSON() {
 		return {
@@ -44,6 +52,7 @@ class Model extends Backbone.Model {
 			image: this.get('image')
 		};
 	}
+
 
 	getSavePromise() {
 
@@ -66,6 +75,7 @@ class Model extends Backbone.Model {
 		});
 		
 	}
+
 
 	getRetrievePromise() {
 

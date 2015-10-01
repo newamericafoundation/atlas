@@ -6,22 +6,18 @@ import baseCrud from './base_crud.js';
 
 var Model = baseCrud.Model.extend({
 
+	/*
+	 * Customize on subclass.
+	 */
 	getViewUrl: function() {
 		return null;
 	},
 
+	/*
+	 * Customize on subclass.
+	 */
 	getEditUrl: function() {
 		return null;
-	},
-
-	/** 
-	 * Recognize and process data.
-	 * @param {object} data - Data as key-value pairs.
-	 * @returns {object} data - Modified data.
-	 */
-	parse: function(data) {
-		data = this._adaptMongoId(data);
-		return data;
 	},
 
 	/*
@@ -106,78 +102,6 @@ var Model = baseCrud.Model.extend({
 		return found;
 	},
 
-	/**
-	 * Adapts Mongoid ID.
-	 * @param {object} data - Data as key-value pairs.
-	 * @returns {object} data - Modified data.
-	 */
-	_adaptMongoId: function(data) {
-		if ((data._id != null)) {
-			if ((data._id.$oid != null)) {
-				data.id = String(data._id.$oid);
-			} else {
-				data.id = String(data._id);
-			}
-			delete data._id;
-		} else if ((data.id != null) && (data.id.$oid != null)) {
-			data.id = String(data.id.$oid);
-		}
-		return data;
-	},
-
-	/**
-	 * Remove the array wrapper, if response is one-member array.
-	 * @param {object} resp - Server resonse.
-	 * @returns {object} resp - Modified response.
-	 */
-	_removeArrayWrapper: function(resp) {
-		if (_.isArray(resp) && (resp.length === 1)) {
-			resp = resp[0];
-		}
-		return resp;
-	},
-
-	/**
-	 * Remove all line breaks from field.
-	 * @param {object} resp - Server response.
-	 * @param {string} key - Response key.
-	 * @returns {object} resp - Modified response.
-	 */
-	_removeLineBreaks: function(resp, key) {
-		if (resp[key] != null) {
-			resp[key] = resp[key].replace(/(\r\n|\n|\r)/gm, '');
-		}
-		return resp;
-	},
-
-	/**
-	 * Removes all spaces from field.
-	 * @param {object} resp - Server response.
-	 * @param {string} key - Response key.
-	 * @returns {object} resp - Modified response.
-	 */
-	_removeSpaces: function(resp, key) {
-		if (resp[key] != null) {
-			resp[key] = resp[key].replace(/\s+/g, '');
-		}
-		return resp;
-	},
-
-	/**
-	 * Process static html on a key.
-	 * @param {object} resp - Server response.
-	 * @param {string} key
-	 * @returns {object} resp - Modified response.
-	 */
-	_processStaticHtml: function(resp, key) {
-		var $html, html, newHtml;
-		html = resp[key];
-		$html = $(html);
-		$html.find('a').attr('target', '_blank');
-		newHtml = $('<div></div>').append($html.clone()).html();
-		resp[key] = newHtml;
-		return resp;
-	},
 
 	/**
 	 * Get markdown html.
@@ -246,25 +170,6 @@ var Model = baseCrud.Model.extend({
 var Collection = baseCrud.Collection.extend({
 	
 	model: Model,
-
-	/*
-	 * The database can be queried by its fields.
-	 *
-	 */
-	organizeQueryParameters: function(queryParams) {
-		var dbQueryParams = {}, customQueryParams = {}, fieldSelectionParams;
-		var paramDefaults = new this.model().defaults;
-		for (let key in queryParams) {
-			let value = queryParams[key];
-			if (paramDefaults[key]) {
-				dbQueryParams[key] = value;
-			} else if (key === '_fields') {
-				fieldSelectionParams = value;
-			} else {
-				customQueryParams[key] = value;
-			}
-		}
-	},
 
 	/**
 	 * Recognize and process server response by applying the corresponding model's parse method.

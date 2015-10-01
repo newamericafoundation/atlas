@@ -5,12 +5,15 @@ Policy analysis tool for New America's Education Policy Program.
 ## Basics
 
 Url: http://atlas.newamerica.org/
-Related Url: http://build.atlas.newamerica.org/
 
 Server: ``node.js v0.12.2``.
-Client: ``React.js``, ``react-router``.
+
+Client: ``React.js``, ``react-router``, ``Backbone``.
+
 Build: ``gulp.js``.
+
 Authentication: ``passport.js`` with ``passport-google-oauth``.
+
 Database: ``MongoDB``.
 
 ## Docs
@@ -21,3 +24,4 @@ Database: ``MongoDB``.
 * [Production](/docs/production.md)
 * [Codebase Structure](/docs/codebase_structure.md)
 * [Data Api](/docs/data_api.md)
+* [Code Style Guide](/docs/code_style_guide.md)

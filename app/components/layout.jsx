@@ -9,18 +9,23 @@ import classNames from 'classnames';
 
 class Layout extends React.Component {
 
+
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<div className={this.getClassName()}>
 				<Setup {...this.props} />
-				<Header {...this.props} theme={this.getHeaderTheme()} />
+				<Header {...this.props} title={this.getHeaderTitle()} isTransparent={this.isHeaderTransparent()} />
 				<RouteHandler {...this.props} />
 			</div>
 		);
 	}
 
 	/*
-	 * Apply a route-specific class name on the wrapper.
+	 * Add a route-specific class modifiers on the wrapper.
 	 * TODO: get route name to clean up this method.
 	 */
 	getClassName() {
@@ -33,10 +38,26 @@ class Layout extends React.Component {
 		});
 	}
 
-	getHeaderTheme() {
+
+	/*
+	 * 
+	 *
+	 */
+	isHeaderTransparent() {
 		var pth = this.props.state.path;
-		if (['/', '/welcome'].indexOf(pth) > -1) { return undefined; }
-		return 'atlas';
+		if (['/', '/welcome'].indexOf(pth) > -1) { return true; }
+		return false;
+	}
+
+
+	/*
+	 * 
+	 *
+	 */
+	getHeaderTitle() {
+		var pth = this.props.state.path;
+		if (['/', '/welcome'].indexOf(pth) > -1) { return 'New America'; }
+		return 'Atlas';
 	}
 
 }

@@ -1,3 +1,5 @@
+// Form component backed by a Backbone model.
+
 import React from 'react';
 
 import _ from 'underscore';
@@ -29,6 +31,56 @@ class Form extends React.Component {
 		this.state = {};
 	}
 
+
+	/*
+	 *
+	 *
+	 */
+	render() {
+		var style = this.props.isEnabled ? {} : { opacity: 0.5 };
+		return (
+			<form 
+				onSubmit={this.sendFormDataToParent.bind(this)}
+				style={style}
+			>
+				{ this.renderFormComponents() }
+				<input 
+					type='submit'
+					disabled={!this.props.isEnabled}
+					value={ this.props.submitButtonText || 'Submit Form' } 
+				/>
+			</form>
+		);
+	}
+
+
+	/*
+	 *
+	 *
+	 */
+	renderFormComponents() {
+		return this.props.model.fields.map((field, i) => {
+			var FormComp = Subcomponents[field.formComponentName] || Subcomponents.Text,
+				id = field.formComponentProps.id,
+				props = field.formComponentProps || {};
+			return (
+				<FormComp 
+					{...props}
+					key={i}
+					isEnabled={this.props.isEnabled}
+					saveDataOnParent={this.saveDataFromChild.bind(this)}
+					initialValue={this.props.model.get(id)}
+				/>
+			);
+		});
+		return (<input />);
+	}
+
+
+	/*
+	 *
+	 *
+	 */
 	saveDataFromChild(childData) {
 
 		var model = this.props.model,
@@ -53,41 +105,11 @@ class Form extends React.Component {
 		this.forceUpdate();
 	}
 
-	render() {
-		var style = this.props.isEnabled ? {} : { opacity: 0.5 };
-		return (
-			<form 
-				onSubmit={this.sendFormDataToParent.bind(this)}
-				style={style}
-			>
-				{ this.renderFormComponents() }
-				<input 
-					type='submit'
-					disabled={!this.props.isEnabled}
-					value={ this.props.submitButtonText || 'Submit Form' } 
-				/>
-			</form>
-		);
-	}
-
-	renderFormComponents() {
-		return this.props.model.fields.map((field, i) => {
-			var FormComp = Subcomponents[field.formComponentName] || Subcomponents.Text,
-				id = field.formComponentProps.id,
-				props = field.formComponentProps || {};
-			return (
-				<FormComp 
-					{...props}
-					key={i}
-					isEnabled={this.props.isEnabled}
-					saveDataOnParent={this.saveDataFromChild.bind(this)}
-					initialValue={this.props.model.get(id)}
-				/>
-			);
-		});
-		return (<input />);
-	}
-
+	
+	/*
+	 * Run method passed down from parent.
+	 *
+	 */
 	sendFormDataToParent(e) {
 		e.preventDefault();
 		this.props.onSubmit(this.props.model);

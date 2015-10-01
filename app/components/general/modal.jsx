@@ -2,6 +2,10 @@ import React from 'react';
 
 class Modal extends React.Component {
 
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<div className='modal'>
@@ -14,6 +18,11 @@ class Modal extends React.Component {
 		);
 	}
 
+
+	/*
+	 * Customize on subclass.
+	 *
+	 */
 	renderContent() {
 		return (
 			<p>It is not nice to leave a model empty.</p>

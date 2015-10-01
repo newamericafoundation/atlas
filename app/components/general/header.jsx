@@ -17,8 +17,12 @@ class Header extends React.Component {
 		var stripStyle = {
 			'backgroundColor': this.state.stripColor
 		};
+		var className = classNames({
+			'header': true,
+			'bg-c-grey--base': (!this.props.isTransparent)
+		});
 		return (
-			<div className={ this.getClass() }>
+			<div className={ className }>
 				<div className="header__corner">
 					<Link 
 						id="header__welcome-link" 
@@ -29,7 +33,7 @@ class Header extends React.Component {
 				</div>
 				<div className="header__main">
 					<h1 className="header__main__cursive-prefix"></h1>
-					<h1 className="header__main__site-name">ATLAS</h1>
+					<h1 className="header__main__site-name">{this.props.title}</h1>
 					<p className="header__main__title"></p>
 				</div>
 				{ this.renderAuth() }
@@ -39,6 +43,11 @@ class Header extends React.Component {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderAuth() {
 		var researcher = window.researcher;
 		if (!researcher) { return; }
@@ -50,22 +59,20 @@ class Header extends React.Component {
 		);
 	}
 
-	getClass() {
-		return classNames({
-			'header': true,
-			'bg-c-grey--base': (this.props.theme === 'atlas'),
-			'bg-c-naf-green': (this.props.theme === 'naf')
-		});
-	}
 
-	getHeaderTitle() {
-		return this.props.headerTitle;
-	}
-
+	/*
+	 *
+	 *
+	 */
 	componentDidMount() {
 		this.setStripHandler();
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	setStripHandler() {
 		var App = this.props.App;
 		if (App == null) { return; }
@@ -89,6 +96,10 @@ Header.contextTypes = {
 
 class HeaderNavCircles extends React.Component {
 	
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -96,6 +107,11 @@ class HeaderNavCircles extends React.Component {
 		};
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<div className="header__nav-circles">
@@ -106,6 +122,11 @@ class HeaderNavCircles extends React.Component {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderList() {
 		return [ 'welcome', 'menu', 'show' ].map((item, i) => {
 			var cls = classNames({

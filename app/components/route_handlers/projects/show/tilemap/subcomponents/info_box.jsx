@@ -42,9 +42,12 @@ class InfoBox extends Static {
 	 *
 	 */
 	renderTitleBarBackground() {
-		var style = this.getTitleBarBackgroundStyle();
 		return (
-			<div className="atl__title-bar__background" style={style} ref='title-bar-background' />
+			<div 
+				className="atl__title-bar__background" 
+				style={ this.getTitleBarBackgroundStyle() } 
+				ref='title-bar-background' 
+			/>
 		);
 	}
 
@@ -54,17 +57,22 @@ class InfoBox extends Static {
 	 *
 	 */
 	getTitleBarBackgroundStyle() {
-		var project = this.props.project,
-			img = this.state.image,
-			imgUrl = img ? img.getUrl() : project.getImageUrl();
+
+		var project = this.props.project;
 		var activeItem = project.get('data').items.active;
 		
-		if (activeItem && activeItem.image) { 
-			return { 'backgroundImage': activeItem.image.getUrl() } 
+		if (!activeItem) {
+			if (project.getImageUrl()) {
+				return { 'backgroundImage': project.getImageUrl() };
+			}
+			return { 'backgroundColor': 'rgba(50, 50, 50, 0.1)' };
 		}
-		if (project.getImageUrl()) { 
-			return { 'backgroundImage': project.getImageUrl() };
+
+		// The image field is set to 'not available' if there was already a network request for the image and it returned empty.
+		if (activeItem.image && activeItem.image !== 'not available') { 
+			return { 'backgroundImage': activeItem.image.getUrl() };
 		}
+
 		return { 'backgroundColor': 'rgba(50, 50, 50, 0.1)' };
 	}
 
@@ -228,17 +236,13 @@ class InfoBox extends Static {
 	 */
 	setImage() {
 
-		var activeItem, imageName, project;
+		var project = this.props.project,
+			activeItem = project.get('data').items.active;
 
-		project = this.props.project;
-		if (!project) { return; }
-
-		activeItem = project.get('data').items.active;
 		if (!activeItem) { return; }
 		
 		if (!activeItem.image) {
 			let imageName = activeItem.getImageName();
-			console.log(imageName);
 			let coll = new image.Collection();
 			coll.getClientFetchPromise({ name: imageName })
 				.then((coll) => {
@@ -246,6 +250,8 @@ class InfoBox extends Static {
 					if (img) {
 						activeItem.image = img;
 						this.forceUpdate();
+					} else {
+						activeItem.image = 'not available';
 					}
 				}
 			);

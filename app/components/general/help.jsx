@@ -5,11 +5,18 @@ import classNames from 'classnames';
 // Parent needs to be relatively positioned for this to work.
 class Help extends React.Component {
 
+	/*
+	 *
+	 *
+	 */
 	render() {
-		var modifierClass = (this.props.position) ? `atl__help--${this.props.position}` : '',
-			id = this.props.id ? `atl__help__${this.props.id}` : undefined;
+		var className = classNames({
+			'atl__help': true
+		});
+		className += ` atl__help--${this.props.position}`;
+		var id = this.props.id ? `atl__help__${this.props.id}` : undefined;
 		return (
-			<div className={ 'atl__help ' + modifierClass } id={ id } >
+			<div className={ className } id={ id } >
 				{ this.props.text }
 			</div>
 		);

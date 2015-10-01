@@ -3,6 +3,10 @@ import classNames from 'classnames';
 
 class Loading extends React.Component {
 
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<div className='loader'>

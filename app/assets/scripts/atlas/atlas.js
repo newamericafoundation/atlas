@@ -1,1 +1,0 @@
-window.Atlas = new Marionette.Application();

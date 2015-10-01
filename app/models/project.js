@@ -196,19 +196,10 @@ exports.Model = base.Model.extend({
         return (keyCount > 1);
     },
 
-    /**
-     * Recognize and process JSON data.
-     * @param {object} resp - JSON response.
-     * @returns {object} resp - Modified JSON response.
+    /*
+     * Returns image url.
+     *
      */
-    parse: function(resp) {
-        resp = this._adaptMongoId(resp);
-        resp = this._removeArrayWrapper(resp);
-        resp = this._removeSpaces(resp, 'template_name');
-        resp = this._processStaticHtml(resp, 'body_text');
-        return resp;
-    },
-
     getImageUrl: function() {
         var encodedImage = this.get('encoded_image');
         if (encodedImage == null) { return; }
@@ -303,7 +294,6 @@ exports.Model = base.Model.extend({
         if (data != null) {
             data.variables = new variable.Collection(data.variables);
             data.items = new item.Collection(data.items, { parse: true });
-            // data.filters = data.variables.extractFilters();
             this.buildFilterTree();
         }
     },
@@ -339,7 +329,7 @@ exports.Model = base.Model.extend({
             if (nd != null) {
                 o.values = variable.getNumericalFilter(formatter);
             } else {
-                o.values = _.map(items.getValueList(variable.get('id')), function(item) {
+                o.values = _.map(items.getValueList(variable), function(item) {
                     if (formatter != null) {
                         item = formatter(item);
                     }
@@ -363,6 +353,8 @@ exports.Model = base.Model.extend({
         };
 
         data.filter = new filter.FilterTree(filterTree);
+        data.filter.makeComposite();
+
         data.filter.state = {};
 
     },

@@ -4,10 +4,19 @@ import { No } from './../../../../../general/icons.jsx';
 
 class Search extends React.Component {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<div className='atl__search'>
@@ -18,6 +27,7 @@ class Search extends React.Component {
 					<input 
 						type='text' 
 						placeholder='Search Project' 
+						autofocus={true}
 						value={ this.props.uiState.searchTerm }
 						onChange={ this.setSearchTerm.bind(this) } 
 					/>
@@ -26,10 +36,20 @@ class Search extends React.Component {
 		);
 	}
 	
+
+	/*
+	 *
+	 *
+	 */
 	setSearchTerm(e) {
 		this.props.setUiState({ searchTerm: e.target.value });
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	close(e) {
 		if (e) { e.preventDefault(); }
 		this.props.setUiState({ isSearchBarActive: false });

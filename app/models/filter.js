@@ -147,7 +147,7 @@ exports.FilterValue = LocalBaseModel.extend({
 
 exports.FilterKey = LocalBaseModel.extend({
 
-    childModel: exports.FilterValue,
+    model: exports.FilterValue,
 
     /*
      * Toggle item as it were 'clicked on'. 
@@ -175,10 +175,6 @@ exports.FilterKey = LocalBaseModel.extend({
         return this;
     },
 
-    toggleOne: function(childIndex) {
-        return this.children[childIndex].toggle();
-    },
-
     getValueIndeces: function(model) {
         var child, data, dataIndeces, i, j, len, ref;
         data = (model != null) && _.isFunction(model.toJSON) ? model.toJSON() : model;
@@ -198,14 +194,10 @@ exports.FilterKey = LocalBaseModel.extend({
     },
 
     test: function(data, options) {
-        var child, j, len, ref, result;
+        var child, result;
         result = false;
-        ref = this.children;
-        for (j = 0, len = ref.length; j < len; j++) {
-            child = ref[j];
-            if (child.test(data, options)) {
-                result = true;
-            }
+        for (let child of this.children) {
+            if (child.test(data, options)) { result = true; }
         }
         return result;
     }
@@ -215,7 +207,7 @@ exports.FilterKey = LocalBaseModel.extend({
 
 exports.FilterTree = LocalBaseModel.extend({
 
-    childModel: exports.FilterKey,
+    model: exports.FilterKey,
 
     test: function(data) {
         return this.getActiveChild().test(data);

@@ -238,9 +238,6 @@ if (!Array.prototype.map) {
     }
   });
 }).call(undefined);
-"use strict";
-
-window.Atlas = new Marionette.Application();
 'use strict';
 
 window.Map = {};

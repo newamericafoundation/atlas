@@ -1,8 +1,10 @@
-var base = require('./base.js');
+import base from './base.js';
+import marked from 'marked';
 
 exports.Model = base.Model.extend({
 	
 	name: 'image',
+
 
 	defaults: {
 
@@ -11,6 +13,7 @@ exports.Model = base.Model.extend({
 		credit: ''
 
 	},
+
 
 	fields: [
 
@@ -48,26 +51,19 @@ exports.Model = base.Model.extend({
 
 	],
 
+
 	apiUrlRoot: '/api/v1/images',
+
 
 	getEditUrl: function() {
 		return `/images/${this.get('id')}/edit`;
 	},
 
+
 	getViewUrl: function() {
 		return '/';
 	},
 
-	/**
-	 * Recognize and process server response.
-	 * @param {object} resp - Server response.
-	 * @return {object} resp - Modified response.
-	 */
-	parse: function(resp) {
-		resp = this._removeArrayWrapper(resp);
-		resp = this._removeLineBreaks(resp, 'encoded');
-		return resp;
-	},
 
 	/** Gets encoded url to use as a CSS background-image. */
 	getUrl: function() {
@@ -79,9 +75,10 @@ exports.Model = base.Model.extend({
 		}
 	},
 
+
 	/** Gets html attribute. */
 	getAttributionHtml: function() {
-		return this.getMarkdownHtml('credit');
+		return marked(this.get('credit'));
 	}
 
 });

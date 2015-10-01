@@ -24,21 +24,18 @@ class Show extends React.Component {
 				isCollapsedMaster: false, // master toggle
 				isInfoBoxActive: false, // stores whether the info box is active
 				isInfoBoxNarrow: false, // stores whether the info box is narrow
+				isHelpActive: false,
 				isMapDragging: false,
 				isOptionsTabActive: false
 			}
 		};
 	}
 
-	// This is a method passed down to all deep children so they can modify the state of the ui.
-	setUiState(uiStateChanges) {
-		var currentUiState = this.state.ui;
-		for (let key in uiStateChanges) {
-			currentUiState[key] = uiStateChanges[key];
-		}
-		this.forceUpdate();
-	}
 
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<div className={ this.getClassName() }>
@@ -55,44 +52,11 @@ class Show extends React.Component {
 		);
 	}
 
-	handleMessageFromButtons(message) {
-		if (message === 'toggle-search-bar') {
-			this.setUiState({ isSearchBarActive: !this.state.ui.isSearchBarActive });
-		} else if (message === 'toggle-collapsed-state') {
-			this.state.ui.isCollapsedMaster = !this.state.ui.isCollapsedMaster;
-			this.forceUpdate();
-		} else if (message === 'toggle-help') {
-			if ($ == null) { return; }
-			$('.atl').toggleClass('atl--help');
-		} else if (message === 'print') {
-			window.print();
-		}
-	}
 
-	getButtons() {
-		return buttonsDataGenerator(this.state.project, window.isResearcherAuthenticated, this.state.ui.isCollapsedDueToOverflow);
-	}
-
-	getClassName() {
-
-		var cls, project, data;
-
-		project = this.state.project;
-		data = (project != null) ? project.get('data') : null;
-
-		// boolean classnames
-		cls = classNames({
-			'atl': true,
-			'atl--collapsed': (this.state.ui.isCollapsedMaster) || (!this.state.ui.isCollapsedMaster && this.state.ui.isCollapsedDueToOverflow),
-			'atl__info-box--active': this.state.ui.isInfoBoxActive,
-			'atl__info-box--narrow': data && (data.variables.getInfoBoxVariableCount() < 2)
-		});
-
-		return cls;
-
-	}
-
-	// Pick and render template-specific project.
+	/*
+	 * Pick and render template-specific project.
+	 *
+	 */
 	renderProject() {
 		if (this.state.project == null) { return <Loading />; }
 		var Comp = (this._isModelTilemap()) ? Tilemap : Explainer;
@@ -107,19 +71,105 @@ class Show extends React.Component {
 		);
 	}
 
-	_isModelStatic() {
-		var project = this.state.project;
-		if (project == null) { return false; }
-		return ([ "Explainer", "Polling", "Policy Brief", "PolicyBrief" ].indexOf(project.get('project_template_name')) > -1);
+
+	/*
+	 *
+	 *
+	 */
+	componentDidMount() {
+		this.fetchProject();
 	}
 
+
+	/*
+	 * This is a method passed down to all deep children so they can modify the state of the ui.
+	 *
+	 */
+	setUiState(uiStateChanges) {
+		var currentUiState = this.state.ui;
+		for (let key in uiStateChanges) {
+			currentUiState[key] = uiStateChanges[key];
+		}
+		this.forceUpdate();
+	}
+
+
+	/*
+	 * This method is bound to the component and passed to the side bar buttons subcomponent that call it with a message. Each type of message is handled appropriately.
+	 *
+	 */
+	handleMessageFromButtons(message) {
+
+		if (message === 'toggle-search-bar') {
+			return this.setUiState({ isSearchBarActive: !this.state.ui.isSearchBarActive });
+		} 
+
+		if (message === 'toggle-collapsed-state') {
+			this.state.ui.isCollapsedMaster = !this.state.ui.isCollapsedMaster;
+			return this.forceUpdate();
+		} 
+
+		if (message === 'toggle-help') {
+			this.state.ui.isHelpActive = !this.state.ui.isHelpActive;
+			return this.forceUpdate();
+		}
+
+		if (message === 'print') {
+			window.print();
+		}
+
+	}
+
+
+	/*
+	 * Get side bar buttons.
+	 *
+	 */
+	getButtons() {
+		return buttonsDataGenerator(this.state.project, window.isResearcherAuthenticated, this.state.ui.isCollapsedDueToOverflow);
+	}
+
+
+	/*
+	 *
+	 *
+	 */
+	getClassName() {
+
+		var cls, project, data;
+
+		project = this.state.project;
+		data = (project != null) ? project.get('data') : null;
+
+		// boolean classnames
+		cls = classNames({
+			'atl': true,
+			'atl--help': this.state.ui.isHelpActive,
+			'atl--collapsed': (this.state.ui.isCollapsedMaster) || (!this.state.ui.isCollapsedMaster && this.state.ui.isCollapsedDueToOverflow),
+			'atl__info-box--active': this.state.ui.isInfoBoxActive,
+			'atl__info-box--narrow': data && (data.variables.getInfoBoxVariableCount() < 2)
+		});
+
+		return cls;
+
+	}
+
+
+	/*
+	 *
+	 *
+	 */
 	_isModelTilemap() {
 		var project = this.state.project;
 		if (project == null) { return false; }
 		return (project.get('project_template_name') === 'Tilemap');
 	}
 
-	// Send separate network request fetching related projects.
+
+	/*
+	 * Send separate network request fetching related projects.
+	 *
+	 */
 	fetchRelatedProjects() {
 
 		var prj = this.state.project;
@@ -139,7 +189,11 @@ class Show extends React.Component {
 
 	}
 
-	// Send network request to get project data.
+
+	/*
+	 * Send network request to get project data.
+	 *
+	 */
 	fetchProject() {
 
 		var atlas_url = this.getAtlasUrl();
@@ -157,21 +211,15 @@ class Show extends React.Component {
 
 	}
 
+
+	/*
+	 * Get project's atlas URL either from props or from props passed from router.
+	 *
+	 */
 	getAtlasUrl() {
 		return this.props.atlas_url || this.props.params.atlas_url;
 	}
 
-	getEditUrl() {
-		var project = this.state.project;
-		if (project) { return project.getViewUrl(); }
-	}
-
-	componentDidMount() {
-		// View is rendered before current project is synced.
-		var App = this.props.App;
-		if (App == null) { return; }
-		this.fetchProject();
-	}
 
 }
 

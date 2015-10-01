@@ -48,7 +48,6 @@ var indexMiddleware = (options, req, res, next) => {
 		req.special_query = {};
 
 		query.special_query_params.split(',').forEach((pm) => {
-			console.log(pm);
 			req.special_query[pm] = query[pm];
 			delete query[pm];
 		});

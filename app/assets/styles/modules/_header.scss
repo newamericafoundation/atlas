@@ -18,25 +18,14 @@
 
 		&__site-name, &__cursive-prefix, &__title { display: inline-block; float: left; } 
 
+		&__site-name {
+			text-transform: uppercase;
+		}
+
 		&__cursive-prefix {
 			font-family: 'BlackJack' !important;
 			@include font-size(20px);
 			margin-right: 2px;
-		}
-
-		&__title {
-			padding: 4px 8px;
-			opacity: 0.8;
-			border-radius: 3px;
-			background-color: map-get(map-get($palette, grey), light);
-			@include font-size(15px);
-			margin-top: 19px;
-			margin-left: 15px;
-			display: none;
-			@include bp-w-sm {
-				display: inline-block;
-			}
-			&:empty { display: none; }
 		}
 
 		h1 {

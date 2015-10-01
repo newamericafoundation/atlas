@@ -28,9 +28,18 @@ class SideBar extends React.Component {
 		this.props.buttons = this.props.buttons || defaultButtons;
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	render() {
+		var className = classNames({
+			'atl__side-bar': true,
+			'atl__side-bar--active': this.state['isActive']
+		});
 		return (
-			<div className={ this.getClass() }>
+			<div className={ className }>
 				<div className="atl__side-bar__toggler" onClick={ this.toggle.bind(this) }>
 					{ this.renderDropdownIcon() }
 				</div>
@@ -40,25 +49,38 @@ class SideBar extends React.Component {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderDropdownIcon() {
 		return this.state.isActive ? <DropdownUp /> : <DropdownDown />;
 	}
 
-	getClass() {
-		return classNames({
-			'atl__side-bar': true,
-			'atl__side-bar--active': this.state['isActive']
-		});
-	}
 
+	/*
+	 *
+	 *
+	 */
 	setHoveredButtonTitle(title) {
 		this.setState({ hoveredButtonTitle: title });
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	toggle() {
 		this.setState({ isActive: !this.state['isActive'] });
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderButtons() {
 		if (this.props.buttons == null) { return; }
 		var list = this.props.buttons.map((options, i) => {
@@ -83,6 +105,10 @@ class SideBar extends React.Component {
 
 class SideBarButton extends React.Component {
 
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<li className="atl__side-bar__icon" 
@@ -95,15 +121,11 @@ class SideBarButton extends React.Component {
 		);
 	}
 
-	onButtonMouseEnter() {
-		this.props.setHoveredButtonTitle(this.props.options.title);
-	}
 
-	onButtonMouseLeave() {
-		this.props.setHoveredButtonTitle('');
-	}
-
-	// Render different types of content.
+	/*
+	 * Render different types of content.
+	 *
+	 */
 	renderContent() {
 		var contentType = this.props.options.contentType;
 		if (contentType === 'form') { return this.renderFormContent(); }
@@ -112,6 +134,11 @@ class SideBarButton extends React.Component {
 		return this.renderDefaultContent();
 	}
 
+
+	/*
+	 * Render default content.
+	 *
+	 */
 	renderDefaultContent() {
 		var IconComp = this.getIconComp();
 		return (
@@ -121,6 +148,11 @@ class SideBarButton extends React.Component {
 		);
 	}
 
+
+	/*
+	 * Render inner link content (React Router link).
+	 *
+	 */
 	renderInnerLinkContent() {
 		var IconComp = this.getIconComp();
 		return (
@@ -130,6 +162,11 @@ class SideBarButton extends React.Component {
 		);
 	}
 
+
+	/*
+	 * Render inner outer content (simple HTML5 link).
+	 *
+	 */
 	renderOuterLinkContent() {
 		var IconComp = this.getIconComp();
 		return (
@@ -139,6 +176,11 @@ class SideBarButton extends React.Component {
 		);
 	}
 
+
+	/*
+	 * Render form content with a single submit button and hidden input fields.
+	 * Use case: force download of a file server-generated on the fly.
+	 */
 	renderFormContent() {
 		var IconComp = this.getIconComp();
 		return ( 
@@ -150,18 +192,35 @@ class SideBarButton extends React.Component {
 		);
 	}
 
+
 	getIconComp() {
 		var iconName = this.props.options.reactIconNames[0] || 'Build';
 		return Icons[iconName];
 	}
 
 	handleClick() {
-
 		// If the parent of the SideBar component passed down its own method to handle a message from the button and if the button has a click message set, call this method.
 		if (this.props.options.clickMessage && this.props.sendMessageToParent) {
 			this.props.sendMessageToParent(this.props.options.clickMessage);
 		}
+	}
 
+
+	/*
+	 *
+	 *
+	 */
+	onButtonMouseEnter() {
+		this.props.setHoveredButtonTitle(this.props.options.title);
+	}
+
+
+	/*
+	 * 
+	 *
+	 */
+	onButtonMouseLeave() {
+		this.props.setHoveredButtonTitle('');
 	}
 
 }

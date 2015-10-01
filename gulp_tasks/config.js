@@ -61,7 +61,6 @@ module.exports = {
 		    source: [
 		    	'./app/assets/scripts/polyfills/**/*',
 		        './app/assets/scripts/config/**/*',
-		        './app/assets/scripts/atlas/atlas.js',
 		        './app/assets/scripts/atlas/map/map.js',
 		        './app/assets/scripts/atlas/map/map_control_helpers.js',
 		        './app/assets/scripts/atlas/map/map_views.js.coffee',

@@ -205,8 +205,10 @@ exports.Model = base.Model.extend({
 
 
 exports.Collection = base.Collection.extend({
+
 	model: exports.Model,
 	
+
 	/** 
 	 * Gets item type first model in a collection.
 	 * @returns {string} itemType
@@ -217,6 +219,7 @@ exports.Collection = base.Collection.extend({
 		return itemType;
 	},
 	
+
 	/** 
 	 * Set active model under collection active field.
 	 * @param {} activeModel - Active model or its id.
@@ -235,6 +238,7 @@ exports.Collection = base.Collection.extend({
 		return this;
 	},
 	
+
 	/** 
 	 * Set hovered model under collection hovered field.
 	 * @param {} hoveredModel - Hovered model or its id.
@@ -253,14 +257,14 @@ exports.Collection = base.Collection.extend({
 		return this;
 	},
 	
+
 	/** 
 	 * Gets lists of values for a given key.
 	 * @param {string|object} key|variable - Key or variable model instance.
 	 * @returns {array} valueList - List of values for specified key.
 	 */
-	getValueList: function(variableOrKey) {
-		var key = (variableOrKey.get) ? variableOrKey.get('id') : variableOrKey,
-			variable = (variableOrKey.get) ? variableOrKey : null,
+	getValueList: function(variable) {
+		var key = variable.get('id'),
 			valueList = [];
 
 		this.models.forEach((model) => {
@@ -294,11 +298,13 @@ exports.Collection = base.Collection.extend({
 		return valueList;
 	},
 	
+
 	/** TODO: Gets value list sorted by frequency in the data. */
 	getSortedValueList: function(key) {
 
 	},
 	
+
 	/** 
 	 * Assumes the model has a latitude and longitude fields.
 	 * Must first go through parse method to make sure these fields are named correctly.
@@ -330,6 +336,7 @@ exports.Collection = base.Collection.extend({
 		];
 	},
 	
+
 	/** 
 	 * Creates single array from lat, long arrays of each model into one array (array of arrays).
 	 * @returns {array} res - Returns array of arrays. E.g. [[lat, long], [lat, long]]
@@ -345,6 +352,7 @@ exports.Collection = base.Collection.extend({
 		return res;
 	},
 	
+
 	richGeoJsonBuilders: {
 
 
@@ -399,6 +407,7 @@ exports.Collection = base.Collection.extend({
 
 	},
 	
+
 	/** 
 	 * The feature is either ready to use or triggers a sync event on itself once it is.
 	 * @returns {} - Generic Rich GeoJson feature.
