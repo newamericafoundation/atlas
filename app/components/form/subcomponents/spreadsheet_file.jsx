@@ -47,9 +47,11 @@ class SpreadsheetFile extends Base {
 
 	parseWorkBook(workbook) {
 		var obj = {};
+		console.log(workbook.Sheets);
 		for (let sheetName in workbook.Sheets) {
 			let sheet = workbook.Sheets[sheetName];
 			obj[sheetName] = XLSX.utils.sheet_to_json(sheet, { raw: true });
+			console.log(obj[sheetName]);
 		}
 		return obj;
 	}
@@ -59,9 +61,10 @@ class SpreadsheetFile extends Base {
 		var file = e.target.files[0];
 		var reader = new FileReader();
 
-		reader.onload = () => { 
+		reader.onload = () => {
 			var bstr = reader.result;
 			var workbook = XLSX.read(bstr, { type: 'binary' });
+			console.log(workbook);
 			this.props.saveDataOnParent({
 				id: this.props.id,
 				value: this.parseWorkBook(workbook)
