@@ -51,7 +51,6 @@ class ProjectSection extends React.Component {
 	}
 
 	toggleActiveState() {
-		var App;
 		this.props.projectSection.toggleActiveState();
 		this.props.updateProjectsIndex();
 	}

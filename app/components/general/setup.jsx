@@ -45,7 +45,7 @@ class PatternsSetup extends React.Component {
 			var colorCodes = this.state.data[i];
 			return (
 				<Pattern
-					App={this.props.App} 
+					radio={this.props.radio} 
 					id={i} 
 					key={i} 
 					colorCodes={colorCodes} 
@@ -55,16 +55,14 @@ class PatternsSetup extends React.Component {
 	}
 
 	componentDidMount() {
-		var App = this.props.App;
-		if (App == null) { return; }
-		App.commands.setHandler('reset:patterns', this.resetPatterns.bind(this));
-		App.reqres.setHandler('get:pattern:id', this.ensureAndGetPattern.bind(this));
+		var { radio } = this.props;
+		radio.commands.setHandler('reset:patterns', this.resetPatterns.bind(this));
+		radio.reqres.setHandler('get:pattern:id', this.ensureAndGetPattern.bind(this));
 	}
 
 	componentWillUnmount() {
-		var App = this.props.App;
-		if (App == null) { return; }
-		App.commands.clearHandler('reset:patterns');
+		var { radio } = this.props.radio;
+		radio.commands.clearHandler('reset:patterns');
 	}
 
 	resetPatterns() {

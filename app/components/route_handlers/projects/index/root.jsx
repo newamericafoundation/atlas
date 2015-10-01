@@ -36,18 +36,18 @@ class Index extends React.Component {
 						<div className="atl__nav bg-c-off-white">
 							<h1 className="title title--compact">Explore Atlas</h1>
 							<ProjectTemplates 
-								App={this.props.App}
+								radio={this.props.radio}
 								projectTemplates={this.state.projectTemplates}
 								updateProjectsIndex={this.forceUpdate.bind(this)}
 							/>
 							<ProjectSections 
-								App={this.props.App} 
+								radio={this.props.radio}
 								projectSections={this.state.projectSections}
 								updateProjectsIndex={this.forceUpdate.bind(this)}
 							/>
 						</div>
 						<Projects 
-							App={this.props.App} 
+							radio={this.props.radio}
 							projects={this.state.projects} 
 							projectTemplates={this.state.projectTemplates} 
 							projectSections={this.state.projectSections}

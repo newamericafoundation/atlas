@@ -6,16 +6,16 @@
             # @map = options.map
             this.map = options.map;
             this.collection = options.collection;
-            Map.props.App.reqres.setHandler('item:map:position', (item) => @getItemMapPosition(item))
+            Map.props.radio.reqres.setHandler('item:map:position', (item) => @getItemMapPosition(item))
             @
 
         setHeaderStripColor: ->
             project = Map.props.project
             indeces = project.getFriendlyIndeces()
             if indeces.length > 0
-                Map.props.App.commands.execute('set:header:strip:color', { color: Map.colors.toRgb(indeces[0] - 1) })
+                Map.props.radio.commands.execute('set:header:strip:color', { color: Map.colors.toRgb(indeces[0] - 1) })
             else
-                Map.props.App.commands.execute('set:header:strip:color', 'none')
+                Map.props.radio.commands.execute('set:header:strip:color', 'none')
 
         # Return pixel coordinates of a map display item's centroid.
         getItemMapPosition: (item) ->
@@ -41,7 +41,7 @@
             items = project.get('data').items
             items.setHovered -1
             @setHeaderStripColor()
-            Map.props.App.commands.execute('update:tilemap', { ignoreMapItems: true })
+            Map.props.radio.commands.execute('update:tilemap', { ignoreMapItems: true })
 
         # Callback.
         onFeatureMouseOver: (feature) ->
@@ -52,7 +52,7 @@
             model = if feature._model? then feature._model else feature.id
             items.setHovered model
             @setHeaderStripColor()
-            Map.props.App.commands.execute('update:tilemap', { ignoreMapItems: true })
+            Map.props.radio.commands.execute('update:tilemap', { ignoreMapItems: true })
 
         # Callback.
         onFeatureClick: (feature) ->
@@ -65,7 +65,6 @@
             items = project.get('data').items
             items.setActive model
             Map.props.setUiState({ isInfoBoxActive: true })
-            # App.commands.execute 'update:tilemap'
             Map.map.ignoreNextClick = false
             @activeFeature = feature
 
@@ -76,7 +75,7 @@
         onMapClick: (e) -> 
             if @activeFeature?
                 @activeFeature = undefined
-                Map.props.App.vent.trigger 'item:deactivate'
+                Map.props.radio.vent.trigger('item:deactivate')
 
         # Returns feature corresponding to model.
         getFeatureByModel: (model) ->
@@ -102,7 +101,7 @@
             if valueIndeces.length is 1
                 return Map.colors.toRgb(valueIndeces[0]-1)
             # Communicate with Comp.Setup.Component to create and retrieve stripe pattern id
-            id = Map.props.App.reqres.request('get:pattern:id', valueIndeces)
+            id = Map.props.radio.reqres.request('get:pattern:id', valueIndeces)
             return "url(#stripe-pattern-#{id})"
 
         # Checks if bounds are finite.

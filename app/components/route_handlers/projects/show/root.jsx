@@ -40,7 +40,7 @@ class Show extends React.Component {
 		return (
 			<div className={ this.getClassName() }>
 				<SideBar 
-					App={ this.props.App } 
+					radio={ this.props.radio } 
 					project={ this.state.project } 
 					sendMessageToParent={ this.handleMessageFromButtons.bind(this) }
 					uiState={ this.state.ui }

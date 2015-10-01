@@ -498,7 +498,7 @@ Map.control = {
       }
       this.map = options.map;
       this.collection = options.collection;
-      Map.props.App.reqres.setHandler('item:map:position', (function (_this) {
+      Map.props.radio.reqres.setHandler('item:map:position', (function (_this) {
         return function (item) {
           return _this.getItemMapPosition(item);
         };
@@ -511,11 +511,11 @@ Map.control = {
       project = Map.props.project;
       indeces = project.getFriendlyIndeces();
       if (indeces.length > 0) {
-        return Map.props.App.commands.execute('set:header:strip:color', {
+        return Map.props.radio.commands.execute('set:header:strip:color', {
           color: Map.colors.toRgb(indeces[0] - 1)
         });
       } else {
-        return Map.props.App.commands.execute('set:header:strip:color', 'none');
+        return Map.props.radio.commands.execute('set:header:strip:color', 'none');
       }
     };
 
@@ -552,7 +552,7 @@ Map.control = {
       items = project.get('data').items;
       items.setHovered(-1);
       this.setHeaderStripColor();
-      return Map.props.App.commands.execute('update:tilemap', {
+      return Map.props.radio.commands.execute('update:tilemap', {
         ignoreMapItems: true
       });
     };
@@ -567,7 +567,7 @@ Map.control = {
       model = feature._model != null ? feature._model : feature.id;
       items.setHovered(model);
       this.setHeaderStripColor();
-      return Map.props.App.commands.execute('update:tilemap', {
+      return Map.props.radio.commands.execute('update:tilemap', {
         ignoreMapItems: true
       });
     };
@@ -599,7 +599,7 @@ Map.control = {
     BaseOverlayView.prototype.onMapClick = function (e) {
       if (this.activeFeature != null) {
         this.activeFeature = void 0;
-        return Map.props.App.vent.trigger('item:deactivate');
+        return Map.props.radio.vent.trigger('item:deactivate');
       }
     };
 
@@ -637,7 +637,7 @@ Map.control = {
       if (valueIndeces.length === 1) {
         return Map.colors.toRgb(valueIndeces[0] - 1);
       }
-      id = Map.props.App.reqres.request('get:pattern:id', valueIndeces);
+      id = Map.props.radio.reqres.request('get:pattern:id', valueIndeces);
       return "url(#stripe-pattern-" + id + ")";
     };
 

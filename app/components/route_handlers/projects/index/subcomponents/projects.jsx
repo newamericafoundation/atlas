@@ -166,39 +166,34 @@ class Project extends React.Component {
 	}
 
 	launch(e) {
-		var href, App;
+		var href;
 		href = this.props.project.get('atlas_url')
 		// When the following page is rendered, its theme color is set to
 		//   current highlight color.
 		// TODO refactor current theme color assignments
-		App = this.props.App;
-		if (App == null) { return; }
-		App.currentThemeColor = this.getColor().replace('0.8', '1.0');
+		var { radio } = this.props;
+		radio.currentThemeColor = this.getColor().replace('0.8', '1.0');
 	}
 
 	applyBackgroundColor() {
-		var color, App;
+		var color;
 		color = this.getColor();
 		this.setState({ highlightBackgroundColor: color });
-		App = this.props.App;
-		if (App == null) { return; }
-		App.commands.execute('set:header:strip:color', { color: color });
+		var { radio } = this.props;
+		radio.commands.execute('set:header:strip:color', { color: color });
 	}
 
 	removeBackgroundColor() {
-		var App;
 		this.setState({ highlightBackgroundColor: '' });
-		App = this.props.App;
-		if (App == null) { return; }
-		App.commands.execute('set:header:strip:color', 'none');
+		var { radio } = this.props;
+		radio.commands.execute('set:header:strip:color', 'none');
 	}
 
 	getColor() {
-		var App, project, projects, index, color;
-		App = this.props.App;
+		var project, projects, index, color;
 		project = this.props.project;
 		projects = this.props.projects;
-		if (App == null || project == null || projects == null) { return; }
+		if (project == null || projects == null) { return; }
 		index = projects.indexOf(project);
 		color = colors.toRgba(index % 15, 0.8);
 		return color;

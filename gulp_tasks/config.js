@@ -49,8 +49,6 @@ module.exports = {
 		        './bower_components/selectize/dist/js/standalone/selectize.js',
 		        './bower_components/underscore/underscore.js',
 		        './bower_components/backbone/backbone.js',
-		        './bower_components/marionette/lib/backbone.marionette.js',
-		        './bower_components/topojson/topojson.js',
 		        './bower_components/chartist/dist/chartist.js',
 		        './bower_components/numeral/numeral.js',
 		        './bower_components/chartist-html/build/chartist-html.js',

@@ -17,15 +17,13 @@ import routes from './../../routes/client.jsx';
 function start() {
 	var isFirstRoute = true;
 
-	console.log(Backbone);
-
 	var radio = new Backbone.Marionette.Application();
 
 	// Developer signature :).
 	console.log('Hi, Mom!');
 
 	Router.run(routes, Router.HistoryLocation, (Root, state) => {
-		React.render(<Root App={radio} state={state} />, $('#site')[0]);
+		React.render(<Root radio={radio} state={state} />, $('#site')[0]);
 	});
 };
 
