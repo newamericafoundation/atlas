@@ -4,6 +4,24 @@ Atlas' codebase should be written and refactored towards the following guideline
 
 ## General
 
+### File Heading
+
+The beginning of a file should contain the description, preferably in a single line:
+
+	// This file does things when other files it them to.
+
+This should be followed by library imports:
+
+	import * as React from 'react';
+
+Then by other imports from Atlas' source code:
+
+	import BaseComponent from './../base.jsx';
+
+A file may contain multiple classes.
+
+### Constructor/Class Methods
+
 When defining a class or constructor, methods should be two lines apart and followed by the preceded by comments signs (for time-sensitive features, this may be left temporarily blank):
 
 	/*
@@ -44,8 +62,26 @@ Methods should be defined in the following order:
 
 # Stylesheets
 
+## General
+
 Stylesheets follow BEM conventions:
 
 	.block__element--modifier
 
 Elements should not be nested more than two levels down. ``.button__content__logo`` is still ok, but avoid ``.button__content__logo__inner``. Instead, simplify, flatten or apply/define a reusable utility class that achieves the required styling.
+
+## What goes where?
+
+Organizing CSS is a tricky one. The organization is certainly inspired by SMACSS, but it pretty much does its own thing.
+
+### Base
+
+### Mixins
+
+### Components
+
+Small things, buttons, modals, the loader. Classes in these are not prefixed by ``atl__``.
+
+### Modules
+
+Anything larger than a component

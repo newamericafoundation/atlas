@@ -10,7 +10,6 @@ var formatters = {
 	 */
 	currency: function(v) {
 	    var formatter;
-	    if (!numeral) { return v; }
 	    formatter = v > 999 ? '($0a)' : '($0)';
 	    return numeral(v).format(formatter);
 	},
@@ -22,7 +21,6 @@ var formatters = {
 	 */
 	number: function(v) {
 	    var formatter;
-	    if (!numeral) { return v; }
 	    if (v === parseInt(v, 10)) {
 	    	formatter = v > 99999 ? '0a' : '0';
 	    } else {
@@ -37,7 +35,7 @@ var formatters = {
 	 *
 	 */
 	percent: function(v) {
-	    return formatters.number(v) + '%';
+	    return formatters.number(v * 100) + '%';
 	},
 
 

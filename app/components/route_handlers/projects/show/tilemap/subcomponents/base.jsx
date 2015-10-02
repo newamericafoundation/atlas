@@ -20,10 +20,10 @@ class Base extends React.Component {
 		var hoveredItem = this.getHoveredItem(),
 			filter = this.getFilter(),
 			filterActiveChild = filter.getActiveChild(),
-			varId;
+			variable;
 		if (!hoveredItem || !filter || !filterActiveChild) { return; }
-		varId = filter.getActiveChild().get('variable').get('id');
-		return hoveredItem.get(varId);
+		variable = filter.getActiveChild().get('variable');
+		return variable.getFormattedField(hoveredItem);
 	}
 
 	getKey() {

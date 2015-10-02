@@ -1,3 +1,5 @@
+// Grid for static pages.
+
 .atl-grid {
 	margin: 0;
 	padding: 0;
@@ -19,9 +21,7 @@
 	}
 	@include bp-atl-grid-unstack {
 		padding: 0;
-		&__1-3, &__2-3, &__3-3 {
-			float: left;
-		}
+		&__1-3, &__2-3, &__3-3 { float: left; }
 		&__1-3 { padding-left: $atl-padding; }
 		&__2-3 { padding: 0 $atl-padding; }
 		&__3-3 { padding-right: $atl-padding; }

@@ -4,6 +4,10 @@ import Loading from './../../general/loading.jsx';
 
 class SpreadsheetFile extends Base {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -11,6 +15,11 @@ class SpreadsheetFile extends Base {
 		};
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	render() {
 		if (!this.state.isParserLoaded) { return (<Loading />); }
 		return (
@@ -31,6 +40,11 @@ class SpreadsheetFile extends Base {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderSummary() {
 		if (this.props.initialValue) {
 			return (
@@ -39,12 +53,22 @@ class SpreadsheetFile extends Base {
 		}
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	componentDidMount() {
 		$().ensureScript('XLSX', '/assets/vendor/js-xlsx-standalone.js', () => {
 			this.setState({ isParserLoaded: true });
 		});
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	parseWorkBook(workbook) {
 		var obj = {};
 		for (let sheetName in workbook.Sheets) {
@@ -54,6 +78,11 @@ class SpreadsheetFile extends Base {
 		return obj;
 	}
 
+
+	/*
+	 * Use HTML5 FileReader API.
+	 *
+	 */
 	saveDataOnParent(e) {
 
 		var file = e.target.files[0];

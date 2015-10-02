@@ -1,31 +1,16 @@
 // Form component backed by a Backbone model.
 
 import React from 'react';
-
 import _ from 'underscore';
 
-import Text from './subcomponents/text.jsx';
-import Radio from './subcomponents/radio.jsx';
-import SelectizeText from './subcomponents/selectize_text.jsx';
-import SpreadsheetFile from './subcomponents/spreadsheet_file.jsx';
-import ImageFile from './subcomponents/image_file.jsx';
-import CKEditor from './subcomponents/ckeditor.jsx';
-import ForeignCollectionRadio from './subcomponents/foreign_collection_radio.jsx';
-import ForeignCollectionCheckBox from './subcomponents/foreign_collection_check_box.jsx';
-
-var Subcomponents = {
-	Text: Text,
-	Radio: Radio,
-	SelectizeText: SelectizeText,
-	SpreadsheetFile: SpreadsheetFile,
-	ImageFile: ImageFile,
-	CKEditor: CKEditor,
-	ForeignCollectionRadio: ForeignCollectionRadio,
-	ForeignCollectionCheckBox: ForeignCollectionCheckBox
-};
+import Subcomponents from './subcomponents/index.js';
 
 class Form extends React.Component {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
 		this.state = {};

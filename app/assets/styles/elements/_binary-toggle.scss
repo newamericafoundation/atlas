@@ -1,0 +1,31 @@
+.binary-toggle {
+
+	$size: 20px;
+	$padding: 10px;
+
+	position: absolute;
+	width: 2 * ($size + 2 * $padding);
+	height: $size;
+
+	&__half {
+
+		&:first-child {
+			border-right: 1px solid map-get($palette, off-white);
+		}
+
+		.binary-toggle__link {
+			width: $size; 
+			height: $size;
+			opacity: 0.5;
+			&:hover { opacity: 0.7; }
+			&--active { opacity: 1; &:hover { opacity: 1; } }
+		}
+
+		width: $size + 2 * $padding;
+		height: $size;
+		padding: 0 $padding;
+		float: left;
+
+	}
+
+}

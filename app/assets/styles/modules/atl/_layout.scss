@@ -21,6 +21,8 @@
 	}
 
 	&__toc {
+
+		// .atl__page-nav--fixed & { position: fixed; }
 		padding-top: 15px;
 		padding-bottom: 15px;
 		ul { max-width: 300px; }
@@ -39,8 +41,6 @@
 	.atl__related li, &__toc li { margin: 15px 0; line-height: 110%; }
 
 	&__page-nav {
-
-		height: auto;
 
 		@include bp-atl-grid-unstack {
 			width: 280px;
