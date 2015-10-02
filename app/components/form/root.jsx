@@ -3,7 +3,9 @@
 import React from 'react';
 import _ from 'underscore';
 
-import Subcomponents from './subcomponents/index.js';
+import * as Subcomponents from './subcomponents/index.js';
+
+console.log(Subcomponents);
 
 class Form extends React.Component {
 

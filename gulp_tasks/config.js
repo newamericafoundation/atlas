@@ -16,7 +16,7 @@ module.exports = {
     	'./app/components/form/**/*',
 
     	'./db/connector.js',
-    	'./db/batch_modifier',
+    	'./db/batch_modifier/**/*',
 
     	'./public/assets/styles/app.css'
 

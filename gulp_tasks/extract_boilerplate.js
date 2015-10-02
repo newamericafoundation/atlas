@@ -4,5 +4,5 @@ import config from './config.js';
 
 gulp.task('extract-boilerplate', () => {
 	return gulp.src(config.boilerplate)
-		.pipe(copy('./../boilerplate/'), { prefix: 0 });
+		.pipe(copy('./../my-newamerica-org/'), { prefix: 0 });
 });

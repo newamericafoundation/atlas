@@ -15,12 +15,12 @@ var express = require('express'),
     dbConnector = require('./db/connector.js'),
 	router = require('./app/routes/index.js');
 
-var appConfig = require('./config/app/variables.json');
+var appConfig = require('./config/app/environments.json');
 
 var env = process.env.NODE_ENV,
 	app = express(),
 	MongoStore = connectMongo(session),
-	port = process.env.PORT || 8081;
+	port = process.env.PORT || appConfig.development.port;
 
 app.set('views', __dirname + '/app/views');
 app.set('view engine', 'jade');
@@ -52,7 +52,7 @@ dbConnector.then(function(db) {
 	    resave: true,
 	    store: new MongoStore({ 
 	    	db: db,
-	    	collection: 'atlas_sessions',
+	    	collection: 'sessions',
 	    	stringify: false
 	    }),
 	    cookie: { maxAge: 1 * 3600 * 1000 }
