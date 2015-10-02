@@ -1,21 +1,24 @@
-var _ = require('underscore'),
-	Backbone = require('backbone'),
-	base = require('./base.js');
+import _ from 'underscore';
+import base from './base.js';
 
-exports.Model = base.Model.extend({
+/*
+ *
+ *
+ */
+class Model extends base.Model {
 
 	/** Activates model. Takes no collection filter logic into consideration - hence internal only. */
-	activate: function() {
+	activate() {
 		return this.set('_isActive', true);
-	},
+	}
 	
 	/** Deactivates model. Takes no collection filter logic into consideration - hence internal only. */
-	deactivate: function() {
+	deactivate() {
 		return this.set('_isActive', false);
-	},
+	}
 	
 	/** Toggle the model's active state. */
-	toggleActiveState: function() {
+	toggleActiveState() {
 		if (this.isActive()) {
 			if (!((this.collection != null) && this.collection.hasSingleActiveChild)) {
 				return this.deactivate();
@@ -26,12 +29,12 @@ exports.Model = base.Model.extend({
 				return this.collection.deactivateSiblings(this);
 			}
 		}
-	},
+	}
 	
 	/** Get active state. */
-	isActive: function() {
+	isActive() {
 		return this.get('_isActive');
-	},
+	}
 	
 	/** 
 	 * Tests whether a tested model satisfies a belongs_to relation with the model instance under a specified foreign key. 
@@ -40,7 +43,7 @@ exports.Model = base.Model.extend({
 	 * @param {string} foreignKey
 	 * @returns {boolean}
 	 */
-	test: function(testedModel, foreignKey) {
+	test(testedModel, foreignKey) {
 		var foreignId, foreignIds, id;
 		if (!this.isActive()) { return false; }
 		id = this.get('id');
@@ -53,27 +56,34 @@ exports.Model = base.Model.extend({
 		return false;
 	}
 
-});
+}
 
-exports.Collection = base.Collection.extend({
 
-	model: exports.Model,
+
+/*
+ *
+ *
+ */
+class Collection extends base.Collection {
+
+	get model() { return exports.Model; }
+
+	get hasSingleActiveChild() { return false; }
 
 	/** Initializes active state of the collection's models. */
-	initialize: function() {
+	initialize() {
 		if (this.initializeActiveStatesOnReset) {
 			return this.on('reset', this.initializeActiveStates);
 		}
-	},
-
-	hasSingleActiveChild: false,
+	}
 	
+
 	/**
 	 * Deactivate all siblings of an active child element.
 	 * @param {} activeChild - Active child model instance from where the method is usually called
 	 * @returns {array} results
 	 */
-	deactivateSiblings: function(activeChild) {
+	deactivateSiblings(activeChild) {
 		var i, len, model, ref, results;
 		ref = this.models;
 		results = [];
@@ -86,14 +96,15 @@ exports.Collection = base.Collection.extend({
 			}
 		}
 		return results;
-	},
+	}
+
 
 	/** 
 	 * Set and initialize active state of the collection's models. 
 	 * If the hasSingleActiveChild is set to true on the collection instance, the first model is set as active and all others are set as inactive.
 	 * Otherwise, all models are set as active. 
 	 */
-	initializeActiveStates: function() {
+	initializeActiveStates() {
 		var i, index, len, model, ref;
 		ref = this.models;
 		for (index = i = 0, len = ref.length; i < len; index = ++i) {
@@ -101,7 +112,8 @@ exports.Collection = base.Collection.extend({
 			model.set('_isActive', !this.hasSingleActiveChild ? true : (index === 0 ? true : false));
 		}
 		return this.trigger('initialize:active:states');
-	},
+	}
+
 
 	/**
 	 * 
@@ -109,7 +121,7 @@ exports.Collection = base.Collection.extend({
 	 * @param {string} foreignKey - 
 	 * @returns {boolean}
 	 */
-	test: function(testedModel, foreignKey) {
+	test(testedModel, foreignKey) {
 		var i, len, model, ref;
 		ref = this.models;
 		for (i = 0, len = ref.length; i < len; i++) {
@@ -121,4 +133,9 @@ exports.Collection = base.Collection.extend({
 		return false;
 	}
 
-});
+}
+
+export default {
+	Model: Model,
+	Collection: Collection
+}

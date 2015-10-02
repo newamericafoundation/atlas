@@ -1,16 +1,20 @@
 // Compiled from Marionette.Accountant
 
-var Backbone = require('backbone'),
-    _ = require('underscore'),
-    $ = require('jquery');
+import Backbone from 'backbone';
+import _ from 'underscore';
+import $ from 'jquery';
 
-exports.Model = Backbone.Model.extend({
+/*
+ *
+ *
+ */
+class Model extends Backbone.Model {
 
     /*
      * Find key that holds array values within model.
      *
      */
-    _getChildrenKey: function() {
+    getChildrenKey() {
         var key, ref, value;
         ref = this.attributes;
         for (key in ref) {
@@ -19,12 +23,17 @@ exports.Model = Backbone.Model.extend({
                 return key;
             }
         }
-    },
+    }
 
-    makeComposite: function() {
+
+    /*
+     *
+     *
+     */
+    makeComposite() {
         var ChildModel, childModel, childrenKey, results;
 
-        childrenKey = this._getChildrenKey();
+        childrenKey = this.getChildrenKey();
 
         this.children = this.children || [];
 
@@ -44,32 +53,52 @@ exports.Model = Backbone.Model.extend({
             });
         }
 
-    },
+    }
 
-    getChildIndex: function() {
+
+    /*
+     *
+     *
+     */
+    getChildIndex() {
         if (this.parent) {
             return this.parent.children.indexOf(this);
         }
         return -1;
-    },
+    }
 
-    getSiblingCount: function() {
+
+    /*
+     *
+     *
+     */
+    getSiblingCount() {
         if (this.parent) {
             return this.parent.children.length;
         }
         return -1;
-    },
+    }
 
-    getNextSibling: function() {
+
+    /*
+     *
+     *
+     */
+    getNextSibling() {
         var ci, sc;
         ci = this.getChildIndex();
         sc = this.getSiblingCount();
         if ((ci !== -1) && (sc !== -1) && (ci < sc)) {
             return this.parent.children[ci + 1];
         }
-    },
+    }
 
-    getPreviousSibling: function() {
+
+    /*
+     *
+     *
+     */
+    getPreviousSibling() {
         var ci, sc;
         ci = this.getChildIndex();
         sc = this.getSiblingCount();
@@ -78,4 +107,9 @@ exports.Model = Backbone.Model.extend({
         }
     }
 
-});
+}
+
+
+export default {
+    Model: Model
+}

@@ -5,8 +5,6 @@ import _ from 'underscore';
 
 import * as Subcomponents from './subcomponents/index.js';
 
-console.log(Subcomponents);
-
 class Form extends React.Component {
 
 	/*

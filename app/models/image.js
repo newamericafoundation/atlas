@@ -1,92 +1,98 @@
 import base from './base.js';
 import marked from 'marked';
 
-exports.Model = base.Model.extend({
+class Model extends base.Model {
 	
-	name: 'image',
+	get resourceName() { return 'image'; }
+
+	get defaults() {
+
+		return {
+			name: 'image',
+			encoded: '',
+			credit: ''
+		};
+
+	}
 
 
-	defaults: {
+	get fields() {
 
-		name: 'image',
-		encoded: '',
-		credit: ''
+		return [
 
-	},
+			{
+	            id: 'name',
+	            formComponentName: 'Text',
+	            formComponentProps: {
+	                id: 'name',
+	                labelText: 'Image Name',
+	                hint: 'Enter simple image name - no need to add a .jpg extension.',
+	                placeholder: 'Enter Image Name'
+	            }
+	        },
 
+	        {
+	            id: 'encoded',
+	            formComponentName: 'ImageFile',
+	            formComponentProps: {
+	                id: 'encoded',
+	                labelText: 'Image File',
+	                hint: 'Size limit: 3MB.'
+	            }
+	        },
 
-	fields: [
+	        {
+	            id: 'credit',
+	            formComponentName: 'Text',
+	            formComponentProps: {
+	                id: 'credit',
+	                labelText: 'Image Credit',
+	                hint: "Single URL or Markdown, e.g. '[Shutterstock](http://www.shutterstock.com/imageurl)'",
+	                placeholder: 'Image Credit'
+	            }
+	        }
 
-		{
-            id: 'name',
-            formComponentName: 'Text',
-            formComponentProps: {
-                id: 'name',
-                labelText: 'Image Name',
-                hint: 'Enter simple image name - no need to add a .jpg extension.',
-                placeholder: 'Enter Image Name'
-            }
-        },
+		];
 
-        {
-            id: 'encoded',
-            formComponentName: 'ImageFile',
-            formComponentProps: {
-                id: 'encoded',
-                labelText: 'Image File',
-                hint: 'Size limit: 3MB.'
-            }
-        },
-
-        {
-            id: 'credit',
-            formComponentName: 'Text',
-            formComponentProps: {
-                id: 'credit',
-                labelText: 'Image Credit',
-                hint: "Single URL or Markdown, e.g. '[Shutterstock](http://www.shutterstock.com/imageurl)'",
-                placeholder: 'Image Credit'
-            }
-        }
-
-	],
+	}
 
 
-	apiUrlRoot: '/api/v1/images',
-
-
-	getEditUrl: function() {
+	getEditUrl() {
 		return `/images/${this.get('id')}/edit`;
-	},
+	}
 
 
-	getViewUrl: function() {
+	getViewUrl() {
 		return '/';
-	},
+	}
 
 
 	/** Gets encoded url to use as a CSS background-image. */
-	getUrl: function() {
+	getUrl() {
 		var encoded;
 		encoded = this.get('encoded');
 		encoded = encoded.replace(/(\r\n|\n|\r)/gm, '');
 		if (encoded != null) {
 			return "url('data:image/png;base64," + encoded + "')";
 		}
-	},
+	}
 
 
 	/** Gets html attribute. */
-	getAttributionHtml: function() {
+	getAttributionHtml() {
 		return marked(this.get('credit'));
 	}
 
-});
+}
 
-exports.Collection = base.Collection.extend({
+class Collection extends base.Collection {
 
-	model: exports.Model,
+	get model() { return Model; }
 
-	apiUrl: '/api/v1/images'
+}
 
-});
+
+export default {
+	Model: Model,
+	Collection: Collection
+}

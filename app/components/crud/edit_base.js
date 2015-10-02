@@ -17,15 +17,6 @@ class EditBase extends SaveBase {
 		return 'edit';
 	}
 
-	// Customize on subclass.
-	getResourceName() {
-		return 'project';
-	}
-
-	// Customize on subclass.
-	getResourceConstructor() {
-		return new Backbone.Model();
-	}
 
 	componentWillMount() {
 		if(!this.state.model) {

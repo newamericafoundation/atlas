@@ -1,212 +1,217 @@
-var _ = require('underscore'),
-    Backbone = require('backbone'),
-    formatters = require('./../utilities/formatters.js'),
-    base = require('./base.js'),
-    projectSection = require('./project_section.js'),
-    projectTemplate = require('./project_template.js'),
-    filter = require('./filter.js'),
-    variable = require('./variable.js'),
-    item = require('./item.js');
+import _ from 'underscore';
 
-exports.Model = base.Model.extend({
+import formatters from './../utilities/formatters.js';
 
-    name: 'project',
+import base from './base.js';
+import projectSection from './project_section.js';
+import projectTemplate from './project_template.js';
+import filter from './filter.js';
+import variable from './variable.js';
+import item from './item.js';
 
-    defaults: {
-        'title': 'New Project',
-        'author': '',
-        'tags': '',
-        'is_section_overview': 'No',
-        'is_live': 'No',
-        'project_template_id': '0',
-        'project_section_ids': [ '1' ],
-        'atlas_url': ''
-    },
+class Model extends base.Model {
+
+    get resourceName() { return 'project'; }
+
+    get defaults() { 
+        return {
+            'title': 'New Project',
+            'author': '',
+            'tags': '',
+            'is_section_overview': 'No',
+            'is_live': 'No',
+            'project_template_id': '0',
+            'project_section_ids': [ '1' ],
+            'atlas_url': ''
+        };
+    }
 
     // Form fields.
-    fields: [
+    get fields() {
+        return [
 
-        {
-            id: 'title',
-            formComponentName: 'Text',
-            formComponentProps: {
+            {
                 id: 'title',
-                labelText: 'Project Title',
-                hint: '',
-                placeholder: 'Enter Project Title'
-            }
-        },
-
-        {
-            id: 'atlas_url',
-            formComponentName: 'Text',
-            formComponentProps: {
-                id: 'atlas_url',
-                labelText: 'Atlas Url',
-                hint: 'The Url the project will live under, such as atlas.newamerica.org/my-pretty-url',
-                placeholder: 'Enter Atlas Url'
-            }
-        },
-
-        {
-            id: 'author',
-            formComponentName: 'Text',
-            formComponentProps: {
-                id: 'author',
-                labelText: 'Author',
-                hint: '',
-                placeholder: 'Enter Author'
-            }
-        },
-
-        {
-            id: 'short_description',
-            formComponentName: 'Text',
-            formComponentProps: {
-                id: 'short_description',
-                labelText: 'Short description',
-                hint: '',
-                placeholder: 'Enter Short Description'
-            }
-        },
-
-        {
-            id: 'is_section_overview',
-            formComponentName: 'Radio',
-            formComponentProps: {
-                id: 'is_section_overview',
-                labelText: 'Is section overview.',
-                hint: 'Each section has one overview project - check if this is one of them:',
-                options: [ 'Yes', 'No' ],
-                defaultOption: 'Yes'
-            }
-        },
-
-        {
-            id: 'is_live',
-            formComponentName: 'Radio',
-            formComponentProps: {
-                id: 'is_live',
-                labelText: 'Is live.',
-                hint: 'Please specify whether this project is viewable on the live site. Changes take effect immediately.',
-                options: [ 'Yes', 'No' ],
-                defaultOption: 'Yes'
-            }
-        },
-
-        {
-            id: 'project_section_ids',
-            name: 'Project Sections',
-            formComponentName: 'ForeignCollectionCheckBox',
-            formComponentProps: {
-                id: 'project_section_ids',
-                foreignCollection: new projectSection.Collection(),
-                labelText: 'Project Sections',
-                hint: ''
-            }
-        },
-
-        {
-            id: 'project_template_id',
-            formComponentName: 'ForeignCollectionRadio',
-            formComponentProps: {
-                id: 'project_template_id',
-                foreignCollection: new projectTemplate.Collection(),
-                labelText: 'Project Template',
-                hint: 'The template will determine the way your project is visualized - select from below:'
+                formComponentName: 'Text',
+                formComponentProps: {
+                    id: 'title',
+                    labelText: 'Project Title',
+                    hint: '',
+                    placeholder: 'Enter Project Title'
+                }
             },
-            foreignModelName: 'ProjectTemplate'
-        },
 
-        {
-            id: 'tags',
-            formComponentName: 'SelectizeText',
-            formComponentProps: {
+            {
+                id: 'atlas_url',
+                formComponentName: 'Text',
+                formComponentProps: {
+                    id: 'atlas_url',
+                    labelText: 'Atlas Url',
+                    hint: 'The Url the project will live under, such as atlas.newamerica.org/my-pretty-url',
+                    placeholder: 'Enter Atlas Url'
+                }
+            },
+
+            {
+                id: 'author',
+                formComponentName: 'Text',
+                formComponentProps: {
+                    id: 'author',
+                    labelText: 'Author',
+                    hint: '',
+                    placeholder: 'Enter Author'
+                }
+            },
+
+            {
+                id: 'short_description',
+                formComponentName: 'Text',
+                formComponentProps: {
+                    id: 'short_description',
+                    labelText: 'Short description',
+                    hint: '',
+                    placeholder: 'Enter Short Description'
+                }
+            },
+
+            {
+                id: 'is_section_overview',
+                formComponentName: 'Radio',
+                formComponentProps: {
+                    id: 'is_section_overview',
+                    labelText: 'Is section overview.',
+                    hint: 'Each section has one overview project - check if this is one of them:',
+                    options: [ 'Yes', 'No' ],
+                    defaultOption: 'Yes'
+                }
+            },
+
+            {
+                id: 'is_live',
+                formComponentName: 'Radio',
+                formComponentProps: {
+                    id: 'is_live',
+                    labelText: 'Is live.',
+                    hint: 'Please specify whether this project is viewable on the live site. Changes take effect immediately.',
+                    options: [ 'Yes', 'No' ],
+                    defaultOption: 'Yes'
+                }
+            },
+
+            {
+                id: 'project_section_ids',
+                name: 'Project Sections',
+                formComponentName: 'ForeignCollectionCheckBox',
+                formComponentProps: {
+                    id: 'project_section_ids',
+                    foreignCollection: new projectSection.Collection(),
+                    labelText: 'Project Sections',
+                    hint: ''
+                }
+            },
+
+            {
+                id: 'project_template_id',
+                formComponentName: 'ForeignCollectionRadio',
+                formComponentProps: {
+                    id: 'project_template_id',
+                    foreignCollection: new projectTemplate.Collection(),
+                    labelText: 'Project Template',
+                    hint: 'The template will determine the way your project is visualized - select from below:'
+                },
+                foreignModelName: 'ProjectTemplate'
+            },
+
+            {
                 id: 'tags',
-                labelText: 'Tags',
-                hint: 'Enter tags separated by commas:'
-            }
-        },
+                formComponentName: 'SelectizeText',
+                formComponentProps: {
+                    id: 'tags',
+                    labelText: 'Tags',
+                    hint: 'Enter tags separated by commas:'
+                }
+            },
 
-        {
-            id: 'body_text',
-            formComponentName: 'CKEditor',
-            formComponentProps: {
+            {
                 id: 'body_text',
-                labelText: 'Body Text'
-            }
-        },
+                formComponentName: 'CKEditor',
+                formComponentProps: {
+                    id: 'body_text',
+                    labelText: 'Body Text'
+                }
+            },
 
-        {
-            id: 'data',
-            formComponentName: 'SpreadsheetFile',
-            formComponentProps: {
+            {
                 id: 'data',
-                labelText: 'Data file',
-                hint: '',
-                worksheets: [ 'data', 'variables' ]
-            }
-        },
+                formComponentName: 'SpreadsheetFile',
+                formComponentProps: {
+                    id: 'data',
+                    labelText: 'Data file',
+                    hint: '',
+                    worksheets: [ 'data', 'variables' ]
+                }
+            },
 
-        {
-            id: 'encoded_image',
-            formComponentName: 'ImageFile',
-            formComponentProps: {
+            {
                 id: 'encoded_image',
-                labelText: 'Image File',
-                hint: 'Size limit: 3MB.'
-            }
-        },
+                formComponentName: 'ImageFile',
+                formComponentProps: {
+                    id: 'encoded_image',
+                    labelText: 'Image File',
+                    hint: 'Size limit: 3MB.'
+                }
+            },
 
-        {
-            id: 'image_credit',
-            formComponentName: 'Text',
-            formComponentProps: {
+            {
                 id: 'image_credit',
-                labelText: 'Image Credit',
-                hint: "Single URL or Markdown, e.g. '[Shutterstock](http://www.shutterstock.com/imageurl)'",
-                placeholder: 'Image Credit'
+                formComponentName: 'Text',
+                formComponentProps: {
+                    id: 'image_credit',
+                    labelText: 'Image Credit',
+                    hint: "Single URL or Markdown, e.g. '[Shutterstock](http://www.shutterstock.com/imageurl)'",
+                    placeholder: 'Image Credit'
+                }
             }
-        }
 
-    ],
-
-    apiUrlRoot: '/api/v1/projects',
+        ]
+    }
 
     /** API queries that need to be handled custom. For every key, there is a this.is_#{key} method that filters a model. */
-    customQueryKeys: ['related_to'],
+    get customQueryKeys() { return ['related_to']; }
 
-    getEditUrl: function() {
-        var id = this.get('id');
-        if (id) { return `/projects/${id}/edit`; }
-        return '/';
-    },
 
-    getViewUrl: function() {
+    /*
+     *
+     *
+     */
+    getViewUrl() {
         return '/' + this.get('atlas_url');
-    },
+    }
+
 
     /** 
      * Conversts model object to json
      * Checks if it has mandatory fields (id and more than one key). 
      * returns {boolean} - Whether madatory fields exist
      */
-    exists: function() {
+    exists() {
         var keyCount = Object.keys(this.toJSON()).length;
         return (keyCount > 1);
-    },
+    }
+
 
     /*
      * Returns image url.
      *
      */
-    getImageUrl: function() {
+    getImageUrl() {
         var encodedImage = this.get('encoded_image');
         if (encodedImage == null) { return; }
         encodedImage = encodedImage.replace(/(\r\n|\n|\r)/gm, '');
         if (encodedImage.indexOf('base64') > -1) { return "url(" + encodedImage + ")"; }
         return "url('data:image/png;base64," + encodedImage + "')";
-    },
+    }
+
 
     /** 
      * Filters a project by two filterable collections that it belongs to.
@@ -214,20 +219,21 @@ exports.Model = base.Model.extend({
      * @param {object} projectTemplates
      * @returns {boolean} filter - Whether both project sections and templates are in filter variable.
      */
-    compositeFilter: function(projectSections, projectTemplates) {
+    compositeFilter(projectSections, projectTemplates) {
         var filter, sectionsFilter, templatesFilter;
         sectionsFilter = this.filter(projectSections, 'project_section');
         templatesFilter = this.filter(projectTemplates, 'project_template');
         filter = sectionsFilter && templatesFilter;
         return filter;
-    },
+    }
+
 
     /*
      * Custom query method to find related projects based on tags.
      * @param {string} project - Project Id.
      * @returns {boolean} - Related status.
      */
-    isRelatedTo: function(project) {
+    isRelatedTo(project) {
         var prj, tags0, tags1, i, max;
         // Project is not related to itself, it is itself :).
         if (this === project) { return false; }
@@ -242,7 +248,8 @@ exports.Model = base.Model.extend({
             }
         }
         return false;
-    },
+    }
+
 
     /**
      * Filter collection by its foreign key.
@@ -250,20 +257,22 @@ exports.Model = base.Model.extend({
      * @param {string} foreignKey
      * @returns {boolean}
      */
-    filter: function(collection, foreignKey) {
+    filter(collection, foreignKey) {
         if ((collection != null) && (collection.test != null)) {
             return collection.test(this, foreignKey);
         }
         return true;
-    },
+    }
+
 
     /** Get imgage attribution html. */
-    getImageAttributionHtml: function() {
+    getImageAttributionHtml() {
         return this.getMarkdownHtml('image_credit');
-    },
+    }
+
 
     // Process entry spreadsheet data.
-    beforeSave: function() {
+    beforeSave() {
 
         var varModel = new variable.Model(),
             data = this.get('data');
@@ -285,10 +294,11 @@ exports.Model = base.Model.extend({
 
         }
 
-    },
+    }
+
 
     /** If there is a data field, convert to appropriate collections. */
-    buildData: function() {
+    buildData() {
         var data;
         data = this.get('data');
         if (data != null) {
@@ -296,14 +306,15 @@ exports.Model = base.Model.extend({
             data.items = new item.Collection(data.items, { parse: true });
             this.buildFilterTree();
         }
-    },
+    }
+
 
     /*
      * Build filter tree by taking each variable the display items are filtered by, and finding every possible value for each variable.
      * E.g. if the items are filtered by marital status and preferred pet, the return value of this method is schematically represented as follows:
      * { "marital_status": [ "single", "married", "divourced five times" ], "preferred_pet": [ "hamster", "comodo dragon", "lama" ] } 
      */
-    buildFilterTree: function() {
+    buildFilterTree() {
 
         var filterTree, filterVariables,
             data = this.get('data'),
@@ -357,19 +368,21 @@ exports.Model = base.Model.extend({
 
         data.filter.state = {};
 
-    },
+    }
+
 
     /**
      * Prepares model on the client.
      * @param {object} App - Marionette application instance. 
      */
-    prepOnClient: function() {
+    prepOnClient() {
         this.buildData();
         this.setHtmlToc('body_text');
         this.embedForeignModelNames();
-    },
+    }
 
-    embedForeignModelNames: function() {
+
+    embedForeignModelNames() {
         var templates = new projectTemplate.Collection(),
             sections = new projectSection.Collection();
 
@@ -377,28 +390,27 @@ exports.Model = base.Model.extend({
         this.addForeignField('project_section_ids', sections, 'name');
 
         return this;
-    },
+    }
+
 
     /*
      * Return an integer friendly index value for the current hovered or active item.
      * Used in coloring.
      */
-    getFriendlyIndeces: function() {
+    getFriendlyIndeces() {
         var items = this.get('data').items,
             filter = this.get('data').filter,
             item = items.hovered || items.active;
         return filter.getFriendlyIndeces(item, 15);
     }
 
-});
+}
 
-exports.Collection = base.Collection.extend({
 
-    dbCollection: 'projects',
 
-    apiUrl: '/api/v1/projects',
+class Collection extends base.Collection {
 
-    model: exports.Model,
+    get model() { return Model; }
 
     /**
      * Used to compare two models when sorting.
@@ -406,7 +418,7 @@ exports.Collection = base.Collection.extend({
      * @param {object} model2
      * @returns {number} comparator - A comparator whose sign determines the sorting order.
      */
-    comparator: function(model1, model2) {
+    comparator(model1, model2) {
         var i1, i2;
         i1 = model1.get('is_section_overview') === 'Yes' ? 10 : 0;
         i2 = model2.get('is_section_overview') === 'Yes' ? 10 : 0;
@@ -416,7 +428,7 @@ exports.Collection = base.Collection.extend({
             i2 += 1;
         }
         return i2 - i1;
-    },
+    }
 
     /** 
      * Filter all children by project sections and templates.
@@ -424,7 +436,7 @@ exports.Collection = base.Collection.extend({
      * @param {collection} projectTemplates
      * @returns {object} this
      */
-    filter: function(projectSections, projectTemplates) {
+    filter(projectSections, projectTemplates) {
         var i, len, model, ref;
         if ((projectSections.models == null) || (projectSections.models.length === 0)) {
             return;
@@ -441,14 +453,14 @@ exports.Collection = base.Collection.extend({
             model.compositeFilter(projectSections, projectTemplates);
         }
         return this;
-    },
+    }
 
     /**
      * Recognize and process server response.
      * @param {object} resp - Server response.
      * @returns {object} resp - Modified response.
      */
-    parse: function(resp) {
+    parse(resp) {
         var i, max,
             item;
         if (exports.Model.prototype.parse == null) {
@@ -459,13 +471,13 @@ exports.Collection = base.Collection.extend({
             resp[i] = exports.Model.prototype.parse(item);
         }
         return resp;
-    },
+    }
 
     /*
      * API query filter.
      *
      */
-    related_to: function(id) {
+    related_to(id) {
 
         var referenceModel, resp;
 
@@ -487,4 +499,9 @@ exports.Collection = base.Collection.extend({
 
     }
 
-});
+}
+
+export default {
+    Model: Model,
+    Collection: Collection
+}

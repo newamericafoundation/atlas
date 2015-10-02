@@ -3,21 +3,17 @@ import classNames from 'classnames';
 import Static from './../general/static.jsx';
 import Form from './../form/root.jsx';
 import Loading from './../general/loading.jsx';
-import Modal from './../general/modal.jsx';
 import _ from 'underscore';
+
+import Base from './base.js';
+import BaseStatusModal from './base_status_modal.js';
 
 import { Link } from 'react-router';
 
-class FormModal extends Modal {
+class FormModal extends BaseStatusModal {
 
 	constructor(props) {
 		super(props);
-	}
-
-	renderContent() {
-		if(this.props.status === 'success') { return this.renderSuccessContent(); }
-		if(this.props.status === 'failure') { return this.renderFailureContent(); }
-		return this.renderPendingContent();
 	}
 
 	renderSuccessContent() {
@@ -51,14 +47,9 @@ class FormModal extends Modal {
 		);
 	}
 
-	reactivateForm(e) {
-		e.preventDefault();
-		this.props.reactivateForm();
-	}
-
 }
 
-class DeleteBase extends Static {
+class DeleteBase extends Base {
 
 	constructor(props) {
 		super(props);
@@ -111,10 +102,6 @@ class DeleteBase extends Static {
 		);
 	}
 
-	getResourceConstructor() {
-		return project.Model;
-	}
-
 	getViewUrl() {
 		if (!this.state.model) { return '/'; }
 		return this.state.model.getViewUrl();
@@ -163,10 +150,6 @@ class DeleteBase extends Static {
 		}
 	}
 
-	getResourceName() {
-		return `${this.state.model ? this.state.model.name : 'item'}`;
-	}
-
 	fetchModel() {
 		if (!this.props.params) { return; }
 		var id = this.props.params.id;
@@ -192,7 +175,6 @@ class DeleteBase extends Static {
 			if (!_.isObject(res)) {
 				res = JSON.parse(res);
 			}
-			console.log(res);
 			this.setState({ saveResponseStatus: res.status });
 		}, (err) => { 
 			this.setState({ saveResponseStatus: 'error' });

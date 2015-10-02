@@ -1,30 +1,33 @@
-var _ = require('underscore'),
-	Backbone = require('backbone'),
-	baseFilter = require('./base_filter.js'),
-	seed = require('./../../db/seeds/project_templates.json');
+import Backbone from 'backbone';
+import _ from 'underscore';
+import baseFilter from './base_filter';
+import seed from './../../db/seeds/project_templates.json';
 
-exports.Model = baseFilter.Model.extend({
-	apiUrlRoot: '/api/v1/project_templates'
-});
 
-exports.Collection = baseFilter.Collection.extend({
+class Model extends baseFilter.Model {
+	get apiUrlRoot() { return '/api/v1/project_templates'; }
+}
 
-	dbCollection: 'project_templates',
 
-	dbSeed: seed,
+class Collection extends baseFilter.Collection {
 
-	model: exports.Model,
+	get dbSeed() { return seed; }
 
-	apiUrl: '/api/v1/project_templates',
+	get model() { return Model; }
 
-	hasSingleActiveChild: true,
+	get hasSingleActiveChild() { return true; }
 
-	initializeActiveStatesOnReset: true,
+	get initializeActiveStatesOnReset() { return true; }
 
-	comparator: 'order',
+	get comparator() { return 'order'; }
 
-	initialize: function() {
+	initialize() {
 		this.reset(seed);
 	}
 
-});
+}
+
+export default {
+	Model: Model,
+	Collection: Collection
+}

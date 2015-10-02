@@ -15,14 +15,14 @@ var indexOf = [].indexOf || function(item) {
  * @constructor
  * Note on methods toLatLongPoint, toRichGeoJson: these methods assume that the model instance has a lat and long fields. 
  */
-exports.Model = base.Model.extend({
+class Model extends base.Model {
 	
 	/** 
 	 * Recognize and process data.
 	 * @param {object} data
 	 * @returns {object} data - Modified data.
 	 */
-	parse: function(data) {
+	parse(data) {
 
 		// Protect for uppercase Name typo.
 		if (data.Name && !data.name) {
@@ -36,7 +36,8 @@ exports.Model = base.Model.extend({
 		this._checkUsCongressionalDistrict(data);
 
 		return data;
-	},
+	}
+
 	
 	/** 
 	 * Splits up values separated by '|' and removes leading and trailing whitespaces.
@@ -45,7 +46,7 @@ exports.Model = base.Model.extend({
 	 * @param {object} data - Data object with key-value pairs.
 	 * @returns {object} data - Modified data.
 	 */
-	_processValues: function(data) {
+	_processValues(data) {
 		var key, value;
 		for (key in data) {
 			value = data[key];
@@ -60,14 +61,15 @@ exports.Model = base.Model.extend({
 			}
 		}
 		return data;
-	},
+	}
+
 	
 	/** 
 	 * Recognizes, validates and returns a pindrop item.
 	 * @param {object} data
 	 * @returns {object} - Validation summary object.
 	 */
-	_checkPin: function(data) {
+	_checkPin(data) {
 		var foundLat, foundLong;
 		foundLat = this.findAndReplaceKey(data, 'lat', ['latitude', 'Latitude', 'lat', 'Lat']);
 		foundLong = this.findAndReplaceKey(data, 'long', ['longitude', 'Longitude', 'long', 'Long']);
@@ -75,14 +77,15 @@ exports.Model = base.Model.extend({
 			data._itemType = 'pin';
 		}
 		return data;
-	},
+	}
+
 	
 	/** 
 	 * Recognizes, validates and returns a US state.
 	 * @param {object} data
 	 * @returns {object} - Validation summary object.
 	 */
-	_checkUsState: function(data) {
+	_checkUsState(data) {
 		var stateData;
 		if (data.name != null) {
 			stateData = _.where(states, {
@@ -95,32 +98,35 @@ exports.Model = base.Model.extend({
 			}
 		}
 		return data;
-	},
+	}
 
-	_checkUsCongressionalDistrict: function(data) {
+
+	_checkUsCongressionalDistrict(data) {
 		if (data.cngdstcd != null) {
 			data.id = data.cngdstcd;
 			data._itemType = 'us_congressional_district';
 		}
 		return data;
-	},
+	}
+
 
 	/** 
 	 * Get and format image name.
 	 * @returns {string} name - Lower-cased name without line breaks.
 	 */
-	getImageName: function() {
+	getImageName() {
 		if (this.get('image') != null) {
 			return this.get('image');
 		}
 		return this.get('name').replace(/(\r\n|\n|\r)/gm, "").toLowerCase();
-	},
+	}
+
 	
 	/** 
 	 * Sets latitude and longitude as a simple array.
 	 * @returns {array} - Spatial data point as simple array [Lat, Long].
 	 */
-	toLatLongPoint: function() {
+	toLatLongPoint() {
 		var lat, long;
 		lat = this.get('lat');
 		long = this.get('long');
@@ -131,21 +137,23 @@ exports.Model = base.Model.extend({
 			long = 145.0796161;
 		}
 		return [lat, long];
-	},
+	}
+
 	
 	/** 
 	 * Reverses [Lat, Long] point and sets longitude and latitude as a simple array.
 	 * @returns {array} - Spatial data point as simple array [Long, Lat].
 	 */
-	toLongLatPoint: function() {
+	toLongLatPoint() {
 		return this.toLatLongPoint().reverse();
-	},
+	}
+
 	
 	/**
 	 * Creates geoJson object from current model.
 	 * @returns {object} geoJson.
 	 */
-	toRichGeoJsonFeature: function() {
+	toRichGeoJsonFeature() {
 		var geoJson;
 		geoJson = {
 			type: 'Feature',
@@ -156,14 +164,15 @@ exports.Model = base.Model.extend({
 			}
 		};
 		return geoJson;
-	},
+	}
+
 
 	/**
 	 * Returns display state.
 	 * @param {}
 	 * @returns {string} displayState - Element of [ 'neutral', 'highlighted', 'inactive' ]
 	 */
-	getDisplayState: function(filter, searchTerm) {
+	getDisplayState(filter, searchTerm) {
 
 		var filterIndeces, valueHoverIndex, isFiltered;
 
@@ -182,14 +191,15 @@ exports.Model = base.Model.extend({
 
 		return;
 
-	},
+	}
+
 	
 	/** 
 	 * Evaluates whether the name attribute matches a search term.
 	 * @param {string} searchTerm
 	 * @returns {boolean} - Match result.
 	 */
-	matchesSearchTerm: function(searchTerm) {
+	matchesSearchTerm(searchTerm) {
 		var name;
 		name = this.get('name');
 		if (!searchTerm || searchTerm === "") { return true; }
@@ -201,23 +211,23 @@ exports.Model = base.Model.extend({
 		return true;
 	}
 
-});
+}
 
 
-exports.Collection = base.Collection.extend({
+class Collection extends base.Collection {
 
-	model: exports.Model,
+	get model() { return Model; }
 	
 
 	/** 
 	 * Gets item type first model in a collection.
 	 * @returns {string} itemType
 	 */
-	getItemType: function() {
+	getItemType() {
 		var itemType;
 		itemType = this.models[0].get('_itemType');
 		return itemType;
-	},
+	}
 	
 
 	/** 
@@ -225,7 +235,7 @@ exports.Collection = base.Collection.extend({
 	 * @param {} activeModel - Active model or its id.
 	 * @returns {object} this
 	 */
-	setActive: function(activeModel) {
+	setActive(activeModel) {
 		var id;
 		if ((_.isObject(activeModel)) && (this.models.indexOf(activeModel) >= 0)) {
 			this.active = activeModel;
@@ -236,7 +246,7 @@ exports.Collection = base.Collection.extend({
 			});
 		}
 		return this;
-	},
+	}
 	
 
 	/** 
@@ -244,7 +254,7 @@ exports.Collection = base.Collection.extend({
 	 * @param {} hoveredModel - Hovered model or its id.
 	 * @returns {object} this
 	 */
-	setHovered: function(hoveredModel) {
+	setHovered(hoveredModel) {
 		var id;
 		if ((_.isObject(hoveredModel)) && (this.models.indexOf(hoveredModel) >= 0)) {
 			this.hovered = hoveredModel;
@@ -255,7 +265,7 @@ exports.Collection = base.Collection.extend({
 			});
 		}
 		return this;
-	},
+	}
 	
 
 	/** 
@@ -263,7 +273,7 @@ exports.Collection = base.Collection.extend({
 	 * @param {string|object} key|variable - Key or variable model instance.
 	 * @returns {array} valueList - List of values for specified key.
 	 */
-	getValueList: function(variable) {
+	getValueList(variable) {
 		var key = variable.get('id'),
 			valueList = [];
 
@@ -296,13 +306,7 @@ exports.Collection = base.Collection.extend({
 		}
 
 		return valueList;
-	},
-	
-
-	/** TODO: Gets value list sorted by frequency in the data. */
-	getSortedValueList: function(key) {
-
-	},
+	}
 	
 
 	/** 
@@ -310,7 +314,7 @@ exports.Collection = base.Collection.extend({
 	 * Must first go through parse method to make sure these fields are named correctly.
 	 * @returns {array} array of arrays - Latitude and longitude bounds, two arrays with two elements each.
 	 */
-	getLatLongBounds: function() {
+	getLatLongBounds() {
 		var j, lat, len, long, maxLat, maxLong, minLat, minLong, model, ref;
 		ref = this.models;
 		for (j = 0, len = ref.length; j < len; j++) {
@@ -334,14 +338,14 @@ exports.Collection = base.Collection.extend({
 			[minLat, minLong],
 			[maxLat, maxLong]
 		];
-	},
+	}
 	
 
 	/** 
 	 * Creates single array from lat, long arrays of each model into one array (array of arrays).
 	 * @returns {array} res - Returns array of arrays. E.g. [[lat, long], [lat, long]]
 	 */
-	toLatLongMultiPoint: function() {
+	toLatLongMultiPoint() {
 		var j, len, model, ref, res;
 		res = [];
 		ref = this.models;
@@ -350,72 +354,79 @@ exports.Collection = base.Collection.extend({
 			res.push(model.toLatLongPoint());
 		}
 		return res;
-	},
+	}
 	
 
-	richGeoJsonBuilders: {
+	get richGeoJsonBuilders() {
 
+		return {
 
+			base: function(collection, baseGeoData, getFeatureId) {
 
-		base: function(collection, baseGeoData, getFeatureId) {
+				var data, richGeoJson, setup;
+				richGeoJson = new rgf.Collection();
 
-			var data, richGeoJson, setup;
-			richGeoJson = new rgf.Collection();
+				setup = function(data) {
+					var feature, item, j, len, ref;
+					richGeoJson.features = baseGeoData.features;
+					ref = richGeoJson.features;
+					for (j = 0, len = ref.length; j < len; j++) {
+						feature = ref[j];
+						let featureId = getFeatureId(feature);
+						item = collection.findWhere({
+							id: featureId
+						});
+						feature._model = item;
+					}
+					return richGeoJson.trigger('sync');
+				};
 
-			setup = function(data) {
-				var feature, item, j, len, ref;
-				richGeoJson.features = baseGeoData.features;
-				ref = richGeoJson.features;
+				setup(baseGeoData);
+				return richGeoJson;
+
+			},
+
+			us_state: function(collection, baseGeoData) {
+				return this.base(collection, baseGeoData, (feature) => { return parseInt(feature.properties.id); });
+			},
+
+			us_congressional_district: function(collection, baseGeoData) {
+				return this.base(collection, baseGeoData, (feature) => { 
+					var props = feature.properties;
+					return parseInt(`${parseInt(props.state_id, 10)}${props.id}`, 10); 
+				});
+			},
+
+			pin: function(collection) {
+				var item, j, len, ref, richGeoJson;
+				richGeoJson = new rgf.Collection();
+				ref = collection.models;
 				for (j = 0, len = ref.length; j < len; j++) {
-					feature = ref[j];
-					let featureId = getFeatureId(feature);
-					item = collection.findWhere({
-						id: featureId
-					});
-					feature._model = item;
+					item = ref[j];
+					richGeoJson.features.push(item.toRichGeoJsonFeature());
 				}
-				return richGeoJson.trigger('sync');
-			};
-
-			setup(baseGeoData);
-			return richGeoJson;
-
-		},
-
-		us_state: function(collection, baseGeoData) {
-			return this.base(collection, baseGeoData, (feature) => { return parseInt(feature.properties.id); });
-		},
-
-		us_congressional_district: function(collection, baseGeoData) {
-			return this.base(collection, baseGeoData, (feature) => { 
-				var props = feature.properties;
-				return parseInt(`${parseInt(props.state_id, 10)}${props.id}`, 10); 
-			});
-		},
-
-		pin: function(collection) {
-			var item, j, len, ref, richGeoJson;
-			richGeoJson = new rgf.Collection();
-			ref = collection.models;
-			for (j = 0, len = ref.length; j < len; j++) {
-				item = ref[j];
-				richGeoJson.features.push(item.toRichGeoJsonFeature());
+				richGeoJson.trigger('sync');
+				return richGeoJson;
 			}
-			richGeoJson.trigger('sync');
-			return richGeoJson;
+
 		}
 
-	},
+	}
 	
 
 	/** 
 	 * The feature is either ready to use or triggers a sync event on itself once it is.
 	 * @returns {} - Generic Rich GeoJson feature.
 	 */
-	getRichGeoJson: function(baseGeoData) {
+	getRichGeoJson(baseGeoData) {
 		var type;
 		type = this.getItemType();
 		return this.richGeoJsonBuilders[type](this, baseGeoData);
 	}
 
-});
+}
+
+export default {
+	Model: Model,
+	Collection: Collection
+}

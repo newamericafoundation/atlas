@@ -2,13 +2,17 @@ import * as Backbone from 'backbone';
 import * as _ from 'underscore';
 import $ from 'jquery';
 
-var Model = Backbone.Model.extend({
+/*
+ *
+ *
+ */
+class Model extends Backbone.Model {
 
 	/*
 	 * Returns a fetch promise. Project ID must be set for this to work.
 	 *
 	 */
-	getClientFetchPromise: function() {
+	getClientFetchPromise() {
 
 		return new Promise((resolve, reject) => {
 
@@ -28,13 +32,14 @@ var Model = Backbone.Model.extend({
 
 		});
 
-	},
+	}
+
 
 	/*
 	 * Returns save promise.
 	 *
 	 */
-	getClientSavePromise: function() {
+	getClientSavePromise() {
 
 		return new Promise((resolve, reject) => {
 
@@ -55,13 +60,14 @@ var Model = Backbone.Model.extend({
 
 		});
 
-	},
+	}
+
 
 	/*
 	 * Returns update promise.
 	 *
 	 */
-	getClientUpdatePromise: function() {
+	getClientUpdatePromise() {
 
 		return new Promise((resolve, reject) => {
 
@@ -82,13 +88,14 @@ var Model = Backbone.Model.extend({
 
 		});
 
-	},
+	}
+
 
 	/*
 	 * Returns delete promise.
 	 *
 	 */
-	getClientDeletePromise: function() {
+	getClientDeletePromise() {
 
 		return new Promise((resolve, reject) => {
 
@@ -109,13 +116,20 @@ var Model = Backbone.Model.extend({
 
 	}
 
-});
+}
 
-var Collection = Backbone.Collection.extend({
+
+
+class Collection extends Backbone.Collection {
 	
-	model: Model,
+	get model() { return Model; }
 
-	buildQueryString: function(query) {
+
+	/*
+	 *
+	 *
+	 */
+	buildQueryString(query) {
 
 		var queryString = '';
 
@@ -123,14 +137,19 @@ var Collection = Backbone.Collection.extend({
 
 		for (let key in query) {
 			let value = query[key];
-			queryString += `${key}=${value}&`
+			queryString += `${key}=${value}&`;
 		}
 
 		return queryString.slice(0, -1);
 
-	},
+	}
 
-	buildFieldString: function(fields) {
+
+	/*
+	 *
+	 *
+	 */
+	buildFieldString(fields) {
 
 		var fieldString = 'fields=';
 
@@ -143,11 +162,14 @@ var Collection = Backbone.Collection.extend({
 
 		return fieldString.slice(0, -1);
 
-	},
+	}
 
-	// Fetch instances on the client.
-	// TODO: customize to include a req object.
-	getClientFetchPromise: function(query, fields) {
+
+	/*
+	 * Fetch instances on the client.
+	 *
+	 */
+	getClientFetchPromise(query, fields) {
 
 		var isCompleteQuery = (query != null && fields == null);
 
@@ -191,7 +213,7 @@ var Collection = Backbone.Collection.extend({
 
 	}
 
-});
+}
 
 export default {
 	Model: Model,

@@ -6,13 +6,13 @@ import seed from './../../db/seeds/shape_files.json';
 import $ from 'jquery';
 import topojson from 'topojson';
 
-var Model = base.Model.extend({
+class Model extends base.Model {
 	
 	/*
 	 * Return promise resolved when GeoJson file is fetched and assembled from TopoJson.
 	 *
 	 */
-	getGeoJsonFetchPromise: function() {
+	getGeoJsonFetchPromise() {
 
 		// Store cache for geoJson data on the constructor.
 		Model.geoJsonCache = Model.geoJsonCache || {};
@@ -43,10 +43,14 @@ var Model = base.Model.extend({
 
 		});
 
-	},
+	}
 
-	// Used by topojson converter through gulp.
-	getRenameParam: function() {
+
+	/*
+	 * Used by topojson converter through gulp.
+	 *
+	 */
+	getRenameParam() {
 		var props = this.get('properties');
 		return Object.keys(props).map((key) => {
 			var value = props[key];
@@ -54,25 +58,14 @@ var Model = base.Model.extend({
 		}).join(',');
 	}
 
-});
+}
 
-var Collection = base.Collection.extend({
+class Collection extends base.Collection {
 
-	dbSeed: seed,
+	get model() { return Model; }
+	initialize() { this.reset(seed); }
 
-	model: Model,
-
-	apiUrl: '/api/v1/project_sections',
-
-	hasSingleActiveChild: false,
-
-	initializeActiveStatesOnReset: true,
-
-	initialize: function() {
-		this.reset(seed);
-	}
-
-});
+}
 
 export default {
 	Model: Model,

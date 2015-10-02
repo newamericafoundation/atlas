@@ -53,7 +53,9 @@ window.Map = {};
                 return this;
             }
 
-            var shp = new M.shapeFile.Collection().findWhere({ name: `${itemType}s` });
+            var shps = new M.shapeFile.Collection();
+
+            var shp = shps.findWhere({ name: `${itemType}s` });
 
             shp.getGeoJsonFetchPromise().then((data) => {
                 launch(data);

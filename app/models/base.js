@@ -4,22 +4,45 @@ import $ from 'jquery';
 import marked from 'marked';
 import baseCrud from './base_crud.js';
 
-var Model = baseCrud.Model.extend({
+
+
+/*
+ *
+ *
+ */
+class Model extends baseCrud.Model {
 
 	/*
-	 * Customize on subclass.
+	 * Lower-case name of the resource constructed by this constructor.
+	 *
 	 */
-	getViewUrl: function() {
-		return null;
-	},
+	get resourceName() { return 'resource'; }
+
+
+	get apiUrlRoot() {
+		var name = this.resourceName;
+		return `/api/v1/${name}s`; 
+	}
 
 
 	/*
-	 * Customize on subclass.
+	 * Customize on subclass if route is non-standard or the resource has a custom plural name.
+	 * 
 	 */
-	getEditUrl: function() {
-		return null;
-	},
+	getViewUrl() {
+		var name = this.resourceName;
+		return `/${name}s/${this.get('id')}`;
+	}
+
+
+	/*
+	 * Customize on subclass if route is non-standard or the resource has a custom plural name.
+	 * 
+	 */
+	getEditUrl() {
+		var name = this.resourceName;
+		return `/${name}s/${this.get('id')}/edit`;
+	}
 
 
 	/*
@@ -28,11 +51,11 @@ var Model = baseCrud.Model.extend({
 	 * @param {string} suffix - Custom suffix.
 	 * @returns {} value
 	 */
-	get: function(field, suffix) {
+	get(field, suffix) {
 		var getFnc = Backbone.Model.prototype.get;
 		if (suffix == null) { return getFnc.apply(this, [ field ]); }
 		return getFnc.apply(this, [ field + '_' + suffix ]);
-	},
+	}
 
 
 	/**
@@ -43,7 +66,7 @@ var Model = baseCrud.Model.extend({
 	 * @param {string} fieldKey - The field of the foreign model to be copied in, e.g. 'name'.
 	 * @returns {object} this - The model instance, with 'model_name' field added.
 	 */
-	addForeignField: function(foreignIdKey, foreignCollection, fieldKey) {
+	addForeignField(foreignIdKey, foreignCollection, fieldKey) {
 
 		var newKey, 
 			foreignModel, foreignIds,
@@ -77,7 +100,7 @@ var Model = baseCrud.Model.extend({
 
 		return this;
 
-	},
+	}
 	
 
 	/**
@@ -87,7 +110,7 @@ var Model = baseCrud.Model.extend({
 	 * @param {array} keyFormatList - List of possible keys, e.g. [latitude, lat, Latitude] for latitude.
 	 * @returns {boolean} found - Whether the key is found in the data.
 	 */
-	findAndReplaceKey: function(data, standardKey, keyFormatList) {
+	findAndReplaceKey(data, standardKey, keyFormatList) {
 		var found, i, kf, len;
 		found = false;
 		if (keyFormatList == null) {
@@ -104,7 +127,7 @@ var Model = baseCrud.Model.extend({
 			}
 		}
 		return found;
-	},
+	}
 
 
 	/**
@@ -112,7 +135,7 @@ var Model = baseCrud.Model.extend({
 	 * @param {string} key
 	 * @returns {} newHtml
 	 */
-	getMarkdownHtml: function(key) {
+	getMarkdownHtml(key) {
 		var $html, md, newHtml;
 		md = this.get(key);
 		if (md != null) {
@@ -121,7 +144,7 @@ var Model = baseCrud.Model.extend({
 			newHtml = $('<div></div>').append($html.clone()).html();
 			return newHtml;
 		}
-	},
+	}
 
 
 	/**
@@ -130,7 +153,7 @@ var Model = baseCrud.Model.extend({
 	 * @param {string} saveKey - Key under which the modified html snippet is placed.
 	 * @returns {object} this
 	 */
-	setHtmlToc: function(key, saveKey) {
+	setHtmlToc(key, saveKey) {
 
 		var html, $containedHtml, arr;
 
@@ -169,19 +192,34 @@ var Model = baseCrud.Model.extend({
 
 	}
 
-});
+}
 
-var Collection = baseCrud.Collection.extend({
+
+
+/*
+ *
+ *
+ */
+class Collection extends baseCrud.Collection {
 	
-	model: Model,
+	get model() { return Model; }
 
+	get dbCollection() { 
+		var name = this.model.prototype.resourceName;
+		return `${name}s`; 
+	}
+
+	get apiUrl() {
+		var name = this.model.prototype.resourceName;
+		return `/api/v1/${name}s`; 
+	}
 
 	/**
 	 * Recognize and process server response by applying the corresponding model's parse method.
 	 * @param {object} resp - Server response.
 	 * @returns {object} resp - Modified response.
 	 */
-	parse: function(resp) {
+	parse(resp) {
 		var i, max,
 			item;
 		var model = new this.model(),
@@ -194,9 +232,9 @@ var Collection = baseCrud.Collection.extend({
 		return resp;
 	}
 
-});
+}
 
-module.exports = {
+export default {
 	Model: Model,
 	Collection: Collection
-};
+}

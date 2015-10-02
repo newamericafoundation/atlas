@@ -4,8 +4,16 @@ import classNames from 'classnames';
 
 import SaveBase from './save_base.js';
 
+/*
+ *
+ *
+ */
 class NewBase extends SaveBase {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -13,6 +21,11 @@ class NewBase extends SaveBase {
 		};
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	componentWillMount() {
 		var Model = this.getResourceConstructor();
 		if (!this.state.model) {
@@ -20,24 +33,29 @@ class NewBase extends SaveBase {
 		}
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getCrudMethodName() {
 		return 'new';
 	}
 
-	// Customize on subclass.
-	getResourceName() {
-		return 'project';
-	}
 
-	// Customize on subclass.
-	getResourceConstructor() {
-		return new Backbone.Model();
-	}
-
+	/*
+	 *
+	 *
+	 */
 	getSubmitButtonText() {
 		return `Create ${this.getResourceName()}`;
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	saveModel(formData) {
 
 		var model = this.state.model;
