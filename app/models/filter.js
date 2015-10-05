@@ -335,6 +335,37 @@ class FilterTree extends LocalBaseModel {
         });
     }
 
+
+    /*
+     * Group filter keys by variable group model instances or group name strings.
+     * Supports old group_name syntax.
+     */
+     group(variableGroupCollection) {
+
+        var grpObj = _.groupBy(this.children, (child) => {
+            var vari = child.get('variable');
+            return vari.get('variable_group_id') || vari.get('group_name');
+        });
+
+        return Object.keys(grpObj).map((groupId) => {
+
+            var variable_group;
+
+            // If the group is found, return group instance. Otherwise, return groupId as string.
+            if (variableGroupCollection) {
+                variable_group = variableGroupCollection.findWhere({ id: groupId }) || groupId;
+            } else {
+                variable_group = groupId;
+            }
+
+            return {
+                variable_group: variable_group,
+                filterKeys: grpObj[groupId]
+            };
+        });
+
+     }
+
 }
 
 

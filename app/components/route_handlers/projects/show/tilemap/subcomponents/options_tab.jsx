@@ -44,6 +44,9 @@ class OptionsTab extends Base {
 
 		var keys = this.props.filter.children;
 
+		console.log(this.props);
+		console.log(this.props.filter.group());
+
 		var groups = _.groupBy(keys, (key) => {
 			var vari = key.get('variable');
 			return vari.get('variable_group_id') || 'Other Variables'; 
