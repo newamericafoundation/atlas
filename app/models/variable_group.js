@@ -15,7 +15,7 @@ class Model extends base.Model {
         for(let key in resp) {
             let value = resp[key];
             let newKey = key.toLowerCase().replace(/ /g, '_');
-            if (['variable group name', 'group name'].indexOf(key.toLowerCase()) > -1) { newKey = 'id'; }
+            if (['variable group name', 'group name', 'name'].indexOf(key.toLowerCase()) > -1) { newKey = 'id'; }
             if (key !== newKey) {
                 resp[newKey] = value;
                 delete resp[key];
