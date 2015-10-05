@@ -73,8 +73,10 @@ class SpreadsheetFile extends Base {
 		var obj = {};
 		for (let sheetName in workbook.Sheets) {
 			let sheet = workbook.Sheets[sheetName];
-			obj[sheetName] = XLSX.utils.sheet_to_json(sheet, { raw: true });
+			let newSheetName = sheetName.toLowerCase().replace(/ /g, '_');
+			obj[newSheetName] = XLSX.utils.sheet_to_json(sheet, { raw: true });
 		}
+		console.log(obj);
 		return obj;
 	}
 

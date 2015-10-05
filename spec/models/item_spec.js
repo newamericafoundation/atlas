@@ -73,17 +73,6 @@ describe('item.Model', function() {
 	});
 
 
-	// Failing. Actual returns (this.get('image')), but not reaching second return to get and format name
-	xdescribe('getImageName', function() {
-
-		it('returns formatted image name from model object', function() {
-			var im = new item.Model({ id: 2, image: { id: 111, name: 'Nice basket' }, title: 'C' });
-			assert.equal(im.getImageName(), { name: 'nicebasket' });
-		});
-
-	});
-
-
 	describe('toLatLongPoint', function() {
 		
 		it('creates single array with lat and long keys', function() {
@@ -182,22 +171,22 @@ describe('item.Collection', function() {
 			modelData3 = { id: 3, title: 'A' };
 
 		it('gets value list', function() {
-			var ic = new item.Collection([ modelData1, modelData2, modelData3 ]);
-			assert.deepEqual(ic.getValueList(new Backbone.Model({ id: 'title'})), [ 'C', 'B', 'A' ]);
+			var ic = new item.Collection([ modelData1, modelData2, modelData3 ]),
+				vari = new variable.Model({ id: 'title'});
+			assert.deepEqual(ic.getValueList(vari), [ 'C', 'B', 'A' ]);
 		});
 
 		// extra whitespaces are introduced in value_order to test trim
-
 		it('sorts value list if a value_order array is present on the variable', function() {
 			var ic = new item.Collection([ modelData1, modelData2, modelData3 ]),
-				variable = new variable.Model({ id: 'title', 'value_order': 'A |B|C' });
-			assert.deepEqual(ic.getValueList(variable), [ 'A', 'B', 'C' ]);
+				vari = new variable.Model({ id: 'title', 'value_order': 'A |B|C' });
+			assert.deepEqual(ic.getValueList(vari), [ 'A', 'B', 'C' ]);
 		});
 
 		it('if a value is missing from the value order array, place it at the end', function() {
 			var ic = new item.Collection([ modelData1, modelData2, modelData3 ]),
-				variable = new Backbone.Model({ id: 'title', 'value_order': 'B|  C' });
-			assert.deepEqual(ic.getValueList(variable), [ 'B', 'C', 'A' ]);
+				vari = new Backbone.Model({ id: 'title', 'value_order': 'B|  C' });
+			assert.deepEqual(ic.getValueList(vari), [ 'B', 'C', 'A' ]);
 		});
 
 	});

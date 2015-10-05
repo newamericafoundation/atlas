@@ -7,6 +7,7 @@ import projectSection from './project_section.js';
 import projectTemplate from './project_template.js';
 import filter from './filter.js';
 import variable from './variable.js';
+import variableGroup from './variable_group.js';
 import item from './item.js';
 
 class Model extends base.Model {
@@ -148,7 +149,7 @@ class Model extends base.Model {
                     id: 'data',
                     labelText: 'Data file',
                     hint: '',
-                    worksheets: [ 'data', 'variables' ]
+                    worksheets: [ 'data', 'variables', 'variable groups' ]
                 }
             },
 
@@ -275,17 +276,39 @@ class Model extends base.Model {
     beforeSave() {
 
         var varModel = new variable.Model(),
+            varGroupModel = new variableGroup.Model(),
             data = this.get('data');
+
+        function parseDataField(data, fieldName, parserModel) {
+            if (data[fieldName]) {
+                let fieldValues = data[fieldName];
+                fieldValues = fieldValues.map((fieldValue) => {
+                    return parserModel.parse(fieldValue);
+                });
+                data[fieldName] = fieldValues;
+            }
+        }
 
         if (data) {
 
-            if (data.variables) {
-                let variables = this.get('data').variables;
-                variables = variables.map((variable) => {
-                    return varModel.parse(variable);
-                });
-                this.get('data').variables = variables;
-            }
+            parseDataField(data, 'variables', varModel);
+            parseDataField(data, 'variable_groups', varGroupModel);
+
+            // if (data.variables) {
+            //     let variables = this.get('data').variables;
+            //     variables = variables.map((variable) => {
+            //         return varModel.parse(variable);
+            //     });
+            //     this.get('data').variables = variables;
+            // }
+
+            // if (data.variable_groups) {
+            //     let variable_groups = this.get('data').variable_groups;
+            //     variable_groups = variable_groups.map((variable) => {
+            //         return varGroupModel.parse(variable);
+            //     });
+            //     this.get('data').variable_groups = variable_groups;
+            // }
 
             if (data.data) {
                 data.items = data.data;
@@ -303,8 +326,10 @@ class Model extends base.Model {
         data = this.get('data');
         if (data != null) {
             data.variables = new variable.Collection(data.variables);
+            data.variable_groups = new variableGroup.Collection(data.variable_groups);
             data.items = new item.Collection(data.items, { parse: true });
             this.buildFilterTree();
+            console.log(this);
         }
     }
 

@@ -6,6 +6,10 @@ import Base from './base.jsx';
 
 class OptionsTab extends Base {
 
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<div className='atl__options-tab'>
@@ -21,21 +25,38 @@ class OptionsTab extends Base {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	close(e) {
 		e.preventDefault();
 		this.props.setUiState({ isOptionsTabActive: false });
 	}
 
+
+	/*
+	 * 
+	 *
+	 */
 	renderKeyGroups() {
+
 		var keys = this.props.filter.children;
-		var groups = _.groupBy(keys, (key) => { return key.get('variable').get('group_name') || 'Other Variables'; });
+
+		var groups = _.groupBy(keys, (key) => {
+			var vari = key.get('variable');
+			return vari.get('variable_group_id') || 'Other Variables'; 
+		});
+
 		var groupNames = Object.keys(groups).sort((name_1, name_2) => {
 			var index_1 = (name_1 === 'Other Variables') ? 1000 : name_1.charCodeAt(0);
 			var index_2 = (name_2 === 'Other Variables') ? 1000 : name_2.charCodeAt(0);
 			return index_1 - index_2;
-
 		});
+
 		var areVariablesGrouped = (groupNames.length > 1);
+		
 		return groupNames.map((groupName) => {
 			var group = groups[groupName];
 			return (
@@ -49,7 +70,11 @@ class OptionsTab extends Base {
 		});
 	}
 
-	// Render only three around the current active key.
+
+	/*
+	 * Render only three around the current active key.
+	 *
+	 */
 	renderKeys(keys) {
 		return keys.map((key, i) => {
 			return (
@@ -62,6 +87,10 @@ class OptionsTab extends Base {
 
 class FilterKey extends React.Component {
 
+	/*
+	 *
+	 *
+	 */
 	render() {
 		var cls = classNames({
 			'button': 'true',
@@ -76,10 +105,20 @@ class FilterKey extends React.Component {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getContent() {
 		return this.props.filterKey.get('variable').get('display_title');
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	toggle() {
 		var { radio } = this.props;
 		this.props.filterKey.clickToggle();

@@ -1,7 +1,8 @@
 var assert = require('assert'),
     Backbone = require('backbone'),
     _ = require('underscore'),
-    variable = require('./../../app/models/variable.js');
+    variable = require('./../../app/models/variable.js'),
+    variableGroup = require('./../../app/models/variable_group.js');
 
 describe('variable.Model', function() {
 
@@ -18,7 +19,8 @@ describe('variable.Model', function() {
                 'Filter Type': "categorical",
                 'Long Description': "How do states define college- and career-readiness?",
                 'Short Description': "College- and Career-Ready Definition",
-                'Variable Name': "definition"
+                'Variable Name': "definition",
+                'Variable group Name': 'group 1'
             };
 
             assert.deepEqual(model.parse(data), {
@@ -27,7 +29,8 @@ describe('variable.Model', function() {
                 'filter_type': "categorical",
                 'long_description': "How do states define college- and career-readiness?",
                 'short_description': "College- and Career-Ready Definition",
-                'id': "definition"
+                'id': 'definition',
+                'variable_group_id': 'group 1'
             });
 
         });
@@ -128,4 +131,67 @@ describe('variable.Model', function() {
         });
 
     });
+});
+
+
+describe('variable.Collection', function() {
+
+    describe('group', function() {
+
+        var varCollection = new variable.Collection([
+                {
+                    id: 'var_1',
+                    variable_group_id: 'grp_1'
+                },
+                {
+                    id: 'var_2',
+                    variable_group_id: 'grp_2'
+                },
+                {
+                    id: 'var_3',
+                    variable_group_id: 'grp_1'
+                }
+            ]),
+            varGrpCollection = new variableGroup.Collection([
+                {
+                    id: 'grp_1'
+                },
+                {
+                    id: 'grp_2'
+                }
+            ]);
+
+        it('groups with a specified variable group collection', function() {
+
+            assert.deepEqual(varCollection.group(varGrpCollection), [
+                {
+                    variable_group: varGrpCollection.models[0],
+                    variables: [ varCollection.models[0], varCollection.models[2] ]
+                },
+                {
+                    variable_group: varGrpCollection.models[1],
+                    variables: [ varCollection.models[1] ]
+                }
+            ]);
+
+        });
+
+        it('groups without a specified variable group collection', function() {
+
+            assert.deepEqual(varCollection.group(), [
+                {
+                    variable_group: 'grp_1',
+                    variables: [ varCollection.models[0], varCollection.models[2] ]
+                },
+                {
+                    variable_group: 'grp_2',
+                    variables: [ varCollection.models[1] ]
+                }
+            ]);
+
+        });
+        
+
+    });
+
 });
