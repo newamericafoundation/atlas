@@ -2,6 +2,8 @@ import React from 'react';
 import classNames from 'classnames';
 import { No } from './../../../../../general/icons.jsx';
 
+import _ from 'underscore';
+
 import Base from './base.jsx';
 
 class OptionsTab extends Base {
@@ -44,32 +46,33 @@ class OptionsTab extends Base {
 
 		var keys = this.props.filter.children;
 
-		console.log(this.props);
-		console.log(this.props.filter.group());
+		var groups = this.props.filter.group(this.props.project.get('data').variable_groups);
 
-		var groups = _.groupBy(keys, (key) => {
-			var vari = key.get('variable');
-			return vari.get('variable_group_id') || 'Other Variables'; 
-		});
-
-		var groupNames = Object.keys(groups).sort((name_1, name_2) => {
-			var index_1 = (name_1 === 'Other Variables') ? 1000 : name_1.charCodeAt(0);
-			var index_2 = (name_2 === 'Other Variables') ? 1000 : name_2.charCodeAt(0);
-			return index_1 - index_2;
-		});
-
-		var areVariablesGrouped = (groupNames.length > 1);
+		var areVariablesGrouped = (groups.length > 1);
 		
-		return groupNames.map((groupName) => {
-			var group = groups[groupName];
+		return groups.map((group) => {
+
+			var groupName, groupDescription,
+				varGroup = group.variable_group;
+
+			if (_.isObject(varGroup)) {
+				groupName = varGroup.get('display_title') || varGroup.get('id');
+				groupDescription = varGroup.get('long_description');
+			} else {
+				groupName = varGroup || 'Other variables';
+				groupDescription = '';
+			}
+
 			return (
 				<li>
 					{ areVariablesGrouped ? (<p className='title'>{ groupName }</p>) : null }
+					{ areVariablesGrouped ? (<p>{ groupDescription }</p>) : null }
 					<ul>
-						{ this.renderKeys(group) }
+						{ this.renderKeys(group.filterKeys) }
 					</ul>
 				</li>
 			);
+
 		});
 	}
 

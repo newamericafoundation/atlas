@@ -5,6 +5,18 @@ var numeral = require('numeral'),
 var formatters = {
 
 	/*
+	 * Main entry point to the module.
+	 *
+	 */
+	format: function(v, formatKey) {
+		if (!formatKey) { return v; }
+		var formatter = formatters[formatKey.toLowerCase()];
+		if (!formatter) { return v; }
+		return formatter(v);
+	},
+
+
+	/*
 	 *
 	 *
 	 */

@@ -50,8 +50,9 @@ class Model extends base.Model {
     getFormattedField(item, defaultFormat) {
         var rawField = item.get(this.get('id')),
             format = this.get('format') || defaultFormat;
-        if (format == null || formatters[format] == null) { return rawField; }
-        return formatters[format](rawField);
+        //if (format == null || formatters[format] == null) { return rawField; }
+        return formatters.format(rawField, format);
+        //return formatters[format](rawField);
     }
 
 
