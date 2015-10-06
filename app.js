@@ -15,12 +15,12 @@ var express = require('express'),
     dbConnector = require('./db/connector.js'),
 	router = require('./app/routes/index.js');
 
-var appConfig = require('./config/app/environments.json');
+var configVars = require('./config/config_variables.json');
 
 var env = process.env.NODE_ENV,
 	app = express(),
 	MongoStore = connectMongo(session),
-	port = process.env.PORT || appConfig.development.port;
+	port = process.env.PORT || configVars.development.port;
 
 app.set('views', __dirname + '/app/views');
 app.set('view engine', 'jade');
@@ -30,7 +30,7 @@ require('./config/passport_config.js');
 
 // Basic configuration.
 app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 
 // GZip serving middleware must be declared before static folder declaration. 
 app.get([ '*.js' ], require('./app/middleware/serve_gzip.js'));
@@ -41,7 +41,22 @@ app.use(methodOverride());
 app.use(cookieParser());
 
 // Load custom configuration.
-require('./config/app/custom.js')(app);
+require('./config/app_config.js')(app);
+
+var listS3Buckets = function() {
+
+	var AWS = require('aws-sdk');
+
+	var s3 = new AWS.S3();
+
+	s3.listBuckets(function(err, data) {
+		if (err) { return console.dir(err); }
+		console.dir(data);
+	});
+
+}
+
+// listS3Buckets();
 
 dbConnector.then(function(db) {
 	

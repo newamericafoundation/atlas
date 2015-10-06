@@ -1,5 +1,11 @@
 {
 
+	"general": {
+		"url": "atlas.newamerica.org",
+		"aws_availability_zone": "us-west-2",
+		"aws_s3_bucket_name": "static.atlas.newamerica.org"
+	},
+
 	"development": {
 		"port": 8081,
 		"session_secret": "Big_Secret"

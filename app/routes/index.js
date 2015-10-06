@@ -1,6 +1,8 @@
-var express = require('express'),
-	fingerprintManifest = require('./utilities/fingerprint_manifest.js'),
-	json2csv = require('nice-json2csv');
+import express from 'express';
+import json2csv from 'nice-json2csv';
+import AWS from 'aws-sdk';
+
+import fingerprintManifest from './utilities/fingerprint_manifest.js';
 
 var router = express.Router();
 var resources = [ 'projects', 'project_sections', 'project_templates', 'images' ];
@@ -23,6 +25,12 @@ router.use('/auth', require('./auth.js'));
 resources.forEach(function(resource) {
 	var url = '/api/v1/' + resource;
 	router.use(url, require('.' + url));
+});
+
+router.get('/static/:file_url', (req, res) => {
+	var s3 = new AWS.S3(),
+		params = { Bucket: 'static.atlas.newamerica.org', Key: req.params.file_url };
+	s3.getObject(params).createReadStream().pipe(res);
 });
 
 // Main routes - routing done by client.

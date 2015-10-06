@@ -19,6 +19,7 @@ Database: ``MongoDB``.
 ## Docs
 
 * [Getting Started](/docs/getting_started.md)
+* [Environment](/docs/environment.md)
 * [Development](/docs/development.md)
 * [Testing](/docs/testing.md)
 * [Production](/docs/production.md)
