@@ -64,6 +64,42 @@ var formatters = {
 	 *
 	 *
 	 */
+	 'percent-100': function(v) {
+	 	return formatters.number(v) + '%';
+	 },
+
+
+	 /*
+	 *
+	 *
+	 */
+	 'percent-1': function(v) {
+	 	return formatters.number(v * 100) + '%';
+	 },
+
+
+	 /*
+	 *
+	 *
+	 */
+	 'percentage-100': function(v) {
+	 	return formatters.number(v) + '%';
+	 },
+
+
+	 /*
+	 *
+	 *
+	 */
+	 'percentage-1': function(v) {
+	 	return formatters.number(v * 100) + '%';
+	 },
+
+
+	/*
+	 *
+	 *
+	 */
 	html: function(html) {
 	    var $html, newHtml;
 	    $html = $(html);
