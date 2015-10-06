@@ -30,7 +30,7 @@ require('./config/passport_config.js');
 
 // Basic configuration.
 app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ extended: true, limit: '50mb', parameterLimit: 100000 }));
+app.use(bodyParser.urlencoded({ limit: '50mb' }));
 
 // GZip serving middleware must be declared before static folder declaration. 
 app.get([ '*.js' ], require('./app/middleware/serve_gzip.js'));
