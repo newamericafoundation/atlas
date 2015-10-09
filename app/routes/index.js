@@ -1,6 +1,8 @@
 import express from 'express';
 import json2csv from 'nice-json2csv';
-import AWS from 'aws-sdk';
+
+import authRouter from './auth.js';
+import staticRouter from './static.js';
 
 import fingerprintManifest from './utilities/fingerprint_manifest.js';
 
@@ -19,7 +21,9 @@ router.get('/logout', (req, res) => {
 });
 
 // Authentication routes.
-router.use('/auth', require('./auth.js'));
+router.use('/auth', authRouter);
+
+router.use('/static', staticRouter);
 
 // Use subroutes for data api, requiring resource-specific subrouters.
 resources.forEach(function(resource) {

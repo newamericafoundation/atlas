@@ -31,4 +31,4 @@ router.get('/google/callback',
         res.redirect('/');
     });
 
-module.exports = router;
+export default router;

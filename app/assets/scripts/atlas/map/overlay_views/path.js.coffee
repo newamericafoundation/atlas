@@ -21,16 +21,15 @@ class Map.PathOverlayView extends Map.BaseOverlayView
     render: () ->
         this.renderSvgContainer() if this.renderSvgContainer?
         this.geoJson = this.collection
-        self = this
         this.g.selectAll('path')
             .data @geoJson.features
             .enter()
             .append 'path'
             .on('mouseover', this.onFeatureMouseOver.bind(this))
             .on('mouseout', this.onFeatureMouseOut.bind(this))
-            .on 'click', (d) ->
+            .on 'click', (d) =>
                 return if d3.event.defaultPrevented
-                self.onFeatureClick(d)
+                this.onFeatureClick(d)
         this.update()
         # TODO - move into a common onShow method
         this.onRender()
@@ -47,32 +46,86 @@ class Map.PathOverlayView extends Map.BaseOverlayView
         this.map.latLngToLayerPoint(new L.LatLng(lat, long))
 
 
-    # Get transform path.
-    getPath: ->
-        self = this
-        getProjectedPoint = (long, lat) ->
-            self.map.latLngToLayerPoint(new L.LatLng(lat, long))
+    # Get transform path based on Leaflet map.
+    # @param {array} latLongScaleOrigin
+    # @param {array} latLongPosition
+    # @returns {function} path
+    getPath: (latLongScaleOrigin, latLongPosition, scale) ->
+
+        map = this.map
+
+        scale ?= 1
+
+        # Find the coordinates of a point from lat long coordinates.
+        # @param {number} long - Longitude.
+        # @param {number} lat - Latitude.
         projectPoint = (long, lat) ->
-            point = getProjectedPoint(long, lat)
-            this.stream.point(point.x, point.y)
+
+            regularPoint = map.latLngToLayerPoint(new L.LatLng(lat, long))
+
+            unless (latLongScaleOrigin? and latLongPosition?)
+                this.stream.point(regularPoint.x, regularPoint.y)
+                return this
+
+            scaleOrigin = map.latLngToLayerPoint(new L.LatLng(latLongScaleOrigin[0], latLongScaleOrigin[1]))
+
+            position = map.latLngToLayerPoint(new L.LatLng(latLongPosition[0], latLongPosition[1]))
+
+            modifiedPoint =
+                x: position.x + (regularPoint.x - scaleOrigin.x) * scale
+                y: position.y + (regularPoint.y - scaleOrigin.y) * scale
+
+            this.stream.point(modifiedPoint.x, modifiedPoint.y)
+
             return this
+
         transform = d3.geo.transform({ point: projectPoint })
         path = d3.geo.path().projection(transform)
         path
 
 
+    # Get scale and centroid modifiers that position Alaska, Hawaii and DC in a visible format.
+    getUsStateProjectionModifiers: () ->
+
+        usStateLatLongCentroids:
+            '2': [ 65.4169289, -153.4474854 ]
+            '15': [ 20.8031863,-157.6043485 ]
+            '11': [ 38.9093905,-77.0328359 ]
+
+        # 
+
+
     # Apply transform and classes on paths.
     update: () ->
+
         path = this.getPath()
+
         geoJson = this.collection
+
         this.g.selectAll('path')
+
             .attr
+
                 'class': (feature) =>
                     displayState = @getFeatureDisplayState(feature)
                     cls = 'map-region map-region__element'
                     cls += " map-region--#{displayState}" if displayState?
                     return cls
-                'd': path
-                'fill': @getFill.bind(@)
+
+                'd': (feature) =>
+                    # access embedded Backbone model
+                    model = feature._model
+
+                    if model? and (model.get('_itemType') is 'us_state') and (model.get('id') is 2)
+                        return this.getPath([ 65.4169289, -153.4474854 ], [ 30.2065372,-134.6754338 ], 0.2)(feature)
+
+                    if model? and (model.get('_itemType') is 'us_state') and (model.get('id') is 11)
+                        return this.getPath([ 38.9093905,-77.0328359 ], [ 32.0680227,-70.8874945 ], 15)(feature)
+
+                    this.getPath()(feature)
+
+                'fill': this.getFill.bind(@)
+
         this.resizeContainer(geoJson, path, 0)
+
         return this

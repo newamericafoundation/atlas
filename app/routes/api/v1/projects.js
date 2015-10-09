@@ -1,9 +1,7 @@
 import express from 'express';
-import bodyParser from 'body-parser';
 import csv from 'csv';
 import project from './../../../models/project.js';
 import base from './../../../models/base.js';
-import { ObjectID } from 'mongodb';
 
 import authMiddleware from './../../../middleware/auth.js';
 
@@ -83,4 +81,4 @@ router.post('/print', function(req, res) {
 
 });
 
-module.exports = router;
+export default router;

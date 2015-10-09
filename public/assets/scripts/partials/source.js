@@ -730,18 +730,18 @@ Map.control = {
     };
 
     PathOverlayView.prototype.render = function () {
-      var self;
       if (this.renderSvgContainer != null) {
         this.renderSvgContainer();
       }
       this.geoJson = this.collection;
-      self = this;
-      this.g.selectAll('path').data(this.geoJson.features).enter().append('path').on('mouseover', this.onFeatureMouseOver.bind(this)).on('mouseout', this.onFeatureMouseOut.bind(this)).on('click', function (d) {
-        if (d3.event.defaultPrevented) {
-          return;
-        }
-        return self.onFeatureClick(d);
-      });
+      this.g.selectAll('path').data(this.geoJson.features).enter().append('path').on('mouseover', this.onFeatureMouseOver.bind(this)).on('mouseout', this.onFeatureMouseOut.bind(this)).on('click', (function (_this) {
+        return function (d) {
+          if (d3.event.defaultPrevented) {
+            return;
+          }
+          return _this.onFeatureClick(d);
+        };
+      })(this));
       this.update();
       this.onRender();
       this.map.on('viewreset', this.update.bind(this));
@@ -753,16 +753,26 @@ Map.control = {
       return this.map.latLngToLayerPoint(new L.LatLng(lat, long));
     };
 
-    PathOverlayView.prototype.getPath = function () {
-      var path, projectPoint, self, transform;
-      self = this;
-      getProjectedPoint = function (long, lat) {
-        return self.map.latLngToLayerPoint(new L.LatLng(lat, long));
-      };
+    PathOverlayView.prototype.getPath = function (latLongScaleOrigin, latLongPosition, scale) {
+      var map, path, projectPoint, transform;
+      map = this.map;
+      if (scale == null) {
+        scale = 1;
+      }
       projectPoint = function (long, lat) {
-        var point;
-        point = getProjectedPoint(long, lat);
-        this.stream.point(point.x, point.y);
+        var modifiedPoint, position, regularPoint, scaleOrigin;
+        regularPoint = map.latLngToLayerPoint(new L.LatLng(lat, long));
+        if (!(latLongScaleOrigin != null && latLongPosition != null)) {
+          this.stream.point(regularPoint.x, regularPoint.y);
+          return this;
+        }
+        scaleOrigin = map.latLngToLayerPoint(new L.LatLng(latLongScaleOrigin[0], latLongScaleOrigin[1]));
+        position = map.latLngToLayerPoint(new L.LatLng(latLongPosition[0], latLongPosition[1]));
+        modifiedPoint = {
+          x: position.x + (regularPoint.x - scaleOrigin.x) * scale,
+          y: position.y + (regularPoint.y - scaleOrigin.y) * scale
+        };
+        this.stream.point(modifiedPoint.x, modifiedPoint.y);
         return this;
       };
       transform = d3.geo.transform({
@@ -770,6 +780,16 @@ Map.control = {
       });
       path = d3.geo.path().projection(transform);
       return path;
+    };
+
+    PathOverlayView.prototype.getUsStateProjectionModifiers = function () {
+      return {
+        usStateLatLongCentroids: {
+          '2': [65.4169289, -153.4474854],
+          '15': [20.8031863, -157.6043485],
+          '11': [38.9093905, -77.0328359]
+        }
+      };
     };
 
     PathOverlayView.prototype.update = function () {
@@ -788,7 +808,19 @@ Map.control = {
             return cls;
           };
         })(this),
-        'd': path,
+        'd': (function (_this) {
+          return function (feature) {
+            var model;
+            model = feature._model;
+            if (model != null && model.get('_itemType') === 'us_state' && model.get('id') === 2) {
+              return _this.getPath([65.4169289, -153.4474854], [30.2065372, -134.6754338], 0.2)(feature);
+            }
+            if (model != null && model.get('_itemType') === 'us_state' && model.get('id') === 11) {
+              return _this.getPath([38.9093905, -77.0328359], [32.0680227, -70.8874945], 15)(feature);
+            }
+            return _this.getPath()(feature);
+          };
+        })(this),
         'fill': this.getFill.bind(this)
       });
       this.resizeContainer(geoJson, path, 0);

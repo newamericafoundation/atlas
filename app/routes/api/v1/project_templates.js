@@ -5,4 +5,4 @@ router.get('/', function(req, res) {
 	require('./base')(req, res, 'project_templates');
 });
 
-module.exports = router;
+export default router;

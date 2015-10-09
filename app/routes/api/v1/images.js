@@ -35,4 +35,4 @@ router.delete('/:id', currentAuthMiddleware, deleteMiddleware.bind(this, { dbCol
 	res.json(req.dbResponse);
 });
 
-module.exports = router;
+export default router;
