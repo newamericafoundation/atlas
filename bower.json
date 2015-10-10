@@ -24,13 +24,10 @@
     "js-xlsx": "~0.8.0",
     "leaflet": "~0.7.3",
     "mapbox.js": "~2.1.9",
-    "marionette": "~2.4.2",
     "normalize.css": "3.0.2",
     "numeral": "~1.5.3",
-    "qajax": "~0.2.4",
     "selectize": "~0.12.0",
     "selectize-scss": "~0.8.9",
-    "topojson": "~1.6.19",
     "underscore": "~1.8.3"
   }
 }

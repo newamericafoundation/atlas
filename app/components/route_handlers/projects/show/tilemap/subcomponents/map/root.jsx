@@ -3,10 +3,16 @@ import classNames from 'classnames';
 import * as colors from './../../../../../../utilities/colors.js';
 import * as svgPaths from './../../../../../../utilities/svg_paths.js';
 
-import Control from './subcomponents/control.jsx';
+import Control from './subcomponents/control/root.jsx';
+
+import Mapper from './subcomponents/mapper/mapper.js';
 
 class Map extends React.Component {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -14,6 +20,11 @@ class Map extends React.Component {
 		};
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<div className="fill-parent" id="atl__map">
@@ -22,39 +33,60 @@ class Map extends React.Component {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	shouldComponentUpdate(nextProps, nextState) {
 		return !nextProps.ignoreMapItemsOnUpdate;
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	componentDidMount() {
-		var Map = window.Map;
-		Map.props = {
+		Mapper.props = {
 			radio: this.props.radio,
 			project: this.props.project,
 			uiState: this.props.uiState,
 			setUiState: this.props.setUiState,
 			setMap: this.setMap.bind(this)
 		};
-		Map.colors = colors;
-		Map.svgPaths = svgPaths;
-		Map.start();
+		Mapper.colors = colors;
+		Mapper.svgPaths = svgPaths;
+		Mapper.start();
 	}
 
-	// Set Mapbox map instance. On the component state.
+
+	/*
+	 * Set Mapbox map instance. On the component state.
+	 *
+	 */
 	setMap(map) {
 		this.setState({ map: map });
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	componentWillUnmount() {
-		var Map = window.Map;
-		Map.props = {};
-		Map.stop();
+		Mapper.props = {};
+		Mapper.stop();
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	componentDidUpdate() {
-		var Map = window.Map;
-		if (!this.props.uiState.isMapDragged && Map.overlayView) { 
-			Map.overlayView.update(); 
+		if (!this.props.uiState.isMapDragged && Mapper.overlayView) { 
+			Mapper.overlayView.update(); 
 		}
 	}
 

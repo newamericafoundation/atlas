@@ -30,10 +30,10 @@ require('./config/passport_config.js');
 
 // Basic configuration.
 app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb', parameterLimit: 1000 }));
 
 // GZip serving middleware must be declared before static folder declaration. 
-app.get([ '*.js' ], require('./app/middleware/serve_gzip.js'));
+app.get([ '*.js', '*.json' ], require('./app/middleware/serve_gzip.js'));
 
 app.use(express.static('public'));
 
@@ -43,26 +43,11 @@ app.use(cookieParser());
 // Load custom configuration.
 require('./config/app_config.js')(app);
 
-var listS3Buckets = function() {
-
-	var AWS = require('aws-sdk');
-
-	var s3 = new AWS.S3();
-
-	s3.listBuckets(function(err, data) {
-		if (err) { return console.dir(err); }
-		console.dir(data);
-	});
-
-}
-
-// listS3Buckets();
-
 dbConnector.then(function(db) {
 	
 	// Initialize session with database storage.
 	app.use(session({
-	    secret: 'Super_Big_Secret',
+	    secret: configVars['session_secret'] || 'Super_Big_Secret',
 	    saveUninitialized: false,
 	    resave: true,
 	    store: new MongoStore({ 
@@ -70,7 +55,7 @@ dbConnector.then(function(db) {
 	    	collection: 'sessions',
 	    	stringify: false
 	    }),
-	    cookie: { maxAge: 1 * 3600 * 1000 }
+	    cookie: { maxAge: 1 * 3600 * 1000 * 24 * 5 }
 	}));
 
 	// Initialize passport.

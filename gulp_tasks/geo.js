@@ -3,6 +3,7 @@ import download from 'gulp-download';
 import unzip from 'gulp-unzip';
 import copy from 'gulp-copy';
 import shell from 'gulp-shell';
+import gzip from 'gulp-gzip';
 import del from 'del';
 
 import shapeFile from './../app/models/shape_file.js';
@@ -12,8 +13,7 @@ gulp.task('geo-clean', (next) => {
     del([ 'temp/topojson/**/*', 'temp/shp/**/*' ], next);
 });
 
-var shps = new shapeFile.Collection(),
-	shp = shps.models[1];
+var shps = new shapeFile.Collection();
 
 var urls = shps.map((shp) => {
 	return shp.get('url');
@@ -37,5 +37,13 @@ var tempFiles = shps.map((shp) => {
 
 gulp.task('geo', [ 'geo-convert-to-topojson' ], () => {
 	return gulp.src(tempFiles)
-		.pipe(copy('./public/data', { prefix: 2 }));
+		.pipe(copy('./public/data', { prefix: 2 }))
+		.pipe(gzip())
+		.pipe(gulp.dest('./public/data'));
+});
+
+gulp.task('geo-gzip', () => {
+	return gulp.src('./public/data/*.json')
+		.pipe(gzip())
+		.pipe(gulp.dest('./pubic/data'));
 });

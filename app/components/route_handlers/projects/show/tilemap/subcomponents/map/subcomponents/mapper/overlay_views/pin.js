@@ -1,4 +1,8 @@
-Map.PinOverlayView = class extends Map.BaseOverlayView {
+import $ from 'jquery';
+
+import BaseOverlayView from './base.js';
+
+class PinOverlayView extends BaseOverlayView {
 
     /*
      *
@@ -164,3 +168,5 @@ Map.PinOverlayView = class extends Map.BaseOverlayView {
     }
 
 }
+
+export default PinOverlayView;

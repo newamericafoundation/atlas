@@ -1,5 +1,10 @@
 // view constructor written using the module pattern (function returning an object, without a new keyword)
-Map.PathOverlayView = class extends Map.BaseOverlayView {
+
+import $ from 'jquery';
+
+import BaseOverlayView from './base.js';
+
+class PathOverlayView extends BaseOverlayView {
 
     /*
      * Brings feature to the top so its stroke is not covered by non-highlighted paths.
@@ -150,3 +155,5 @@ Map.PathOverlayView = class extends Map.BaseOverlayView {
     }
 
 }
+
+export default PathOverlayView;

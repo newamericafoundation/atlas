@@ -44,8 +44,6 @@ module.exports = {
 		    // bower scripts
 		    vendor: [
 		        './bower_components/jquery/dist/jquery.js',
-		        // './bower_components/q/q.js',
-		        // './bower_components/qajax/src/qajax.js',
 		        './bower_components/selectize/dist/js/standalone/selectize.js',
 		        './bower_components/underscore/underscore.js',
 		        './bower_components/backbone/backbone.js',
@@ -59,13 +57,7 @@ module.exports = {
 		    // main application code
 		    source: [
 		    	'./app/assets/scripts/polyfills/**/*',
-		        './app/assets/scripts/config/**/*',
-		        './app/assets/scripts/atlas/map/map.js',
-		        './app/assets/scripts/atlas/map/map_control_helpers.js',
-		        './app/assets/scripts/atlas/map/map_views.js',
-		        './app/assets/scripts/atlas/map/overlay_views/base.js',
-		        './app/assets/scripts/atlas/map/overlay_views/path.js',
-		        './app/assets/scripts/atlas/map/overlay_views/pin.js'
+		        './app/assets/scripts/config/**/*'
 		    ]
 
     	}

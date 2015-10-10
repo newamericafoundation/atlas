@@ -1,22 +1,23 @@
 {
 
 	"general": {
+		"session_secret": "Super_Big_Secret",
 		"url": "atlas.newamerica.org",
 		"aws_availability_zone": "us-west-2",
 		"aws_s3_bucket_name": "static.atlas.newamerica.org"
 	},
 
 	"development": {
-		"port": 8081,
-		"session_secret": "Big_Secret"
+		"dbName": "mongoid",
+		"port": 8081
 	},
 
 	"test": {
-		"db": "test"
+		"dbName": "test"
 	},
 
 	"production": {
-		"session_secret": "Super_Big_Secret"
+		"dbName": "mongoid"
 	}
 
 }

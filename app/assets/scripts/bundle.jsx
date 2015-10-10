@@ -9,8 +9,6 @@ import { Route, RouteHandler, Redirect } from 'react-router';
 
 import classNames from 'classnames';
 
-import shapeFile from './../../models/shape_file.js';
-
 import routes from './../../routes/client.jsx';
 
 /*
@@ -41,9 +39,5 @@ function start() {
 global.Comp = {
 	start: start
 };
-
-global.M = {
-	shapeFile: shapeFile
-}
 
 export default start;

@@ -1,6 +1,5 @@
 // This is an object mixed into Leaflet's maps to provide additional functionality.
-
-Map.control = {
+var controlHelpers = {
 
 	/*
      * Centers map on specified target specified as latitude-longitude array.
@@ -93,3 +92,5 @@ Map.control = {
     }
 
 };
+
+export default controlHelpers;

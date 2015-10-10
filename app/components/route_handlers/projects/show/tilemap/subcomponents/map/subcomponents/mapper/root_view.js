@@ -1,5 +1,8 @@
 // This is a custom view constructor that uses d3 and Mapbox to render graphics.
-Map.RootView = class {
+
+import controlHelpers from './control_helpers.js';
+
+class RootView {
 
 	/*
 	 *
@@ -37,27 +40,25 @@ Map.RootView = class {
 		this.map.scrollWheelZoom.disable();
 		// add control convenience methods
 
-		_.extend(this.map, Map.control);
+		_.extend(this.map, controlHelpers);
 
 		this.map.ignoreNextClick = false;
 		// do not register a map item click event if it is fired due to a map drag end
 
 		this.map.on('dragstart', (e) => { 
-			Map.props.setUiState({ isMapDragged: true });
+			this.props.setUiState({ isMapDragged: true });
 		});
 
 		this.map.on('dragend', (e) => {
 			var items;
-			Map.props.setUiState({ isMapDragged: false });
+			this.props.setUiState({ isMapDragged: false });
 			// use functionality only if there is sufficient drag
 			//   as Leaflet sometimes detects slightly imperfect clicks as drags
-			items = Map.props.project.get('data').items;
+			items = this.props.project.get('data').items;
 			if (e.distance > 15 && items.hovered) {
 				this.map.ignoreNextClick = true;
 			}
 		});
-		// Expose map to the module. 
-		Map.map = this.map;
 
 		return this;
 
@@ -84,7 +85,7 @@ Map.RootView = class {
 	render() {
 		L.mapbox.accessToken = 'pk.eyJ1Ijoicm9zc3ZhbmRlcmxpbmRlIiwiYSI6ImRxc0hRR28ifQ.XwCYSPHrGbRvofTV-CIUqw';
 		this.map = L.mapbox.map(this.elId, 'rossvanderlinde.874ab107', this.getMapOptions());
-		Map.props.setMap(this.map);
+		this.props.setMap(this.map);
 		this._setupMap();
 		this.hideAttribution();
 		return this;
@@ -112,3 +113,5 @@ Map.RootView = class {
 	}
 
 }
+
+export default RootView;

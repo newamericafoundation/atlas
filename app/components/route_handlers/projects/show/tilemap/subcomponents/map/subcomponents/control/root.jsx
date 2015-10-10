@@ -1,13 +1,22 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Info, Plus, Minus } from './../../../../../../../general/icons.jsx';
+import { Info, Plus, Minus } from './../../../../../../../../general/icons.jsx';
 
 class Control extends React.Component {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<div className='atl__map-control'>
@@ -27,12 +36,22 @@ class Control extends React.Component {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	zoom(zoomChange) {
 		if (this.props.map) {
 			this.props.map.changeZoom(zoomChange);
 		}
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	showAttribution() {
 		$('.leaflet-control-attribution').toggle();
 	}
