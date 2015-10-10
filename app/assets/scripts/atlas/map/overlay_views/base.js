@@ -6,8 +6,9 @@ Map.BaseOverlayView = class {
      *
      */
     constructor(options = {}) {
-        this.map = options.map;
-        this.collection = options.collection;
+        for (let key in options) {
+            this[key] = options[key];
+        }
         Map.props.radio.reqres.setHandler('item:map:position', (item) => { return this.getItemMapPosition(item); })
         return this;
     }
@@ -18,8 +19,8 @@ Map.BaseOverlayView = class {
      *
      */
     setMapEventListeners() {
-        Map.map.on('viewreset', this.update.bind(this));
-        Map.map.on('click', this.onMapClick.bind(this));
+        this.map.on('viewreset', this.update.bind(this));
+        this.map.on('click', this.onMapClick.bind(this));
     }
 
 
@@ -42,7 +43,7 @@ Map.BaseOverlayView = class {
      */
     setHeaderStripColor() {
         var project, indeces;
-        project = Map.props.project;
+        project = this.props.project;
         indeces = project.getFriendlyIndeces();
         if (indeces.length > 0) {
             Map.props.radio.commands.execute('set:header:strip:color', { color: Map.colors.toRgb(indeces[0] - 1) });

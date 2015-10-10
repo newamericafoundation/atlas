@@ -40,7 +40,10 @@ window.Map = {};
                 return coll.onReady(function() {
                     var overlayView = new OverlayView({
                         map: Map.map,
-                        collection: coll
+                        collection: coll,
+                        props: Map.props,
+                        colors: Map.colors,
+                        svgPaths: Map.svgPaths
                     });
                     Map.overlayView = overlayView;
                     return overlayView.render();

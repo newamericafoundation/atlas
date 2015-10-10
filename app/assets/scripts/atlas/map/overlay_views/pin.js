@@ -28,7 +28,7 @@ Map.PinOverlayView = class extends Map.BaseOverlayView {
 
         this.renderSvgContainer();
 
-        this.shape = Map.svgPaths.shapes.pindrop;
+        this.shape = this.svgPaths.shapes.pindrop;
 
         // Get halves and thirds of the pin to apply corresponding coloring.
         pindrop = this.getShapes();
@@ -62,11 +62,11 @@ Map.PinOverlayView = class extends Map.BaseOverlayView {
      */
     getFills(feature) {
         var filter, valueIndeces;
-        filter = Map.props.project.get('data').filter;
+        filter = this.props.project.get('data').filter;
         valueIndeces = filter.getFriendlyIndeces(feature._model, 15);
         if (!valueIndeces || valueIndeces.length === 0) { return; }
         return valueIndeces.map((valueIndex) => {
-            return Map.colors.toRgb(valueIndex-1);
+            return this.colors.toRgb(valueIndex-1);
         });
     }
 
@@ -77,10 +77,12 @@ Map.PinOverlayView = class extends Map.BaseOverlayView {
      */
     update() {
 
-        var transform, path, self = this;
+        var transform, path, 
+            self = this,
+            map = this.map;
 
         var getProjectedPoint = (long, lat) => {
-            return Map.map.latLngToLayerPoint(new L.LatLng(lat, long));
+            return map.latLngToLayerPoint(new L.LatLng(lat, long));
         };
 
         var projectPoint = function(long, lat) { 

@@ -282,7 +282,10 @@ window.Map = {};
                 return coll.onReady(function () {
                     var overlayView = new OverlayView({
                         map: Map.map,
-                        collection: coll
+                        collection: coll,
+                        props: Map.props,
+                        colors: Map.colors,
+                        svgPaths: Map.svgPaths
                     });
                     Map.overlayView = overlayView;
                     return overlayView.render();
@@ -575,8 +578,9 @@ Map.BaseOverlayView = (function () {
 
         _classCallCheck(this, _class);
 
-        this.map = options.map;
-        this.collection = options.collection;
+        for (var key in options) {
+            this[key] = options[key];
+        }
         Map.props.radio.reqres.setHandler('item:map:position', function (item) {
             return _this.getItemMapPosition(item);
         });
@@ -591,8 +595,8 @@ Map.BaseOverlayView = (function () {
     _createClass(_class, [{
         key: 'setMapEventListeners',
         value: function setMapEventListeners() {
-            Map.map.on('viewreset', this.update.bind(this));
-            Map.map.on('click', this.onMapClick.bind(this));
+            this.map.on('viewreset', this.update.bind(this));
+            this.map.on('click', this.onMapClick.bind(this));
         }
 
         /*
@@ -614,7 +618,7 @@ Map.BaseOverlayView = (function () {
         key: 'setHeaderStripColor',
         value: function setHeaderStripColor() {
             var project, indeces;
-            project = Map.props.project;
+            project = this.props.project;
             indeces = project.getFriendlyIndeces();
             if (indeces.length > 0) {
                 Map.props.radio.commands.execute('set:header:strip:color', { color: Map.colors.toRgb(indeces[0] - 1) });
@@ -1093,7 +1097,7 @@ Map.PinOverlayView = (function (_Map$BaseOverlayView) {
 
             this.renderSvgContainer();
 
-            this.shape = Map.svgPaths.shapes.pindrop;
+            this.shape = this.svgPaths.shapes.pindrop;
 
             // Get halves and thirds of the pin to apply corresponding coloring.
             pindrop = this.getShapes();
@@ -1119,14 +1123,16 @@ Map.PinOverlayView = (function (_Map$BaseOverlayView) {
     }, {
         key: 'getFills',
         value: function getFills(feature) {
+            var _this = this;
+
             var filter, valueIndeces;
-            filter = Map.props.project.get('data').filter;
+            filter = this.props.project.get('data').filter;
             valueIndeces = filter.getFriendlyIndeces(feature._model, 15);
             if (!valueIndeces || valueIndeces.length === 0) {
                 return;
             }
             return valueIndeces.map(function (valueIndex) {
-                return Map.colors.toRgb(valueIndex - 1);
+                return _this.colors.toRgb(valueIndex - 1);
             });
         }
 
@@ -1140,10 +1146,11 @@ Map.PinOverlayView = (function (_Map$BaseOverlayView) {
 
             var transform,
                 path,
-                self = this;
+                self = this,
+                map = this.map;
 
             var getProjectedPoint = function getProjectedPoint(long, lat) {
-                return Map.map.latLngToLayerPoint(new L.LatLng(lat, long));
+                return map.latLngToLayerPoint(new L.LatLng(lat, long));
             };
 
             var projectPoint = function projectPoint(long, lat) {
