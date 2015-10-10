@@ -63,9 +63,9 @@ module.exports = {
 		        './app/assets/scripts/atlas/map/map.js',
 		        './app/assets/scripts/atlas/map/map_control_helpers.js',
 		        './app/assets/scripts/atlas/map/map_views.js',
-		        './app/assets/scripts/atlas/map/overlay_views/base.js.coffee',
-		        './app/assets/scripts/atlas/map/overlay_views/path.js.coffee',
-		        './app/assets/scripts/atlas/map/overlay_views/pin.js.coffee'
+		        './app/assets/scripts/atlas/map/overlay_views/base.js',
+		        './app/assets/scripts/atlas/map/overlay_views/path.js',
+		        './app/assets/scripts/atlas/map/overlay_views/pin.js'
 		    ]
 
     	}

@@ -554,504 +554,676 @@ Map.RootView = (function () {
 
 	return _class;
 })();
+// overlay view layers inherit from this object
 'use strict';
 
-(function () {
-  Map.BaseOverlayView = (function () {
-    function BaseOverlayView(options) {
-      if (options == null) {
-        options = {};
-      }
-      this.map = options.map;
-      this.collection = options.collection;
-      Map.props.radio.reqres.setHandler('item:map:position', (function (_this) {
-        return function (item) {
-          return _this.getItemMapPosition(item);
-        };
-      })(this));
-      return this;
-    }
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-    BaseOverlayView.prototype.setMapEventListeners = function () {
-      Map.map.on('viewreset', this.update.bind(this));
-      return Map.map.on('click', this.onMapClick.bind(this));
-    };
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-    BaseOverlayView.prototype.renderSvgContainer = function () {
-      this.svg = d3.select(this.map.getPanes().overlayPane).append('svg').attr('class', 'deethree');
-      return this.g = this.svg.append('g').attr('class', 'leaflet-zoom-hide');
-    };
+Map.BaseOverlayView = (function () {
 
-    BaseOverlayView.prototype.setHeaderStripColor = function () {
-      var indeces, project;
-      project = Map.props.project;
-      indeces = project.getFriendlyIndeces();
-      if (indeces.length > 0) {
-        return Map.props.radio.commands.execute('set:header:strip:color', {
-          color: Map.colors.toRgb(indeces[0] - 1)
+    /*
+     *
+     *
+     */
+
+    function _class() {
+        var _this = this;
+
+        var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+        _classCallCheck(this, _class);
+
+        this.map = options.map;
+        this.collection = options.collection;
+        Map.props.radio.reqres.setHandler('item:map:position', function (item) {
+            return _this.getItemMapPosition(item);
         });
-      } else {
-        return Map.props.radio.commands.execute('set:header:strip:color', 'none');
-      }
-    };
-
-    BaseOverlayView.prototype.getItemMapPosition = function (item) {
-      var feature, identityPath, latLong, longLatArrayCentroid, map;
-      identityPath = d3.geo.path().projection(function (d) {
-        return d;
-      });
-      feature = this.getFeatureByModel(item);
-      longLatArrayCentroid = identityPath.centroid(feature);
-      latLong = L.latLng(longLatArrayCentroid[1], longLatArrayCentroid[0]);
-      map = Map.map;
-      return map.latLngToContainerPoint(latLong);
-    };
-
-    BaseOverlayView.prototype.updateAnimated = function () {
-      var $el;
-      $el = $('.leaflet-overlay-pane');
-      return $el.stop().animate({
-        opacity: 0
-      }, 750, 'swing', (function (_this) {
-        return function () {
-          _this.update();
-          return $el.animate({
-            opacity: 1
-          }, 750);
-        };
-      })(this));
-    };
-
-    BaseOverlayView.prototype.onFeatureMouseOut = function (feature) {
-      var items, project;
-      project = Map.props.project;
-      items = project.get('data').items;
-      items.setHovered(-1);
-      this.setHeaderStripColor();
-      return Map.props.radio.commands.execute('update:tilemap', {
-        ignoreMapItems: true
-      });
-    };
-
-    BaseOverlayView.prototype.onFeatureMouseOver = function (feature) {
-      var items, model, project;
-      if (this.bringFeatureToFront != null) {
-        this.bringFeatureToFront(feature);
-      }
-      project = Map.props.project;
-      items = project.get('data').items;
-      model = feature._model != null ? feature._model : feature.id;
-      items.setHovered(model);
-      this.setHeaderStripColor();
-      return Map.props.radio.commands.execute('update:tilemap', {
-        ignoreMapItems: true
-      });
-    };
-
-    BaseOverlayView.prototype.onFeatureClick = function (feature) {
-      var items, model, project;
-      if (Map.map != null && Map.map.ignoreNextClick) {
-        Map.map.ignoreNextClick = false;
-        return;
-      }
-      if (d3.event.stopPropagation != null) {
-        d3.event.stopPropagation();
-      }
-      model = feature._model;
-      project = Map.props.project;
-      items = project.get('data').items;
-      items.setActive(model);
-      Map.props.setUiState({
-        isInfoBoxActive: true
-      });
-      Map.map.ignoreNextClick = false;
-      return this.activeFeature = feature;
-    };
-
-    BaseOverlayView.prototype.onRender = function () {
-      return $('.loading-icon').remove();
-    };
-
-    BaseOverlayView.prototype.onMapClick = function (e) {
-      if (this.activeFeature != null) {
-        this.activeFeature = void 0;
-        return Map.props.radio.vent.trigger('item:deactivate');
-      }
-    };
-
-    BaseOverlayView.prototype.getFeatureByModel = function (model) {
-      var feature, i, len, ref;
-      ref = this.collection.features;
-      for (i = 0, len = ref.length; i < len; i++) {
-        feature = ref[i];
-        if (feature._model === model) {
-          return feature;
-        }
-      }
-    };
-
-    BaseOverlayView.prototype.getFeatureDisplayState = function (feature) {
-      var filter, model, searchTerm;
-      if (Map.props.uiState == null) {
-        return;
-      }
-      filter = Map.props.project.get('data').filter;
-      searchTerm = Map.props.uiState.searchTerm;
-      model = feature._model;
-      if (model != null) {
-        return model.getDisplayState(filter, searchTerm);
-      }
-    };
-
-    BaseOverlayView.prototype.getFill = function (feature) {
-      var filter, id, valueIndeces;
-      filter = Map.props.project.get('data').filter;
-      valueIndeces = filter.getFriendlyIndeces(feature._model, 15);
-      if (valueIndeces == null || valueIndeces.length === 0) {
-        return;
-      }
-      if (valueIndeces.length === 1) {
-        return Map.colors.toRgb(valueIndeces[0] - 1);
-      }
-      id = Map.props.radio.reqres.request('get:pattern:id', valueIndeces);
-      return "url(#stripe-pattern-" + id + ")";
-    };
-
-    BaseOverlayView.prototype._areBoundsFinite = function (bounds) {
-      return isFinite(bounds[0][0]) && isFinite(bounds[0][1]) && isFinite(bounds[1][0]) && isFinite(bounds[1][1]);
-    };
-
-    BaseOverlayView.prototype.resizeContainer = function (geoJson, path, extraExpansion) {
-      var bottomRight, bounds, topLeft;
-      bounds = path.bounds(geoJson);
-      if (this._areBoundsFinite(bounds)) {
-        bounds[0][0] -= extraExpansion;
-        bounds[0][1] -= extraExpansion;
-        bounds[1][0] += extraExpansion;
-        bounds[1][1] += extraExpansion;
-        topLeft = bounds[0];
-        bottomRight = bounds[1];
-        this.svg.attr({
-          'width': bottomRight[0] - topLeft[0],
-          'height': bottomRight[1] - topLeft[1] + 50
-        });
-        this.svg.style({
-          'left': topLeft[0] + 'px',
-          'top': topLeft[1] + 'px'
-        });
-        return this.g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
-      }
-    };
-
-    BaseOverlayView.prototype.destroy = function () {
-      if (this.stopListening) {
-        this.stopListening();
-      }
-      this.g.selectAll('path').remove();
-      this.g.remove();
-      this.svg.remove();
-      return this;
-    };
-
-    return BaseOverlayView;
-  })();
-}).call(undefined);
-'use strict';
-
-(function () {
-  var extend = function extend(child, parent) {
-    for (var key in parent) {
-      if (hasProp.call(parent, key)) child[key] = parent[key];
-    }function ctor() {
-      this.constructor = child;
-    }ctor.prototype = parent.prototype;child.prototype = new ctor();child.__super__ = parent.prototype;return child;
-  },
-      hasProp = ({}).hasOwnProperty;
-
-  Map.PathOverlayView = (function (superClass) {
-    var getProjectedPoint;
-
-    extend(PathOverlayView, superClass);
-
-    function PathOverlayView() {
-      return PathOverlayView.__super__.constructor.apply(this, arguments);
-    }
-
-    PathOverlayView.prototype.bringFeatureToFront = function (feature) {
-      return this.g.selectAll('path').sort(function (a, b) {
-        if (a.id !== feature.id) {
-          return -1;
-        }
-        return +1;
-      });
-    };
-
-    PathOverlayView.prototype.render = function () {
-      if (this.renderSvgContainer != null) {
-        this.renderSvgContainer();
-      }
-      this.geoJson = this.collection;
-      this.g.selectAll('path').data(this.geoJson.features).enter().append('path').on('mouseover', this.onFeatureMouseOver.bind(this)).on('mouseout', this.onFeatureMouseOut.bind(this)).on('click', (function (_this) {
-        return function (d) {
-          if (d3.event.defaultPrevented) {
-            return;
-          }
-          return _this.onFeatureClick(d);
-        };
-      })(this));
-      this.update();
-      this.onRender();
-      this.setMapEventListeners();
-      return this;
-    };
-
-    getProjectedPoint = function (long, lat) {
-      return this.map.latLngToLayerPoint(new L.LatLng(lat, long));
-    };
-
-    PathOverlayView.prototype.getPath = function (latLongScaleOrigin, latLongPosition, scale) {
-      var map, path, projectPoint, transform;
-      map = this.map;
-      if (scale == null) {
-        scale = 1;
-      }
-      projectPoint = function (long, lat) {
-        var modifiedPoint, position, regularPoint, scaleOrigin;
-        regularPoint = map.latLngToLayerPoint(new L.LatLng(lat, long));
-        if (!(latLongScaleOrigin != null && latLongPosition != null)) {
-          this.stream.point(regularPoint.x, regularPoint.y);
-          return this;
-        }
-        scaleOrigin = map.latLngToLayerPoint(new L.LatLng(latLongScaleOrigin[0], latLongScaleOrigin[1]));
-        position = map.latLngToLayerPoint(new L.LatLng(latLongPosition[0], latLongPosition[1]));
-        modifiedPoint = {
-          x: position.x + (regularPoint.x - scaleOrigin.x) * scale,
-          y: position.y + (regularPoint.y - scaleOrigin.y) * scale
-        };
-        this.stream.point(modifiedPoint.x, modifiedPoint.y);
         return this;
-      };
-      transform = d3.geo.transform({
-        point: projectPoint
-      });
-      path = d3.geo.path().projection(transform);
-      return path;
-    };
+    }
 
-    PathOverlayView.prototype.getUsStateProjectionModifiers = function (usStateId) {
-      return {
-        usStateLatLongCentroids: {
-          '2': {
-            latLongScaleOrigin: [65.4169289, -153.4474854],
-            latLongPosition: [30.2065372, -134.6754338],
-            scale: 0.2
-          },
-          '15': {
-            latLongScaleOrigin: [20.8031863, -157.6043485],
-            latLongPosition: []
-          },
-          '11': {
-            latLongScaleOrigin: [38.9093905, -77.0328359],
-            latLongPosition: [32.0680227, -70.8874945],
-            scale: 15
-          }
+    /*
+     *
+     *
+     */
+
+    _createClass(_class, [{
+        key: 'setMapEventListeners',
+        value: function setMapEventListeners() {
+            Map.map.on('viewreset', this.update.bind(this));
+            Map.map.on('click', this.onMapClick.bind(this));
         }
-      };
-    };
 
-    PathOverlayView.prototype.update = function () {
-      var geoJson, path;
-      path = this.getPath();
-      geoJson = this.collection;
-      this.g.selectAll('path').attr({
-        'class': (function (_this) {
-          return function (feature) {
-            var cls, displayState;
-            displayState = _this.getFeatureDisplayState(feature);
-            cls = 'map-region map-region__element';
-            if (displayState != null) {
-              cls += " map-region--" + displayState;
+        /*
+         * Initialize.
+         *
+         */
+    }, {
+        key: 'renderSvgContainer',
+        value: function renderSvgContainer() {
+            this.svg = d3.select(this.map.getPanes().overlayPane).append('svg').attr('class', 'deethree');
+            this.g = this.svg.append('g').attr('class', 'leaflet-zoom-hide');
+        }
+
+        /*
+         *
+         *
+         */
+    }, {
+        key: 'setHeaderStripColor',
+        value: function setHeaderStripColor() {
+            var project, indeces;
+            project = Map.props.project;
+            indeces = project.getFriendlyIndeces();
+            if (indeces.length > 0) {
+                Map.props.radio.commands.execute('set:header:strip:color', { color: Map.colors.toRgb(indeces[0] - 1) });
+            } else {
+                Map.props.radio.commands.execute('set:header:strip:color', 'none');
             }
-            return cls;
-          };
-        })(this),
-        'd': (function (_this) {
-          return function (feature) {
-            var model;
+        }
+
+        /*
+         * Return pixel coordinates of a map display item's centroid.
+         *
+         */
+    }, {
+        key: 'getItemMapPosition',
+        value: function getItemMapPosition(item) {
+            var identityPath, feature, longLatArrayCentroid, latLong, map;
+            identityPath = d3.geo.path().projection(function (d) {
+                return d;
+            });
+            feature = this.getFeatureByModel(item);
+            longLatArrayCentroid = identityPath.centroid(feature);
+            latLong = L.latLng(longLatArrayCentroid[1], longLatArrayCentroid[0]);
+            map = Map.map;
+            return map.latLngToContainerPoint(latLong);
+        }
+
+        /*
+         * Fade out, update entire overlaypane and fade back in.
+         *
+         */
+    }, {
+        key: 'updateAnimated',
+        value: function updateAnimated() {
+            var _this2 = this;
+
+            var $el = $('.leaflet-overlay-pane');
+            // call stop() to reset previously started animations
+            $el.stop().animate({ opacity: 0 }, 750, 'swing', function () {
+                _this2.update();
+                $el.animate({ opacity: 1 }, 750);
+            });
+        }
+
+        /*
+         * Callback.
+         *
+         */
+    }, {
+        key: 'onFeatureMouseOut',
+        value: function onFeatureMouseOut(feature) {
+            var project, items;
+            project = Map.props.project;
+            items = project.get('data').items;
+            items.setHovered(-1);
+            this.setHeaderStripColor();
+            Map.props.radio.commands.execute('update:tilemap', { ignoreMapItems: true });
+        }
+
+        /*
+         * Callback.
+         *
+         */
+    }, {
+        key: 'onFeatureMouseOver',
+        value: function onFeatureMouseOver(feature) {
+            var project, items, model;
+            if (this.bringFeatureToFront) {
+                this.bringFeatureToFront(feature);
+            }
+            project = Map.props.project;
+            items = project.get('data').items;
+            model = feature._model ? feature._model : feature.id;
+            items.setHovered(model);
+            this.setHeaderStripColor();
+            Map.props.radio.commands.execute('update:tilemap', { ignoreMapItems: true });
+        }
+
+        /*
+         * Callback.
+         *
+         */
+    }, {
+        key: 'onFeatureClick',
+        value: function onFeatureClick(feature) {
+            var model, project, items;
+            if (Map.map && Map.map.ignoreNextClick) {
+                Map.map.ignoreNextClick = false;
+                return;
+            }
+            if (d3.event.stopPropagation) {
+                d3.event.stopPropagation();
+            }
             model = feature._model;
-            if (model != null && model.get('_itemType') === 'us_state' && model.get('id') === 2) {
-              return _this.getPath([65.4169289, -153.4474854], [30.2065372, -134.6754338], 0.2)(feature);
-            }
-            if (model != null && model.get('_itemType') === 'us_state' && model.get('id') === 11) {
-              return _this.getPath([38.9093905, -77.0328359], [32.0680227, -70.8874945], 15)(feature);
-            }
-            return _this.getPath()(feature);
-          };
-        })(this),
-        'fill': this.getFill.bind(this)
-      });
-      this.resizeContainer(geoJson, path, 0);
-      return this;
-    };
+            project = Map.props.project;
+            items = project.get('data').items;
+            items.setActive(model);
+            Map.props.setUiState({ isInfoBoxActive: true });
+            Map.map.ignoreNextClick = false;
+            this.activeFeature = feature;
+            return this;
+        }
 
-    return PathOverlayView;
-  })(Map.BaseOverlayView);
-}).call(undefined);
+        /*
+         *
+         *
+         */
+    }, {
+        key: 'onRender',
+        value: function onRender() {
+            $('.loading-icon').remove();
+        }
+
+        /*
+         * Callback.
+         *
+         */
+    }, {
+        key: 'onMapClick',
+        value: function onMapClick(e) {
+            if (this.activeFeature) {
+                this.activeFeature = undefined;
+                Map.props.radio.vent.trigger('item:deactivate');
+            }
+        }
+
+        /*
+         * Returns feature corresponding to model.
+         *
+         */
+    }, {
+        key: 'getFeatureByModel',
+        value: function getFeatureByModel(model) {
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = this.collection.features[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var feature = _step.value;
+
+                    if (feature._model === model) {
+                        return feature;
+                    }
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator['return']) {
+                        _iterator['return']();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+        }
+
+        /*
+         * Returns display state of a feature.
+         *
+         */
+    }, {
+        key: 'getFeatureDisplayState',
+        value: function getFeatureDisplayState(feature) {
+            var filter, searchTerm, model;
+            filter = Map.props.project.get('data').filter;
+            searchTerm = Map.props.uiState.searchTerm;
+            model = feature._model;
+            if (model) {
+                return model.getDisplayState(filter, searchTerm);
+            }
+        }
+
+        /*
+         * Get feature fill.
+         * @param {object} feature
+         * @returns {string} fill - Color string or stripe pattern url.
+         */
+    }, {
+        key: 'getFill',
+        value: function getFill(feature) {
+            var filter, valueIndeces, id;
+            filter = Map.props.project.get('data').filter;
+            valueIndeces = filter.getFriendlyIndeces(feature._model, 15);
+            if (!valueIndeces || valueIndeces.length === 0) {
+                return;
+            }
+            if (valueIndeces.length === 1) {
+                return Map.colors.toRgb(valueIndeces[0] - 1);
+            }
+            // Communicate with Comp.Setup.Component to create and retrieve stripe pattern id
+            id = Map.props.radio.reqres.request('get:pattern:id', valueIndeces);
+            return 'url(#stripe-pattern-' + id + ')';
+        }
+
+        /*
+         * Checks if bounds are finite.
+         * @returns {boolean}
+         */
+    }, {
+        key: '_areBoundsFinite',
+        value: function _areBoundsFinite(bounds) {
+            return isFinite(bounds[0][0]) && isFinite(bounds[0][1]) && isFinite(bounds[1][0]) && isFinite(bounds[1][1]);
+        }
+
+        /*
+         * Resizes and repositions svg container and its direct child group.
+         * @param {object} svg
+         * @param {object} g
+         * @param {object} geoJson
+         * @param {object} path
+         * @param {number} extraExpansion - Pixel amount the svg container is to be expanded by, in order to avoid clipping off parts of shapes close to the edge.
+         */
+    }, {
+        key: 'resizeContainer',
+        value: function resizeContainer(geoJson, path, extraExpansion) {
+            var bounds = path.bounds(geoJson),
+                topLeft,
+                bottomRight;
+            if (!this._areBoundsFinite(bounds)) {
+                return;
+            }
+            bounds[0][0] -= extraExpansion;
+            bounds[0][1] -= extraExpansion;
+            bounds[1][0] += extraExpansion;
+            bounds[1][1] += extraExpansion;
+            topLeft = bounds[0];
+            bottomRight = bounds[1];
+            this.svg.attr({ 'width': bottomRight[0] - topLeft[0], 'height': bottomRight[1] - topLeft[1] + 50 });
+            this.svg.style({ 'left': topLeft[0] + 'px', 'top': topLeft[1] + 'px' });
+            this.g.attr("transform", 'translate(' + -topLeft[0] + ',' + -topLeft[1] + ')');
+            return this;
+        }
+
+        /*
+         * Destroy overlay view along with all event listeners.
+         *
+         */
+    }, {
+        key: 'destroy',
+        value: function destroy() {
+            if (this.stopListening) this.stopListening();
+            this.g.selectAll('path').remove();
+            this.g.remove();
+            this.svg.remove();
+            return this;
+        }
+    }]);
+
+    return _class;
+})();
+// view constructor written using the module pattern (function returning an object, without a new keyword)
 'use strict';
 
-(function () {
-  var extend = function extend(child, parent) {
-    for (var key in parent) {
-      if (hasProp.call(parent, key)) child[key] = parent[key];
-    }function ctor() {
-      this.constructor = child;
-    }ctor.prototype = parent.prototype;child.prototype = new ctor();child.__super__ = parent.prototype;return child;
-  },
-      hasProp = ({}).hasOwnProperty;
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-  Map.PinOverlayView = (function (superClass) {
-    extend(PinOverlayView, superClass);
+var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
-    function PinOverlayView() {
-      return PinOverlayView.__super__.constructor.apply(this, arguments);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Map.PathOverlayView = (function (_Map$BaseOverlayView) {
+    _inherits(_class, _Map$BaseOverlayView);
+
+    function _class() {
+        _classCallCheck(this, _class);
+
+        _get(Object.getPrototypeOf(_class.prototype), 'constructor', this).apply(this, arguments);
     }
 
-    PinOverlayView.prototype.getShapes = function () {
-      return [{
-        path: this.shape.paths.slice_1_of_2,
-        className: 'map-pin__1-of-2'
-      }, {
-        path: this.shape.paths.slice_2_of_2,
-        className: 'map-pin__2-of-2'
-      }, {
-        path: this.shape.paths.slice_1_of_3,
-        className: 'map-pin__1-of-3'
-      }, {
-        path: this.shape.paths.slice_2_of_3_a,
-        className: 'map-pin__2-of-3'
-      }, {
-        path: this.shape.paths.slice_2_of_3_b,
-        className: 'map-pin__2-of-3'
-      }, {
-        path: this.shape.paths.slice_3_of_3,
-        className: 'map-pin__3-of-3'
-      }, {
-        path: this.shape.paths.outer,
-        className: 'map-pin__outer'
-      }, {
-        path: this.shape.paths.inner,
-        className: 'map-pin__inner'
-      }];
-    };
+    _createClass(_class, [{
+        key: 'bringFeatureToFront',
 
-    PinOverlayView.prototype.render = function () {
-      var pindrop;
-      if (this.renderSvgContainer != null) {
-        this.renderSvgContainer();
-      }
-      this.shape = Map.svgPaths.shapes.pindrop;
-      pindrop = this.getShapes();
-      this.g.selectAll('g').data(this.collection.features).enter().append('g').attr({
-        'class': 'map-pin'
-      }).on('mouseover', this.onFeatureMouseOver.bind(this)).on('mouseout', this.onFeatureMouseOut.bind(this)).on('click', this.onFeatureClick.bind(this)).selectAll('path').data(pindrop).enter().append('path').attr({
-        'd': function d(_d) {
-          return _d.path;
-        },
-        'class': function _class(d) {
-          return d.className;
+        /*
+         * Brings feature to the top so its stroke is not covered by non-highlighted paths.
+         */
+        value: function bringFeatureToFront(feature) {
+            this.g.selectAll('path').sort(function (a, b) {
+                if (a.id !== feature.id) {
+                    return -1;
+                }
+                return +1;
+            });
         }
-      });
-      this.update();
-      this.onRender();
-      return this.setMapEventListeners();
-    };
 
-    PinOverlayView.prototype.getFills = function (feature) {
-      var filter, valueIndeces;
-      filter = Map.props.project.get('data').filter;
-      valueIndeces = filter.getFriendlyIndeces(feature._model, 15);
-      if (valueIndeces == null || valueIndeces.length === 0) {
-        return;
-      }
-      return valueIndeces.map(function (valueIndex) {
-        return Map.colors.toRgb(valueIndex - 1);
-      });
-    };
+        /*
+         * Backbone-like render method.
+         */
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this = this;
 
-    PinOverlayView.prototype.update = function () {
-      var getIndecesFromClassName, getProjectedPoint, path, projectPoint, self, transform;
-      getProjectedPoint = function (long, lat) {
-        return Map.map.latLngToLayerPoint(new L.LatLng(lat, long));
-      };
-      projectPoint = function (long, lat) {
-        var point;
-        point = getProjectedPoint(long, lat);
-        this.stream.point(point.x, point.y);
-        return this;
-      };
-      getIndecesFromClassName = function (cls) {
-        var indeces;
-        indeces = cls.split('__')[1].split('-');
-        if (indeces[2] != null) {
-          indeces = indeces = [parseInt(indeces[0], 10), parseInt(indeces[2], 10)];
-          return indeces;
+            this.renderSvgContainer();
+            this.geoJson = this.collection;
+            this.g.selectAll('path').data(this.geoJson.features).enter().append('path').on('mouseover', this.onFeatureMouseOver.bind(this)).on('mouseout', this.onFeatureMouseOut.bind(this)).on('click', function (d) {
+                if (d3.event.defaultPrevented) {
+                    return;
+                }
+                _this.onFeatureClick(d);
+            });
+            this.update();
+            // TODO - move into a common onShow method
+            this.onRender();
+            this.setMapEventListeners();
+            return this;
         }
-      };
-      transform = d3.geo.transform({
-        point: projectPoint
-      });
-      path = d3.geo.path().projection(transform);
-      self = this;
-      this.g.selectAll('g').attr({
-        transform: function transform(d) {
-          var coord, pt, x, y;
-          coord = d.geometry.coordinates;
-          pt = getProjectedPoint(coord[0], coord[1]);
-          x = pt.x - self.shape.dim.width / 2;
-          y = pt.y - self.shape.dim.height;
-          return "translate(" + x + "," + y + ")";
-        },
-        "class": function _class(feature) {
-          var cls, displayState;
-          displayState = self.getFeatureDisplayState(feature);
-          cls = 'map-pin map-pin__element';
-          if (displayState != null) {
-            cls += " map-pin--" + displayState;
-          }
-          return cls;
+
+        /*
+         * Get projected point.
+         * @param {number} long
+         * @param {number} lat
+         * @returns {object}
+         */
+    }, {
+        key: 'getProjectedPoint',
+        value: function getProjectedPoint(long, lat) {
+            this.map.latLngToLayerPoint(new L.LatLng(lat, long));
         }
-      }).selectAll('path').attr({
-        'class': function _class(d, i) {
-          var baseClass;
-          baseClass = 'map-pin__element';
-          return d.className + ' ' + baseClass;
-        },
-        'fill': function fill(d, i) {
-          var colorIndex, colors, indeces, parentFeature;
-          parentFeature = d3.select(this.parentNode).datum();
-          colors = self.getFills(parentFeature);
-          if (colors == null) {
-            return 'none';
-          }
-          indeces = getIndecesFromClassName(d.className);
-          if (indeces != null) {
-            if (colors.length === 1) {
-              return colors[0];
+
+        /*
+         * Get transform path based on Leaflet map.
+         * @param {array} latLongScaleOrigin
+         * @param {array} latLongPosition
+         * @returns {function} path
+         */
+    }, {
+        key: 'getPath',
+        value: function getPath(latLongScaleOrigin, latLongPosition) {
+            var scale = arguments.length <= 2 || arguments[2] === undefined ? 1 : arguments[2];
+
+            var map = this.map,
+                transform,
+                path;
+
+            /*
+             * Find the coordinates of a point from lat long coordinates.
+             * @param {number} long - Longitude.
+             * @param {number} lat - Latitude.
+             */
+            var projectPoint = function projectPoint(long, lat) {
+
+                var regularPoint, scaleOrigin, position, modifiedPoint;
+
+                regularPoint = map.latLngToLayerPoint(new L.LatLng(lat, long));
+
+                if (!latLongScaleOrigin || !latLongPosition) {
+                    this.stream.point(regularPoint.x, regularPoint.y);
+                    return this;
+                }
+
+                scaleOrigin = map.latLngToLayerPoint(new L.LatLng(latLongScaleOrigin[0], latLongScaleOrigin[1]));
+                position = map.latLngToLayerPoint(new L.LatLng(latLongPosition[0], latLongPosition[1]));
+
+                modifiedPoint = {
+                    x: position.x + (regularPoint.x - scaleOrigin.x) * scale,
+                    y: position.y + (regularPoint.y - scaleOrigin.y) * scale
+                };
+
+                this.stream.point(modifiedPoint.x, modifiedPoint.y);
+                return this;
+            };
+
+            transform = d3.geo.transform({ point: projectPoint });
+            path = d3.geo.path().projection(transform);
+            return path;
+        }
+
+        /*
+         * Get scale and centroid modifiers that position Alaska, Hawaii and DC in a visible format.
+         */
+    }, {
+        key: 'getUsStateProjectionModifiers',
+        value: function getUsStateProjectionModifiers(usStateId) {
+            var usStateLatLongCentroids = {
+                '2': {
+                    latLongScaleOrigin: [65.4169289, -153.4474854],
+                    latLongPosition: [30.2065372, -134.6754338],
+                    scale: 0.2
+                },
+                '15': {
+                    latLongScaleOrigin: [20.8031863, -157.6043485],
+                    latLongPosition: [],
+                    scale: 1
+                },
+                '11': {
+                    latLongScaleOrigin: [38.9093905, -77.0328359],
+                    latLongPosition: [32.0680227, -70.8874945],
+                    scale: 15
+                }
+            };
+        }
+
+        /*
+         * Apply transform and classes on paths.
+         */
+    }, {
+        key: 'update',
+        value: function update() {
+            var _this2 = this;
+
+            var path = this.getPath(),
+                geoJson = this.collection;
+            this.g.selectAll('path').attr({
+                'class': function _class(feature) {
+                    var displayState = _this2.getFeatureDisplayState(feature);
+                    var cls = 'map-region map-region__element';
+                    if (displayState) {
+                        cls += ' map-region--' + displayState;
+                    }
+                    return cls;
+                },
+                'd': function d(feature) {
+                    // access embedded Backbone model
+                    var model = feature._model;
+                    if (model && model.get('_itemType') === 'us_state' && model.get('id') === 2) {
+                        return _this2.getPath([65.4169289, -153.4474854], [30.2065372, -134.6754338], 0.2)(feature);
+                    }
+                    if (model && model.get('_itemType') === 'us_state' && model.get('id') === 11) {
+                        return _this2.getPath([38.9093905, -77.0328359], [32.0680227, -70.8874945], 15)(feature);
+                    }
+                    return _this2.getPath()(feature);
+                },
+                'fill': this.getFill.bind(this)
+            });
+            this.resizeContainer(geoJson, path, 0);
+            return this;
+        }
+    }]);
+
+    return _class;
+})(Map.BaseOverlayView);
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+Map.PinOverlayView = (function (_Map$BaseOverlayView) {
+    _inherits(_class, _Map$BaseOverlayView);
+
+    function _class() {
+        _classCallCheck(this, _class);
+
+        _get(Object.getPrototypeOf(_class.prototype), 'constructor', this).apply(this, arguments);
+    }
+
+    _createClass(_class, [{
+        key: 'getShapes',
+
+        /*
+         *
+         *
+         */
+        value: function getShapes() {
+            return [{ path: this.shape.paths.slice_1_of_2, className: 'map-pin__1-of-2' }, { path: this.shape.paths.slice_2_of_2, className: 'map-pin__2-of-2' }, { path: this.shape.paths.slice_1_of_3, className: 'map-pin__1-of-3' }, { path: this.shape.paths.slice_2_of_3_a, className: 'map-pin__2-of-3' }, { path: this.shape.paths.slice_2_of_3_b, className: 'map-pin__2-of-3' }, { path: this.shape.paths.slice_3_of_3, className: 'map-pin__3-of-3' }, { path: this.shape.paths.outer, className: 'map-pin__outer' }, { path: this.shape.paths.inner, className: 'map-pin__inner' }];
+        }
+
+        /*
+         *
+         *
+         */
+    }, {
+        key: 'render',
+        value: function render() {
+
+            var pindrop;
+
+            this.renderSvgContainer();
+
+            this.shape = Map.svgPaths.shapes.pindrop;
+
+            // Get halves and thirds of the pin to apply corresponding coloring.
+            pindrop = this.getShapes();
+
+            this.g.selectAll('g').data(this.collection.features).enter().append('g').attr({ 'class': 'map-pin' }).on('mouseover', this.onFeatureMouseOver.bind(this)).on('mouseout', this.onFeatureMouseOut.bind(this)).on('click', this.onFeatureClick.bind(this)).selectAll('path').data(pindrop).enter().append('path').attr({
+                'd': function d(_d) {
+                    return _d.path;
+                },
+                'class': function _class(d) {
+                    return d.className;
+                }
+            });
+
+            this.update();
+            this.onRender();
+            this.setMapEventListeners();
+        }
+
+        /*
+         *
+         *
+         */
+    }, {
+        key: 'getFills',
+        value: function getFills(feature) {
+            var filter, valueIndeces;
+            filter = Map.props.project.get('data').filter;
+            valueIndeces = filter.getFriendlyIndeces(feature._model, 15);
+            if (!valueIndeces || valueIndeces.length === 0) {
+                return;
             }
-            if (colors.length === 2 && indeces[1] === 2 || colors.length === 3 && indeces[1] === 3 || colors.length > 3) {
-              colorIndex = indeces[0] - 1;
-              if (colors[colorIndex] != null) {
-                return colors[colorIndex];
-              }
-            }
-          }
-          return 'none';
+            return valueIndeces.map(function (valueIndex) {
+                return Map.colors.toRgb(valueIndex - 1);
+            });
         }
-      });
-      this.resizeContainer(this.collection, path, 100);
-      return this;
-    };
 
-    return PinOverlayView;
-  })(Map.BaseOverlayView);
-}).call(undefined);
+        /*
+         *
+         *
+         */
+    }, {
+        key: 'update',
+        value: function update() {
+
+            var transform,
+                path,
+                self = this;
+
+            var getProjectedPoint = function getProjectedPoint(long, lat) {
+                return Map.map.latLngToLayerPoint(new L.LatLng(lat, long));
+            };
+
+            var projectPoint = function projectPoint(long, lat) {
+                var point = getProjectedPoint(long, lat);
+                this.stream.point(point.x, point.y);
+                return this;
+            };
+
+            // Assuming a class name of the form .base__1-of-3, extracts numbers 1 and 3 in an array.
+            // @returns {array}
+            var getIndecesFromClassName = function getIndecesFromClassName(cls) {
+                var indeces = cls.split('__')[1].split('-');
+                if (indeces[2] != null) {
+                    indeces = [parseInt(indeces[0], 10), parseInt(indeces[2], 10)];
+                    return indeces;
+                }
+            };
+
+            transform = d3.geo.transform({ point: projectPoint });
+            path = d3.geo.path().projection(transform);
+
+            this.g.selectAll('g').attr({
+                transform: function transform(d) {
+                    var coord, pt, x, y;
+                    coord = d.geometry.coordinates;
+                    pt = getProjectedPoint(coord[0], coord[1]);
+                    // The display coordinates for an SVG point to the upper left corner of an SVG.
+                    //   To correctly center the map pin, subtract half the width and the full height.
+                    x = pt.x - self.shape.dim.width / 2;
+                    y = pt.y - self.shape.dim.height;
+                    return 'translate(' + x + ',' + y + ')';
+                },
+                'class': function _class(feature) {
+                    var displayState, cls;
+                    displayState = self.getFeatureDisplayState(feature);
+                    cls = 'map-pin map-pin__element';
+                    if (displayState) {
+                        cls += ' map-pin--' + displayState;
+                    }
+                    return cls;
+                }
+            }).selectAll('path').attr({
+                'class': function _class(d, i) {
+                    var baseClass = 'map-pin__element';
+                    return d.className + ' ' + baseClass;
+                },
+
+                // These sub-paths hold halves and thirds of the entire pin so that their
+                //   colors may be set dynamically based on how many color values need to be rendered.
+                // This method gets the fill colors as well as the indeces (1-of-3 means the first third)
+                //   and applies colors appropriately.
+                // Logic is complicated and poorly factored.
+                'fill': function fill(d, i) {
+                    var parentFeature, colors, indeces;
+                    parentFeature = d3.select(this.parentNode).datum();
+                    colors = self.getFills(parentFeature);
+                    if (!colors) {
+                        return 'none';
+                    }
+                    indeces = getIndecesFromClassName(d.className);
+                    if (indeces) {
+                        if (colors.length === 1) {
+                            return colors[0];
+                        }
+                        if (colors.length === 2 && indeces[1] === 2 || colors.length === 3 && indeces[1] === 3 || colors.length > 3) {
+                            var colorIndex = indeces[0] - 1;
+                            if (colors[colorIndex]) {
+                                return colors[colorIndex];
+                            }
+                        }
+                    }
+                    return 'none';
+                }
+            });
+
+            this.resizeContainer(this.collection, path, 100);
+
+            return this;
+        }
+    }]);
+
+    return _class;
+})(Map.BaseOverlayView);
