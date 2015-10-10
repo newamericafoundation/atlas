@@ -416,92 +416,144 @@ Map.control = {
     }
 
 };
+// This is a custom view constructor that uses d3 and Mapbox to render graphics.
 'use strict';
 
-(function () {
-  Map.RootView = (function () {
-    function RootView(options) {
-      this.el = options.el;
-      this.elId = this.el.substr(1);
-      this.$el = $(this.el);
-      _.extend(this, Backbone.Events);
-      this;
-    }
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-    RootView.prototype._getZoomLevel = function () {
-      var width;
-      width = this.$el.width();
-      if (width > 1350) {
-        return 5;
-      }
-      if (width > 700) {
-        return 4;
-      }
-      return 3;
-    };
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-    RootView.prototype._setupMap = function () {
-      var zoomLevel;
-      zoomLevel = this._getZoomLevel();
-      this.map.setView([37.6, -95.665], zoomLevel);
-      this.map.scrollWheelZoom.disable();
-      _.extend(this.map, Map.control);
-      this.map.ignoreNextClick = false;
-      this.map.on('dragstart', (function (_this) {
-        return function (e) {
-          return Map.props.setUiState({
-            isMapDragged: true
-          });
-        };
-      })(this));
-      this.map.on('dragend', (function (_this) {
-        return function (e) {
-          var items;
-          Map.props.setUiState({
-            isMapDragged: false
-          });
-          items = Map.props.project.get('data').items;
-          if (e.distance > 15 && items.hovered != null) {
-            return _this.map.ignoreNextClick = true;
-          }
-        };
-      })(this));
-      return Map.map = this.map;
-    };
+Map.RootView = (function () {
 
-    RootView.prototype.getMapOptions = function () {
-      return {
-        attributionControl: true,
-        zoomControl: false,
-        inertia: false
-      };
-    };
+	/*
+  *
+  *
+  */
 
-    RootView.prototype.render = function () {
-      L.mapbox.accessToken = 'pk.eyJ1Ijoicm9zc3ZhbmRlcmxpbmRlIiwiYSI6ImRxc0hRR28ifQ.XwCYSPHrGbRvofTV-CIUqw';
-      this.map = L.mapbox.map(this.elId, 'rossvanderlinde.874ab107', this.getMapOptions());
-      Map.props.setMap(this.map);
-      this._setupMap();
-      this.hideAttribution();
-      return this;
-    };
+	function _class(options) {
+		_classCallCheck(this, _class);
 
-    RootView.prototype.hideAttribution = function () {
-      return $('.leaflet-control-attribution').hide();
-    };
+		this.el = options.el;
+		this.elId = this.el.substr(1);
+		this.$el = $(this.el);
+		_.extend(this, Backbone.Events);
+		return this;
+	}
 
-    RootView.prototype.destroy = function () {
-      if (this.map == null) {
-        return;
-      }
-      this.map.clearAllEventListeners();
-      this.map.remove();
-      return this;
-    };
+	/*
+  * Get optimal start zoom level corresponding to the width of the container.
+  *
+  */
 
-    return RootView;
-  })();
-}).call(undefined);
+	_createClass(_class, [{
+		key: '_getZoomLevel',
+		value: function _getZoomLevel() {
+			var width = this.$el.width();
+			if (width > 1350) {
+				return 5;
+			}
+			if (width > 700) {
+				return 4;
+			}
+			return 3;
+		}
+
+		/*
+   * Set up map.
+   *
+   */
+	}, {
+		key: '_setupMap',
+		value: function _setupMap() {
+			var _this = this;
+
+			var zoomLevel = this._getZoomLevel();
+			this.map.setView([37.6, -95.665], zoomLevel);
+			this.map.scrollWheelZoom.disable();
+			// add control convenience methods
+
+			_.extend(this.map, Map.control);
+
+			this.map.ignoreNextClick = false;
+			// do not register a map item click event if it is fired due to a map drag end
+
+			this.map.on('dragstart', function (e) {
+				Map.props.setUiState({ isMapDragged: true });
+			});
+
+			this.map.on('dragend', function (e) {
+				var items;
+				Map.props.setUiState({ isMapDragged: false });
+				// use functionality only if there is sufficient drag
+				//   as Leaflet sometimes detects slightly imperfect clicks as drags
+				items = Map.props.project.get('data').items;
+				if (e.distance > 15 && items.hovered) {
+					_this.map.ignoreNextClick = true;
+				}
+			});
+			// Expose map to the module.
+			Map.map = this.map;
+
+			return this;
+		}
+
+		/*
+   * Return map options.
+   * @returns {object} options
+   */
+	}, {
+		key: 'getMapOptions',
+		value: function getMapOptions() {
+			return {
+				attributionControl: true,
+				zoomControl: false,
+				inertia: false
+			};
+		}
+
+		/*
+   * Render view.
+   *
+   */
+	}, {
+		key: 'render',
+		value: function render() {
+			L.mapbox.accessToken = 'pk.eyJ1Ijoicm9zc3ZhbmRlcmxpbmRlIiwiYSI6ImRxc0hRR28ifQ.XwCYSPHrGbRvofTV-CIUqw';
+			this.map = L.mapbox.map(this.elId, 'rossvanderlinde.874ab107', this.getMapOptions());
+			Map.props.setMap(this.map);
+			this._setupMap();
+			this.hideAttribution();
+			return this;
+		}
+
+		/*
+   * Hide attribution view.
+   *
+   */
+	}, {
+		key: 'hideAttribution',
+		value: function hideAttribution() {
+			$('.leaflet-control-attribution').hide();
+		}
+
+		/*
+   * Destroy view. Clear Leaflet-specific event listeners.
+   *
+   */
+	}, {
+		key: 'destroy',
+		value: function destroy() {
+			if (!this.map) {
+				return;
+			}
+			this.map.clearAllEventListeners();
+			this.map.remove();
+			return this;
+		}
+	}]);
+
+	return _class;
+})();
 'use strict';
 
 (function () {
@@ -517,8 +569,18 @@ Map.control = {
           return _this.getItemMapPosition(item);
         };
       })(this));
-      this;
+      return this;
     }
+
+    BaseOverlayView.prototype.setMapEventListeners = function () {
+      Map.map.on('viewreset', this.update.bind(this));
+      return Map.map.on('click', this.onMapClick.bind(this));
+    };
+
+    BaseOverlayView.prototype.renderSvgContainer = function () {
+      this.svg = d3.select(this.map.getPanes().overlayPane).append('svg').attr('class', 'deethree');
+      return this.g = this.svg.append('g').attr('class', 'leaflet-zoom-hide');
+    };
 
     BaseOverlayView.prototype.setHeaderStripColor = function () {
       var indeces, project;
@@ -682,7 +744,7 @@ Map.control = {
     };
 
     BaseOverlayView.prototype.destroy = function () {
-      if (this.stopListening != null) {
+      if (this.stopListening) {
         this.stopListening();
       }
       this.g.selectAll('path').remove();
@@ -724,11 +786,6 @@ Map.control = {
       });
     };
 
-    PathOverlayView.prototype.renderSvgContainer = function () {
-      this.svg = d3.select(this.map.getPanes().overlayPane).append('svg').attr('class', 'deethree');
-      return this.g = this.svg.append('g').attr('class', 'leaflet-zoom-hide');
-    };
-
     PathOverlayView.prototype.render = function () {
       if (this.renderSvgContainer != null) {
         this.renderSvgContainer();
@@ -744,8 +801,7 @@ Map.control = {
       })(this));
       this.update();
       this.onRender();
-      this.map.on('viewreset', this.update.bind(this));
-      this.map.on('click', this.onMapClick.bind(this));
+      this.setMapEventListeners();
       return this;
     };
 
@@ -782,12 +838,23 @@ Map.control = {
       return path;
     };
 
-    PathOverlayView.prototype.getUsStateProjectionModifiers = function () {
+    PathOverlayView.prototype.getUsStateProjectionModifiers = function (usStateId) {
       return {
         usStateLatLongCentroids: {
-          '2': [65.4169289, -153.4474854],
-          '15': [20.8031863, -157.6043485],
-          '11': [38.9093905, -77.0328359]
+          '2': {
+            latLongScaleOrigin: [65.4169289, -153.4474854],
+            latLongPosition: [30.2065372, -134.6754338],
+            scale: 0.2
+          },
+          '15': {
+            latLongScaleOrigin: [20.8031863, -157.6043485],
+            latLongPosition: []
+          },
+          '11': {
+            latLongScaleOrigin: [38.9093905, -77.0328359],
+            latLongPosition: [32.0680227, -70.8874945],
+            scale: 15
+          }
         }
       };
     };
@@ -849,23 +916,8 @@ Map.control = {
       return PinOverlayView.__super__.constructor.apply(this, arguments);
     }
 
-    PinOverlayView.prototype.renderSvgContainer = function () {
-      this.svg = d3.select(Map.map.getPanes().overlayPane).append('svg').attr('class', 'deethree');
-      return this.g = this.svg.append('g').attr('class', 'leaflet-zoom-hide');
-    };
-
-    PinOverlayView.prototype.setMapEventListeners = function () {
-      Map.map.on('viewreset', this.update.bind(this));
-      return Map.map.on('click', this.onMapClick.bind(this));
-    };
-
-    PinOverlayView.prototype.render = function () {
-      var pindrop;
-      if (this.renderSvgContainer != null) {
-        this.renderSvgContainer();
-      }
-      this.shape = Map.svgPaths.shapes.pindrop;
-      pindrop = [{
+    PinOverlayView.prototype.getShapes = function () {
+      return [{
         path: this.shape.paths.slice_1_of_2,
         className: 'map-pin__1-of-2'
       }, {
@@ -890,6 +942,15 @@ Map.control = {
         path: this.shape.paths.inner,
         className: 'map-pin__inner'
       }];
+    };
+
+    PinOverlayView.prototype.render = function () {
+      var pindrop;
+      if (this.renderSvgContainer != null) {
+        this.renderSvgContainer();
+      }
+      this.shape = Map.svgPaths.shapes.pindrop;
+      pindrop = this.getShapes();
       this.g.selectAll('g').data(this.collection.features).enter().append('g').attr({
         'class': 'map-pin'
       }).on('mouseover', this.onFeatureMouseOver.bind(this)).on('mouseout', this.onFeatureMouseOut.bind(this)).on('click', this.onFeatureClick.bind(this)).selectAll('path').data(pindrop).enter().append('path').attr({

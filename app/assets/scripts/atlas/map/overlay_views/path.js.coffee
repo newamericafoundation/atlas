@@ -3,18 +3,9 @@ class Map.PathOverlayView extends Map.BaseOverlayView
 
     # Brings feature to the top so its stroke is not covered by non-highlighted paths.
     bringFeatureToFront: (feature) ->
-        @g.selectAll('path').sort (a, b) ->
+        this.g.selectAll('path').sort (a, b) ->
             return -1 if a.id isnt feature.id
             return +1
-
-
-    # Initialize.
-    renderSvgContainer: () ->
-        this.svg = d3.select(this.map.getPanes().overlayPane)
-            .append('svg')
-            .attr('class', 'deethree')
-        this.g = this.svg.append('g')
-            .attr('class', 'leaflet-zoom-hide')
 
 
     # Backbone-like render method.
@@ -22,7 +13,7 @@ class Map.PathOverlayView extends Map.BaseOverlayView
         this.renderSvgContainer() if this.renderSvgContainer?
         this.geoJson = this.collection
         this.g.selectAll('path')
-            .data @geoJson.features
+            .data(this.geoJson.features)
             .enter()
             .append 'path'
             .on('mouseover', this.onFeatureMouseOver.bind(this))
@@ -32,10 +23,9 @@ class Map.PathOverlayView extends Map.BaseOverlayView
                 this.onFeatureClick(d)
         this.update()
         # TODO - move into a common onShow method
-        this.onRender()
-        this.map.on('viewreset', this.update.bind(this))
-        this.map.on('click', this.onMapClick.bind(this))
-        return this
+        this.onRender();
+        this.setMapEventListeners();
+        return this;
 
 
     # Get projected point.
@@ -43,7 +33,7 @@ class Map.PathOverlayView extends Map.BaseOverlayView
     # @param {number} lat
     # @returns {object}
     getProjectedPoint = (long, lat) ->
-        this.map.latLngToLayerPoint(new L.LatLng(lat, long))
+        this.map.latLngToLayerPoint(new L.LatLng(lat, long));
 
 
     # Get transform path based on Leaflet map.
@@ -52,9 +42,9 @@ class Map.PathOverlayView extends Map.BaseOverlayView
     # @returns {function} path
     getPath: (latLongScaleOrigin, latLongPosition, scale) ->
 
-        map = this.map
+        map = this.map;
 
-        scale ?= 1
+        scale ?= 1;
 
         # Find the coordinates of a point from lat long coordinates.
         # @param {number} long - Longitude.
@@ -79,18 +69,26 @@ class Map.PathOverlayView extends Map.BaseOverlayView
 
             return this
 
-        transform = d3.geo.transform({ point: projectPoint })
-        path = d3.geo.path().projection(transform)
-        path
+        transform = d3.geo.transform({ point: projectPoint });
+        path = d3.geo.path().projection(transform);
+        return path
 
 
     # Get scale and centroid modifiers that position Alaska, Hawaii and DC in a visible format.
-    getUsStateProjectionModifiers: () ->
+    getUsStateProjectionModifiers: (usStateId) ->
 
         usStateLatLongCentroids:
-            '2': [ 65.4169289, -153.4474854 ]
-            '15': [ 20.8031863,-157.6043485 ]
-            '11': [ 38.9093905,-77.0328359 ]
+            '2': 
+                latLongScaleOrigin: [ 65.4169289, -153.4474854 ]
+                latLongPosition: [ 30.2065372,-134.6754338 ]
+                scale: 0.2
+            '15': 
+                latLongScaleOrigin: [ 20.8031863,-157.6043485 ]
+                latLongPosition: [  ]
+            '11': 
+                latLongScaleOrigin: [ 38.9093905,-77.0328359 ]
+                latLongPosition: [ 32.0680227,-70.8874945 ]
+                scale: 15
 
         # 
 
@@ -98,9 +96,9 @@ class Map.PathOverlayView extends Map.BaseOverlayView
     # Apply transform and classes on paths.
     update: () ->
 
-        path = this.getPath()
+        path = this.getPath();
 
-        geoJson = this.collection
+        geoJson = this.collection;
 
         this.g.selectAll('path')
 
@@ -126,6 +124,6 @@ class Map.PathOverlayView extends Map.BaseOverlayView
 
                 'fill': this.getFill.bind(@)
 
-        this.resizeContainer(geoJson, path, 0)
+        this.resizeContainer(geoJson, path, 0);
 
-        return this
+        return this;
