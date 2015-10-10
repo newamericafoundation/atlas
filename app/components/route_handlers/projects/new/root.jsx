@@ -5,10 +5,10 @@ import project from './../../../../models/project.js';
 
 class New extends NewBase {
 
-	getResourceName() {
-		return 'project';
-	}
-
+	/*
+	 *
+	 *
+	 */
 	getResourceConstructor() {
 		return project.Model;
 	}

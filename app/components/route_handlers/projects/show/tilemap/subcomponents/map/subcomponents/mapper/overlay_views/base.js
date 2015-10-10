@@ -63,11 +63,30 @@ class BaseOverlayView {
     getItemMapPosition(item) {
         var identityPath, feature, longLatArrayCentroid, latLong, map;
         identityPath = d3.geo.path().projection((d) => { return d; });
-        feature = this.getFeatureByModel(item)
-        longLatArrayCentroid = identityPath.centroid(feature)
+        feature = this.getFeatureByModel(item);
+        longLatArrayCentroid = identityPath.centroid(feature);
         latLong = L.latLng(longLatArrayCentroid[1], longLatArrayCentroid[0]);
         map = this.map;
         return map.latLngToContainerPoint(latLong);
+    }
+
+
+    /*
+     * 
+     *
+     */
+    latLongToModifiedContainerPoint(latLongPosition, latLongOriginCenter, latLongDestinationCenter, scale) {
+
+        var map = this.map;
+
+        var position = map.latLongToContainerPoint(new L.LatLng(latLongPosition[0]. latLongPosition[1]));
+        var originCenter = map.latLongToContainerPoint(new L.LatLng(latLongOriginCenter[0]. latLongOriginCenter[1]));
+        var destinationCenter = map.latLongToContainerPoint(new L.LatLng(latLongDestinationCenter[0], latLongDestinationCenter[1]));
+
+        var destination = [ 0, 0 ];
+
+        return destination;
+
     }
 
 

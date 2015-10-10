@@ -5,10 +5,10 @@ import project from './../../../../models/project.js';
 
 class Edit extends EditBase {
 
-	getResourceName() {
-		return 'project';
-	}
-
+	/*
+	 *
+	 *
+	 */
 	getResourceConstructor() {
 		return project.Model;
 	}

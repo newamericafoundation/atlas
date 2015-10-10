@@ -18,7 +18,11 @@ module.exports = {
     	'./db/connector.js',
     	'./db/batch_modifier/**/*',
 
-    	'./public/assets/styles/app.css'
+    	'./public/assets/styles/app.css',
+
+    	'./gulp_tasks/devops.js',
+
+    	'./gulpfile.js'
 
     ],
 

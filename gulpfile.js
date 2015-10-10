@@ -1,17 +1,2 @@
 require('babel/register');
-
-var gulp = require('gulp');
-
-require('./gulp_tasks/spec.js');
-require('./gulp_tasks/css.js');
-require('./gulp_tasks/js/index.js');
-
-require('./gulp_tasks/dev.js');
-require('./gulp_tasks/deploy.js');
-require('./gulp_tasks/devops.js');
-
-require('./gulp_tasks/default.js');
-
-require('./gulp_tasks/extract_boilerplate.js');
-
-require('./gulp_tasks/geo.js');
+require('./gulp_tasks/index.js');

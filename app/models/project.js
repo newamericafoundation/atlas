@@ -32,7 +32,6 @@ class Model extends base.Model {
         return [
 
             {
-                id: 'title',
                 formComponentName: 'Text',
                 formComponentProps: {
                     id: 'title',
@@ -43,7 +42,6 @@ class Model extends base.Model {
             },
 
             {
-                id: 'atlas_url',
                 formComponentName: 'Text',
                 formComponentProps: {
                     id: 'atlas_url',
@@ -54,7 +52,6 @@ class Model extends base.Model {
             },
 
             {
-                id: 'author',
                 formComponentName: 'Text',
                 formComponentProps: {
                     id: 'author',
@@ -65,7 +62,6 @@ class Model extends base.Model {
             },
 
             {
-                id: 'short_description',
                 formComponentName: 'Text',
                 formComponentProps: {
                     id: 'short_description',
@@ -76,7 +72,6 @@ class Model extends base.Model {
             },
 
             {
-                id: 'is_section_overview',
                 formComponentName: 'Radio',
                 formComponentProps: {
                     id: 'is_section_overview',
@@ -88,7 +83,6 @@ class Model extends base.Model {
             },
 
             {
-                id: 'is_live',
                 formComponentName: 'Radio',
                 formComponentProps: {
                     id: 'is_live',
@@ -100,7 +94,6 @@ class Model extends base.Model {
             },
 
             {
-                id: 'project_section_ids',
                 name: 'Project Sections',
                 formComponentName: 'ForeignCollectionCheckBox',
                 formComponentProps: {
@@ -112,7 +105,6 @@ class Model extends base.Model {
             },
 
             {
-                id: 'project_template_id',
                 formComponentName: 'ForeignCollectionRadio',
                 formComponentProps: {
                     id: 'project_template_id',
@@ -124,7 +116,6 @@ class Model extends base.Model {
             },
 
             {
-                id: 'tags',
                 formComponentName: 'SelectizeText',
                 formComponentProps: {
                     id: 'tags',
@@ -134,7 +125,6 @@ class Model extends base.Model {
             },
 
             {
-                id: 'body_text',
                 formComponentName: 'CKEditor',
                 formComponentProps: {
                     id: 'body_text',
@@ -143,7 +133,6 @@ class Model extends base.Model {
             },
 
             {
-                id: 'data',
                 formComponentName: 'SpreadsheetFile',
                 formComponentProps: {
                     id: 'data',
@@ -154,7 +143,6 @@ class Model extends base.Model {
             },
 
             {
-                id: 'encoded_image',
                 formComponentName: 'ImageFile',
                 formComponentProps: {
                     id: 'encoded_image',
@@ -164,7 +152,6 @@ class Model extends base.Model {
             },
 
             {
-                id: 'image_credit',
                 formComponentName: 'Text',
                 formComponentProps: {
                     id: 'image_credit',

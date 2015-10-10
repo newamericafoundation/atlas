@@ -7,6 +7,10 @@ import image from './../../../../models/image.js';
 
 class Delete extends DeleteBase {
 
+	/*
+	 *
+	 *
+	 */
 	getResourceConstructor() {
 		return image.Model;
 	}
