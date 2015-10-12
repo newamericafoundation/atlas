@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
+import marked from 'marked';
 
 import { Plus, Minus } from './../../../../../../general/icons.jsx';
 
@@ -46,7 +47,19 @@ class FilterKeyGroup extends React.Component {
 				<h1 className='title'>
 					{ info.name }
 				</h1>
-				{ this.state.isExpanded ? (<p>{ info.description }</p>) : null }
+				{ this.state.isExpanded 
+					? 
+						<div 
+							className='atl__filter__var-group__description'
+							dangerouslySetInnerHTML={
+								{
+									__html: marked(info.description, { sanitize: true })
+								}
+							} 
+						/> 
+					: 
+						null 
+				}
 			</div>
 		);
 	}

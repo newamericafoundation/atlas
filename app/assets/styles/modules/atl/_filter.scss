@@ -61,6 +61,13 @@
     &__var-group {
         position: relative;
 
+        &__description {
+            p {
+                font-family: MetaSerifWeb-Book;
+                margin: 10px 0;
+            }
+        }
+
         &__toggle-icon {
             cursor: pointer;
             opacity: 0.8;

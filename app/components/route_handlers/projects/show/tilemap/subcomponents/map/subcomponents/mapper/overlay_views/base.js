@@ -78,20 +78,36 @@ class BaseOverlayView {
 
 
     /*
-     * 
-     *
+     * Get modifier layer point.
+     * @param {array} latLongPosition - Latitude longitude array.
      */
-    latLongToModifiedContainerPoint(latLongPosition, options/* latLongOriginCenter, latLongDestinationCenter, scale */) {
+    latLongToModifiedLayerPoint(latLongPosition, options) {
 
         var map = this.map;
 
         var { latLongOriginCenter, latLongDestinationCenter, scale, pixelOffset } = options;
 
-        var position = map.latLongToContainerPoint(new L.LatLng(latLongPosition[0]. latLongPosition[1]));
-        var originCenter = map.latLongToContainerPoint(new L.LatLng(latLongOriginCenter[0]. latLongOriginCenter[1]));
-        var destinationCenter = map.latLongToContainerPoint(new L.LatLng(latLongDestinationCenter[0], latLongDestinationCenter[1]));
+        // Default pixel offset to zero and scale to 1.
+        pixelOffset = pixelOffset || [ 0, 0 ];
+        scale = scale || 1;
 
-        var destination = [ 0, 0 ];
+        var position = map.latLngToLayerPoint(new L.LatLng(latLongPosition[0], latLongPosition[1]));
+
+        if (!latLongOriginCenter || !latLongDestinationCenter) {
+            return { 
+                x: position.x + pixelOffset[0], 
+                y: position.y + pixelOffset[1]
+            }; 
+        }
+
+        var originCenter = map.latLngToLayerPoint(new L.LatLng(latLongOriginCenter[0]. latLongOriginCenter[1]));
+
+        var destinationCenter = map.latLngToLayerPoint(new L.LatLng(latLongDestinationCenter[0], latLongDestinationCenter[1]));
+        
+        var destination = {
+            x: (position.x - originCenter.x) * scale + destinationCenter.x + pixelOffset[0],
+            y: (position.y - originCenter.y) * scale + destinationCenter.y + pixelOffset[1]
+        };
 
         return destination;
 

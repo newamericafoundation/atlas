@@ -80,10 +80,10 @@ class PinOverlayView extends BaseOverlayView {
         var path, transform;
 
         var getProjectedPoint = (long, lat) => {
-            return map.latLngToLayerPoint(new L.LatLng(lat, long));
+            return this.map.latLngToLayerPoint(new L.LatLng(lat, long));
         };
 
-        var projectPoint = function(long, lat) { 
+        var projectPoint = function(long, lat) {
             var point = getProjectedPoint(long, lat);
             this.stream.point(point.x, point.y);
             return this;
@@ -91,6 +91,8 @@ class PinOverlayView extends BaseOverlayView {
 
         transform = d3.geo.transform({ point: projectPoint });
         path = d3.geo.path().projection(transform);
+
+        return path;
         
     }
 
@@ -101,19 +103,7 @@ class PinOverlayView extends BaseOverlayView {
      */
     update() {
 
-        var transform, path, 
-            self = this,
-            map = this.map;
-
-        var getProjectedPoint = (long, lat) => {
-            return map.latLngToLayerPoint(new L.LatLng(lat, long));
-        };
-
-        var projectPoint = function(long, lat) { 
-            var point = getProjectedPoint(long, lat);
-            this.stream.point(point.x, point.y);
-            return this;
-        }
+        var self = this;
 
         // Assuming a class name of the form .base__1-of-3, extracts numbers 1 and 3 in an array.
         // @returns {array}
@@ -125,20 +115,19 @@ class PinOverlayView extends BaseOverlayView {
             }
         }
 
-        transform = d3.geo.transform({ point: projectPoint });
-        path = d3.geo.path().projection(transform);
+        var path = this.getPath();
 
         this.g.selectAll('g')
             .attr({
                 transform: (d) => {
                     var coord, pt, x, y;
                     coord = d.geometry.coordinates;
-                    pt = getProjectedPoint(coord[0], coord[1]);
-                    // The display coordinates for an SVG point to the upper left corner of an SVG.
-                    //   To correctly center the map pin, subtract half the width and the full height.
-                    x = pt.x - self.shape.dim.width / 2;
-                    y = pt.y - self.shape.dim.height;
-                    return `translate(${x},${y})`;
+
+                    pt = self.latLongToModifiedLayerPoint([ coord[1], coord[0] ], {
+                        pixelOffset: [ - self.shape.dim.width / 2, - self.shape.dim.height ]
+                    });
+
+                    return `translate(${pt.x},${pt.y})`;
                 },
                 class: (feature) => {
                     var displayState, cls;

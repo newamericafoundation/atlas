@@ -1,5 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
+import marked from 'marked';
+
 import Static from './../../../../../general/static.jsx';
 import Icons from './../../../../../general/icons.jsx';
 
@@ -304,10 +306,12 @@ class InfoBox extends Static {
 			body = project.get('body_text');
 			toc = project.get('body_text_toc');
 		}
+
 		return cntnt = {
 			body: body,
 			toc: toc
 		};
+
   	}
 
 

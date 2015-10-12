@@ -1,5 +1,3 @@
-// view constructor written using the module pattern (function returning an object, without a new keyword)
-
 import $ from 'jquery';
 
 import BaseOverlayView from './base.js';
@@ -59,42 +57,29 @@ class PathOverlayView extends BaseOverlayView {
      * @param {array} latLongPosition
      * @returns {function} path
      */
-    getPath(latLongScaleOrigin, latLongPosition, scale = 1) {
+    getPath(latLongOriginCenter, latLongDestinationCenter, scale) {
 
-        var map = this.map, transform, path;
+        var self = this, 
+            transform, path;
 
-        /*
-         * Find the coordinates of a point from lat long coordinates.
-         * @param {number} long - Longitude.
-         * @param {number} lat - Latitude.
-         */
         var projectPoint = function(long, lat) {
 
-            var regularPoint, scaleOrigin, position, modifiedPoint;
+            var point = self.latLongToModifiedLayerPoint([ lat, long ], {
+                latLongOriginCenter: latLongOriginCenter,
+                latLongDestinationCenter: latLongDestinationCenter,
+                scale: scale
+            });
 
-            regularPoint = map.latLngToLayerPoint(new L.LatLng(lat, long))
-
-            if (!latLongScaleOrigin || !latLongPosition) {
-                this.stream.point(regularPoint.x, regularPoint.y);
-                return this;
-            }
-
-            scaleOrigin = map.latLngToLayerPoint(new L.LatLng(latLongScaleOrigin[0], latLongScaleOrigin[1]));
-            position = map.latLngToLayerPoint(new L.LatLng(latLongPosition[0], latLongPosition[1]));
-
-            modifiedPoint = {
-                x: position.x + (regularPoint.x - scaleOrigin.x) * scale,
-                y: position.y + (regularPoint.y - scaleOrigin.y) * scale
-            };
-
-            this.stream.point(modifiedPoint.x, modifiedPoint.y)
+            this.stream.point(point.x, point.y);
             return this;
 
         }
 
         transform = d3.geo.transform({ point: projectPoint });
         path = d3.geo.path().projection(transform);
+
         return path;
+
     }
 
 
@@ -149,10 +134,10 @@ class PathOverlayView extends BaseOverlayView {
                     // access embedded Backbone model
                     var model = feature._model;
                     // if (model && (model.get('_itemType') === 'us_state') && (model.get('id') === 2)) {
-                    //     return this.getPath([ 65.4169289, -153.4474854 ], [ 30.2065372,-134.6754338 ], 0.2)(feature);
+                    //     return this.getPath([ 65.4169289, -153.4474854 ], [ 30.2065372, -134.6754338 ], 0.2)(feature);
                     // }
                     // if (model && (model.get('_itemType') === 'us_state') && (model.get('id') === 11)) {
-                    //     return this.getPath([ 38.9093905,-77.0328359 ], [ 32.0680227,-70.8874945 ], 15)(feature);
+                    //     return this.getPath([ 38.9093905, -77.0328359 ], [ 32.0680227, -70.8874945 ], 15)(feature);
                     // }
                     return path(feature);
                 },
