@@ -32,11 +32,17 @@ class BaseOverlayView {
      *
      */
     renderSvgContainer() {
+
         this.svg = d3.select(this.map.getPanes().overlayPane)
             .append('svg')
             .attr('class', 'deethree');
+
         this.g = this.svg.append('g')
-            .attr('class', 'leaflet-zoom-hide');
+            .attr('class', 'deethree__main-group leaflet-zoom-hide');
+
+        this.gAux = this.svg.append('g')
+            .attr('class', 'deethree__aux-group leaflet-zoom-hide');
+
     }
 
 
@@ -75,9 +81,11 @@ class BaseOverlayView {
      * 
      *
      */
-    latLongToModifiedContainerPoint(latLongPosition, latLongOriginCenter, latLongDestinationCenter, scale) {
+    latLongToModifiedContainerPoint(latLongPosition, options/* latLongOriginCenter, latLongDestinationCenter, scale */) {
 
         var map = this.map;
+
+        var { latLongOriginCenter, latLongDestinationCenter, scale, pixelOffset } = options;
 
         var position = map.latLongToContainerPoint(new L.LatLng(latLongPosition[0]. latLongPosition[1]));
         var originCenter = map.latLongToContainerPoint(new L.LatLng(latLongOriginCenter[0]. latLongOriginCenter[1]));

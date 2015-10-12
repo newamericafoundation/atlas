@@ -19,6 +19,7 @@ class PathOverlayView extends BaseOverlayView {
 
     /*
      * Backbone-like render method.
+     *
      */
     render() {
         this.renderSvgContainer();
@@ -99,6 +100,7 @@ class PathOverlayView extends BaseOverlayView {
 
     /*
      * Get scale and centroid modifiers that position Alaska, Hawaii and DC in a visible format.
+     *
      */
     getUsStateProjectionModifiers(usStateId) {
         var usStateLatLongCentroids = {
@@ -121,8 +123,14 @@ class PathOverlayView extends BaseOverlayView {
     }
 
 
+    getModifiedUsStatePath(usStateId) {
+        
+    }
+
+
     /*
      * Apply transform and classes on paths.
+     *
      */
     update() {
         var path = this.getPath(),

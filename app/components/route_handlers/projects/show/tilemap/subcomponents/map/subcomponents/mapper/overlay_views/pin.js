@@ -75,6 +75,26 @@ class PinOverlayView extends BaseOverlayView {
     }
 
 
+    getPath() {
+
+        var path, transform;
+
+        var getProjectedPoint = (long, lat) => {
+            return map.latLngToLayerPoint(new L.LatLng(lat, long));
+        };
+
+        var projectPoint = function(long, lat) { 
+            var point = getProjectedPoint(long, lat);
+            this.stream.point(point.x, point.y);
+            return this;
+        }
+
+        transform = d3.geo.transform({ point: projectPoint });
+        path = d3.geo.path().projection(transform);
+        
+    }
+
+
     /*
      *
      *
