@@ -58,4 +58,20 @@
         opacity: 1;
     }
 
+    &__var-group {
+        position: relative;
+
+        &__toggle-icon {
+            cursor: pointer;
+            opacity: 0.8;
+            &:hover { opacity: 1; }
+            top: 3px;
+            left: -35px;
+            width: $icon-size;
+            height: $icon-size;
+            fill: map-get($palette, off-white);
+            position: absolute; 
+        }
+    }
+
 }

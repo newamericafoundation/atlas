@@ -140,13 +140,13 @@ class PathOverlayView extends BaseOverlayView {
                 'd': (feature) => {
                     // access embedded Backbone model
                     var model = feature._model;
-                    if (model && (model.get('_itemType') === 'us_state') && (model.get('id') === 2)) {
-                        return this.getPath([ 65.4169289, -153.4474854 ], [ 30.2065372,-134.6754338 ], 0.2)(feature);
-                    }
-                    if (model && (model.get('_itemType') === 'us_state') && (model.get('id') === 11)) {
-                        return this.getPath([ 38.9093905,-77.0328359 ], [ 32.0680227,-70.8874945 ], 15)(feature);
-                    }
-                    return this.getPath()(feature);
+                    // if (model && (model.get('_itemType') === 'us_state') && (model.get('id') === 2)) {
+                    //     return this.getPath([ 65.4169289, -153.4474854 ], [ 30.2065372,-134.6754338 ], 0.2)(feature);
+                    // }
+                    // if (model && (model.get('_itemType') === 'us_state') && (model.get('id') === 11)) {
+                    //     return this.getPath([ 38.9093905,-77.0328359 ], [ 32.0680227,-70.8874945 ], 15)(feature);
+                    // }
+                    return path(feature);
                 },
                 'fill': this.getFill.bind(this)
             });

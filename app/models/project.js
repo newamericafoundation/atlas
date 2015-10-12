@@ -316,7 +316,6 @@ class Model extends base.Model {
             data.variable_groups = new variableGroup.Collection(data.variable_groups);
             data.items = new item.Collection(data.items, { parse: true });
             this.buildFilterTree();
-            console.log(this);
         }
     }
 

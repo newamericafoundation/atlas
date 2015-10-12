@@ -7,7 +7,7 @@ import Popup from './subcomponents/popup.jsx';
 import InfoBox from './subcomponents/info_box.jsx';
 import List from './subcomponents/list.jsx';
 import Search from './subcomponents/search.jsx';
-import OptionsTab from './subcomponents/options_tab.jsx';
+import OptionsTab from './subcomponents/options_tab/root.jsx';
 
 class Tilemap extends React.Component {
 	

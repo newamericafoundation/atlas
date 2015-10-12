@@ -6,7 +6,7 @@
 	top: 0;
 	right: 0;
 	@include transform(translate(0, 100%));
-	z-index: 9;
+	z-index: 101;
 	overflow: hidden;
 
 	.atl__info-box--narrow & {
@@ -16,6 +16,7 @@
 	}
 	
 	@include transition(all, 0.5s, ease-in-out);
+
 	.atl__info-box--active & {
 		@include transform(translate(0, 0%));
 	   	@include transition(all, 0.5s, ease-in-out);
@@ -24,7 +25,7 @@
 	&__close {
 		z-index: 10;
 		position: absolute;
-		top: 25px;
+		top: 0 * $top-bar-height + 25px;
 		right: 25px;
 		width: 25px;
 		height: 25px;

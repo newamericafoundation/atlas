@@ -15,8 +15,8 @@
 	padding: 30px;
 
 	&__close {
-		position: absolute;
-		top: 25px;
+		position: fixed;
+		top: $top-bar-height + 25px;
 		right: 25px;
 		width: 20px;
 		height: 20px;
@@ -31,7 +31,6 @@
 		margin: auto;
 		width: 90%;
 		max-width: 700px;
-
 	}
 
 	.button { margin: 0 3px; }
