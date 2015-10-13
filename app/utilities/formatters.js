@@ -114,6 +114,7 @@ var formatters = {
 	 *
 	 */
 	removeLineBreaks: function(string) {
+		if (string == null) { return ''; }
 	    string = String(string);
 	    return string.replace(/(\r\n|\n|\r)/gm, '');
 	},
@@ -124,6 +125,7 @@ var formatters = {
 	 *
 	 */
 	removeSpaces: function(string) {
+		if (string == null) { return ''; }
 	    string = String(string);
 	    return string.replace(/\s+/g, '');
 	},
@@ -135,16 +137,8 @@ var formatters = {
 	 */
 	hyphenate: function(string) {
 	    string = String(string);
+	    string = String(string);
 	    return string.replace('ommunication', 'ommuni-cation');
-	},
-
-
-	/*
-	 * 
-	 *
-	 */
-	htmlWithToc: function(html) {
-		
 	},
 
 

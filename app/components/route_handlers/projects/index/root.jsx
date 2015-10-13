@@ -22,11 +22,20 @@ var defaultButtons = [
 
 class Index extends React.Component {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
 		this.state = {};
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<div className="atl fill-parent">
@@ -65,27 +74,42 @@ class Index extends React.Component {
 		this.fetchProjectTemplates();
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	fetchProjects() {
 		var coll = new project.Collection()
 		coll.getClientFetchPromise({  }, { data: 0, body_text: 0, encoded_image: 0 }).then((coll) => {
 			this.setState({ projects: coll });
-		});
+		}).catch((err) => { console.log(err); });
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	fetchProjectSections() {
 		var coll = new projectSection.Collection()
 		coll.getClientFetchPromise().then((coll) => {
 			coll.initializeActiveStates();
 			this.setState({ projectSections: coll });
-		});
+		}).catch((err) => { console.log(err); });
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	fetchProjectTemplates() {
 		var coll = new projectTemplate.Collection()
 		coll.getClientFetchPromise().then((coll) => {
 			coll.initializeActiveStates();
 			this.setState({ projectTemplates: coll });
-		});
+		}).catch((err) => { console.log(err); });
 	}
 
 }

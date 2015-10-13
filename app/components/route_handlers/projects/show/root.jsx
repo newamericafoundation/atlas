@@ -185,7 +185,7 @@ class Show extends React.Component {
 			})
 			.then((coll) => {
 				this.setState({ related: coll });
-			});
+			}).catch((err) => { console.log(err); });
 
 	}
 
@@ -207,6 +207,8 @@ class Show extends React.Component {
 					this.setState({ project: project });
 					this.fetchRelatedProjects();
 				}
+			}).catch((err) => { 
+				console.error('Project error: ', err.stack); 
 			});
 
 	}

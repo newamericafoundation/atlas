@@ -94,7 +94,7 @@ Mapper.Controller = {
 
         shp.getGeoJsonFetchPromise().then((data) => {
             launch(data);
-        });
+        }).catch((err) => { console.log(err); });
 
         return this;
 

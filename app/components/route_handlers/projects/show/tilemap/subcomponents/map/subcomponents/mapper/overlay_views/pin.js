@@ -82,6 +82,22 @@ class PinOverlayView extends BaseOverlayView {
      *
      *
      */
+    getFeatureTransform(feature) {
+        var longLatPosition, pt;
+        longLatPosition = feature.geometry.coordinates;
+
+        pt = this.latLongToModifiedLayerPoint([ longLatPosition[1], longLatPosition[0] ], {
+            pixelOffset: [ - this.shape.dim.width / 2, - this.shape.dim.height ]
+        });
+
+        return `translate(${pt.x},${pt.y})`;
+    }
+
+
+    /*
+     *
+     *
+     */
     update() {
 
         var self = this;
@@ -100,29 +116,14 @@ class PinOverlayView extends BaseOverlayView {
 
         this.g.selectAll('g')
             .attr({
-                transform: (d) => {
-                    var coord, pt, x, y;
-                    coord = d.geometry.coordinates;
-
-                    pt = self.latLongToModifiedLayerPoint([ coord[1], coord[0] ], {
-                        pixelOffset: [ - self.shape.dim.width / 2, - self.shape.dim.height ]
-                    });
-
-                    return `translate(${pt.x},${pt.y})`;
-                },
-                class: (feature) => {
-                    var displayState, cls;
-                    displayState = self.getFeatureDisplayState(feature);
-                    cls = 'map-pin map-pin__element';
-                    if (displayState) { cls += ` map-pin--${displayState}`; }
-                    return cls;
-                }
+                transform: this.getFeatureTransform.bind(this),
+                class: (feature) => { return this.getFeatureClassName.apply(this, [ feature, 'map-pin' ]); }
             })
             .selectAll('path')
             .attr({
                 'class': (d, i) => {
                     var baseClass = 'map-pin__element';
-                    return d.className + ' ' + baseClass
+                    return d.className + ' ' + baseClass;
                 },
 
                 // These sub-paths hold halves and thirds of the entire pin so that their

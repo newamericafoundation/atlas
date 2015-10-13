@@ -4,6 +4,7 @@ import Backbone from 'backbone';
 import base from './base.js';
 import formatters from './../utilities/formatters.js';
 
+var bigNumber = 100000000000;
 
 class Model extends base.Model {
 
@@ -84,9 +85,9 @@ class Model extends base.Model {
             member = member.trim();
             if (member === "") {
                 if (index === 0) {
-                    return -1000000000;
+                    return -bigNumber;
                 }
-                return +1000000000;
+                return +bigNumber;
             }
             return filterFloat(member);
         });
@@ -126,9 +127,9 @@ class Model extends base.Model {
             return filterValue;
         }
 
-        if (min === -1000000000) {
+        if (min === -bigNumber) {
             filterValue.value = "Less than " + maxDisplay;
-        } else if (max === +1000000000) {
+        } else if (max === +bigNumber) {
             filterValue.value = "Greater than " + minDisplay;
         } else {
             filterValue.value = "Between " + minDisplay + " and " + maxDisplay;

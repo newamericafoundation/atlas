@@ -281,22 +281,6 @@ class Model extends base.Model {
             parseDataField(data, 'variables', varModel);
             parseDataField(data, 'variable_groups', varGroupModel);
 
-            // if (data.variables) {
-            //     let variables = this.get('data').variables;
-            //     variables = variables.map((variable) => {
-            //         return varModel.parse(variable);
-            //     });
-            //     this.get('data').variables = variables;
-            // }
-
-            // if (data.variable_groups) {
-            //     let variable_groups = this.get('data').variable_groups;
-            //     variable_groups = variable_groups.map((variable) => {
-            //         return varGroupModel.parse(variable);
-            //     });
-            //     this.get('data').variable_groups = variable_groups;
-            // }
-
             if (data.data) {
                 data.items = data.data;
                 delete data.data;
@@ -313,7 +297,9 @@ class Model extends base.Model {
         data = this.get('data');
         if (data != null) {
             data.variables = new variable.Collection(data.variables);
-            data.variable_groups = new variableGroup.Collection(data.variable_groups);
+            if (data.variable_groups) {
+                data.variable_groups = new variableGroup.Collection(data.variable_groups);
+            }
             data.items = new item.Collection(data.items, { parse: true });
             this.buildFilterTree();
         }
@@ -337,7 +323,9 @@ class Model extends base.Model {
             var formatter, nd, o, variable;
 
             if (variable.get('format') != null) {
-                formatter = formatters[variable.get('format')];
+                let formatterName = variable.get('format');
+                formatterName = (formatterName === 'markdown') ? 'number' : formatterName;
+                formatter = formatters[formatterName];
             }
 
             o = {

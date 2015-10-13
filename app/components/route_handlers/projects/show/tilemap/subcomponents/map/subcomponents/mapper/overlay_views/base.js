@@ -1,5 +1,7 @@
 // overlay view layers inherit from this object
 
+'use strict';
+
 import $ from 'jquery';
 
 class BaseOverlayView {
@@ -70,13 +72,15 @@ class BaseOverlayView {
 
         var identityPath, feature, longLatArrayCentroid, latLong, options;
 
-        identityPath = d3.geo.path().projection((d) => { return d; });
-
         feature = this.getFeatureByModel(item);
 
+        // Get feature centroid.
+        identityPath = d3.geo.path().projection((d) => { return d; });
         longLatArrayCentroid = identityPath.centroid(feature);
+
         latLong = L.latLng(longLatArrayCentroid[1], longLatArrayCentroid[0]);
 
+        // Call options generator.
         options = this.getFeaturePathOptions(feature);
 
         return this.latLongToModifiedLayerPoint([ longLatArrayCentroid[1], longLatArrayCentroid[0] ], options);
@@ -92,7 +96,12 @@ class BaseOverlayView {
 
         var map = this.map;
 
-        var { latLongOriginCenter, latLongDestinationCenter, scale, pixelOffset } = options;
+        var { 
+            latLongOriginCenter, // point to which scaling is specified. Typically the centroid of a shape.
+            latLongDestinationCenter,  // point to which the origin center should be displaced to.
+            scale, // scale factor
+            pixelOffset // final offset in pixels. Used to position map pins.
+        } = options;
 
         // Default pixel offset to zero and scale to 1.
         pixelOffset = pixelOffset || [ 0, 0 ];
@@ -111,6 +120,7 @@ class BaseOverlayView {
 
         var destinationCenter = map.latLngToContainerPoint(new L.LatLng(latLongDestinationCenter[0], latLongDestinationCenter[1]));
         
+        // Scale coordinates with respect to origin, move to destination and add offset.
         var destination = {
             x: (position.x - originCenter.x) * scale + destinationCenter.x + pixelOffset[0],
             y: (position.y - originCenter.y) * scale + destinationCenter.y + pixelOffset[1]
@@ -122,7 +132,7 @@ class BaseOverlayView {
 
 
     /*
-     * Return d3 path.
+     * Get d3 path.
      *
      */
     getPath(options = {}) {
@@ -130,9 +140,9 @@ class BaseOverlayView {
         var self = this, 
             transform, path;
 
-        var projectPoint = function(long, lat) {
+        var projectPoint = function(lng, lat) {
 
-            var point = self.latLongToModifiedLayerPoint([ lat, long ], options);
+            var point = self.latLongToModifiedLayerPoint([ lat, lng ], options);
 
             this.stream.point(point.x, point.y);
             return this;
@@ -144,6 +154,19 @@ class BaseOverlayView {
 
         return path;
 
+    }
+
+
+    /*
+     * Get class name string for a map item.
+     *
+     */
+    getFeatureClassName(feature, baseClassName) {
+        var displayState, cls;
+        displayState = this.getFeatureDisplayState(feature);
+        cls = `${baseClassName} ${baseClassName}__element`;
+        if (displayState) { cls += ` ${baseClassName}--${displayState}`; }
+        return cls;
     }
 
 

@@ -41,17 +41,6 @@ class PathOverlayView extends BaseOverlayView {
 
 
     /*
-     * Get projected point.
-     * @param {number} long
-     * @param {number} lat
-     * @returns {object}
-     */
-    getProjectedPoint(long, lat) {
-        this.map.latLngToLayerPoint(new L.LatLng(lat, long));
-    }
-
-
-    /*
      * Get scale and centroid modifiers that position Alaska, Hawaii and DC in a visible format.
      *
      */
@@ -77,7 +66,7 @@ class PathOverlayView extends BaseOverlayView {
 
 
     /*
-     * 
+     * Get options for D3 feature path generation.
      *
      */
     getFeaturePathOptions(feature) {
@@ -94,27 +83,13 @@ class PathOverlayView extends BaseOverlayView {
 
 
     /*
-     *
+     * Generate D3 feature path.
      *
      */
     getFeaturePath(feature) {
         var pathOptions = this.getFeaturePathOptions(feature);
         var path = this.getPath(pathOptions);
         return path(feature);
-    }
-
-
-    /*
-     *
-     *
-     */
-    getFeatureClass(feature) {
-        var displayState = this.getFeatureDisplayState(feature);
-        var cls = 'map-region map-region__element';
-        if (displayState) {
-            cls += ` map-region--${displayState}`;
-        }
-        return cls;
     }
 
 
@@ -129,7 +104,7 @@ class PathOverlayView extends BaseOverlayView {
 
         this.g.selectAll('path')
             .attr({
-                'class': this.getFeatureClass.bind(this),
+                'class': (feature) => { return this.getFeatureClassName.apply(this, [ feature, 'map-region' ]); },
                 'd': this.getFeaturePath.bind(this),
                 'fill': this.getFill.bind(this)
             });
