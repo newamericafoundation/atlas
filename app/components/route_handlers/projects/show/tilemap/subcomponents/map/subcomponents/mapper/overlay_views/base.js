@@ -67,13 +67,20 @@ class BaseOverlayView {
      *
      */
     getItemMapPosition(item) {
-        var identityPath, feature, longLatArrayCentroid, latLong, map;
+
+        var identityPath, feature, longLatArrayCentroid, latLong, options;
+
         identityPath = d3.geo.path().projection((d) => { return d; });
+
         feature = this.getFeatureByModel(item);
+
         longLatArrayCentroid = identityPath.centroid(feature);
         latLong = L.latLng(longLatArrayCentroid[1], longLatArrayCentroid[0]);
-        map = this.map;
-        return map.latLngToContainerPoint(latLong);
+
+        options = this.getFeaturePathOptions(feature);
+
+        return this.latLongToModifiedLayerPoint([ longLatArrayCentroid[1], longLatArrayCentroid[0] ], options);
+
     }
 
 
@@ -81,7 +88,7 @@ class BaseOverlayView {
      * Get modifier layer point.
      * @param {array} latLongPosition - Latitude longitude array.
      */
-    latLongToModifiedLayerPoint(latLongPosition, options) {
+    latLongToModifiedLayerPoint(latLongPosition, options = {}) {
 
         var map = this.map;
 
@@ -91,7 +98,7 @@ class BaseOverlayView {
         pixelOffset = pixelOffset || [ 0, 0 ];
         scale = scale || 1;
 
-        var position = map.latLngToLayerPoint(new L.LatLng(latLongPosition[0], latLongPosition[1]));
+        var position = map.latLngToContainerPoint(new L.LatLng(latLongPosition[0], latLongPosition[1]));
 
         if (!latLongOriginCenter || !latLongDestinationCenter) {
             return { 
@@ -100,9 +107,9 @@ class BaseOverlayView {
             }; 
         }
 
-        var originCenter = map.latLngToLayerPoint(new L.LatLng(latLongOriginCenter[0]. latLongOriginCenter[1]));
+        var originCenter = map.latLngToContainerPoint(new L.LatLng(latLongOriginCenter[0], latLongOriginCenter[1]));
 
-        var destinationCenter = map.latLngToLayerPoint(new L.LatLng(latLongDestinationCenter[0], latLongDestinationCenter[1]));
+        var destinationCenter = map.latLngToContainerPoint(new L.LatLng(latLongDestinationCenter[0], latLongDestinationCenter[1]));
         
         var destination = {
             x: (position.x - originCenter.x) * scale + destinationCenter.x + pixelOffset[0],
@@ -111,6 +118,41 @@ class BaseOverlayView {
 
         return destination;
 
+    }
+
+
+    /*
+     * Return d3 path.
+     *
+     */
+    getPath(options = {}) {
+
+        var self = this, 
+            transform, path;
+
+        var projectPoint = function(long, lat) {
+
+            var point = self.latLongToModifiedLayerPoint([ lat, long ], options);
+
+            this.stream.point(point.x, point.y);
+            return this;
+
+        }
+
+        transform = d3.geo.transform({ point: projectPoint });
+        path = d3.geo.path().projection(transform);
+
+        return path;
+
+    }
+
+
+    /*
+     * Customize on subclass.
+     *
+     */
+    getFeaturePathOptions(feature) {
+        return;
     }
 
 

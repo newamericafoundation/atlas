@@ -9,7 +9,7 @@ class PathOverlayView extends BaseOverlayView {
      */
     bringFeatureToFront(feature) {
         this.g.selectAll('path').sort((a, b) => {
-            if (a.id !== feature.id) { return -1; }
+            if (a !== feature) { return -1; }
             return +1;
         });
     }
@@ -52,64 +52,69 @@ class PathOverlayView extends BaseOverlayView {
 
 
     /*
-     * Get transform path based on Leaflet map.
-     * @param {array} latLongScaleOrigin
-     * @param {array} latLongPosition
-     * @returns {function} path
-     */
-    getPath(latLongOriginCenter, latLongDestinationCenter, scale) {
-
-        var self = this, 
-            transform, path;
-
-        var projectPoint = function(long, lat) {
-
-            var point = self.latLongToModifiedLayerPoint([ lat, long ], {
-                latLongOriginCenter: latLongOriginCenter,
-                latLongDestinationCenter: latLongDestinationCenter,
-                scale: scale
-            });
-
-            this.stream.point(point.x, point.y);
-            return this;
-
-        }
-
-        transform = d3.geo.transform({ point: projectPoint });
-        path = d3.geo.path().projection(transform);
-
-        return path;
-
-    }
-
-
-    /*
      * Get scale and centroid modifiers that position Alaska, Hawaii and DC in a visible format.
      *
      */
     getUsStateProjectionModifiers(usStateId) {
-        var usStateLatLongCentroids = {
+        return {
             '2': {
-                latLongScaleOrigin: [ 65.4169289, -153.4474854 ],
-                latLongPosition: [ 30.2065372,-134.6754338 ],
+                latLongOriginCenter: [ 65.4169289, -153.4474854 ],
+                latLongDestinationCenter: [ 30.2065372,-134.6754338 ],
                 scale: 0.2
             },
             '15': {
-                latLongScaleOrigin: [ 20.8031863,-157.6043485 ],
-                latLongPosition: [  ],
+                latLongOriginCenter: [ 20.8031863,-157.6043485 ],
+                latLongDestinationCenter: [  ],
                 scale: 1
             },
             '11': {
-                latLongScaleOrigin: [ 38.9093905,-77.0328359 ],
-                latLongPosition: [ 32.0680227,-70.8874945 ],
+                latLongOriginCenter: [ 38.9093905,-77.0328359 ],
+                latLongDestinationCenter: [ 32.0680227,-70.8874945 ],
                 scale: 15
             }
-        };
+        }[usStateId];
     }
 
 
-    getModifiedUsStatePath(usStateId) {
-        
+    /*
+     * 
+     *
+     */
+    getFeaturePathOptions(feature) {
+        // access embedded Backbone model
+        var model = feature._model;
+        if (model && (model.get('_itemType') === 'us_state') && (model.get('id') === 2)) {
+            return this.getUsStateProjectionModifiers('2');
+        }
+        if (model && (model.get('_itemType') === 'us_state') && (model.get('id') === 11)) {
+            return this.getUsStateProjectionModifiers('11');
+        }
+        return;
+    }
+
+
+    /*
+     *
+     *
+     */
+    getFeaturePath(feature) {
+        var pathOptions = this.getFeaturePathOptions(feature);
+        var path = this.getPath(pathOptions);
+        return path(feature);
+    }
+
+
+    /*
+     *
+     *
+     */
+    getFeatureClass(feature) {
+        var displayState = this.getFeatureDisplayState(feature);
+        var cls = 'map-region map-region__element';
+        if (displayState) {
+            cls += ` map-region--${displayState}`;
+        }
+        return cls;
     }
 
 
@@ -118,29 +123,14 @@ class PathOverlayView extends BaseOverlayView {
      *
      */
     update() {
+        
         var path = this.getPath(),
             geoJson = this.collection;
+
         this.g.selectAll('path')
             .attr({
-                'class': (feature) => {
-                    var displayState = this.getFeatureDisplayState(feature);
-                    var cls = 'map-region map-region__element';
-                    if (displayState) {
-                        cls += ` map-region--${displayState}`;
-                    }
-                    return cls;
-                },
-                'd': (feature) => {
-                    // access embedded Backbone model
-                    var model = feature._model;
-                    // if (model && (model.get('_itemType') === 'us_state') && (model.get('id') === 2)) {
-                    //     return this.getPath([ 65.4169289, -153.4474854 ], [ 30.2065372, -134.6754338 ], 0.2)(feature);
-                    // }
-                    // if (model && (model.get('_itemType') === 'us_state') && (model.get('id') === 11)) {
-                    //     return this.getPath([ 38.9093905, -77.0328359 ], [ 32.0680227, -70.8874945 ], 15)(feature);
-                    // }
-                    return path(feature);
-                },
+                'class': this.getFeatureClass.bind(this),
+                'd': this.getFeaturePath.bind(this),
                 'fill': this.getFill.bind(this)
             });
         this.resizeContainer(geoJson, path, 0);

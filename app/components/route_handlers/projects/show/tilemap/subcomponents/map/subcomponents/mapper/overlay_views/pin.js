@@ -2,22 +2,25 @@ import $ from 'jquery';
 
 import BaseOverlayView from './base.js';
 
+import * as svgPaths from './../../../../../../../../../utilities/svg_paths.js';
+
 class PinOverlayView extends BaseOverlayView {
 
     /*
-     *
+     * Get map pin svg, including halves and thirds for multi-value match coloring.
      *
      */
     getShapes() {
+        var shp = svgPaths.shapes.pindrop;
         return [
-            { path: this.shape.paths.slice_1_of_2, className: 'map-pin__1-of-2' },
-            { path: this.shape.paths.slice_2_of_2,  className: 'map-pin__2-of-2' },
-            { path: this.shape.paths.slice_1_of_3, className: 'map-pin__1-of-3' },
-            { path: this.shape.paths.slice_2_of_3_a,  className: 'map-pin__2-of-3' },
-            { path: this.shape.paths.slice_2_of_3_b,  className: 'map-pin__2-of-3' },
-            { path: this.shape.paths.slice_3_of_3,  className: 'map-pin__3-of-3' }, 
-            { path: this.shape.paths.outer, className: 'map-pin__outer' },
-            { path: this.shape.paths.inner, className: 'map-pin__inner' }
+            { path: shp.paths.slice_1_of_2, className: 'map-pin__1-of-2' },
+            { path: shp.paths.slice_2_of_2,  className: 'map-pin__2-of-2' },
+            { path: shp.paths.slice_1_of_3, className: 'map-pin__1-of-3' },
+            { path: shp.paths.slice_2_of_3_a,  className: 'map-pin__2-of-3' },
+            { path: shp.paths.slice_2_of_3_b,  className: 'map-pin__2-of-3' },
+            { path: shp.paths.slice_3_of_3,  className: 'map-pin__3-of-3' }, 
+            { path: shp.paths.outer, className: 'map-pin__outer' },
+            { path: shp.paths.inner, className: 'map-pin__inner' }
         ];
     }
 
@@ -32,7 +35,7 @@ class PinOverlayView extends BaseOverlayView {
 
         this.renderSvgContainer();
 
-        this.shape = this.svgPaths.shapes.pindrop;
+        this.shape = svgPaths.shapes.pindrop;
 
         // Get halves and thirds of the pin to apply corresponding coloring.
         pindrop = this.getShapes();
@@ -72,28 +75,6 @@ class PinOverlayView extends BaseOverlayView {
         return valueIndeces.map((valueIndex) => {
             return this.colors.toRgb(valueIndex-1);
         });
-    }
-
-
-    getPath() {
-
-        var path, transform;
-
-        var getProjectedPoint = (long, lat) => {
-            return this.map.latLngToLayerPoint(new L.LatLng(lat, long));
-        };
-
-        var projectPoint = function(long, lat) {
-            var point = getProjectedPoint(long, lat);
-            this.stream.point(point.x, point.y);
-            return this;
-        }
-
-        transform = d3.geo.transform({ point: projectPoint });
-        path = d3.geo.path().projection(transform);
-
-        return path;
-        
     }
 
 

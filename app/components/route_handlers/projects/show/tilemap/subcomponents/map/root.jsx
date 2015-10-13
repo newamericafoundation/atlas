@@ -1,7 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
 import * as colors from './../../../../../../utilities/colors.js';
-import * as svgPaths from './../../../../../../utilities/svg_paths.js';
 
 import Control from './subcomponents/control/root.jsx';
 
@@ -56,7 +55,6 @@ class Map extends React.Component {
 			setMap: this.setMap.bind(this)
 		};
 		Mapper.colors = colors;
-		Mapper.svgPaths = svgPaths;
 		Mapper.start();
 	}
 
