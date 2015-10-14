@@ -16,7 +16,15 @@
 
 	&__close {
 		position: fixed;
-		top: $top-bar-height + 25px;
+		top: 2 * $top-bar-height + 38px + 25px;
+
+		@include bp-unstack-map-settings-bar {
+			top: $top-bar-height + 25px;
+			.atl--collapsed & {
+				top: 2 * $top-bar-height + 25px;
+			}
+		}
+
 		right: 25px;
 		width: 20px;
 		height: 20px;
@@ -45,28 +53,16 @@
 		margin-top: 0px;
 	}
 
-	@mixin collapsed() {
-		left: 0;
-		top: 2 * $top-bar-height + 15px;
-	}
+	left: 0;
+	top: $top-bar-height + 38px;
 
-	@mixin expanded() {
+	@include bp-unstack-map-settings-bar {
 		top: 0;
 		left: $atl-settings-bar-width;
 		border-left: 2px solid map-get(map-get($palette, grey), light);
-	}
-
-	@mixin collapsed-large-screen() {
-		top: $top-bar-height;
-		left: 0;
-	}
-
-	@include collapsed;
-
-	@include bp-unstack-map-settings-bar {
-		@include expanded;
 		.atl--collapsed & {
-			@include collapsed-large-screen;
+			top: $top-bar-height;
+			left: 0;
 		}
 	}
 

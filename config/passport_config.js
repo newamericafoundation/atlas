@@ -11,8 +11,7 @@ var getCallbackUrl = function() {
 
 // API Access link for creating client ID and secret:
 // https://code.google.com/apis/console/
-var GOOGLE_CLIENT_ID = process.env['GOOGLE_CLIENT_ID'];
-var GOOGLE_CLIENT_SECRET = process.env['GOOGLE_CLIENT_SECRET'];
+var { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env;
 
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
@@ -50,7 +49,7 @@ passport.use(new OAuth2Strategy({
         var model = new researcher.Model(profile._json);
 
         if (!model.isDomainAuthorized()) {
-            return done(new Error('Unauthorized domain'));
+            return done('Please log into your newamerica.org as your primary account. We are working on a more robust solution to handle multiple Google logins for more convenient access to the site.');
         }
 
         model.getSavePromise().then(() => {
