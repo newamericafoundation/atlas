@@ -72,12 +72,12 @@ class PathOverlayView extends BaseOverlayView {
     getFeaturePathOptions(feature) {
         // access embedded Backbone model
         var model = feature._model;
-        if (model && (model.get('_itemType') === 'us_state') && (model.get('id') === 2)) {
-            return this.getUsStateProjectionModifiers('2');
-        }
-        if (model && (model.get('_itemType') === 'us_state') && (model.get('id') === 11)) {
-            return this.getUsStateProjectionModifiers('11');
-        }
+        // if (model && (model.get('_itemType') === 'us_state') && (model.get('id') === 2)) {
+        //     return this.getUsStateProjectionModifiers('2');
+        // }
+        // if (model && (model.get('_itemType') === 'us_state') && (model.get('id') === 11)) {
+        //     return this.getUsStateProjectionModifiers('11');
+        // }
         return;
     }
 

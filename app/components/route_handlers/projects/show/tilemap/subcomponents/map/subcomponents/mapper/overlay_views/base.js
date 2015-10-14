@@ -100,14 +100,17 @@ class BaseOverlayView {
             latLongOriginCenter, // point to which scaling is specified. Typically the centroid of a shape.
             latLongDestinationCenter,  // point to which the origin center should be displaced to.
             scale, // scale factor
-            pixelOffset // final offset in pixels. Used to position map pins.
+            pixelOffset, // final offset in pixels. Used to position map pins.
+            leafletConvertMethodName
         } = options;
+
+        leafletConvertMethodName = leafletConvertMethodName || 'latLngToContainerPoint';
 
         // Default pixel offset to zero and scale to 1.
         pixelOffset = pixelOffset || [ 0, 0 ];
         scale = scale || 1;
 
-        var position = map.latLngToContainerPoint(new L.LatLng(latLongPosition[0], latLongPosition[1]));
+        var position = map[leafletConvertMethodName](new L.LatLng(latLongPosition[0], latLongPosition[1]));
 
         if (!latLongOriginCenter || !latLongDestinationCenter) {
             return { 
@@ -116,9 +119,9 @@ class BaseOverlayView {
             }; 
         }
 
-        var originCenter = map.latLngToContainerPoint(new L.LatLng(latLongOriginCenter[0], latLongOriginCenter[1]));
+        var originCenter = map[leafletConvertMethodName](new L.LatLng(latLongOriginCenter[0], latLongOriginCenter[1]));
 
-        var destinationCenter = map.latLngToContainerPoint(new L.LatLng(latLongDestinationCenter[0], latLongDestinationCenter[1]));
+        var destinationCenter = map[leafletConvertMethodName](new L.LatLng(latLongDestinationCenter[0], latLongDestinationCenter[1]));
         
         // Scale coordinates with respect to origin, move to destination and add offset.
         var destination = {
@@ -139,6 +142,8 @@ class BaseOverlayView {
 
         var self = this, 
             transform, path;
+
+        options.leafletConvertMethodName = 'latLngToLayerPoint';
 
         var projectPoint = function(lng, lat) {
 
