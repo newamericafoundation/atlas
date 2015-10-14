@@ -87,7 +87,8 @@ class PinOverlayView extends BaseOverlayView {
         longLatPosition = feature.geometry.coordinates;
 
         pt = this.latLongToModifiedLayerPoint([ longLatPosition[1], longLatPosition[0] ], {
-            pixelOffset: [ - this.shape.dim.width / 2, - this.shape.dim.height ]
+            pixelOffset: [ - this.shape.dim.width / 2, - this.shape.dim.height ],
+            leafletConvertMethodName: 'latLngToLayerPoint'
         });
 
         return `translate(${pt.x},${pt.y})`;
