@@ -13,6 +13,13 @@ export default {
 	    res.redirect('/login');
 	},
 
+	ensureAdminAuthenticated: function(req, res, next) {
+		if (req.isAuthenticated && req.user && req.user.isAdmin) {
+			return next();
+		}
+		res.redirect('/login');
+	},
+
 	// Neutral placeholder middleware.
 	ensureNothing: function(req, res, next) {
 	    return next();

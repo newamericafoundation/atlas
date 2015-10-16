@@ -41,8 +41,9 @@ class Static extends React.Component {
 	}
 
 	renderTitleBarBackground() {
+		var color = this.props.radio ? this.props.radio.currentThemeColor : '#2dbbb3';
 		return (
-			<div className="atl__title-bar__background" ref='title-bar__background' style={{backgroundColor: this.props.radio.currentThemeColor}} />
+			<div className="atl__title-bar__background" ref='title-bar__background' style={{backgroundColor: color}} />
 		);
 	}
 

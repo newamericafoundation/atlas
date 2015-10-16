@@ -46,6 +46,16 @@ class Model extends baseCrud.Model {
 
 
 	/*
+	 * Customize on subclass if route is non-standard or the resource has a custom plural name.
+	 * 
+	 */
+	getDeleteUrl() {
+		var name = this.resourceName;
+		return `/${name}s/${this.get('id')}/delete`;
+	}
+
+
+	/*
 	 * Custom get function, accommodating a suffix, e.g. status_2012.
 	 * @param {string} field - Same as in Backbone.
 	 * @param {string} suffix - Custom suffix.

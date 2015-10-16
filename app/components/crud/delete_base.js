@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import Static from './../general/static.jsx';
 import Form from './../form/root.jsx';
-import Loading from './../general/loading.jsx';
+import Loader from './../general/loader.jsx';
 import _ from 'underscore';
 
 import Base from './base.js';
@@ -16,34 +16,60 @@ class FormModal extends BaseStatusModal {
 		super(props);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderSuccessContent() {
-		var resourceName = this.props.model.name;
+		var resourceName = this.props.model.resourceName;
 		return (
 			<div>
 				<p className='title'>Delete successful</p>
-				<ul>
-					<li><Link className='link' to='/menu'>{ `View all ${name}s` }</Link></li>
-				</ul>
+				{ this.renderLinks() }
 			</div>
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderFailureContent() {
+		var resourceName = this.props.model.resourceName;
 		return (
 			<div>
 				<p className='title'>Delete failed</p>
-				<ul>
-					<li><a className='link' onClick={this.reactivateForm.bind(this)} href='/'>Keep Editing</a></li>
-				</ul>
+				{ this.renderLinks() }
 			</div>
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderPendingContent() {
 		return (
 			<div>
 				<p className='title'>Deleting...</p>
 			</div>
+		);
+	}
+
+
+	/*
+	 *
+	 *
+	 */
+	renderLinks() {
+		var resourceName = this.props.model.resourceName;
+		return (
+			<ul>
+				<li><a className='link' href={this.props.model.getIndexUrl()}>View Resources</a></li>
+			</ul>
 		);
 	}
 
@@ -58,6 +84,11 @@ class DeleteBase extends Base {
 		};
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<div className='atl atl--explainer'>
@@ -70,6 +101,11 @@ class DeleteBase extends Base {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderModal() {
 		if (this.state.saveResponseStatus) {
 			return (
@@ -82,6 +118,11 @@ class DeleteBase extends Base {
 		}
 	} 
 
+
+	/*
+	 *
+	 *
+	 */
 	renderTitleBarContent() {
 		return (
 			<div className="atl__title-bar__content">
@@ -102,16 +143,31 @@ class DeleteBase extends Base {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getViewUrl() {
 		if (!this.state.model) { return '/'; }
 		return this.state.model.getViewUrl();
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getEditUrl() {
 		if (!this.state.model) { return '/'; }
 		return this.state.model.getEditUrl();
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderPageNavContent() {
 		return (
 			<div>
@@ -120,8 +176,13 @@ class DeleteBase extends Base {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderPageContent() {
-		var bulk = this.state.model ? this.renderSummary() : <Loading />
+		var bulk = this.state.model ? this.renderSummary() : <Loader />
 		return (
 			<div className="static-content">
 				{ bulk }
@@ -129,6 +190,11 @@ class DeleteBase extends Base {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderSummary() {
 		return (
 			<div>
@@ -140,16 +206,31 @@ class DeleteBase extends Base {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	reactivateForm() {
 		this.setState({ saveResponseStatus: undefined });
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	componentDidMount() {
 		if(!this.state.model) {
 			this.fetchModel();
 		}
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	fetchModel() {
 		if (!this.props.params) { return; }
 		var id = this.props.params.id;
@@ -160,11 +241,21 @@ class DeleteBase extends Base {
 		});
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	handleDeleteClick(e) {
 		e.preventDefault();
 		this.deleteModel();
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	deleteModel() {
 		
 		var model = this.state.model;

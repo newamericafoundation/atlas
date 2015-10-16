@@ -43,7 +43,7 @@ class Model extends Backbone.Model {
 
 		return new Promise((resolve, reject) => {
 
-			var url = this.apiUrlRoot + '/new';
+			var url = this.apiUrlRoot;
 
 			$.ajax({
 				url: url,

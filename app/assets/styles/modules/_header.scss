@@ -57,8 +57,9 @@
 	}
 
 	&__auth {
+		position: relative;
 		height: 100%;
-		width: 300px;
+		width: 240px;
 		padding-top: 18px;
 		margin-left: 25px;
 		& > * {
@@ -74,6 +75,26 @@
 			margin: 12px 0 0 8px;
 			@include font-size(15px);
 		}
+
+		a {
+			display: none;
+			position: absolute;
+			text-align: left;
+			padding-top: 10px;
+			padding-left: 10px;
+			width: 120px;
+			height: 40px;
+			top: 100%;
+			left: -10px;
+			background-color: map-get($palette, naf-green);
+		}
+
+		&:hover {
+			a {
+				display: block;
+			}
+		}
+
 	}
 
 	&__nav-circles {

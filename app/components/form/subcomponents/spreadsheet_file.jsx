@@ -1,6 +1,6 @@
 import React from 'react';
 import Base from './base.jsx';
-import Loading from './../../general/loading.jsx';
+import Loader from './../../general/loader.jsx';
 
 class SpreadsheetFile extends Base {
 
@@ -21,7 +21,7 @@ class SpreadsheetFile extends Base {
 	 *
 	 */
 	render() {
-		if (!this.state.isParserLoaded) { return (<Loading />); }
+		if (!this.state.isParserLoaded) { return (<Loader />); }
 		return (
 			<div className='form__wrapper'>
 				<label for={this.props.id}>{ this.props.labelText }</label>

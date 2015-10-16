@@ -6,6 +6,10 @@ import SaveBase from './save_base.js';
 
 class EditBase extends SaveBase {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -13,17 +17,31 @@ class EditBase extends SaveBase {
 		};
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getCrudMethodName() {
 		return 'edit';
 	}
 
 
+	/*
+	 *
+	 *
+	 */
 	componentWillMount() {
 		if(!this.state.model) {
 			this.fetchModel();
 		}
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	fetchModel() {
 		if (!this.props.params) { return; }
 		var id = this.props.params.id;
@@ -34,6 +52,11 @@ class EditBase extends SaveBase {
 		});
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	saveModel() {
 		
 		var model = this.state.model;

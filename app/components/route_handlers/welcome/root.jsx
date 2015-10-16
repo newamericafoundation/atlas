@@ -1,13 +1,17 @@
 import React from 'react';
 import classNames from 'classnames';
 import { Link } from 'react-router';
-import Loading from './../../general/loading.jsx';
+import Loader from './../../general/loader.jsx';
 import Icons from './../../general/icons.jsx';
 
 var imageSource = "/assets/images/iStock_000065438623_720.jpg";
 
 class Welcome extends React.Component {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -15,9 +19,14 @@ class Welcome extends React.Component {
 		};
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	render() {
-		var GridIcon = Icons.Grid;
-		if (!this.state.hasImageLoaded) { return (<Loading />); }
+		var { Grid } = Icons;
+		if (!this.state.hasImageLoaded) { return (<Loader />); }
 		return (
 			<div className="welcome fill-parent" style={ this.getRootVisibilityStyle() }>
 				<div className="welcome__background"></div>
@@ -32,7 +41,7 @@ class Welcome extends React.Component {
 				</div>
 				<div className="welcome__main-nav">
 					<Link to="/menu">
-						<GridIcon />
+						<Grid />
 					</Link>
 					<p className="center">View All Projects</p>
 				</div>
@@ -40,15 +49,11 @@ class Welcome extends React.Component {
 		);
 	}
 
-	getBackgroundImageStyle() {
-		return { 'backgroundImage': `url('${imageSource}')` }
-	}
 
-	getRootVisibilityStyle() {
-		if (this.state.hasImageLoaded === false) { return { display: 'none' }; }
-		return { display: 'block' };
-	}
-
+	/*
+	 *
+	 *
+	 */
 	componentDidMount() {
 		$('<img>').attr({ src: imageSource }).load(() => {
 			this.setState({ hasImageLoaded: true });
@@ -56,6 +61,30 @@ class Welcome extends React.Component {
 		this.clearHeaderStripColoring();
 	}
 
+
+	/*
+	 *
+	 *
+	 */
+	getBackgroundImageStyle() {
+		return { 'backgroundImage': `url('${imageSource}')` }
+	}
+
+
+	/*
+	 *
+	 *
+	 */
+	getRootVisibilityStyle() {
+		if (this.state.hasImageLoaded === false) { return { display: 'none' }; }
+		return { display: 'block' };
+	}
+
+
+	/*
+	 *
+	 *
+	 */
 	clearHeaderStripColoring() {
 		var { radio } = this.props;
 		radio.commands.execute('set:header:strip:color', {});

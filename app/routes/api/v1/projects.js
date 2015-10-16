@@ -13,7 +13,6 @@ import indexMiddleware from './../../../middleware/crud/index.js';
 
 // Unsafe setting to test back-end while in development, skipping the auth step which is required at each server restart.
 var currentAuthMiddleware = (process.NODE_ENV === 'production') ? authMiddleware.ensureAuthenticated : authMiddleware.ensureNothing;
-// var currentAuthMiddleware = authMiddleware.ensureAuthenticated;
 
 var shouldHideDraftProjects = function(req) {
 	// Unsafe setting to test back-end while in development, skipping the auth step which is required at each server restart.
@@ -47,7 +46,7 @@ router.post('/:id/edit', currentAuthMiddleware, updateMiddleware.bind(this, { db
 	res.json(req.dbResponse);
 });
 
-router.post('/new', currentAuthMiddleware, newMiddleware.bind(this, { dbCollectionName: 'projects', authQuery: { is_live: 'Yes' } }), (req, res) => {
+router.post('/', currentAuthMiddleware, newMiddleware.bind(this, { dbCollectionName: 'projects', authQuery: { is_live: 'Yes' } }), (req, res) => {
 	res.json(req.dbResponse);
 });
 

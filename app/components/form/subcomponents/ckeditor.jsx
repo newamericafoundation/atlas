@@ -1,6 +1,6 @@
 import React from 'react';
 import Base from './base.jsx';
-import Loading from './../../general/loading.jsx';
+import Loader from './../../general/loader.jsx';
 
 class CKEditor extends Base {
 

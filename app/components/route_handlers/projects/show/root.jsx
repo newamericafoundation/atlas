@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import Tilemap from './tilemap/root.jsx';
 import Explainer from './explainer/root.jsx';
 
-import Loading from './../../../general/loading.jsx';
+import Loader from './../../../general/loader.jsx';
 import SideBar from './../../../general/side_bar.jsx';
 
 import project from './../../../../models/project.js';
@@ -58,7 +58,7 @@ class Show extends React.Component {
 	 *
 	 */
 	renderProject() {
-		if (this.state.project == null) { return <Loading />; }
+		if (this.state.project == null) { return <Loader />; }
 		var Comp = (this._isModelTilemap()) ? Tilemap : Explainer;
 		return (
 			<Comp

@@ -1,6 +1,12 @@
 import * as util from 'gulp-util';
 
-module.exports = {
+export default {
+
+	localEnvPath: '../secrets/atlas.json',
+
+	localPemKeyPath: '../secrets/atlas.pem',
+
+	localDbBackupPath: '../atlas-newamerica-org-db/',
 
     production: !!util.env.production,
 
@@ -15,14 +21,18 @@ module.exports = {
     	'./app/components/crud/**/*',
     	'./app/components/form/**/*',
 
+    	'./app/components/general/loader.jsx',
+    	'./app/components/general/modal.jsx',
+    	'./app/components/general/static.jsx',
+
+    	'./app/components/route_handlers/helpers/**/*',
+
     	'./db/connector.js',
     	'./db/batch_modifier/**/*',
 
     	'./public/assets/styles/app.css',
 
-    	'./gulp_tasks/devops.js',
-
-    	'./gulpfile.js'
+    	'./gulp_tasks/devops.js'
 
     ],
 

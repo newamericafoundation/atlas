@@ -168,6 +168,11 @@ class Model extends base.Model {
     get customQueryKeys() { return ['related_to']; }
 
 
+    getIndexUrl() {
+        return '/menu';
+    }
+
+
     /*
      *
      *

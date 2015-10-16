@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-class Loading extends React.Component {
+class Loader extends React.Component {
 
 	/*
 	 *
@@ -17,4 +17,4 @@ class Loading extends React.Component {
 
 }
 
-export default Loading;
+export default Loader;

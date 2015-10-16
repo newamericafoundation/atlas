@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 import classNames from 'classnames';
 import Static from './../general/static.jsx';
 import Form from './../form/root.jsx';
-import Loading from './../general/loading.jsx';
+import Loader from './../general/loader.jsx';
 
 import Base from './base.js';
 import BaseStatusModal from './base_status_modal.js';
@@ -131,10 +131,26 @@ class SaveBase extends Base {
 		return (
 			<div className="atl__title-bar__content">
 				<h1 className='title'>{ `${this.getCrudMethodName()} ${this.getResourceName()}` }</h1>
-				<ul>
-					<li>Updated: {  }</li>
-				</ul>
+				{ this.renderLinks() }
 			</div>
+		);
+	}
+
+
+	/*
+	 *
+	 *
+	 */
+	renderLinks() {
+		var model = this.state.model;
+		if (!model) { return; }
+		var name = model.resourceName,
+			deleteLink = model.get('id') ? (<li><Link className='link' to={model.getDeleteUrl()}>{ `Delete this ${name}` }</Link></li>) : null;
+		return (
+			<ul>
+				<li><Link className='link' to={model.getIndexUrl()}>{ `View all ${name}s` }</Link></li>
+				{ deleteLink }
+			</ul>
 		);
 	}
 
@@ -158,7 +174,7 @@ class SaveBase extends Base {
 	 */
 	renderPageContent() {
 		var isFormEnabled = (this.state.saveResponseStatus == null);
-		if (!this.state.model) { return (<Loading />); }
+		if (!this.state.model) { return (<Loader />); }
 		return (
 			<div className="static-content">
 				<Form 
