@@ -3,6 +3,7 @@ import json2csv from 'nice-json2csv';
 
 import authRouter from './auth.js';
 import staticRouter from './static.js';
+import lambdaRouter from './lambda.js';
 
 import fingerprintManifest from './utilities/fingerprint_manifest.js';
 
@@ -24,17 +25,12 @@ router.get('/logout', (req, res) => {
 router.use('/auth', authRouter);
 
 router.use('/static', staticRouter);
+router.use('/lambda', lambdaRouter);
 
 // Use subroutes for data api, requiring resource-specific subrouters.
 resources.forEach(function(resource) {
 	var url = '/api/v1/' + resource;
 	router.use(url, require('.' + url));
-});
-
-router.get('/static/:file_url', (req, res) => {
-	var s3 = new AWS.S3(),
-		params = { Bucket: 'static.atlas.newamerica.org', Key: req.params.file_url };
-	s3.getObject(params).createReadStream().pipe(res);
 });
 
 // Main routes - routing done by client.

@@ -15,14 +15,3 @@ export default function(app) {
 	return app;
 
 }
-
-// var AWS = require('aws-sdk');
-
-// AWS.config.region = 'us-west-2';
-
-// var s3 = new AWS.S3();
-
-// s3.listBuckets((err, data) => {
-// 	if (err) { return console.dir(err); }
-// 	console.dir(data);
-// });
