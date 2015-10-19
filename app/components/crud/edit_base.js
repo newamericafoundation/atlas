@@ -49,7 +49,7 @@ class EditBase extends SaveBase {
 		var model = new Model({ id: id });
 		model.getClientFetchPromise({ id: id }).then((model) => {
 			this.setState({ model: model });
-		});
+		}).catch((err) => { console.log(err.stack); });
 	}
 
 

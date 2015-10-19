@@ -61,7 +61,7 @@ class PatternsSetup extends React.Component {
 	}
 
 	componentWillUnmount() {
-		var { radio } = this.props.radio;
+		var { radio } = this.props;
 		radio.commands.clearHandler('reset:patterns');
 	}
 

@@ -145,10 +145,14 @@ class SaveBase extends Base {
 		var model = this.state.model;
 		if (!model) { return; }
 		var name = model.resourceName,
-			deleteLink = model.get('id') ? (<li><Link className='link' to={model.getDeleteUrl()}>{ `Delete this ${name}` }</Link></li>) : null;
+			indexLink = (model.getIndexUrl()) ? (<li><Link className='link' to={model.getIndexUrl()}>{ `View all ${name}s` }</Link></li>) : null,
+			// there should be no edit or delete links if the model is empty
+			newLink = (model.get('id') && model.getNewUrl()) ? (<li><Link className='link' to={model.getNewUrl()}>{ `Create new ${name}` }</Link></li>) : null,
+			deleteLink = (model.get('id') && model.getDeleteUrl()) ? (<li><Link className='link' to={model.getDeleteUrl()}>{ `Delete this ${name}` }</Link></li>) : null;
 		return (
 			<ul>
-				<li><Link className='link' to={model.getIndexUrl()}>{ `View all ${name}s` }</Link></li>
+				{ indexLink }
+				{ newLink }
 				{ deleteLink }
 			</ul>
 		);
@@ -177,7 +181,8 @@ class SaveBase extends Base {
 		if (!this.state.model) { return (<Loader />); }
 		return (
 			<div className="static-content">
-				<Form 
+				<Form
+					history={ this.props.history }
 					model={ this.state.model }
 					isEnabled={ isFormEnabled }
 					submitButtonText={ this.getSubmitButtonText() }

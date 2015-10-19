@@ -51,13 +51,13 @@ export default function(project, isResearcherAuthenticated, isCollapsedDueToOver
 		{
 			title: 'Edit Project',
 			contentType: 'inner-link',
-			url: `/projects/${id}/edit`,
+			url: project ? project.getEditUrl() : '/',
 			reactIconNames: [ 'Build' ]
 		},
 		{
 			title: 'Delete Project',
 			contentType: 'inner-link',
-			url: `/projects/${id}/delete`,
+			url: project ? project.getDeleteUrl() : '/',
 			reactIconNames: [ 'Trash' ]
 		}
 	];

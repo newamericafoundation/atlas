@@ -99,6 +99,7 @@ class Model extends base.Model {
                 formComponentProps: {
                     id: 'project_section_ids',
                     foreignCollection: new projectSection.Collection(),
+                    foreignCollectionDisplayField: 'name',
                     labelText: 'Project Sections',
                     hint: ''
                 }
@@ -109,10 +110,10 @@ class Model extends base.Model {
                 formComponentProps: {
                     id: 'project_template_id',
                     foreignCollection: new projectTemplate.Collection(),
+                    foreignCollectionDisplayField: 'name',
                     labelText: 'Project Template',
                     hint: 'The template will determine the way your project is visualized - select from below:'
-                },
-                foreignModelName: 'ProjectTemplate'
+                }
             },
 
             {
@@ -258,13 +259,20 @@ class Model extends base.Model {
     }
 
 
-    /** Get imgage attribution html. */
+    /*
+     * Get imgage attribution html. 
+     *
+     */
     getImageAttributionHtml() {
-        return this.getMarkdownHtml('image_credit');
+        var cred = this.get('image_credit');
+        return formatters.markdown(cred);
     }
 
 
-    // Process entry spreadsheet data.
+    /*
+     * Process entry spreadsheet data.
+     *
+     */
     beforeSave() {
 
         var varModel = new variable.Model(),

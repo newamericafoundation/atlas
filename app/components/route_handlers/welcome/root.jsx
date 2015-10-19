@@ -92,8 +92,4 @@ class Welcome extends React.Component {
 
 }
 
-Welcome.contextTypes = {
-	router: React.PropTypes.func
-};
-
 export default Welcome;

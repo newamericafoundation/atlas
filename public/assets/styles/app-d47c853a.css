@@ -4449,6 +4449,17 @@ td, th {
   width: 100%;
   height: 100%;
   overflow: scroll; }
+  .page__button {
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    bottom: -15px;
+    right: 12px;
+    fill: #85026a;
+    cursor: pointer;
+    opacity: 0.8; }
+    .page__button:hover {
+      opacity: 1; }
   .page .feature-box {
     display: inline-block;
     margin: 10px 15px 0px 0; }

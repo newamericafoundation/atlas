@@ -9,6 +9,73 @@ import $ from 'jquery';
 class Model extends Backbone.Model {
 
 	/*
+	 * Lower-case name of the resource constructed by this constructor.
+	 *
+	 */
+	get resourceName() { return 'resource'; }
+
+
+	/*
+	 *
+	 *
+	 */
+	get apiUrlRoot() {
+		var name = this.resourceName;
+		return `/api/v1/${name}s`; 
+	}
+
+
+	/*
+	 *
+	 *
+	 */
+	getIndexUrl() {
+		var name = this.resourceName;
+		return `/${name}s`;
+	}
+
+
+	/*
+	 * Customize on subclass if route is non-standard or the resource has a custom plural name.
+	 * 
+	 */
+	getViewUrl() {
+		var name = this.resourceName;
+		return `/${name}s/${this.get('id')}`;
+	}
+
+
+	/*
+	 * Customize on subclass if route is non-standard or the resource has a custom plural name.
+	 * 
+	 */
+	getEditUrl() {
+		var name = this.resourceName;
+		return `/admin/${name}s/${this.get('id')}/edit`;
+	}
+
+
+	/*
+	 * Customize on subclass if route is non-standard or the resource has a custom plural name.
+	 * 
+	 */
+	getDeleteUrl() {
+		var name = this.resourceName;
+		return `/admin/${name}s/${this.get('id')}/delete`;
+	}
+
+
+	/*
+	 *
+	 *
+	 */
+	getNewUrl() {
+		var name = this.resourceName;
+		return `/admin/${name}s/new`;
+	}
+
+
+	/*
 	 * Returns a fetch promise. Project ID must be set for this to work.
 	 *
 	 */
@@ -123,6 +190,26 @@ class Model extends Backbone.Model {
 class Collection extends Backbone.Collection {
 	
 	get model() { return Model; }
+
+
+	/*
+	 *
+	 *
+	 */
+	get dbCollectionName() { 
+		var name = this.model.prototype.resourceName;
+		return `${name}s`; 
+	}
+
+
+	/*
+	 *
+	 *
+	 */
+	get apiUrl() {
+		var name = this.model.prototype.resourceName;
+		return `/api/v1/${name}s`; 
+	}
 
 
 	/*

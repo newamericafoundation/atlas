@@ -88,11 +88,6 @@ class Header extends React.Component {
 }
 
 
-Header.contextTypes = {
-	router: React.PropTypes.func
-};
-
-
 class HeaderNavCircles extends React.Component {
 	
 	/*

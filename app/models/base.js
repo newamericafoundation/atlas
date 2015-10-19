@@ -5,55 +5,11 @@ import marked from 'marked';
 import baseCrud from './base_crud.js';
 
 
-
 /*
  *
  *
  */
 class Model extends baseCrud.Model {
-
-	/*
-	 * Lower-case name of the resource constructed by this constructor.
-	 *
-	 */
-	get resourceName() { return 'resource'; }
-
-
-	get apiUrlRoot() {
-		var name = this.resourceName;
-		return `/api/v1/${name}s`; 
-	}
-
-
-	/*
-	 * Customize on subclass if route is non-standard or the resource has a custom plural name.
-	 * 
-	 */
-	getViewUrl() {
-		var name = this.resourceName;
-		return `/${name}s/${this.get('id')}`;
-	}
-
-
-	/*
-	 * Customize on subclass if route is non-standard or the resource has a custom plural name.
-	 * 
-	 */
-	getEditUrl() {
-		var name = this.resourceName;
-		return `/${name}s/${this.get('id')}/edit`;
-	}
-
-
-	/*
-	 * Customize on subclass if route is non-standard or the resource has a custom plural name.
-	 * 
-	 */
-	getDeleteUrl() {
-		var name = this.resourceName;
-		return `/${name}s/${this.get('id')}/delete`;
-	}
-
 
 	/*
 	 * Custom get function, accommodating a suffix, e.g. status_2012.
@@ -68,7 +24,7 @@ class Model extends baseCrud.Model {
 	}
 
 
-	/**
+	/*
 	 * Adds fields of a foreign collection, referenced by a foreign id within the model.
 	 * @param {string} foreignIdKey - Foreign id key, of the format 'model_id' or 'model_ids'.
 	 *                                  the former references a single value, the latter an array.
@@ -140,24 +96,7 @@ class Model extends baseCrud.Model {
 	}
 
 
-	/**
-	 * Get markdown html.
-	 * @param {string} key
-	 * @returns {} newHtml
-	 */
-	getMarkdownHtml(key) {
-		var $html, md, newHtml;
-		md = this.get(key);
-		if (md != null) {
-			$html = $(marked(md));
-			$html.find('a').attr('target', '_blank');
-			newHtml = $('<div></div>').append($html.clone()).html();
-			return newHtml;
-		}
-	}
-
-
-	/**
+	/*
 	 * Set table of contents for html data under a given key.
 	 * @param {string} key
 	 * @param {string} saveKey - Key under which the modified html snippet is placed.
@@ -214,15 +153,6 @@ class Collection extends baseCrud.Collection {
 	
 	get model() { return Model; }
 
-	get dbCollection() { 
-		var name = this.model.prototype.resourceName;
-		return `${name}s`; 
-	}
-
-	get apiUrl() {
-		var name = this.model.prototype.resourceName;
-		return `/api/v1/${name}s`; 
-	}
 
 	/**
 	 * Recognize and process server response by applying the corresponding model's parse method.

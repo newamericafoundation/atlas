@@ -24,7 +24,7 @@ class Form extends React.Component {
 	render() {
 		var style = this.props.isEnabled ? {} : { opacity: 0.5 };
 		return (
-			<form 
+			<form
 				onSubmit={this.sendFormDataToParent.bind(this)}
 				style={style}
 			>
@@ -49,8 +49,9 @@ class Form extends React.Component {
 				id = field.formComponentProps.id,
 				props = field.formComponentProps || {};
 			return (
-				<FormComp 
+				<FormComp
 					{...props}
+					history={this.props.history}
 					key={i}
 					isEnabled={this.props.isEnabled}
 					saveDataOnParent={this.saveDataFromChild.bind(this)}

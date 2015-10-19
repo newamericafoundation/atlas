@@ -6,6 +6,10 @@ import seed from './../../db/seeds/project_sections.json';
 
 class Model extends baseFilter.Model {
 	get resourceName() { return 'project_section'; }
+
+	getEditUrl() { return null; }
+	getNewUrl() { return null; }
+	getDeleteUrl() { return null; }
 }
 
 class Collection extends baseFilter.Collection {

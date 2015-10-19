@@ -6,6 +6,10 @@ import seed from './../../db/seeds/project_templates.json';
 
 class Model extends baseFilter.Model {
 	get apiUrlRoot() { return '/api/v1/project_templates'; }
+
+	getEditUrl() { return null; }
+	getNewUrl() { return null; }
+	getDeleteUrl() { return null; }
 }
 
 

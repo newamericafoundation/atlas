@@ -7,8 +7,23 @@ import Header from './general/header.jsx';
 
 import classNames from 'classnames';
 
-class Layout extends React.Component {
+import Backbone from 'backbone';
 
+/*
+ * Create radio object with the same fields as a Marionette Application object.
+ * This is a temporary setup to support the Marionette transition.
+ */
+function createRadio() {
+	var radio = {};
+	radio.vent = new Backbone.Wreqr.EventAggregator();
+	radio.reqres = new Backbone.Wreqr.RequestResponse();
+	radio.commands = new Backbone.Wreqr.Commands();
+	return radio;
+}
+
+var radio = createRadio();
+
+class Layout extends React.Component {
 
 	/*
 	 *
@@ -17,11 +32,18 @@ class Layout extends React.Component {
 	render() {
 		return (
 			<div className={this.getClassName()}>
-				<Setup {...this.props} />
-				<Header {...this.props} title={this.getHeaderTitle()} isTransparent={this.isHeaderTransparent()} />
-				<RouteHandler {...this.props} />
+				<Setup radio={radio} />
+				<Header radio={radio} title={this.getHeaderTitle()} isTransparent={this.isHeaderTransparent()} />
+				{ React.cloneElement(this.props.children, { radio: radio }) }
 			</div>
 		);
+	}
+
+
+	getPath() {
+		// var pth = this.props.state.path;
+		var pth = this.props.location.pathname;
+		return pth;
 	}
 
 	/*
@@ -29,7 +51,7 @@ class Layout extends React.Component {
 	 * TODO: get route name to clean up this method.
 	 */
 	getClassName() {
-		var pth = this.props.state.path;
+		var pth = this.getPath();
 		return classNames({
 			'wrapper': true,
 			'atl-route--welcome_index': (['/', '/welcome'].indexOf(pth) > -1),
@@ -44,7 +66,7 @@ class Layout extends React.Component {
 	 *
 	 */
 	isHeaderTransparent() {
-		var pth = this.props.state.path;
+		var pth = this.getPath();
 		if (['/', '/welcome'].indexOf(pth) > -1) { return true; }
 		return false;
 	}
@@ -55,7 +77,7 @@ class Layout extends React.Component {
 	 *
 	 */
 	getHeaderTitle() {
-		var pth = this.props.state.path;
+		var pth = this.getPath();
 		if (['/', '/welcome'].indexOf(pth) > -1) { return 'New America'; }
 		return 'Atlas';
 	}

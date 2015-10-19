@@ -1,12 +1,19 @@
 import React from 'react';
-import Base from './base.jsx';
+import ForeignCollectionBase from './foreign_collection_base.jsx';
 
-class ForeignCollectionRadio extends Base {
+import Loader from './../../general/loader.jsx';
+
+class ForeignCollectionRadio extends ForeignCollectionBase {
 
 	constructor(props) {
 		super(props);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<div className='form__wrapper'>
@@ -17,8 +24,16 @@ class ForeignCollectionRadio extends Base {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderOptions() {
-		return this.props.foreignCollection.map((foreignModel, i) => {
+		var foreignColl = this.getForeignCollection(),
+			field = this.getForeignCollectionDisplayField();
+		if (!foreignColl || foreignColl.length === 0) { return <Loader /> }
+		return foreignColl.map((foreignModel, i) => {
 			var option = foreignModel.get('id'),
 				isChecked = this.isOptionChecked(option, i);
 			return (
@@ -32,27 +47,37 @@ class ForeignCollectionRadio extends Base {
 						onChange={this.saveDataOnParent.bind(this)} 
 						value={ option } 
 					/>
-					<p>{ foreignModel.get('name') }</p>
+					<p>{ foreignModel.get(field) }</p>
 				</div>
 			);
 		});
 	}
 
-	isOptionChecked(option, i) {
-		if(this.props.initialValue) { return (option === this.props.initialValue); }
-		return (i === 0);
-	}
 
+	/*
+	 *
+	 *
+	 */
 	componentDidMount() {
 		// If there was no initial value passed to the component, pass back the first option to the parent.
-		if(!this.props.initialValue) {
-			this.props.saveDataOnParent({
-				id: this.props.id,
-				value: this.props.foreignCollection.models[0].get('id')
-			});
-		}
+		this.fetchForeignCollection();
 	}
 
+
+	/*
+	 *
+	 *
+	 */
+	isOptionChecked(option, i) {
+		if(this.props.initialValue) { return (option === this.props.initialValue); }
+		return false;
+	}
+
+
+	/*
+	 *
+	 *
+	 */
 	saveDataOnParent(e) {
 		this.props.saveDataOnParent({
 			id: this.props.id,
