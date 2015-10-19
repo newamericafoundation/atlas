@@ -1,15 +1,26 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
+
 import classNames from 'classnames';
 
 import Base from './base.jsx';
 
 class Headline extends Base {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
 		this.maxHeight = 0;
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<div className='atl__headline' ref='root'>
@@ -23,47 +34,82 @@ class Headline extends Base {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	componentDidMount() {
 		this.props.cacheHeight(this.getHeight());
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	componentDidUpdate() {
 		this.props.cacheHeight(this.getHeight());
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getHeight() {
-		var $el = $(React.findDOMNode(this.refs.root));
+		var $el = $(ReactDOM.findDOMNode(this.refs.root));
 		var height = $el.height();
 		if (height > this.maxHeight) { this.maxHeight = height; }
 		else { height = this.maxHeight }
 		return height;
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	openInfoBox(e) {
-		var project = this.props.project;
-		if (project == null) { return; }
+		var { project } = this.props;
+		if (!project) { return; }
 		e.preventDefault();
 		this.props.project.get('data').items.active = undefined;
 		this.props.setUiState({ isInfoBoxActive: true });
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getShortDescription() {
-		var project = this.props.project;
-		if (project == null) { return; }
+		var { project } = this.props;
+		if (!project) { return; }
 		return project.get('short_description');
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getSectionText() {
-		var project, projectSectionNames;
-		project = this.props.project;
+		var { project } = this.props, 
+			projectSectionNames;
 		if (project == null) { return; }
 		projectSectionNames = project.get('project_section_names');
 		if (projectSectionNames == null) { return ''; }
 		return projectSectionNames.join(',<br>').toUpperCase();
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getTitle() {
-		var project = this.props.project;
+		var { project } = this.props;
 		if (project == null) { return; }
 		return project.get('title');
 	}

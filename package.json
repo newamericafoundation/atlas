@@ -75,7 +75,8 @@
     "passport-google-oauth": "^0.2.0",
     "prerender-node": "^1.2.1",
     "qajax": "^1.3.0",
-    "react": "^0.13.3",
+    "react": "^0.14.0",
+    "react-dom": "^0.14.0",
     "react-router": "^1.0.0-rc3",
     "topojson": "^1.6.19",
     "underscore": "^1.8.3"

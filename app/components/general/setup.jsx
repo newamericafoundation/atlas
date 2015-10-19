@@ -1,4 +1,6 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
+
 import * as colors from './../utilities/colors.js';
 import classNames from 'classnames';
 
@@ -20,6 +22,10 @@ class Setup extends React.Component {
 //   multi-colored striped fill on SVG elements.
 class PatternsSetup extends React.Component {
 	
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -27,6 +33,11 @@ class PatternsSetup extends React.Component {
 		};
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<defs>
@@ -35,6 +46,11 @@ class PatternsSetup extends React.Component {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderList() {
 		// Need to start with a set number of empty patterns and modify as new patterns are requested.
 		//   it does not work when they are generated from scratch on the fly.
@@ -54,24 +70,42 @@ class PatternsSetup extends React.Component {
 		});
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	componentDidMount() {
 		var { radio } = this.props;
 		radio.commands.setHandler('reset:patterns', this.resetPatterns.bind(this));
 		radio.reqres.setHandler('get:pattern:id', this.ensureAndGetPattern.bind(this));
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	componentWillUnmount() {
 		var { radio } = this.props;
 		radio.commands.clearHandler('reset:patterns');
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	resetPatterns() {
 		this.setState({ data: [] });
 	}
 
-	// Ensures a pattern is defined and returns its id.
-	// this.param {array} colorCodes
-	// this.returns {number} id
+
+	/*
+	 * Ensures a pattern is defined and returns its id.
+	 * this.param {array} colorCodes
+	 * this.returns {number} id
+	 */
 	ensureAndGetPattern(colorCodes) {
 		var data;
 		// Loop through existing patterns to see if the combination has been defined before.
@@ -93,7 +127,11 @@ class PatternsSetup extends React.Component {
 		return this.state.data.length-1;
 	}
 
-	// These are the readily assembled pattern templates are assembled programatically by the child component.
+
+	/*
+	 * These are the readily assembled pattern templates are assembled programatically by the child component.
+	 *
+	 */
 	__testRenderTwoColorPattern() {
 		return (
 			<pattern id="diagonal-stripes" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
@@ -105,6 +143,11 @@ class PatternsSetup extends React.Component {
 		);
 	}
 
+
+	/*
+	 * These are the readily assembled pattern templates are assembled programatically by the child component.
+	 *
+	 */
 	__testRenderThreeColorPattern() {
 		return (
 			<pattern id="diagonal-stripes" x="0" y="0" width="18" height="18" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
@@ -121,6 +164,10 @@ class PatternsSetup extends React.Component {
 // Single pattern element.
 class Pattern extends React.Component {
 	
+	/*
+	 * These are the readily assembled pattern templates are assembled programatically by the child component.
+	 *
+	 */
 	render() {
 		var colorCount, dim, className;
 		if (this.props.colorCodes == null) { return (<pattern />); }
@@ -143,28 +190,48 @@ class Pattern extends React.Component {
 		);
 	}
 
-	// Custom color function that translates a color code into an rgb value.
-	// TODO: this function needs to be provided as props to the parent component.
-	//   this will make the component more general.
+
+	/*
+	 * Custom color function that translates a color code into an rgb value.
+	 * TODO: this function needs to be provided as props to the parent component.
+	 *   this will make the component more general.
+	 */
 	getColor(colorCode) {
 		return colors.toRgb(colorCode - 1);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	componentDidMount() {
 		this.setPatternTransform();
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	componentDidUpdate() {
 		this.setPatternTransform();
 	}
 
-	// React does not support patternTransform as an attribute.
-	//   Need to set with vanilla JavaScript instead (jQuery lowercases it by default).
+
+	/*
+	 * React does not support patternTransform as an attribute.
+	 * Need to set with vanilla JavaScript instead (jQuery lowercases it by default).
+	 */
 	setPatternTransform() {
-		React.findDOMNode(this).setAttribute('patternTransform', 'rotate(45)');
+		ReactDOM.findDOMNode(this).setAttribute('patternTransform', 'rotate(45)');
 	}
 
-	// this.param {number} n - Number of rectangles defining the pattern.
+
+	/*
+	 * this.param {number} n - Number of rectangles defining the pattern.
+	 *
+	 */
 	_getPatternRects(n) {
 		var n, arr;
 		if (this.props.colorCodes == null) { return; }

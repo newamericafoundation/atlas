@@ -25,7 +25,6 @@ class SideBar extends React.Component {
 		this.state = {
 			isActive: false
 		};
-		this.props.buttons = this.props.buttons || defaultButtons;
 	}
 
 

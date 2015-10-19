@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 import Headline from './headline.jsx';
 import DisplayToggle from './display_toggle.jsx';
-import Filter from './filter.jsx';
+import Filter from './filter/root.jsx';
 
 import Base from './base.jsx';
 
