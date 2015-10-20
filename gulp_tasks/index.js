@@ -9,3 +9,5 @@ require('./devops.js');
 require('./default.js');
 require('./extract_boilerplate.js');
 require('./geo.js');
+
+require('./services/lambda.js');
