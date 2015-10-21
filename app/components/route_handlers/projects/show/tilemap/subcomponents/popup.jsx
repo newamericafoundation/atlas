@@ -5,6 +5,10 @@ import Base from './base.jsx';
 
 class Popup extends Base {
 
+	/*
+	 *
+	 *
+	 */
 	render() {
 		var style = this.getStyle();
 		var hoveredItem = this.getHoveredItem();
@@ -30,6 +34,11 @@ class Popup extends Base {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderLogo() {
 		return (
 			<svg className="hex-button" viewBox="0 0 100 100">
@@ -43,6 +52,11 @@ class Popup extends Base {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getStyle() {
 		var { radio } = this.props;
 		var hoveredItem, App, position;

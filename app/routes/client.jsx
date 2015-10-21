@@ -15,9 +15,10 @@ import ProjectsShow from './../components/route_handlers/projects/show/root.jsx'
 
 import ImagesIndex from  './../components/route_handlers/images/index/root.jsx';
 
-import * as models from './../models/index.js';
+
 import resourceRouteGenerator from './../components/route_handlers/helpers/resource_route_generator.jsx';
 
+import * as models from './../models/index.js';
 
 // Main route definition.
 var routes = (
@@ -25,7 +26,7 @@ var routes = (
 
 		<Route path='/' component={Layout}>
 
-			<Route name='welcome' path='welcome' component={Welcome} />
+			<IndexRoute component={Welcome} />
 
 			{ resourceRouteGenerator(models.project.Model) }
 

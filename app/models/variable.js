@@ -51,9 +51,10 @@ class Model extends base.Model {
     getFormattedField(item, defaultFormat) {
         var rawField = item.get(this.get('id')),
             format = this.get('format') || defaultFormat;
-        //if (format == null || formatters[format] == null) { return rawField; }
+        if (_.isArray(rawField)) {
+            return rawField.map((item) => { return formatters.format(item, format); }).join(', ');
+        }
         return formatters.format(rawField, format);
-        //return formatters[format](rawField);
     }
 
 

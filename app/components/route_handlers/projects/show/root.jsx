@@ -206,6 +206,8 @@ class Show extends React.Component {
 					project.prepOnClient();
 					this.setState({ project: project });
 					this.fetchRelatedProjects();
+				} else {
+					this.props.history.pushState(null, '/menu');
 				}
 			}).catch((err) => { 
 				console.error('Project error: ', err.stack); 
@@ -224,9 +226,5 @@ class Show extends React.Component {
 
 
 }
-
-Show.contextTypes = {
-	router: React.PropTypes.func
-};
 
 export default Show;
