@@ -10,9 +10,7 @@ import watchify from 'watchify';
 var entry = './app/assets/scripts/bundle.jsx';
 
 var globalShim = browserifyGlobalShim.configure({
-    'jquery': '$',
-    'underscore': '_',
-    'backbone': 'Backbone'
+    'jquery': '$'
 });
 
 var getBrowserifyBundler = (entries) => {

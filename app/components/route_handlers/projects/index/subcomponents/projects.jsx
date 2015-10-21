@@ -180,6 +180,7 @@ class Project extends React.Component {
 	 *
 	 */
 	getBackgroundStyle() {
+		return { 'backgroundImage': 'url(/static/images/resize_cache--Stock_Photos_w400--shutterstock_114464926.jpg)' };
 		var project = this.props.project;
 		if (project == null || !this.props.shouldDisplayImage) { return; }
 		var style = { 'backgroundImage': project.getImageUrl() };

@@ -93,7 +93,7 @@ class SaveBase extends Base {
 	 *
 	 */
 	render() {
-		var style = { 'overflow-y': 'scroll' };
+		var style = { 'overflowY': 'scroll' };
 		return (
 			<div className='atl'>
 				<div className='atl__main fill-parent' style={style} onScroll={ this.setStickyPageNav.bind(this) }>

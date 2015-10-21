@@ -2,8 +2,6 @@ import React from 'react';
 
 import { Router, Route, IndexRoute } from 'react-router';
 
-
-
 import classNames from 'classnames';
 
 import Layout from './../components/layout.jsx';
@@ -24,6 +22,8 @@ var routes = (
 	<Route path='/' component={Layout}>
 
 		<IndexRoute component={Welcome} />
+
+		<Route path='admin/images/all' component={ImagesIndex} />
 
 		{ resourceRouteGenerator(models.project.Model) }
 

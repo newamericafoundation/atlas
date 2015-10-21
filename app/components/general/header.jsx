@@ -49,7 +49,8 @@ class Header extends React.Component {
 	 *
 	 */
 	renderAuth() {
-		var researcher = window.researcher;
+		if (!global.window) { return; }
+		var { researcher } = global.window;
 		if (!researcher) { return; }
 		return (
 			<div className="header__auth">

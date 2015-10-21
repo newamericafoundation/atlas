@@ -9,7 +9,6 @@ import config from './../config.js';
 
 AWS.config.region = 'us-west-2';
 
-
 var lambda = new AWS.Lambda();
 var secretEnv = config.getLocalSecretEnv();
 
@@ -23,8 +22,9 @@ class LambdaShipper {
 	 *
 	 *
 	 */
-	constructor(folderName) {
+	constructor(folderName, prefix) {
 		this.folderName = folderName;
+		this.prefix = prefix;
 	}
 
 
@@ -86,7 +86,7 @@ class LambdaShipper {
 }
 
 var folderName = 'hello_lambda_s3';
-var lambdaShipper = new LambdaShipper(folderName);
+var lambdaShipper = new LambdaShipper(folderName, 'Atlas');
 
 
 

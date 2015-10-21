@@ -27,7 +27,11 @@ class Model extends base.Model {
         };
     }
 
-    // Form fields.
+
+    /*
+     * Form fields.
+     *
+     */
     get fields() {
         return [
 
@@ -165,10 +169,18 @@ class Model extends base.Model {
         ]
     }
 
-    /** API queries that need to be handled custom. For every key, there is a this.is_#{key} method that filters a model. */
+
+    /* 
+     * API queries that need to be handled custom. For every key, there is a this.is_#{key} method that filters a model. 
+     *
+     */
     get customQueryKeys() { return ['related_to']; }
 
 
+    /*
+     *
+     *
+     */
     getIndexUrl() {
         return '/menu';
     }
@@ -394,6 +406,10 @@ class Model extends base.Model {
     }
 
 
+    /*
+     *
+     *
+     */
     embedForeignModelNames() {
         var templates = new projectTemplate.Collection(),
             sections = new projectSection.Collection();

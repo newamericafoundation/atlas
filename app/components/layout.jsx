@@ -1,6 +1,6 @@
 import React from 'react';
-import Router from 'react-router';
-import { Route, RouteHandler, Redirect } from 'react-router';
+
+import { RoutingContext } from 'react-router';
 
 import Setup from './general/setup.jsx';
 import Header from './general/header.jsx';
@@ -8,6 +8,7 @@ import Header from './general/header.jsx';
 import classNames from 'classnames';
 
 import Backbone from 'backbone';
+import 'backbone.wreqr';
 
 /*
  * Create radio object with the same fields as a Marionette Application object.
@@ -15,11 +16,9 @@ import Backbone from 'backbone';
  */
 function createRadio() {
 	var radio = {};
-	//if (Backbone.Wreckr) {
-		radio.vent = new Backbone.Wreqr.EventAggregator();
-		radio.reqres = new Backbone.Wreqr.RequestResponse();
-		radio.commands = new Backbone.Wreqr.Commands();
-	//}
+	radio.vent = new Backbone.Wreqr.EventAggregator();
+	radio.reqres = new Backbone.Wreqr.RequestResponse();
+	radio.commands = new Backbone.Wreqr.Commands();
 	return radio;
 }
 
@@ -42,8 +41,20 @@ class Layout extends React.Component {
 	}
 
 
+	/*
+	 *
+	 *
+	 */
+	componentDidMount() {
+		// console.log(<RoutingContext />);
+	}
+
+
+	/*
+	 *
+	 *
+	 */
 	getPath() {
-		// var pth = this.props.state.path;
 		var pth = this.props.location.pathname;
 		return pth;
 	}

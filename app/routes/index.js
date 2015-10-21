@@ -1,6 +1,9 @@
 import express from 'express';
 import json2csv from 'nice-json2csv';
 
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
+
 import authRouter from './auth.js';
 import staticRouter from './static.js';
 import lambdaRouter from './lambda.js';
@@ -38,10 +41,20 @@ resources.forEach(function(resource) {
 });
 
 // Main routes - routing done by client.
-router.get('*'/*[ '/', '/menu', '/welcome', '/:atlas_url', '*' ]*/, (req, res) => {
+router.get('*', (req, res) => {
+
 	var opt = fingerprintManifest;
 	opt.user = req.user;
-	res.render('index.jade', opt);
+
+	// match({ routes: clientRoutes, location: req.url }, (err, redirectLocation, renderProps) => {
+
+	// 	if (!err) {
+	// 		opt.reactOutput = ReactDOMServer.renderToString(<RoutingContext {...renderProps} />);
+	// 	}
+
+		res.render('index.jade', opt);
+	// });
+
 });
 
 module.exports = router;

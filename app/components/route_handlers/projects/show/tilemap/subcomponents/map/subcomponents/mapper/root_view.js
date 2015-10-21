@@ -1,6 +1,8 @@
 // This is a custom view constructor that uses d3 and Mapbox to render graphics.
 
 import controlHelpers from './control_helpers.js';
+import _ from 'underscore';
+import Backbone from 'backbone';
 
 class RootView {
 

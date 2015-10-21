@@ -38,7 +38,7 @@ class Index extends Static {
 	renderImages() {
 		return this.state.images.map((image, i) => {
 			return (
-				<Link to={image.getEditUrl()} className='feature-box' style={{ margin: '20px', display: 'inline-block' }}>
+				<Link key={i} to={image.getEditUrl()} className='feature-box' style={{ margin: '20px', display: 'inline-block' }}>
 					<div className='feature-box__top-content'>
 						<p>{ image.get('name') }</p>
 					</div>
@@ -59,9 +59,5 @@ class Index extends Static {
 	}
 
 }
-
-Index.contextTypes = {
-	router: React.PropTypes.func
-};
 
 export default Index;

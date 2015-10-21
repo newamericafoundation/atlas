@@ -19,7 +19,6 @@ function start() {
 
 	// Developer signature :).
 	console.log('Hi, Mom!');
-
 	ReactDOM.render(clientRouter, global.document.getElementById('site'));
 
 };

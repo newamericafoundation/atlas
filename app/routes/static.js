@@ -26,7 +26,7 @@ router.get('/images/:file_name', (req, res) => {
 	console.log(req.query);
 
 	var s3 = new AWS.S3(),
-		key = req.params.file_name.replace(/--/g, '/'),
+		key = 'images/' + req.params.file_name.replace(/--/g, '/'),
 		params = { Bucket: 'static.atlas.newamerica.org', Key: key };
 	s3.getObject(params).createReadStream().pipe(res);
 
@@ -37,3 +37,5 @@ router.get('/images/:file_name', (req, res) => {
 
 
 export default router;
+
+'resize_cache--Stock_Photos_w400--shutterstock_114464926.jpg'

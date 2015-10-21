@@ -21,7 +21,6 @@ class Model extends base.Model {
 		return [
 
 			{
-	            id: 'name',
 	            formComponentName: 'Text',
 	            formComponentProps: {
 	                id: 'name',
@@ -32,12 +31,22 @@ class Model extends base.Model {
 	        },
 
 	        {
-	            id: 'encoded',
 	            formComponentName: 'ImageFile',
 	            formComponentProps: {
 	                id: 'encoded',
-	                labelText: 'Image File',
+	                labelText: 'Direct image upload',
 	                hint: 'Size limit: 3MB.'
+	            }
+	        },
+
+	        {
+	            formComponentName: 'Radio',
+	            formComponentProps: {
+	                id: 'stock_type',
+	                labelText: 'Stock photo platform.',
+	                options: [ 'shutterstock', 'unsplash' ],
+	                hint: "Stock photo platform",
+	                placeholder: 'Image Credit'
 	            }
 	        },
 
@@ -45,10 +54,10 @@ class Model extends base.Model {
 	            id: 'credit',
 	            formComponentName: 'Text',
 	            formComponentProps: {
-	                id: 'credit',
-	                labelText: 'Image Credit',
-	                hint: "Single URL or Markdown, e.g. '[Shutterstock](http://www.shutterstock.com/imageurl)'",
-	                placeholder: 'Image Credit'
+	                id: 'stock_id',
+	                labelText: 'Stock photo identifier.',
+	                hint: "Stock photo id.",
+	                placeholder: 'Id'
 	            }
 	        }
 
@@ -57,18 +66,16 @@ class Model extends base.Model {
 	}
 
 
-	getEditUrl() {
-		return `/images/${this.get('id')}/edit`;
-	}
-
-
 	getViewUrl() {
-		return '/';
+		return null;
 	}
 
 
 	/** Gets encoded url to use as a CSS background-image. */
 	getUrl() {
+		// if (this.get('stock_type') && this.get('stock_id')) {
+		// 	return `url(/static/images/resize_cache--Stock_Photos--${this.get('stock_type')}_${this.get('stock_id')})`;
+		// }
 		var encoded;
 		encoded = this.get('encoded');
 		encoded = encoded.replace(/(\r\n|\n|\r)/gm, '');

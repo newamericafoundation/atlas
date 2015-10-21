@@ -76,7 +76,7 @@ class Show extends React.Component {
 	 *
 	 *
 	 */
-	componentDidMount() {
+	componentWillMount() {
 		this.fetchProject();
 	}
 
@@ -114,8 +114,8 @@ class Show extends React.Component {
 			return this.forceUpdate();
 		}
 
-		if (message === 'print') {
-			window.print();
+		if (message === 'print' && global.window) {
+			global.window.print();
 		}
 
 	}
@@ -126,7 +126,8 @@ class Show extends React.Component {
 	 *
 	 */
 	getButtons() {
-		return buttonsDataGenerator(this.state.project, window.isResearcherAuthenticated, this.state.ui.isCollapsedDueToOverflow);
+		if (!global.window) { return; }
+		return buttonsDataGenerator(this.state.project, global.window.isResearcherAuthenticated, this.state.ui.isCollapsedDueToOverflow);
 	}
 
 
