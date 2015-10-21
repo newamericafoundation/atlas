@@ -15,9 +15,11 @@ import Backbone from 'backbone';
  */
 function createRadio() {
 	var radio = {};
-	radio.vent = new Backbone.Wreqr.EventAggregator();
-	radio.reqres = new Backbone.Wreqr.RequestResponse();
-	radio.commands = new Backbone.Wreqr.Commands();
+	//if (Backbone.Wreckr) {
+		radio.vent = new Backbone.Wreqr.EventAggregator();
+		radio.reqres = new Backbone.Wreqr.RequestResponse();
+		radio.commands = new Backbone.Wreqr.Commands();
+	//}
 	return radio;
 }
 

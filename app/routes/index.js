@@ -5,6 +5,10 @@ import authRouter from './auth.js';
 import staticRouter from './static.js';
 import lambdaRouter from './lambda.js';
 
+import { match, RoutingContext } from 'react-router';
+
+import clientRoutes from './client.jsx';
+
 import fingerprintManifest from './utilities/fingerprint_manifest.js';
 
 var router = express.Router();
@@ -34,7 +38,7 @@ resources.forEach(function(resource) {
 });
 
 // Main routes - routing done by client.
-router.get([ '/', '/menu', '/welcome', '/:atlas_url', '*' ], (req, res) => {
+router.get('*'/*[ '/', '/menu', '/welcome', '/:atlas_url', '*' ]*/, (req, res) => {
 	var opt = fingerprintManifest;
 	opt.user = req.user;
 	res.render('index.jade', opt);

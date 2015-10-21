@@ -1,12 +1,16 @@
 import * as util from 'gulp-util';
 
-export default {
+import localSecretEnv from './../../secrets/atlas.json';
 
-	localEnvPath: '../secrets/atlas.json',
+var config = {
 
 	localPemKeyPath: '../secrets/atlas.pem',
 
 	localDbBackupPath: '../atlas-newamerica-org-db/',
+
+	getLocalSecretEnv: () => {
+		return localSecretEnv;
+	},
 
     production: !!util.env.production,
 
@@ -63,7 +67,6 @@ export default {
 		        './bower_components/backbone/backbone.js',
 		        './bower_components/backbone.wreqr/lib/backbone.wreqr.js',
 		        './bower_components/chartist/dist/chartist.js',
-		        './bower_components/numeral/numeral.js',
 		        './bower_components/chartist-html/build/chartist-html.js',
 		        './app/assets/scripts/vendor/**/*'
 		    ],
@@ -79,3 +82,5 @@ export default {
     }
 
 };
+
+export default config;

@@ -3,17 +3,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import Router from 'react-router';
+import createBrowserHistory from 'history/lib/createBrowserHistory';
+
+import { Router } from 'react-router';
 
 import routes from './../../routes/client.jsx';
 
+var clientRouter = (
+	<Router history={createBrowserHistory()}>
+		{ routes }
+	</Router>
+);
 
 function start() {
 
 	// Developer signature :).
 	console.log('Hi, Mom!');
 
-	ReactDOM.render(routes, global.document.getElementById('site'));
+	ReactDOM.render(clientRouter, global.document.getElementById('site'));
 
 };
 
