@@ -14,6 +14,7 @@ var config = {
 
     production: !!util.env.production,
 
+    // Code that is shared with other projects such as my.newamerica.org. To be extended into its own CMS.
     boilerplate: [
 
     	'./app.js',
@@ -59,7 +60,7 @@ var config = {
 		        './bower_components/js-xlsx/dist/xlsx.js'
 		    ],
 
-		    // bower scripts
+		    // vendor scripts
 		    vendor: [
 		        './bower_components/jquery/dist/jquery.js',
 		        './bower_components/selectize/dist/js/standalone/selectize.js',
@@ -68,7 +69,7 @@ var config = {
 		        './app/assets/scripts/vendor/**/*'
 		    ],
 
-		    // main application code
+		    // outside-bundle source code
 		    source: [
 		    	'./app/assets/scripts/polyfills/**/*',
 		        './app/assets/scripts/config/**/*'

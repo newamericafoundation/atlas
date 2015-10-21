@@ -1,16 +1,10 @@
-export default function(project, isResearcherAuthenticated, isCollapsedDueToOverflow) {
+export default function buttonsDataGenerator(project, isResearcherAuthenticated, isCollapsedDueToOverflow) {
 
 	var atlas_url = (project) ? (project.get('atlas_url')) : '';
 	var id = (project) ? (project.get('id')) : '';
 
 	var publicButtons = [
 
-		// { 
-		// 	title: 'Explore Atlas',
-		// 	contentType: 'inner-link',
-		// 	url: '/menu',
-		// 	reactIconNames: [ 'Grid' ]
-		// },
 		{ 
 			title: 'Collapse/Expand',
 			contentType: 'button',

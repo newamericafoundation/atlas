@@ -11,18 +11,10 @@ import config from './config.js';
 var devTasks = [
 
     {
-        name: 'css-build',
+        name: 'css',
         shouldRun: function(file) {
             var ext = path.extname(file);
             return (ext === '.scss');
-        }
-    },
-
-    {
-        name: 'js-build-source',
-        shouldRun: function(file) {
-            var ext = path.extname(file);
-            return ((file.slice(0, 10) === 'app/assets') && (['.js', '.coffee'].indexOf(ext) > -1));
         }
     }
 

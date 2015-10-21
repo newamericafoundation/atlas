@@ -14,7 +14,7 @@ gulp.task('css-clean', function(next) {
     return del([ 'public/assets/styles/**/*' ], next);
 });
 
-gulp.task('css-build', ['css-clean'], function() {
+gulp.task('css', ['css-clean'], function() {
     return gulp.src('./app/assets/styles/app.scss')
         .pipe(sass())
         .pipe(config.production ? minifyCss() : util.noop())
@@ -26,9 +26,4 @@ gulp.task('css-build', ['css-clean'], function() {
         .pipe(gulp.dest('public/assets/styles'))
         .pipe(rev.manifest())
         .pipe(gulp.dest('public/assets/styles'));
-});
-
-gulp.task('css-ship-to-intranet', [ 'css-build' ], function() {
-  return gulp.src('./public/assets/styles/app.css')
-    .pipe(copy('./../my-newamerica-org/', { prefix: 0 }));
 });
