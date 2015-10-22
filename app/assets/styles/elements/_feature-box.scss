@@ -4,7 +4,7 @@
 	$w2: 100px;
 
 	$bg-c-0: rgba(0, 0, 0, 0.05);
-	$bg-c-1: map-get($palette, naf-green);
+	$bg-c-1: palette-get(turquoise);
 
 	cursor: pointer;
 	width: $w1;

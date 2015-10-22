@@ -1,12 +1,23 @@
 $palette: (
+
 	naf-green: #2dbbb3,
+
+	turquoise: (
+		base: #2dbbb3,
+		dark: darken(#2dbbb3, 10)
+	),
+
 	grey: (
 		base: rgb(50, 50, 50), // used on titles
 		text: rgba(51, 50, 50, 0.9), // used on general text, off-white background
 		light: #4a4a4a, // 
 		dark: rgb(30, 30, 30)
 	),
-	off-white: #fffaef,
+
+	off-white: (
+		base: #fffaef
+	),
+
 	scheme: ( 
 		rgb(133, 2, 106), 
 		rgb(138, 1, 135), 
@@ -24,9 +35,11 @@ $palette: (
 		rgb(11, 144, 199),
 		rgb(50, 161, 217)
 	),
+
 	blue: #549bae
+
 );
 
-@function palette-get($base, $key) {
-	@return 1;
+@function palette-get($key, $type: 'base') {
+	@return map-get(map-get($palette, $key), $type);
 }

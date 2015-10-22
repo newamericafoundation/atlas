@@ -3,7 +3,7 @@
 	@include animation(fadein 1s);
 
 	svg {
-		fill: map-get($palette, off-white);
+		fill: palette-get(off-white);
 	}
 
 	&__title, &__subtitle, &__strip, &__main-nav {
@@ -13,11 +13,11 @@
 
 	&__title {
 
-		margin-top: 25vh;
+		margin-top: 12vh;
 		text-align: center;
 
 		@include bp-h(600px) {
-			margin-top: 12vh;
+			margin-top: 25vh;
 		}
 
 		&__name, &__alias {
@@ -109,7 +109,7 @@
 	}
 
 	&__background {
-		background-color: darken(map-get(map-get($palette, grey), base), 3);
+		background-color: darken(palette-get(grey), 3);
 	}
 
 	&__terrain {

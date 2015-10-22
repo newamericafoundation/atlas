@@ -1,6 +1,6 @@
 .header {
 
-	svg { fill: map-get($palette, off-white); }
+	svg { fill: palette-get(off-white); }
 
 	overflow: visible;
 	height: $top-bar-height;
@@ -86,7 +86,7 @@
 			height: 40px;
 			top: 100%;
 			left: -10px;
-			background-color: map-get($palette, naf-green);
+			background-color: palette-get(turquoise);
 		}
 
 		&:hover {
@@ -95,28 +95,6 @@
 			}
 		}
 
-	}
-
-	&__nav-circles {
-		position: absolute;
-		width: 100%;
-		text-align: center;
-		display: inline-block;
-		top: 30px;
-		left: calc(50% - 45px);
-		margin: 0;
-		width: auto;
-
-		.atl-route--welcome_index & { left: auto; right: 30px; }
-
-		@include bp-w-sm {
-			left: auto;
-			right: 45px;
-		}
-
-		@include bp-expand-menu {
-			display: none;
-		}
 	}
 
 	&__strip {
@@ -129,5 +107,3 @@
 	}
 
 }
-
-

@@ -1,9 +1,9 @@
 html { 
 	font-size: 100%;
-	color: map-get($palette, off-white);
+	color: palette-get(off-white);
 }
 
-a { color: map-get($palette, off-white); }
+a { color: palette-get(off-white); }
 
 h1, h2, h3, h4, h5, p, a, li {
 	display: block;
@@ -13,7 +13,7 @@ h1, h2, h3, h4, h5, p, a, li {
 
 .bg-c-off-white {
 
-	$c: map-get(map-get($palette, grey), text);
+	$c: palette-get(grey, text);
 
 	h1, h2, h3, h4, h5, p, a, li {
 		color: $c;

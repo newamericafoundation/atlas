@@ -14,7 +14,7 @@
 		width: 100%;
 		height: 100%;
 		svg {
-			fill: map-get($palette, off-white);
+			fill: palette-get(off-white);
 		}
 	}
 
@@ -95,12 +95,12 @@
 	    }
 
 	    // background and icon colors - regular theme
-		$c-bg-0: map-get(map-get($palette, grey), base);
-		$c-ic-0: map-get($palette, off-white);
+		$c-bg-0: palette-get(grey);
+		$c-ic-0: palette-get(off-white);
 
 		// background and icon colors - naf green theme
-		$c-bg-1: map-get($palette, naf-green);
-		$c-ic-1: map-get($palette, off-white);
+		$c-bg-1: palette-get(turquoise);
+		$c-ic-1: palette-get(off-white);
 
 	    /* initial color setup */
 	    background-color: $c-bg-0;

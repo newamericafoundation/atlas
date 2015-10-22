@@ -15,23 +15,23 @@
 }
 
 .bg-c-off-white {
-	$color: map-get($palette, off-white);
+	$color: palette-get(off-white);
 	background-color: $color;
 }
 
 .bg-c-grey--base {
-	background-color: map-get(map-get($palette, grey), base);
+	background-color: palette-get(grey);
 }
 
 .bg-c-grey--light {
-	background-color: map-get(map-get($palette, grey), light);
+	background-color: palette-get(grey, light);
 }
 
 .bg-c-naf-green {
-	background-color: map-get($palette, naf-green);
+	background-color: palette-get(turquoise);
 }
 
 .c-off-white {
-	$color: map-get($palette, off-white);
+	$color: palette-get(off-white);
 	color: $color;
 }
