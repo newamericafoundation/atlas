@@ -14,9 +14,8 @@ block content
 	- if (process.env.NODE_ENV === 'production') {
 		script(src="/assets/scripts/build/#{js}")
 	- } else {
-		script(src='/assets/scripts/partials/vendor.js')
-		script(src='/assets/scripts/partials/source.js')
-		script(src='/assets/scripts/partials/component.js')
+		script(src='/assets/scripts/partials/_vendor.js')
+		script(src='/assets/scripts/partials/_bundle.js')
 	- }
 
 	- if (user || (process.env.NODE_ENV === 'development')) {

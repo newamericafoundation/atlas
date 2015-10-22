@@ -65,7 +65,7 @@ describe('variable.Model', function() {
         it('builds filter including +/- infinity values if leading and trailing delimiter marks are present', function() {
             model.set('numerical_filter_dividers', '|100|200|300|');
             assert.deepEqual(model.getNumericalFilter(), [{
-                min: -1000000000,
+                min: -100000000000,
                 max: 100,
                 value: 'Less than 100'
             }, {
@@ -78,7 +78,7 @@ describe('variable.Model', function() {
                 value: 'Between 200 and 300'
             }, {
                 min: 300,
-                max: +1000000000,
+                max: +100000000000,
                 value: 'Greater than 300'
             }]);
         });
@@ -86,7 +86,7 @@ describe('variable.Model', function() {
         it('builds filter including - infinity values if only leading delimiter mark is present', function() {
             model.set('numerical_filter_dividers', '|100|200|300');
             assert.deepEqual(model.getNumericalFilter(), [{
-                min: -1000000000,
+                min: -100000000000,
                 max: 100,
                 value: 'Less than 100'
             }, {
@@ -112,7 +112,7 @@ describe('variable.Model', function() {
                 value: 'Between 200 and 300'
             }, {
                 min: 300,
-                max: +1000000000,
+                max: +100000000000,
                 value: 'Greater than 300'
             }]);
         });

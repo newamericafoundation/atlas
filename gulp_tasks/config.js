@@ -66,13 +66,9 @@ var config = {
 		        './bower_components/selectize/dist/js/standalone/selectize.js',
 		        './bower_components/chartist/dist/chartist.js',
 		        './bower_components/chartist-html/build/chartist-html.js',
-		        './app/assets/scripts/vendor/**/*'
-		    ],
-
-		    // outside-bundle source code
-		    source: [
-		    	'./app/assets/scripts/polyfills/**/*',
-		        './app/assets/scripts/config/**/*'
+		        './app/assets/scripts/vendor/**/*',
+		        './app/assets/scripts/polyfills/**/*',
+		        './app/assets/scripts/vendor_config/**/*'
 		    ]
 
     	}
