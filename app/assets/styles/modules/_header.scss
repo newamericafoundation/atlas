@@ -16,7 +16,11 @@
 		height: 100%;
 		padding-top: 6px;
 
-		&__site-name, &__cursive-prefix, &__title { display: inline-block; float: left; } 
+		&__site-name, &__cursive-prefix, &__title { 
+			display: inline-block;
+			color: palette-get(off-white);
+			float: left; 
+		} 
 
 		&__site-name {
 			text-transform: uppercase;
@@ -30,7 +34,8 @@
 
 		h1 {
 			@include font-size(20px);
-			font-family: 'Platform Web';
+			font-family: 'Platform';
+			font-weight: bold;
 			margin: 20px 0 0 0;
 			opacity: 1;
 		}
@@ -72,6 +77,7 @@
 			border-radius: 100%;
 		}
 		p {
+			color: palette-get(off-white);
 			margin: 12px 0 0 8px;
 			@include font-size(15px);
 		}

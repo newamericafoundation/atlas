@@ -2,6 +2,8 @@ import React from 'react';
 import classNames from 'classnames';
 import marked from 'marked';
 
+import _ from 'underscore';
+
 import { Plus, Minus } from './../../../../../../general/icons.jsx';
 
 import FilterKey from './filter_key.jsx';
@@ -27,7 +29,7 @@ class FilterKeyGroup extends React.Component {
 	render() {
 
 		return (
-			<li>
+			<li className='atl__filter__var-group'>
 				{ this.renderHeading() }
 				<ul>
 					{ this.renderKeys() }
@@ -42,20 +44,14 @@ class FilterKeyGroup extends React.Component {
 		if (!this.props.shouldDisplayHeader) { return; }
 		var info = this.getGroupInfo();
 		return (
-			<div className='atl__filter__var-group'>
+			<div>
 				{ this.renderToggleIcon(info.description.length > 0) }
-				<h1 className='title'>
-					{ info.name }
-				</h1>
+				<h1 className='title'>{ info.name }</h1>
 				{ this.state.isExpanded 
 					? 
 						<div 
 							className='atl__filter__var-group__description'
-							dangerouslySetInnerHTML={
-								{
-									__html: marked(info.description, { sanitize: true })
-								}
-							} 
+							dangerouslySetInnerHTML={{ __html: marked(info.description, { sanitize: true }) }} 
 						/> 
 					: 
 						null 

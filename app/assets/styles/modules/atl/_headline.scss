@@ -3,8 +3,12 @@
 	padding: 0 20px 20px 20px;
 
 	.link {
-		color: map-get($palette, off-white);
-		border-bottom: 2px solid map-get($palette, off-white);
+		color: palette-get(off-white);
+		border-bottom: 2px solid palette-get(off-white);
+	}
+
+	&__title, &__sections, &__description {
+		color: palette-get(off-white);
 	}
 
 	&__title {
@@ -12,17 +16,14 @@
 		cursor: pointer;
 		opacity: 0.9;
 		&:hover { opacity: 1; }
-		font-family: 'Platform Web';
+		font-family: 'Platform';
+		font-weight: bold;
 		text-transform: uppercase;
 		line-height: 85%; 
 		margin: 0;
 
 		@mixin collapsed {
 			display: none;
-			// @include font-size(24px);
-			// color: map-get(map-get($palette, grey), base);
-			// padding-left: 100px;
-			// padding-top: 12px;
 		}
 		
 		@include collapsed;
@@ -47,7 +48,7 @@
 	&__sections {
 		@include font-size(16px);
 		margin: 14px auto 25px auto;
-		font-family: 'SimplonNorm-Regular-WebS';
+		font-family: 'Simplon';
 		text-transform: uppercase;
 		opacity: 0.4;
 		letter-spacing: 2px;

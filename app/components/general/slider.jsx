@@ -1,8 +1,13 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 
 class Slider extends React.Component {
 
+    /*
+     *
+     *
+     */
     constructor(props) {
         super(props);
         this.state = {
@@ -10,6 +15,11 @@ class Slider extends React.Component {
         };
     }
 
+
+    /*
+     *
+     *
+     */
     render() {
         return (
             <div className='atl__slider' ref='root'>
@@ -17,20 +27,40 @@ class Slider extends React.Component {
         );
     }
 
+
+    /*
+     *
+     *
+     */
     componentDidMount() {
         this.buildSlider();
     }
 
+
+    /*
+     *
+     *
+     */
     componentWillUnmount() {
         this.destroySlider();
     }
 
+
+    /*
+     *
+     *
+     */
     componentDidUpdate() {
         this.setSliderValueText();
     }
 
+
+    /*
+     *
+     *
+     */
     buildSlider() {
-        var $el = $(React.findDOMNode(this.refs.root));
+        var $el = $(ReactDOM.findDOMNode(this.refs.root));
         $el.slider({
             value: this.state.valueIndex,
             min: 0,
@@ -44,23 +74,33 @@ class Slider extends React.Component {
         this.setSliderValueText();
     }
 
+
+    /*
+     *
+     *
+     */
     destroySlider() {
         var $el = $(React.findDOMNode(this.refs.root));
         $el.unbind();
     }
 
+
+    /*
+     *
+     *
+     */
     setSliderValueText() {
         var $el = $(React.findDOMNode(this.refs.root));
         $el.find('span').html(this.getSliderValueText());
     }
 
+
+    /*
+     *
+     *
+     */
     getSliderValueText() {
         return this.props.values[this.state.valueIndex];
-    }
-
-    componentWillUnmount() {
-        var $el = $(React.findDOMNode(this.refs.root));
-        $el.unbind();
     }
 
 }

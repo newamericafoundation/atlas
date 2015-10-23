@@ -56,12 +56,13 @@
 		bottom: 0;
 		h1, p { @include font-size(15px); }
 		h1 {
-			font-family: 'SimplonNorm-Bold-WebS';
+			font-family: 'Simplon';
+			font-weight: bold;
 		}
 		p {
 			padding: 0 0;
 			line-height: 100%;
-			font-family: 'SimplonNorm-Regular-WebS';
+			font-family: 'Simplon';
 		}
 	}
 

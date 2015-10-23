@@ -20,6 +20,10 @@ import { DropdownUp, DropdownDown } from './icons.jsx';
 
 class SideBar extends React.Component {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -192,11 +196,20 @@ class SideBarButton extends React.Component {
 	}
 
 
+	/*
+	 *
+	 *
+	 */
 	getIconComp() {
 		var iconName = this.props.options.reactIconNames[0] || 'Build';
 		return Icons[iconName];
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	handleClick() {
 		// If the parent of the SideBar component passed down its own method to handle a message from the button and if the button has a click message set, call this method.
 		if (this.props.options.clickMessage && this.props.sendMessageToParent) {

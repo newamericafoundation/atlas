@@ -1,8 +1,9 @@
 .faq {
  	margin: 40px 0; 
 	& &__question {
-		font-family: 'SimplonNorm-Bold-WebS';
+		font-family: 'Simplon';
+		font-weight: bold;
 		@include font-size(18px);
-		color: map-get($palette, naf-green); 
+		color: palette-get(turquoise); 
 	}
 }

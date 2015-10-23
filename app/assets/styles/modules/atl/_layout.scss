@@ -9,20 +9,23 @@
 	}
 
 	&__toc, &__related {
+
+		& > p, a {
+			font-family: 'Simplon';
+			font-weight: bold;
+		}
+
 		& > p {
-			font-family: 'SimplonNorm-Bold-WebS'; 
 			@include font-size(21px);
 		}
 		a {
 			@include link;
-			font-family: 'SimplonNorm-Bold-WebS'; 
 			@include font-size(17px);
 		}
 	}
 
 	&__toc {
 
-		// .atl__page-nav--fixed & { position: fixed; }
 		padding-top: 15px;
 		padding-bottom: 15px;
 		ul { max-width: 300px; }
@@ -38,19 +41,25 @@
 		}
 	}
 
-	.atl__related li, &__toc li { margin: 15px 0; line-height: 110%; }
+	.atl__related li, &__toc li { 
+		margin: 15px 0; 
+		line-height: 110%; 
+	}
 
 	&__page-nav {
 
 		@include bp-atl-grid-unstack {
+
 			width: 280px;
 			position: relative;
 			top: 0px;
+
 			&--fixed {
 				position: fixed;
 				left: 45px;
 				top: $top-bar-height + 20px;
 			}
+
 		}
 	}
 

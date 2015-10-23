@@ -1,8 +1,14 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
+
 import Base from './base.jsx';
 
 class SelectizeText extends Base {
 
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<div className='form__wrapper'>
@@ -21,8 +27,13 @@ class SelectizeText extends Base {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	componentDidMount() {
-		var $el = $(React.findDOMNode(this.refs.input));
+		var $el = $(ReactDOM.findDOMNode(this.refs.input));
 		$el.selectize({
 			delimiter: ',',
 			persist: true,
@@ -32,11 +43,21 @@ class SelectizeText extends Base {
 		}).on('change', this.saveDataOnParent.bind(this));
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	componentWillUnmount() {
-		var $el = $(React.findDOMNode(this.refs.input));
+		var $el = $(ReactDOM.findDOMNode(this.refs.input));
 		$el[0].selectize.destroy();
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	saveDataOnParent(e) {
 		this.props.saveDataOnParent({
 			id: this.props.id,

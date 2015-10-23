@@ -18,7 +18,10 @@
 
 	li { display: list-item; }
 
-	h1, h2, h3, th, b, strong { font-family: 'SimplonNorm-Bold-WebS'; }
+	h1, h2, h3, th, b, strong { 
+		font-family: 'Simplon'; 
+		font-weight: bold; 
+	}
 
 	h1, h2 { line-height: 100%; }
 
@@ -35,25 +38,26 @@
 			border-bottom: 2px solid rgba(51,50,50,0.4);
 			color: rgba(51,50,50,0.4);
 			@include font-size(17px);
-			font-family: 'SimplonNorm-Regular-WebS';
+			font-family: 'Simplon';
 			opacity: 1; 
 		}
 	}
 
 	a { 
 		@include link;
-		font-family: 'SimplonNorm-Bold-WebS';
+		font-family: 'Simplon';
+		font-weight: bold;
 		line-height: 100%;
 	}
 
 	p, a, li {
-		font-family: MetaSerifWeb-Book; 
+		font-family: 'Meta Serif';
 		@include font-size(18px);
-		line-height: 140%;
+		line-height: 155%;
 		@media print { @include font-size(12px); }
 	}
 
-	td { font-family: 'SimplonNorm-Regular-WebS'; }
+	td { font-family: 'Simplon'; }
 	
 	blockquote {
 	    font-size: 1.3em;
@@ -63,7 +67,7 @@
 	    padding-right: 25px;
 	    margin-top: 1em;
 	    margin-bottom: 1em;
-	    font-family: "MetaSerifWeb-Book", serif;
+	    font-family: "Meta Serif", serif;
 	}
 
 }

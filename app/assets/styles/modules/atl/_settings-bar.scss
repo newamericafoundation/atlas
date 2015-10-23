@@ -11,13 +11,10 @@
 	&__item-summary {
 		padding: 0 20px;
 		display: block;
-		// overflow: hidden;
-		// height: 30px;
 		p {
 			&:first-child {
-				font-family: 'SimplonNorm-Bold-WebS';
+				font-weight: bold;
 			}
-			// display: inline-block;
 			margin: 0;
 			padding: 5px;
 		}
@@ -40,8 +37,8 @@
 		height: 35px;
 		@include font-size(16px);
 		border-radius: 6px;
-		background-color: map-get(map-get($palette, grey), light);
-		color: map-get($palette, off-white);
+		background-color: palette-get(grey, light);
+		color: palette-get(off-white);
 	}
 
 	@include collapsed;

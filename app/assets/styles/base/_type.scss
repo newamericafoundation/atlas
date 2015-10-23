@@ -1,24 +1,17 @@
 html { 
 	font-size: 100%;
-	color: palette-get(off-white);
+	color: palette-get(grey, text);
 }
-
-a { color: palette-get(off-white); }
 
 h1, h2, h3, h4, h5, p, a, li {
 	display: block;
-	font-family: 'SimplonNorm-Regular-WebS';
+	font-family: 'Simplon';
+	font-weight: normal;
 	line-height: 125%;
 }
 
-.bg-c-off-white {
-
-	$c: palette-get(grey, text);
-
-	h1, h2, h3, h4, h5, p, a, li {
-		color: $c;
-	}
-
+h1, h2, h3, h4, h5, p, a, li {
+	
 }
 
 h1 { @include font-size(53px); }

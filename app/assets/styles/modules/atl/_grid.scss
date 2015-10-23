@@ -3,6 +3,7 @@
 .atl-grid {
 	margin: 0;
 	padding: 0;
+	position: static;
 	@extend %clearfix;
 	width: 100%;
 	margin: auto;

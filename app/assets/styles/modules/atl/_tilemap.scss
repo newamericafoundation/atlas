@@ -42,13 +42,13 @@
 }
 
 @mixin overlay-highlighted--region() {
-	stroke: map-get($palette, off-white);
+	stroke: palette-get(off-white);
 	stroke-width: 3.5px;
 }
 
 @mixin overlay-highlighted--pin() {
 	stroke-width: 2.5px;
-	stroke: map-get(map-get($palette, grey), base);
+	stroke: palette-get(grey);
 }
 
 @mixin overlay-inactive() {
@@ -60,35 +60,31 @@
 .map-region {
 	fill-opacity: 0.85;
 	stroke-width: 1px;
-	stroke: map-get($palette, off-white);
+	stroke: palette-get(off-white);
 	&:hover, &--highlighted { @include overlay-highlighted--region(); }
 	&--inactive { @include overlay-inactive(); }
 	&--neutral {
-		fill: map-get(map-get($palette, grey), light);
-	}
-
-	&--striped {
-		fill: url('#diagonal-stripes');
+		fill: palette-get(grey, light);
 	}
 }
 
 @mixin overlay-hover--pin() {
 	& .map-pin__outer, & .map-pin__inner {
-		stroke: map-get($palette, off-white);
+		stroke: palette-get(off-white);
 		stroke-width: 2.5px;//
 	}
 }
 
 .map-pin {
 	&__outer { fill: none; stroke: none; }
-	&__inner { fill: map-get($palette, off-white); stroke: none; }
+	&__inner { fill: palette-get(off-white); stroke: none; }
 
 	&--neutral {
 		.map-pin {
 			&__1-of-2, &__2-of-2, &__1-of-3, &__2-of-3, &__3-of-3 { stroke: none; fill: none; }
 
-			&__outer { fill: map-get(map-get($palette, grey), light); stroke: none; }
-			&__inner { fill: map-get($palette, off-white); }
+			&__outer { fill: palette-get(grey, light); stroke: none; }
+			&__inner { fill: palette-get(off-white); }
 		}
 	}
 

@@ -1,19 +1,11 @@
-.background--cover {
-	-webkit-background-size: cover;
-    -moz-background-size: cover;
-	-o-background-size: cover;
-	background-size: cover;
-	background-position: center center;
-	background-repeat: no-repeat;
-}
-
 %title {
 	overflow: visible;
 	margin: 0 auto;
 	position: relative;
 	max-width: 750px;
 	text-align: center;
-	font-family: 'Platform Web';
+	font-family: 'Platform';
+	font-weight: bold;
 	line-height: 85%;
 	@include font-size(40px);
 	@include bp-w-sm { @include font-size(53px); }

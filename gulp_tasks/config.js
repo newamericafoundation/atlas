@@ -63,6 +63,7 @@ var config = {
 		    // vendor scripts
 		    vendor: [
 		        './bower_components/jquery/dist/jquery.js',
+		        './bower_components/numeral/numeral.js',
 		        './bower_components/selectize/dist/js/standalone/selectize.js',
 		        './bower_components/chartist/dist/chartist.js',
 		        './bower_components/chartist-html/build/chartist-html.js',

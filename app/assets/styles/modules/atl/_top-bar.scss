@@ -53,12 +53,14 @@
 		div {
 			height: 100%;
 			display: table;
-			p {
+			h1 {
+				color: palette-get(off-white);
 				display: table-cell;
 				vertical-align: middle;
 				margin: 0;
 				padding: 0;
-				font-family: 'Platform Web';
+				font-family: 'Platform';
+				font-weight: bold;
 				text-transform: uppercase;
 				@include font-size(20px);
 			}
@@ -100,7 +102,7 @@
 			.button { margin-right: 6px; }
 
 			&:last-child > p {
-				font-family: 'SimplonNorm-Bold-WebS';
+				font-weight: bold;
 			}
 
 			& > p {

@@ -13,9 +13,9 @@
 	}
 
 	&--image {
-		background-color: map-get($palette, off-white);
+		background-color: palette-get(off-white);
 		.title, .icon-button__text {
-			color: map-get(map-get($palette, grey), base);
+			color: palette-get(grey);
 		}
 	}
 
@@ -82,7 +82,7 @@
 			padding: 0;
 
 			.atl__title-bar--solid & {
-				color: map-get($palette, off-white);
+				color: palette-get(off-white);
 				@media print { color: black; }
 			}
 
@@ -100,7 +100,7 @@
 				margin: auto 10px;
 
 				.atl__title-bar--solid & {
-					color: map-get($palette, off-white);
+					color: palette-get(off-white);
 					@media print { color: black; }
 				}
 				

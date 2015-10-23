@@ -1,32 +1,43 @@
 import React from 'react';
 import classNames from 'classnames';
+
 import Slider from './../../../../../general/slider.jsx';
-import Icons from './../../../../../general/icons.jsx';
+import { More } from './../../../../../general/icons.jsx';
 import Base from './base.jsx';
 
 class TopBar extends Base {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	render() {
-		var MoreIcon = Icons.More;
 		return (
 			<div className="atl__top-bar">
 				<div className={ this.getContentClassName() }>
 					{ false ? <TopBarIcons {...this.props} /> : null }
 					{ this.renderTimeline() }
-					<div className="atl__top-bar__title"><div><p>{ this.props.project.get('title') }</p></div></div>
+					<div className="atl__top-bar__title">
+						<div>
+							<h1>{ this.props.project.get('title') }</h1>
+						</div>
+					</div>
 					<div className="atl__top-bar__summary">
-						
-						
 						<div className="atl__top-bar__summary__item">
 							<div className='button button--active'>
 								<p>{ this.getKey() }</p>
 							</div>
 							<div className='button' onClick={ this.toggleOptionsTab.bind(this) }>
-								<MoreIcon />
+								<More />
 							</div>
 						</div>
 
@@ -36,16 +47,31 @@ class TopBar extends Base {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	toggleOptionsTab() {
 		this.props.setUiState({ isOptionsTabActive: !this.props.uiState.isOptionsTabActive });
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getContentClassName() {
 		return classNames({
 			'atl__top-bar__content': true,
 		}, this.getBackgroundColorClass());
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderTimeline() {
 		return;
 		return (
@@ -55,6 +81,11 @@ class TopBar extends Base {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getBackgroundColorClass() {
 		var hoveredItem, indeces, cls;
 		indeces = this.props.project.getFriendlyIndeces();
@@ -78,6 +109,11 @@ class TopBarIcons extends React.Component {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getIconData() {
 		return [
 			{
@@ -91,6 +127,11 @@ class TopBarIcons extends React.Component {
 		];
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderIcons() {
 		return this.getIconData().map((icon, i) => {
 			return (
@@ -103,6 +144,10 @@ class TopBarIcons extends React.Component {
 
 class TopBarIcon extends React.Component {
 
+	/*
+	 *
+	 *
+	 */
 	render() {
 		var Icon = Icons[this.props.icon.reactIconName],
 			cls = classNames({
@@ -116,12 +161,22 @@ class TopBarIcon extends React.Component {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	changeGlobalItemsDisplayMode() {
 		this.props.setUiState({
 			itemsDisplayMode: this.props.icon.id
 		});
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	isActive() {
 		return (this.props.uiState.itemsDisplayMode === this.props.icon.id);
 	}

@@ -39,31 +39,39 @@
         @include bp-unstack-map-settings-bar { display: block; }
         .atl--collapsed & { display: none; }
 
-        &__heading {
-            & > p {
-                @include font-size(16px);
-                font-family: 'MetaSerifWeb-Book'; 
-                opacity: 0.7;
-            }
+        &__heading > p {
+            color: palette-get(off-white);
+            @include font-size(16px);
+            font-family: 'Meta Serif'; 
+            opacity: 0.7;
         }
         
 
         a {
             @include link;
             @include font-size(16px);
-            color: map-get($palette, off-white);
-            border-bottom: 2px solid map-get($palette, off-white);
-            font-family: 'SimplonNorm-Regular-WebS';
+            color: palette-get(off-white);
+            border-bottom: 2px solid palette-get(off-white);
+            font-family: 'Simplon';
         }
+
         opacity: 1;
     }
 
+    .toggle-button__text p {
+        color: palette-get(off-white);
+    }
+
     &__var-group {
+
+        h1 { color: palette-get(off-white); }
+
         position: relative;
 
         &__description {
             p {
-                font-family: MetaSerifWeb-Book;
+                font-family: 'Meta Serif';
+                color: palette-get(off-white);
                 margin: 10px 0;
             }
         }
@@ -76,7 +84,7 @@
             left: -35px;
             width: $icon-size;
             height: $icon-size;
-            fill: map-get($palette, off-white);
+            fill: palette-get(off-white);
             position: absolute; 
         }
     }

@@ -16,7 +16,7 @@
 	width: $w;
 	height: 300px;
 	pointer-events: none;
-	font-family: 'SimplonNorm-Bold-WebS' !important;
+	font-weight: bold;
 
 	&__wrapper {
 		text-align: center;
@@ -29,8 +29,8 @@
 
 	&__content {
 
-		$c1: map-get($palette, off-white);
-		$c2: map-get(map-get($palette, grey), base);
+		$c1: palette-get(off-white);
+		$c2: palette-get(grey);
 
 		display: inline-block;
 		margin: auto;
@@ -70,8 +70,7 @@
 			display: table;
 
 			p {
-				font-family: 'SimplonNorm-Regular-WebS';
-				&:first-child { font-family: 'SimplonNorm-Bold-WebS'; }
+				&:first-child { font-weight: bold; }
 				display: block;
 				margin: 0;
 				padding: 0;

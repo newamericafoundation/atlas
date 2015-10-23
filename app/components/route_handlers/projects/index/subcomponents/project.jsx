@@ -26,7 +26,7 @@ class Project extends React.Component {
 	render() {
 		var project, cls;
 		if (!this.isVisible()) {
-			return (<div/>);
+			return null;
 		}
 		project = this.props.project;
 		cls = classNames({
@@ -110,7 +110,7 @@ class Project extends React.Component {
 
 
 	/*
-	 *
+	 * Determines if a project is visible.
 	 *
 	 */
 	isVisible() {

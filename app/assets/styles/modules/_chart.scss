@@ -25,7 +25,7 @@
 			width: 100%;
 			text-align: center;
 			margin: 0;
-			color: map-get($palette, off-white);
+			color: palette-get(off-white);
 			@include font-size(18px);
 		}
 

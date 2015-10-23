@@ -1,6 +1,6 @@
 @mixin link() {
-	color: #333; 
-	border-bottom: 2px solid #333;
+	color: palette-get(grey); 
+	border-bottom: 2px solid palette-get(grey);
 	opacity: 0.4;
 	display: inline;
 	&:hover {

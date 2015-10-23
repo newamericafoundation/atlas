@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import marked from 'marked';
 
@@ -17,9 +18,8 @@ class InfoBox extends Static {
 	 */
 	constructor(props) {
 		super(props);
-		this.state = {
-			transitionEventNamespace: 0
-		}
+		this.state = this.state || {};
+		this.state.transitionEventNamespace = 0;
 	}
 
 
@@ -102,6 +102,8 @@ class InfoBox extends Static {
 	 *
 	 */
 	renderPageNavContent() {
+		// Render empty because of positioning bug.
+		return;
 		return (
 			<div className="atl__toc">
 				<p>Page Contents</p>
@@ -205,7 +207,7 @@ class InfoBox extends Static {
 		items = this.props.project.get('data').items;
 		e.preventDefault();
 		transitionEventName = this.getTransitionEventName();
-		$el = $(React.findDOMNode(this.refs.main));
+		$el = $(ReactDOM.findDOMNode(this.refs.main));
 		$el.on(transitionEventName, () => {
 			delete items.active;
 			$el.off(transitionEventName);

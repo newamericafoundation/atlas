@@ -39,7 +39,7 @@ class Welcome extends React.Component {
 				<div className="welcome__subtitle">
 					{ "A policy analysis tool from New America's Education Program" }
 				</div>
-				<div className="welcome__main-nav">
+				<div className="welcome__nav">
 					<Link to="/menu">
 						<Grid />
 					</Link>

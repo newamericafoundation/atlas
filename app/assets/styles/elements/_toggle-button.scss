@@ -46,10 +46,10 @@
             .hexicon__hex {
                 fill: none;
                 stroke-width: 5px;
-                stroke: #666;
+                stroke: palette-get(grey, extra-light);
             }
             .hexicon__yes { fill: none; }
-            .hexicon__no { fill: #666; }
+            .hexicon__no { fill: palette-get(grey, extra-light); }
         }
 
     }
@@ -60,7 +60,7 @@
         width: $text-width + $text-padding;
         overflow: hidden;
         text-overflow: ellipsis;
-        word-break: normal;//break-all;
+        word-break: normal;
         height: 100%;
         padding-left: $text-padding;
 

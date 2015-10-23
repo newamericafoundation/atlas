@@ -9,7 +9,7 @@
 		vertical-align: middle;
 	}
 
-	background-color: map-get($palette, naf-green);
+	background-color: palette-get(turquoise);
 
 	&__title {
 		text-align: center;
@@ -33,11 +33,11 @@
 		width: 200px;
 		height: 30px;
 		padding-top: 8px;
-		background-color: map-get($palette, off-white);
-		font-family: 'SimplonNorm-Regular-WebS';
+		background-color: palette-get(off-white);
+		font-family: 'Simplon';
 		p {
 			margin: 0;
-			color: map-get($palette, naf-green);
+			color: palette-get(turquoise);
 			text-align: center;
 			@include font-size(14px);
 		}
