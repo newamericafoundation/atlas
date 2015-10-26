@@ -112,9 +112,24 @@ class SideBarButton extends React.Component {
 	 *
 	 *
 	 */
+	constructor(props) {
+		super(props);
+		this.state = this.state || {};
+		this.state.isActive = false;
+	}
+
+
+	/*
+	 *
+	 *
+	 */
 	render() {
+		var cls = classNames({
+			'atl__side-bar__icon': true,
+			'atl__side-bar__icon--active': this.props.options.hasActiveState && this.props.options.isActive
+		});
 		return (
-			<li className="atl__side-bar__icon" 
+			<li className={ cls }
 				onMouseEnter={ this.onButtonMouseEnter.bind(this) } 
 				onMouseLeave={ this.onButtonMouseLeave.bind(this) } 
 				onClick={ this.handleClick.bind(this) } 
@@ -201,7 +216,9 @@ class SideBarButton extends React.Component {
 	 *
 	 */
 	getIconComp() {
-		var iconName = this.props.options.reactIconNames[0] || 'Build';
+		var { hasActiveState, isActive, reactIconNames } = this.props.options;
+		var iconNameIndex = (hasActiveState && isActive) ? 1 : 0;
+		var iconName = reactIconNames[iconNameIndex] || 'Build';
 		return Icons[iconName];
 	}
 
@@ -211,9 +228,13 @@ class SideBarButton extends React.Component {
 	 *
 	 */
 	handleClick() {
+		var { hasActiveState, isActive, clickMessage, sendMessageToParent } = this.props.options;
+		if (hasActiveState) {
+			this.props.options.isActive = !isActive;
+		}
 		// If the parent of the SideBar component passed down its own method to handle a message from the button and if the button has a click message set, call this method.
-		if (this.props.options.clickMessage && this.props.sendMessageToParent) {
-			this.props.sendMessageToParent(this.props.options.clickMessage);
+		if (clickMessage && this.props.sendMessageToParent) {
+			this.props.sendMessageToParent(clickMessage);
 		}
 	}
 

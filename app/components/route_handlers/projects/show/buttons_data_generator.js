@@ -10,20 +10,25 @@ export default function buttonsDataGenerator(project, isResearcherAuthenticated,
 			contentType: 'button',
 			clickMessage: 'toggle-collapsed-state', 
 			reactIconNames: [ 'Contract', 'Expand' ],
+			hasActiveState: true,
+			isActive: false,
 			isHidden: isCollapsedDueToOverflow
 		},
+
 		{ 
 			title: 'Help',
 			contentType: 'button',
 			clickMessage: 'toggle-help', 
 			reactIconNames: [ 'Help' ]
 		},
+
 		{ 
 			title: 'Print',
 			contentType: 'button',
 			clickMessage: 'print',
 			reactIconNames: [ 'Print' ]
 		},
+
 		{ 
 			title: 'Download Data',
 			contentType: 'form',
@@ -32,6 +37,7 @@ export default function buttonsDataGenerator(project, isResearcherAuthenticated,
 			url: '/api/v1/projects/print',
 			reactIconNames: [ 'Download' ]
 		},
+		
 		{ 
 			title: 'Search',
 			contentType: 'button',
