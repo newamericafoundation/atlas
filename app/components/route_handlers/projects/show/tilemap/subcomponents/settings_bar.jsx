@@ -9,11 +9,14 @@ import Base from './base.jsx';
 
 class SettingsBar extends Base {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
-		this.state = {
-			dummy: 'dummy'
-		};
+		this.state = this.state || {};
+		// Store heights in an object separate from state to not trigger re-renders.
 		this.heights = {
 			window: 0,
 			headline: 0,
@@ -22,22 +25,26 @@ class SettingsBar extends Base {
 		};
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<div className='atl__settings-bar' ref='root'>
 				<Headline {...this.props} cacheHeight={ this.cacheHeight.bind(this, 'headline') } />
-				{
-				// <div className='atl__settings-bar__item-summary'>
-				// 	<p>{ this.getName() }</p>
-				// 	<p>{ this.getValue() }</p>
-				// </div>
-				}
 				<Filter {...this.props} cacheHeight={ this.cacheHeight.bind(this, 'filter') } filter={ this.getFilter() } />
 			</div>
 		);
 		
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	componentDidMount() {
 		// make sure overflow is checked even after render lags
 		setTimeout(this.checkOverflow.bind(this), 300);
@@ -49,12 +56,21 @@ class SettingsBar extends Base {
 		});
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	componentWillUnmount() {
 		// remove namespaced event
 		$(window).off('resize.settings-bar-overflow');
 	}
 
-	// If content is overflowing, set global collapsed state.
+
+	/*
+	 * If content is overflowing, set global collapsed state.
+	 *
+	 */
 	checkOverflow() {
 		var totalHeight, isCollapsed;
 		this.heights.window = $(window).height();
@@ -65,12 +81,20 @@ class SettingsBar extends Base {
 		}
 	}
 
-	// Method passed to child components so they can log their heights on the current
-	//   component's state. Current component can then check whether its contents are overflowing.
+
+	/*
+	 * Method passed to child components so they can log their heights on the current component's state. Current component can then check whether its contents are overflowing.
+	 *
+	 */
 	cacheHeight(elementName, height) {
 		this.heights[elementName] = height;
 	}
 
+
+	/*
+	 * Get the total height of the component.
+	 *
+	 */
 	getTotalHeight() {
 		return this.heights.headline + this.heights.filter + this.heights.header;
 	}

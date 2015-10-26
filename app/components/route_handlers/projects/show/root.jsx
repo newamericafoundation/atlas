@@ -27,7 +27,8 @@ class Show extends React.Component {
 				isHelpActive: false,
 				isMapDragging: false,
 				isOptionsTabActive: false
-			}
+			},
+			buttons: []
 		};
 	}
 
@@ -45,7 +46,7 @@ class Show extends React.Component {
 					sendMessageToParent={ this.handleMessageFromButtons.bind(this) }
 					uiState={ this.state.ui }
 					setUiState={ this.setUiState.bind(this) }
-					buttons={ this.getButtons() }
+					buttons={ this.state.buttons }
 				/>
 				{ this.renderProject() }
 			</div>
@@ -78,6 +79,18 @@ class Show extends React.Component {
 	 */
 	componentWillMount() {
 		this.fetchProject();
+	}
+
+
+	/*
+	 * If the project just loaded, update the side bar links with appropriate project data.
+	 *
+	 */
+	componentWillUpdate(nextProps, nextState) {
+		if (this.state.project) { return; }
+		if (nextState.project) {
+			this.setState({ buttons: buttonsDataGenerator(nextState.project, global.window.isResearcherAuthenticated, this.state.ui.isCollapsedDueToOverflow) });
+		}
 	}
 
 

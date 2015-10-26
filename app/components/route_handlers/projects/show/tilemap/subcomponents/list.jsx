@@ -5,6 +5,10 @@ import Base from './base.jsx';
 
 class List extends Base {
 
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<div className='atl__list fill-parent bg-c-off-white'>
@@ -13,6 +17,11 @@ class List extends Base {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderItems() {
 		var project = this.props.project;
 		if (project == null) { return; }

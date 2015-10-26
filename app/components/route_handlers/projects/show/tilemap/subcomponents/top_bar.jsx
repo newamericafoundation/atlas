@@ -97,8 +97,17 @@ class TopBar extends Base {
 }
 
 
+
+/*
+ *
+ *
+ */
 class TopBarIcons extends React.Component {
 
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<div className="atl__top-bar__icons">

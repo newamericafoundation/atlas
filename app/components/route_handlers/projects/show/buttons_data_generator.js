@@ -19,7 +19,9 @@ export default function buttonsDataGenerator(project, isResearcherAuthenticated,
 			title: 'Help',
 			contentType: 'button',
 			clickMessage: 'toggle-help', 
-			reactIconNames: [ 'Help' ]
+			hasActiveState: true,
+			isActive: false,
+			reactIconNames: [ 'Help', 'Help' ]
 		},
 
 		{ 
@@ -37,11 +39,11 @@ export default function buttonsDataGenerator(project, isResearcherAuthenticated,
 			url: '/api/v1/projects/print',
 			reactIconNames: [ 'Download' ]
 		},
-		
+
 		{ 
 			title: 'Search',
 			contentType: 'button',
-			reactIconNames: [ 'Search' ],
+			reactIconNames: [ 'Search', 'Search' ],
 			clickMessage: 'toggle-search-bar'
 		}
 
