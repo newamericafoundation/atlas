@@ -2,7 +2,6 @@ import React from 'react';
 import classNames from 'classnames';
 
 import Headline from './headline.jsx';
-import DisplayToggle from './display_toggle.jsx';
 import Filter from './filter/root.jsx';
 
 import Base from './base.jsx';
@@ -16,7 +15,7 @@ class SettingsBar extends Base {
 	constructor(props) {
 		super(props);
 		this.state = this.state || {};
-		// Store heights in an object separate from state to not trigger re-renders.
+		// Store heights of child components in this object separate from state in order to not trigger re-renders as height values are updated.
 		this.heights = {
 			window: 0,
 			headline: 0,
@@ -32,7 +31,7 @@ class SettingsBar extends Base {
 	 */
 	render() {
 		return (
-			<div className='atl__settings-bar' ref='root'>
+			<div className='atl__settings-bar'>
 				<Headline {...this.props} cacheHeight={ this.cacheHeight.bind(this, 'headline') } />
 				<Filter {...this.props} cacheHeight={ this.cacheHeight.bind(this, 'filter') } filter={ this.getFilter() } />
 			</div>
@@ -46,11 +45,11 @@ class SettingsBar extends Base {
 	 *
 	 */
 	componentDidMount() {
-		// make sure overflow is checked even after render lags
+		// Make sure overflow is checked even after render lags.
 		setTimeout(this.checkOverflow.bind(this), 300);
 		setTimeout(this.checkOverflow.bind(this), 600);
 		setTimeout(this.checkOverflow.bind(this), 900);
-		// namespace resize event for convenient removal
+		// Namespace resize event for convenient removal.
 		$(window).on('resize.settings-bar-overflow', () => {
 			this.checkOverflow();
 		});
@@ -62,7 +61,7 @@ class SettingsBar extends Base {
 	 *
 	 */
 	componentWillUnmount() {
-		// remove namespaced event
+		// Remove namespaced event.
 		$(window).off('resize.settings-bar-overflow');
 	}
 

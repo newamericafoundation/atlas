@@ -12,13 +12,23 @@ import OptionsTab from './subcomponents/options_tab/root.jsx';
 
 class Tilemap extends React.Component {
 	
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
 		this.state = {
+			// Determines whether the custom d3 Mapper module should update the map when the wrapper component updates.
 			ignoreMapItemsOnUpdate: false
 		};
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	render() {
 		if (!this.isHealthy()) { return (<div className='bg-c-off-white'><p className='title'>Project data is invalid.</p></div>) }
 		return (
@@ -34,6 +44,33 @@ class Tilemap extends React.Component {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
+	componentWillMount() {
+		var { radio } = this.props;
+		radio.commands.setHandler('update:tilemap', (args = {}) => {
+			this.setState({ ignoreMapItemsOnUpdate: args.ignoreMapItems });
+		});
+	}
+
+
+	/*
+	 *
+	 *
+	 */
+	componentWillUnmount() {
+		var { radio } = this.props;
+		radio.commands.removeHandler('update:tilemap');
+	}
+
+
+	/*
+	 * Determines whether the project is healthy.
+	 *
+	 */
 	isHealthy() {
 		var project = this.props.project;
 		if (!project) { return false; }
@@ -42,6 +79,11 @@ class Tilemap extends React.Component {
 		return true;
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderOptionsTab() {
 		if (!this.props.uiState.isOptionsTabActive) { return; }
 		var project = this.props.project;
@@ -50,6 +92,11 @@ class Tilemap extends React.Component {
 		return (<OptionsTab {...this.props} filter={filter} />);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderItems() {
 		if (this.props.uiState.itemsDisplayMode === 'map') {
 			return (<Map {...this.props} ignoreMapItemsOnUpdate={this.state.ignoreMapItemsOnUpdate} />);
@@ -58,20 +105,13 @@ class Tilemap extends React.Component {
 		}
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getActiveItem() {
 		return this.props.project.get('data').items.active;
-	}
-
-	componentWillMount() {
-		var { radio } = this.props;
-		radio.commands.setHandler('update:tilemap', (args = {}) => {
-			this.setState({ ignoreMapItemsOnUpdate: args.ignoreMapItems });
-		});
-	}
-
-	componentWillUnmount() {
-		var { radio } = this.props;
-		radio.commands.removeHandler('update:tilemap');
 	}
 
 }
