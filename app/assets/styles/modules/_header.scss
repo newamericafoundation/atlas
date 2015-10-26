@@ -62,9 +62,11 @@
 	}
 
 	&__auth {
+
+		cursor: pointer;
 		position: relative;
 		height: 100%;
-		width: 240px;
+		width: 180px;
 		padding-top: 18px;
 		margin-left: 25px;
 		& > * {
@@ -76,29 +78,35 @@
 			height: 40px;
 			border-radius: 100%;
 		}
-		p {
-			color: palette-get(off-white);
-			margin: 12px 0 0 8px;
+
+		p, &__logout {
 			@include font-size(15px);
+			color: palette-get(off-white);
 		}
 
-		a {
+		p {
+			margin: 12px 0 0 8px;
+		}
+
+		&__logout {
 			display: none;
 			position: absolute;
 			text-align: left;
-			padding-top: 10px;
-			padding-left: 10px;
-			width: 120px;
-			height: 40px;
+			padding-top: 30px;
+			padding-left: 55px;
+			width: 100%;
+			height: $top-bar-height;
 			top: 100%;
 			left: -10px;
 			background-color: palette-get(turquoise);
-		}
 
-		&:hover {
-			a {
+			opacity: 0.8;
+
+			.header__auth:hover & {
 				display: block;
+				opacity: 1;
 			}
+
 		}
 
 	}

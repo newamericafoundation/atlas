@@ -5,6 +5,10 @@ import classNames from 'classnames';
 
 class Header extends React.Component {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -12,6 +16,11 @@ class Header extends React.Component {
 		};
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	render() {
 		var stripStyle = {
 			'backgroundColor': this.state.stripColor
@@ -54,6 +63,7 @@ class Header extends React.Component {
 			<div className="header__auth">
 				<img src={researcher.image.url} alt='Researcher Photo'></img>
 				<p>{ `Hi, ${researcher.name.givenName}!` }</p>
+				<a href='/logout' className='header__auth__logout'>Log out</a>
 			</div>
 		);
 	}

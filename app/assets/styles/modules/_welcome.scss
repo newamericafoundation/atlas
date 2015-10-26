@@ -54,6 +54,8 @@
 		padding: 0 30px;
 		text-align: center;
 
+		color: palette-get(off-white);
+
 		@include bp-w-sm {
 			@include font-size(24px);
 		}
