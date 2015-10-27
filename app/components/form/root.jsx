@@ -51,6 +51,7 @@ class Form extends React.Component {
 			return (
 				<FormComp
 					{...props}
+					model={this.props.model}
 					history={this.props.history}
 					key={i}
 					isEnabled={this.props.isEnabled}

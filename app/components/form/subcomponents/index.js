@@ -1,6 +1,6 @@
 export { default as Text } from './text.jsx';
 export { default as TextArea } from './text_area.jsx';
-export { default as File } from './file.jsx';
+export { default as Upload } from './upload.jsx';
 export { default as Radio } from './radio.jsx';
 export { default as SelectizeText } from './selectize_text.jsx';
 export { default as SpreadsheetFile } from './spreadsheet_file.jsx';

@@ -17,6 +17,27 @@ import resourceRouteGenerator from './../components/route_handlers/helpers/resou
 
 import * as models from './../models/index.js';
 
+var isomorphicConfig = {
+	'menu': {
+		fetchData: [
+			{	
+				key: 'projects',
+				apiUrl: '/api/v1/projects'
+			}
+		]
+	},
+	':atlas_url': {
+		fetchData: [
+			{
+				key: 'project',
+				apiUrl: (req) => {
+					return `/api/v1/projects?atlas_url=${req.params.atlas_url}`;
+				}
+			}
+		]
+	}
+};
+
 // Main route definition.
 var routes = (
 	<Route path='/' component={Layout}>

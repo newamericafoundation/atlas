@@ -11,6 +11,11 @@ import baseCrud from './base_crud.js';
  */
 class Model extends baseCrud.Model {
 
+	get resourceName() { return 'resource'; }
+
+	// Generic plural
+	get resourceNamePlural() { return this.resourceName + 's'; }
+
 	/*
 	 * Custom get function, accommodating a suffix, e.g. status_2012.
 	 * @param {string} field - Same as in Backbone.
@@ -21,6 +26,15 @@ class Model extends baseCrud.Model {
 		var getFnc = Backbone.Model.prototype.get;
 		if (suffix == null) { return getFnc.apply(this, [ field ]); }
 		return getFnc.apply(this, [ field + '_' + suffix ]);
+	}
+
+
+	/*
+	 *
+	 *
+	 */
+	getUploadPath() {
+		return `uploads/${this.resourceNamePlural}/`;
 	}
 
 

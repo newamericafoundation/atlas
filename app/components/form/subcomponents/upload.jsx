@@ -3,9 +3,13 @@
 import React from 'react';
 import Base from './base.jsx';
 
+import Loader from './../../general/loader.jsx';
+
+import moment from 'moment';
+
 import $ from 'jquery';
 
-class File extends Base {
+class Upload extends Base {
 
 	/*
 	 *
@@ -31,14 +35,14 @@ class File extends Base {
 			<div className='form__wrapper'>
 				<label for={this.props.id}>{ this.props.labelText }</label>
 				<p className='form__hint'>{ this.props.hint }</p>
-				<p className='form__hint'>{ this.state.upload }</p>
+				{ (this.state.upload === 'pending') ? <Loader/> : null }
 				<input 
 					type='file'
 					onChange={this.processUpload.bind(this)}
 					disabled={!this.props.isEnabled}
 					name={this.props.id}
 					id={this.props.id}
-					value={this.props.initialValue}
+					filename={this.props.initialValue}
 					placeholder={this.props.placeholder} 
 				/>
 			</div>
@@ -56,8 +60,14 @@ class File extends Base {
 
 		var reader = new FileReader();
 
+		var fileName = file.name;
+
+		var timeStamp = moment(new Date()).format('YYYY-MM-DD-HH-mm-ss');
+
+		fileName = fileName.slice(0, fileName.indexOf('.')) + '-' + timeStamp + fileName.slice(fileName.indexOf('.'));
+
 		var params = {
-			Key: file.name, 
+			Key: `${this.props.model.getUploadPath()}${fileName}`, 
 			ContentType: file.type
 		};
 
@@ -75,6 +85,10 @@ class File extends Base {
 				method: 'post',
 				success: (data) => {
 					this.setState({ upload: 'success' });
+					this.props.saveDataOnParent({
+						id: this.props.id,
+						value: fileName
+					});
 				},
 				error: (data) => {
 					this.setState({ upload: 'error' });
@@ -89,4 +103,4 @@ class File extends Base {
 
 }
 
-export default File;
+export default Upload;

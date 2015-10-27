@@ -61,9 +61,9 @@ class Model extends base.Model {
 	        },
 
 	        {
-	            formComponentName: 'File',
+	            formComponentName: 'Upload',
 	            formComponentProps: {
-	                id: 'file_upload',
+	                id: 'file',
 	                labelText: 'Stock photo identifier.',
 	                hint: "Upload file here.",
 	                placeholder: 'Id'
