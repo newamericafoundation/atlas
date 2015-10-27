@@ -3,6 +3,10 @@ import Base from './base.jsx';
 
 class Text extends Base {
 
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<div className='form__wrapper'>
@@ -21,6 +25,11 @@ class Text extends Base {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	saveDataOnParent(e) {
 		this.props.saveDataOnParent({
 			id: this.props.id,

@@ -1,8 +1,14 @@
+// Image file form component that does not process uploads, but sets an image field as base64 encoded.
+
 import React from 'react';
 import Base from './base.jsx';
 
 class ImageFile extends Base {
 
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<div className='form__wrapper'>
@@ -23,6 +29,11 @@ class ImageFile extends Base {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderThumbnail() {
 		var encoded = this.props.initialValue;
 		if (encoded) {
@@ -33,6 +44,11 @@ class ImageFile extends Base {
 		}
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	saveDataOnParent(e) {
 
 		var file = e.target.files[0];

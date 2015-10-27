@@ -1,3 +1,5 @@
+// Spreadsheet file component that does not upload the spreadsheet but processes its contents to JSON.
+
 import React from 'react';
 import Base from './base.jsx';
 import Loader from './../../general/loader.jsx';

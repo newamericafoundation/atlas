@@ -28,6 +28,7 @@ router.get('/images/:file_name', (req, res) => {
 	var s3 = new AWS.S3(),
 		key = 'images/' + req.params.file_name.replace(/--/g, '/'),
 		params = { Bucket: 'static.atlas.newamerica.org', Key: key };
+
 	s3.getObject(params).createReadStream().pipe(res);
 
 	// replace with AWS Lambda to handle file pre-processing steps such as image resizing.
@@ -35,7 +36,23 @@ router.get('/images/:file_name', (req, res) => {
 });
 
 
+router.post('/upload', (req, res) => {
+
+	var s3 = new AWS.S3(),
+		params = {
+			Bucket: 'static.atlas.newamerica.org',
+			Key: 'uploads/' + req.body.Key,
+			ContentType: req.body.ContentType,
+			Body: req.body.Body
+		};
+
+	s3.upload(params, (err, data) => {
+		if (err) { console.log('upload error'); return res.json({ message: 'error' }); }
+		return res.json({ message: 'success' });
+	});
+
+});
+
+
 
 export default router;
-
-'resize_cache--Stock_Photos_w400--shutterstock_114464926.jpg'

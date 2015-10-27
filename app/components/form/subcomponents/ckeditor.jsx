@@ -4,11 +4,20 @@ import Loader from './../../general/loader.jsx';
 
 class CKEditor extends Base {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
 		this.editorBasePath = '/assets/vendor/ckeditor/';
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<div className='form__wrapper'>
@@ -25,6 +34,11 @@ class CKEditor extends Base {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	configureEditor() {
 		CKEDITOR.basePath = this.editorBasePath;
 		CKEDITOR.config.allowedContent = true;
@@ -37,6 +51,11 @@ class CKEditor extends Base {
 		CKEDITOR.config.height = '500px';
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	componentDidMount() {
 		$().ensureScript('CKEDITOR', this.editorBasePath + 'ckeditor.js', () => {
 			this.configureEditor();
@@ -50,6 +69,11 @@ class CKEditor extends Base {
 		});
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	componentWillUnmount() {
 		this.instance.destroy();
 	}

@@ -51,12 +51,21 @@ class Model extends base.Model {
 	        },
 
 	        {
-	            id: 'credit',
 	            formComponentName: 'Text',
 	            formComponentProps: {
 	                id: 'stock_id',
 	                labelText: 'Stock photo identifier.',
 	                hint: "Stock photo id.",
+	                placeholder: 'Id'
+	            }
+	        },
+
+	        {
+	            formComponentName: 'File',
+	            formComponentProps: {
+	                id: 'file_upload',
+	                labelText: 'Stock photo identifier.',
+	                hint: "Upload file here.",
 	                placeholder: 'Id'
 	            }
 	        }
@@ -66,6 +75,10 @@ class Model extends base.Model {
 	}
 
 
+	/*
+	 *
+	 *
+	 */
 	getViewUrl() {
 		return null;
 	}

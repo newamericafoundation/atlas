@@ -3,6 +3,10 @@ import Base from './base.jsx';
 
 class ForeignCollectionBase extends Base {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
 		this.state = this.state || {};
@@ -48,7 +52,7 @@ class ForeignCollectionBase extends Base {
 
 
 	/*
-	 *
+	 * The foreign collection is either passed down directly through props or fetched to state.
 	 *
 	 */
 	getForeignCollection() {
