@@ -36,6 +36,15 @@ class Collection extends base.Collection {
 
     get model() { return Model; }
 
+    /*
+     *
+     *
+     */
+    comparator(model1, model2) {
+        const KEY = 'variable_group_order';
+        return - (model1.get(KEY) - model2.get(KEY));
+    }
+
 }
 
 

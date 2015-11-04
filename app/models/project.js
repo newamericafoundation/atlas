@@ -324,6 +324,7 @@ class Model extends base.Model {
             data.variables = new variable.Collection(data.variables);
             if (data.variable_groups) {
                 data.variable_groups = new variableGroup.Collection(data.variable_groups);
+                data.variable_groups.sort();
             }
             data.items = new item.Collection(data.items, { parse: true });
             this.buildFilterTree();

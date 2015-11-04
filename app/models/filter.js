@@ -353,15 +353,23 @@ class FilterTree extends LocalBaseModel {
 
             // If the group is found, return group instance. Otherwise, return groupId as string.
             if (variableGroupCollection) {
-                variable_group = variableGroupCollection.findWhere({ id: groupId }) || groupId;
-            } else {
-                variable_group = groupId;
+                variable_group = variableGroupCollection.findWhere({ id: groupId });
             }
+
+            variable_group = variable_group || groupId;
 
             return {
                 variable_group: variable_group,
                 filterKeys: grpObj[groupId]
             };
+
+        }).sort((v1, v2) => {
+            var vg1 = v1.variable_group,
+                vg2 = v2.variable_group;
+            const KEY = 'variable_group_order';
+            if (vg1 == null || vg2 == null) { return 0; }
+            if (vg1.get == null || vg2.get == null) { return 0; }
+            return + vg1.get(KEY) - vg2.get(KEY);
         });
 
      }

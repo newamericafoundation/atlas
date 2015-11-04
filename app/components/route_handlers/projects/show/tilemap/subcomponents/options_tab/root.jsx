@@ -46,9 +46,13 @@ class OptionsTab extends Base {
 	 */
 	renderKeyGroups() {
 
-		var keys = this.props.filter.children;
+		var { radio, filter, project } = this.props;
 
-		var groups = this.props.filter.group(this.props.project.get('data').variable_groups);
+		var keys = filter.children;
+
+		var groups = filter.group(project.get('data').variable_groups);
+
+		console.log(groups);
 
 		var shouldDisplayHeader = (groups.length > 1);
 		
@@ -56,7 +60,7 @@ class OptionsTab extends Base {
 
 			return (
 				<FilterKeyGroup
-					radio={this.props.radio}
+					radio={radio}
 					group={group}
 					shouldDisplayHeader={shouldDisplayHeader}
 					key={i}

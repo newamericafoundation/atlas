@@ -204,36 +204,6 @@ class Collection extends base.Collection {
         return models;
     }
 
-
-    /*
-     * Group variables by variable group model instances.
-     * Supports old group_name syntax.
-     */
-     group(variableGroupCollection) {
-
-        var grpObj = _.groupBy(this.models, (model) => {
-            return model.get('variable_group_id') || model.get('group_name');
-        });
-
-        return Object.keys(grpObj).map((groupId) => {
-
-            var variable_group;
-
-            // If the group is found, return group instance. Otherwise, return groupId as string.
-            if (variableGroupCollection) {
-                variable_group = variableGroupCollection.findWhere({ id: groupId }) || groupId;
-            } else {
-                variable_group = groupId;
-            }
-
-            return {
-                variable_group: variable_group,
-                variables: grpObj[groupId]
-            };
-        });
-
-     }
-
 }
 
 

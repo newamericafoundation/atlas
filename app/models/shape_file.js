@@ -31,6 +31,7 @@ class Model extends base.Model {
 				type: 'get',
 				url: url,
 				success: (data) => {
+					if (data.objects == null) { data = JSON.parse(data); }
 					var geoJson = topojson.feature(data, data.objects[this.get('fileName')]);
 					// Set on cache.
 					Model.geoJsonCache[name] = geoJson;

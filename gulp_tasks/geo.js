@@ -29,7 +29,7 @@ var shellTasks = shps.map((shp) => {
 	return `topojson -o temp/topojson/${shp.get('name')}.json -p ${shp.getRenameParam()} -q 1e6 -s 1e-7 temp/shp/${shp.get('fileName')}.shp`;
 });
 
-gulp.task('geo-convert-to-topojson', /* [ 'geo-download' ], */ shell.task(shellTasks));
+gulp.task('geo-convert-to-topojson'/*,[ 'geo-download' ]*/, shell.task(shellTasks));
 
 var tempFiles = shps.map((shp) => {
 	return `./temp/topojson/${shp.get('name')}.json`;
@@ -40,10 +40,4 @@ gulp.task('geo', [ 'geo-convert-to-topojson' ], () => {
 		.pipe(copy('./public/data', { prefix: 2 }))
 		.pipe(gzip())
 		.pipe(gulp.dest('./public/data'));
-});
-
-gulp.task('geo-gzip', () => {
-	return gulp.src('./public/data/*.json')
-		.pipe(gzip())
-		.pipe(gulp.dest('./pubic/data'));
 });
