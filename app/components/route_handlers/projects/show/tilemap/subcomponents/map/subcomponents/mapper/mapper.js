@@ -92,8 +92,8 @@ Mapper.Controller = {
             name: `${itemType}s`
         });
 
+        // Fetch shape file and launch.
         shp.getGeoJsonFetchPromise().then((data) => {
-            console.log(data);
             launch(data);
         }).catch((err) => { console.log(err); });
 

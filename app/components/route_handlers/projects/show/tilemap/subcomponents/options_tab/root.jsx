@@ -34,9 +34,35 @@ class OptionsTab extends Base {
 	 *
 	 *
 	 */
+	componentWillMount() {
+		this.computeVariableGroups();
+	}
+
+
+	/*
+	 *
+	 *
+	 */
 	close(e) {
 		e.preventDefault();
 		this.props.setUiState({ isOptionsTabActive: false });
+	}
+
+
+	/*
+	 * Compute variable groups and set on state.
+	 * TODO: extract to model code.
+	 */
+	computeVariableGroups() {
+		var { filter, project } = this.props;
+		var keys = filter.children;
+		var groups = filter.group(project.get('data').variable_groups);
+		var shouldDisplayHeader = (groups.length > 1);
+
+		this.setState({
+			groups: groups,
+			shouldDisplayHeader: shouldDisplayHeader
+		});
 	}
 
 
@@ -46,23 +72,15 @@ class OptionsTab extends Base {
 	 */
 	renderKeyGroups() {
 
-		var { radio, filter, project } = this.props;
-
-		var keys = filter.children;
-
-		var groups = filter.group(project.get('data').variable_groups);
-
-		console.log(groups);
-
-		var shouldDisplayHeader = (groups.length > 1);
+		var { radio } = this.props;
 		
-		return groups.map((group, i) => {
+		return this.state.groups.map((group, i) => {
 
 			return (
 				<FilterKeyGroup
 					radio={radio}
 					group={group}
-					shouldDisplayHeader={shouldDisplayHeader}
+					shouldDisplayHeader={this.state.shouldDisplayHeader}
 					key={i}
 				/>
 			);
