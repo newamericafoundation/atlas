@@ -1,13 +1,17 @@
-import React from 'react';
-import classNames from 'classnames';
-import { No } from './../../../../../../general/icons.jsx';
+//
 
 import _ from 'underscore';
+import React from 'react';
+import classNames from 'classnames';
 
 import Base from './../base.jsx';
-
 import FilterKeyGroup from './filter_key_group.jsx';
+import { No } from './../../../../../../general/icons.jsx';
 
+/*
+ *
+ *
+ */
 class OptionsTab extends Base {
 
 	/*
@@ -40,7 +44,7 @@ class OptionsTab extends Base {
 
 
 	/*
-	 *
+	 * 
 	 *
 	 */
 	close(e) {
@@ -58,7 +62,6 @@ class OptionsTab extends Base {
 		var keys = filter.children;
 		var groups = filter.group(project.get('data').variable_groups);
 		var shouldDisplayHeader = (groups.length > 1);
-
 		this.setState({
 			groups: groups,
 			shouldDisplayHeader: shouldDisplayHeader
@@ -71,11 +74,8 @@ class OptionsTab extends Base {
 	 *
 	 */
 	renderKeyGroups() {
-
 		var { radio } = this.props;
-		
 		return this.state.groups.map((group, i) => {
-
 			return (
 				<FilterKeyGroup
 					radio={radio}
@@ -84,7 +84,6 @@ class OptionsTab extends Base {
 					key={i}
 				/>
 			);
-
 		});
 	}
 

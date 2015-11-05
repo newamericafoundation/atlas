@@ -10,25 +10,49 @@ import baseComposite from './base_composite.js';
  */
 class LocalBaseModel extends baseComposite.Model {
 
+    /*
+     *
+     *
+     */
     isActive() {
         return this.get('_isActive');
     }
 
+
+    /*
+     *
+     *
+     */
     activate() {
         this.set('_isActive', true);
         return this;
     }
 
+
+    /*
+     *
+     *
+     */
     deactivate() {
         this.set('_isActive', false);
         return this;
     }
 
+
+    /*
+     *
+     *
+     */
     toggle() {
         this.set('_isActive', !this.isActive());
         return this;
     }
 
+
+    /*
+     *
+     *
+     */
     activateAllChildren() {
         this.children.forEach(function(child) {
             child.activate();
@@ -36,6 +60,11 @@ class LocalBaseModel extends baseComposite.Model {
         return this;
     }
 
+
+    /*
+     *
+     *
+     */
     deactivateAllChildren() {
         this.children.forEach(function(child) {
             child.deactivate();
@@ -43,12 +72,18 @@ class LocalBaseModel extends baseComposite.Model {
         return this;
     }
 
+
+    /*
+     *
+     *
+     */
     toggleAllChildren() {
         this.children.forEach(function(child) {
             child.toggle();
         });
         return this;
     }
+
 
     /*
      * Deactivate all siblings, not including self.
@@ -66,6 +101,7 @@ class LocalBaseModel extends baseComposite.Model {
         });
     }
 
+
     /*
      * Get sibling index.
      *
@@ -74,6 +110,7 @@ class LocalBaseModel extends baseComposite.Model {
         var siblingsIncludingSelf = this.parent.children;
         return siblingsIncludingSelf.indexOf(this);
     }
+
 
     /* 
      * If every sibling in order got integer indeces between 1 and n, interpolate for instance.
@@ -87,6 +124,11 @@ class LocalBaseModel extends baseComposite.Model {
         return Math.round(i * (n - 1) / (max - 1) + 1);
     }
 
+
+    /*
+     *
+     *
+     */
     getSiblingCountIncludingSelf() {
         return this.parent.children.length;
     }
@@ -101,6 +143,10 @@ class LocalBaseModel extends baseComposite.Model {
  */
 class FilterValue extends LocalBaseModel {
 
+    /*
+     *
+     *
+     */
     test(d, options) {
         var j, key, len, res, val, value;
         if (d == null) { return false; }
@@ -120,6 +166,11 @@ class FilterValue extends LocalBaseModel {
         return res;
     }
 
+
+    /*
+     *
+     *
+     */
     testValue(value) {
         var res;
         res = false;
@@ -135,14 +186,29 @@ class FilterValue extends LocalBaseModel {
         return res;
     }
 
+
+    /*
+     *
+     *
+     */
     _isNumericFilter() {
         return (this.get('min') != null) && (this.get('max') != null);
     }
 
+
+    /*
+     *
+     *
+     */
     isParentActive() {
         return this.parent === this.parent.parent.getActiveChild();
     }
 
+
+    /*
+     *
+     *
+     */
     handleClick() {
         var activeKeyIndex, keyIndex;
         this.toggle();
@@ -175,6 +241,7 @@ class FilterKey extends LocalBaseModel {
             this.activate();
         }
     }
+
 
     /*
      * When deactivating, activate all children back.
@@ -233,6 +300,11 @@ class FilterKey extends LocalBaseModel {
 }
 
 
+
+/*
+ *
+ *
+ */
 class FilterTree extends LocalBaseModel {
 
     /*
@@ -347,7 +419,7 @@ class FilterTree extends LocalBaseModel {
             return vari.get('variable_group_id') || vari.get('group_name');
         });
 
-        return Object.keys(grpObj).map((groupId) => {
+        var groupArray = Object.keys(grpObj).map((groupId) => {
 
             var variable_group;
 
@@ -363,19 +435,30 @@ class FilterTree extends LocalBaseModel {
                 filterKeys: grpObj[groupId]
             };
 
-        }).sort((v1, v2) => {
-            var vg1 = v1.variable_group,
-                vg2 = v2.variable_group;
-            const KEY = 'variable_group_order';
-            if (vg1 == null || vg2 == null) { return 0; }
-            if (vg1.get == null || vg2.get == null) { return 0; }
-            return + vg1.get(KEY) - vg2.get(KEY);
+        })
+
+        groupArray.sort(function(v1, v2) {
+
+            const GROUP_KEY = 'variable_group',
+                GROUP_ORDER_KEY = 'variable_group_order';
+
+            var vg1 = v1[GROUP_KEY],
+                vg2 = v2[GROUP_KEY];
+            
+            if (vg1 == null) { return 1; }
+            if (vg2 == null) { return -1; }
+            if (vg1.get == null) { return 1; }
+            if (vg2.get == null) { return -1; }
+
+            return + vg1.get(GROUP_ORDER_KEY) - vg2.get(GROUP_ORDER_KEY);
+
         });
+
+        return groupArray;
 
      }
 
 }
-
 
 
 export default {
