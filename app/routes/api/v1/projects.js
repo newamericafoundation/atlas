@@ -1,5 +1,6 @@
 import express from 'express';
 import csv from 'csv';
+
 import project from './../../../models/project.js';
 import base from './../../../models/base.js';
 
@@ -13,12 +14,6 @@ import indexMiddleware from './../../../middleware/crud/index.js';
 
 // Unsafe setting to test back-end while in development, skipping the auth step which is required at each server restart.
 var currentAuthMiddleware = (process.NODE_ENV === 'production') ? authMiddleware.ensureAuthenticated : authMiddleware.ensureNothing;
-
-var shouldHideDraftProjects = function(req) {
-	// Unsafe setting to test back-end while in development, skipping the auth step which is required at each server restart.
-	return (process.env.NODE_ENV === 'production') ? !req.isAuthenticated() : false;
-	// return (!req.isAuthenticated());
-};
 
 var router = express.Router();
 
@@ -54,6 +49,12 @@ router.delete('/:id', currentAuthMiddleware, deleteMiddleware.bind(this, { dbCol
 	res.json(req.dbResponse);
 });
 
+
+var shouldHideDraftProjects = function(req) {
+	// Unsafe setting to test back-end while in development, skipping the auth step which is required at each server restart.
+	return (process.env.NODE_ENV === 'production') ? !req.isAuthenticated() : false;
+	// return (!req.isAuthenticated());
+};
 
 // Print project data.
 router.post('/print', function(req, res) {

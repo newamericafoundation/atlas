@@ -72,12 +72,15 @@ class NewBase extends SaveBase {
 
 		// While pending, save form data using the instance method on the model.
 		model.getClientSavePromise().then((res) => {
-			console.log(res);
 			res = JSON.parse(res);
 			model.set('id', res.id);
 			this.setState({ saveResponseStatus: res.status });
-		}, (err) => { this.setState({ saveResponseStatus: 'error' }); 
-		});
+		}, (err) => { 
+			if (err) { 
+				console.log(err.stack); 
+			} 
+			this.setState({ saveResponseStatus: 'error' }) 
+		}).catch((err) => { console.log(err.stack); }); 
 
 	}
 

@@ -14,25 +14,21 @@ var currentAuthMiddleware = authMiddleware.ensureAuthenticated;
 
 var router = express.Router();
 
-router.get('/', indexMiddleware.bind(this, { dbCollectionName: 'images' }), (req, res) => {
+var standardResponder = (req, res) => {
 	res.json(req.dbResponse);
-});
+};
 
-router.get('/:id', showMiddleware.bind(this, { dbCollectionName: 'images' }), (req, res) => {
-	res.json(req.dbResponse);
-});
+var standardOptions = { dbCollectionName: 'images' };
+
+router.get('/', indexMiddleware.bind(this, standardOptions), standardResponder);
+
+router.get('/:id', showMiddleware.bind(this, standardOptions), standardResponder);
 
 // authenticated requests
-router.post('/:id/edit', currentAuthMiddleware, updateMiddleware.bind(this, { dbCollectionName: 'images' }), (req, res) => {
-	res.json(req.dbResponse);
-});
+router.post('/:id/edit', currentAuthMiddleware, updateMiddleware.bind(this, standardOptions), standardResponder);
 
-router.post('/new', currentAuthMiddleware, newMiddleware.bind(this, { dbCollectionName: 'images' }), (req, res) => {
-	res.json(req.dbResponse);
-});
+router.post('/', currentAuthMiddleware, newMiddleware.bind(this, standardOptions), standardResponder);
 
-router.delete('/:id', currentAuthMiddleware, deleteMiddleware.bind(this, { dbCollectionName: 'images' }), (req, res) => {
-	res.json(req.dbResponse);
-});
+router.delete('/:id', currentAuthMiddleware, deleteMiddleware.bind(this, standardOptions), standardResponder);
 
 export default router;

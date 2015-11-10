@@ -7,6 +7,8 @@ var newMiddleware = (options, req, res, next) => {
 
 	var resourceData = JSON.parse(req.body.jsonString);
 
+	console.log('hi');
+
 	dbCollection.insert(resourceData, (err, data) => {
 
 		if(err) { 
