@@ -3,7 +3,6 @@ import nodemon from 'gulp-nodemon';
 import liveReload from 'gulp-livereload';
 import notify from 'gulp-notify';
 import path from 'path';
-import env from './../../../secrets/atlas.json';
 
 import config from './../config.js';
 
@@ -39,41 +38,26 @@ var buildTaskList = function(changedFiles) {
     return tasks;
 };
 
-var envName = config.production ? 'production' : 'development';
-
-env.NODE_ENV = envName;
-
-var ignore = {
-    'development': [ 
-        'node_modules/**/*', 
-        'bower_components/**/*', 
-        'spec/**/*', 
-        'db/**/*',
-        'public/**/*',
-        'app/components/**/*', // monitored by watchify
-        'app/models/**/*' // monitored by watchify
-    ],
-    'production': [
-        'app/**/*'
-    ]
-};
-
-var ext = {
-    'development': 'js jade scss coffee',
-    'production': ''
-};
 
 // Development environment.
 gulp.task('dev', () => {
 
-    if(env === 'development') { liveReload.listen(); }
+    liveReload.listen();
 
     gulp.start('bundle-watch');
+
     nodemon({
         script: './app.js',
-        env: env,
-        ext: ext[envName],
-        ignore: ignore[envName],
+        ext: 'js jade scss coffee',
+        ignore: [ 
+            'node_modules/**/*', 
+            'bower_components/**/*', 
+            'spec/**/*', 
+            'db/**/*',
+            'public/**/*',
+            'app/components/**/*', // monitored by watchify
+            'app/models/**/*' // monitored by watchify
+        ],
         tasks: buildTaskList
     })
     .on('restart', () => { 

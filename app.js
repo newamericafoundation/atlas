@@ -12,8 +12,11 @@ var express = require('express'),
     methodOverride = require('method-override'),
     session = require('express-session'),
     connectMongo = require('connect-mongo'),
+    dotenv = require('dotenv'),
     dbConnector = require('./db/connector.js'),
 	router = require('./app/routes/index.js');
+
+dotenv.load();
 
 var configVars = require('./config/config_variables.json');
 

@@ -2,7 +2,7 @@ import fs from 'fs';
 import config from './../../config.js';
 import AWS from 'aws-sdk';
 
-var secretEnv = config.getLocalSecretEnv();
+var secretEnv = process.env;
 
 var lambda = new AWS.Lambda();
 

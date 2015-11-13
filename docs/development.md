@@ -5,11 +5,10 @@ Once you clone the repository, run the following two commands to install depende
 	npm install
 	bower install
 
-New America sites have been severely hacked before, so the following method of using secret keys and api tokens in development mode are crucial. Create a folder called ``secrets`` directly outside the project folder, so that they are siblings:
+New America sites have been severely hacked before, so the following method of using secret keys and api tokens in development mode are crucial. You will need to recreate the ``.env`` file that stores environment variables for development mode (loaded automatically by the ``dotenv`` project), as this is ignored by gitignore. See [the environment docs](/environment.md) for details.
 
-	secrets
-		atlas.json
 	atlas
+		.env
 		app
 		config
 		db
@@ -18,17 +17,13 @@ New America sites have been severely hacked before, so the following method of u
 		package.json
 		README.md
 
-Create a ``secrets/atlas.json`` file containing the secret environment variables. See [the environment docs](/environment.md) for details.
-
 Once this file is up, you can run a fully featured development environment by simply typing:
 
 	gulp dev
 
-Then navigate to ``localhost:8081``. This command automatically reads in the secret environment variables from ``./../secrets/atlas.json`` so the app will work seamlessly in development mode. Note that ``NODE_ENV=development`` is set explicitly. 
-
 Gulp will watch for changes in development scripts and styles automatically (see build logic in the ``gulpfile``).
 
-In development mode, the app behaves as if a researcher is always authenticated.
+In development mode, the app behaves as if a researcher is always authenticated (write permissions on projects and images are enabled).
 
 # Development Database
 

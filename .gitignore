@@ -1,3 +1,5 @@
+.env
+**/*.pem
 node_modules
 bower_components
 services/lambda/dist

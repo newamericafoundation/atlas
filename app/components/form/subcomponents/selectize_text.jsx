@@ -1,7 +1,7 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react'
+import ReactDOM from 'react-dom'
 
-import Base from './base.jsx';
+import Base from './base.jsx'
 
 class SelectizeText extends Base {
 

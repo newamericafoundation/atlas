@@ -80,8 +80,4 @@ class EditBase extends SaveBase {
 
 }
 
-EditBase.contextTypes = {
-	router: React.PropTypes.func
-};
-
 export default EditBase;
