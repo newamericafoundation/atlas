@@ -1,6 +1,8 @@
-import * as Backbone from 'backbone';
-import * as _ from 'underscore';
-import $ from 'jquery';
+import * as Backbone from 'backbone'
+import * as _ from 'underscore'
+import $ from 'jquery'
+
+import fetch from 'isomorphic-fetch'
 
 /*
  *
@@ -81,23 +83,13 @@ class Model extends Backbone.Model {
 	 */
 	getClientFetchPromise() {
 
-		return new Promise((resolve, reject) => {
+		var url = this.apiUrlRoot + '/' + this.get('id');
 
-			var url = this.apiUrlRoot + '/' + this.get('id');
-
-			$.ajax({
-				url: url,
-				type: 'get',
-				success: (datum) => {
-					this.set(datum);
-					resolve(this);
-				},
-				error: (err) => {
-					reject(err);
-				}
-			});
-
-		});
+		return fetch(url)
+			.then(res => {
+				this.set(res.json())
+				return this
+			})
 
 	}
 
@@ -187,6 +179,10 @@ class Model extends Backbone.Model {
 
 
 
+/*
+ *
+ *
+ */
 class Collection extends Backbone.Collection {
 	
 	get model() { return Model; }

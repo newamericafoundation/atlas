@@ -1,14 +1,17 @@
-import { MongoClient } from 'mongodb';
-import express from 'express';
+import { MongoClient } from 'mongodb'
+import express from 'express'
 
-var env = process.env.NODE_ENV;
+var { NODE_ENV, PRODUCTION_DB_URL } = process.env
 
 function getDbUrl() {
-	var dbUrlBase = (env === 'development') ? 'localhost' : process.env['PRODUCTION_DB_URL'];
-	return 'mongodb://' + dbUrlBase + ':27017/mongoid';
+	var dbUrlBase = (NODE_ENV === 'development') ? 'localhost' : PRODUCTION_DB_URL;
+	return `mongodb://${dbUrlBase}:27017/mongoid`;
 }
 
 export default new Promise((resolve, reject) => {
+
+	var dbUrl = getDbUrl()
+	console.log(dbUrl)
 
 	MongoClient.connect(getDbUrl(), (err, db) => {
 		if (err) {
@@ -19,4 +22,4 @@ export default new Promise((resolve, reject) => {
 		resolve(db);
 	});
 
-});
+})

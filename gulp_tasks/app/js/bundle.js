@@ -5,6 +5,8 @@ import babelify from 'babelify';
 import source from 'vinyl-source-stream';
 import watchify from 'watchify';
 
+import './clean.js'
+
 // Application entry point.
 var entry = './app/assets/scripts/bundle.jsx';
 
@@ -19,7 +21,7 @@ var getWatchifyBundler = (entries) => {
     return watchify(getBrowserifyBundler(entries));
 };
 
-var writeBundle = (bundler, name = '_bundle.js', dest = './public/assets/scripts/partials') => {
+var writeBundle = (bundler, name = 'bundle.js', dest = './public/assets/scripts') => {
     return bundler.bundle()
         .on('error', (err) => {
             console.log('Browserify error..');
@@ -30,13 +32,13 @@ var writeBundle = (bundler, name = '_bundle.js', dest = './public/assets/scripts
 };
 
 // Make server-side component definitions available on the client.
-gulp.task('bundle', () => {
+gulp.task('bundle', [ 'js-clean' ], () => {
     var bundler = getBrowserifyBundler();
     return writeBundle(bundler);
 });
 
 // Make server-side component definitions available on the client.
-gulp.task('bundle-watch', () => {
+gulp.task('bundle-watch', [ 'js-clean' ], () => {
     var bundler = getWatchifyBundler();
     bundler.on('update', () => {
         console.log('Rebundling..')

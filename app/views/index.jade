@@ -2,29 +2,23 @@ extend layout
 
 block content
 
+	// TODO: isomorphic rendering
 	div(class='fill-parent', id='site')
-		- if (typeof reactOutput !== 'undefined') {
-			!= reactOutput
-		- } else {
-			div(class="wrapper")
-				div(class="loader")
-					img(src="/assets/images/spinner.gif")
-		- }
+		div(class="wrapper")
+			div(class="loader")
+				img(src="/assets/images/spinner.gif")
 			
-	- if (process.env.NODE_ENV === 'production') {
-		script(src="/assets/scripts/build/#{js}")
-	- } else {
-		script(src='/assets/scripts/partials/_bundle.js')
-		script(src='/assets/scripts/partials/_vendor.js')
-	- }
+	script(src="/assets/scripts/#{js}")
 
+	// Set an active user if authenticated.
 	- if (user || (process.env.NODE_ENV === 'development')) {
 		script(type='text/javascript').
 			window.isResearcherAuthenticated = true;
 			window.researcher = !{JSON.stringify(user || { image: { url: '' }, name: {} })};
 	- }
 
+	// Start client-side app.
 	script(type='text/javascript').
 		$(function() { 
-			atlas.start();
+			window.startAtlas();
 		});

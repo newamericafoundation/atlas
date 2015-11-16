@@ -1,30 +1,30 @@
-import $ from 'jquery';
+import $ from 'jquery'
 
-import RootView from './root_view.js';
+import RootView from './root_view.js'
 
-import PinOverlayView from './overlay_views/pin.js';
-import PathOverlayView from './overlay_views/path.js';
+import PinOverlayView from './overlay_views/pin.js'
+import PathOverlayView from './overlay_views/path.js'
 
-import shapeFile from './../../../../../../../../../models/shape_file.js';
+import shapeFile from './../../../../../../../../../models/shape_file.js'
 
-var Mapper = {};
-
-Mapper.start = function() {
-    return this.Controller.show();
-};
-
-Mapper.stop = function() {
-    return this.Controller.destroy();
-};
-
-Mapper.Controller = {
+var Mapper = {
 
     /*
      *
      *
      */
-    show: function() {
-        return $().ensureScript('L', '/assets/vendor/mapbox.js', this.showMain.bind(this));
+    start: function() {
+        return $.fn.ensureScript('L', '/assets/vendor/mapbox.js', this.showMain.bind(this));
+    },
+
+
+    /*
+     *
+     *
+     */
+    stop: function() {
+        if (Mapper.overlayView) { Mapper.overlayView.destroy(); }
+        if (Mapper.rootView) { return Mapper.rootView.destroy(); }
     },
 
 
@@ -44,7 +44,7 @@ Mapper.Controller = {
         this.$loading = $("<div class='loader'><img src='/assets/images/spinner.gif'></div>");
         $('.atl__main').append(this.$loading);
         
-        return $().ensureScript('d3', '/assets/vendor/d3.min.js', this.showOverlay.bind(this));
+        return $.fn.ensureScript('d3', '/assets/vendor/d3.min.js', this.showOverlay.bind(this));
 
     },
 
@@ -109,16 +109,6 @@ Mapper.Controller = {
     getOverlayViewConstructor: function(itemType) {
         if (itemType === 'pin') { return PinOverlayView; }
         return PathOverlayView;
-    },
-
-
-    /*
-     *
-     *
-     */
-    destroy: function() {
-        if (Mapper.overlayView) { Mapper.overlayView.destroy(); }
-        if (Mapper.rootView) { return Mapper.rootView.destroy(); }
     }
 
 };

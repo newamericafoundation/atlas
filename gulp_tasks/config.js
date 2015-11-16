@@ -37,7 +37,7 @@ var config = {
 
     		// Vendor scripts that are lazy-loaded when needed, then kept on the window.
 			vendorAsyncSingle: [
-		        './bower_components/d3/d3.min.js', 
+		        './node_modules/d3/d3.min.js', 
 		        './bower_components/mapbox.js/mapbox.js'
 		    ],
 
@@ -48,13 +48,6 @@ var config = {
 		    vendorAsyncXlsxParser: [
 		    	'./bower_components/js-xlsx/jszip.js',
 		        './bower_components/js-xlsx/dist/xlsx.js'
-		    ],
-
-		    // vendor scripts
-		    vendor: [
-		        './bower_components/chartist/dist/chartist.js',
-		        './bower_components/chartist-html/build/chartist-html.js',
-		        './app/assets/scripts/vendor_config/**/*'
 		    ]
 
     	}

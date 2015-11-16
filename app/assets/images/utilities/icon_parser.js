@@ -1,14 +1,19 @@
 var cheerio = require('cheerio'),
 	fs = require('fs'),
 	tidy = require('htmltidy').tidy,
-	$;
+	$; // Not jQuery, but a jQuery-like object created dynamically inside the code.
 
 class IconSvgFile {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(options) {
 		this.name = options.name;
 		this.path = options.path;
 	}
+
 
 	/*
 	 * Uppercase and join name.
@@ -22,24 +27,28 @@ class IconSvgFile {
 		return nameParts.join('');
 	}
 
+
 	/*
 	 * Define React component from name and markup.
 	 *
 	 */
 	defineReactComponent(componentName, renderMarkup) {
-/* multi-line formatted code */
-		return `
-Icons.${componentName} = class extends React.Component {
-	render() {
+		/* multi-line formatted code */
+return `
+	Icons.${componentName} = () => {
 		return (
-${renderMarkup}
+	${renderMarkup}
 		);
 	}
-}
-		`;
-/* end of multi-line formatted code */
+`;
+		/* end of multi-line formatted code */
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	processSvgDoc(doc) {
 		$ = cheerio.load(doc, {
 			normalizeWhitespace: false
@@ -53,6 +62,7 @@ ${renderMarkup}
 		html = html.replace(/viewbox/g, 'viewBox');
 		return html;
 	}
+
 
 	/*
 	 * Asynchronously gets React component definition.
@@ -70,6 +80,11 @@ ${renderMarkup}
 		
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getSvgAsync(next) {
 		console.log(this.path);
 		console.log(__dirname);
@@ -84,14 +99,28 @@ ${renderMarkup}
 
 class IconSvgFiles {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(path) {
 		this.path = path;
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getIconName(fileName) {
 		return fileName.slice(6, -4);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	setIcons(next) {
 		this.list = [];
 		fs.readdir(__dirname + this.path, (err, files) => {
@@ -107,6 +136,11 @@ class IconSvgFiles {
 		return this;
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	getReactComponent(next) {
 
 		var output = '';
@@ -129,7 +163,7 @@ class IconSvgFiles {
 
 }
 
-
+// Entry point.
 new IconSvgFiles('/../icons/svg')
 	.setIcons((iconSvgFiles) => {
 		if (iconSvgFiles == null) { return; }

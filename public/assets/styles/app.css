@@ -4215,7 +4215,8 @@ td, th {
       border-radius: 100%;
       position: absolute;
       top: 105px;
-      left: 10px; }
+      left: 10px;
+      background-color: (base: #2dbbb3, dark: #23928c); }
       @media screen and (min-width: 1000px) {
         .page__content__logo {
           left: -70px; } }

@@ -14,12 +14,13 @@
     "spec"
   ],
   "dependencies": {
-    "chartist": "~0.8.3",
-    "chartist-html": "~0.1.2",
     "ckeditor": "~4.5.3",
     "js-xlsx": "~0.8.0",
     "leaflet": "~0.7.3",
     "mapbox.js": "~2.1.9",
     "selectize-scss": "~0.8.9"
+  },
+  "resolutions": {
+    "sifter": "0.4.x"
   }
 }

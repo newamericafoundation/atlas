@@ -5,6 +5,8 @@
 // Allow ES6 syntax in all required files.
 require('babel/register');
 
+if (process.env['NODE_ENV'] !== 'production') { require('dotenv').load() }
+
 var express = require('express'),
 	passport = require('passport'),
     bodyParser = require('body-parser'),
@@ -12,18 +14,15 @@ var express = require('express'),
     methodOverride = require('method-override'),
     session = require('express-session'),
     connectMongo = require('connect-mongo'),
-    dotenv = require('dotenv'),
     dbConnector = require('./db/connector.js'),
 	router = require('./app/routes/index.js');
 
-dotenv.load();
-
 var configVars = require('./config/config_variables.json');
 
-var env = process.env.NODE_ENV,
-	app = express(),
+var app = express(),
 	MongoStore = connectMongo(session),
-	port = process.env.PORT || configVars.development.port;
+	env = process.env.NODE_ENV,
+	port = process.env.PORT;
 
 app.set('views', __dirname + '/app/views');
 app.set('view engine', 'jade');

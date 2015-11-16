@@ -8,18 +8,12 @@ import rev from 'gulp-rev';
 import config from './../../config.js';
 
 // Main js build task. Concatenates partial builds, compresses and gzips in production mode.
-gulp.task('js', [ 'js-clean', 'js-vendor', 'bundle' ], () => {
-    return gulp.src([ 
-            'public/assets/scripts/partials/_vendor.js', 
-            'public/assets/scripts/partials/_bundle.js'
-        ])
-        .pipe(concat('app.js'))
-        .pipe(gulp.dest('public/assets/scripts/build'))
-        .pipe(config.production ? util.noop() : gulp.dest('public/assets/scripts/build'))
+gulp.task('js', [ 'bundle' ], () => {
+    return gulp.src([ 'public/assets/scripts/bundle.js' ])
         .pipe(config.production ? uglify().on('error', util.log) : util.noop())
         .pipe(rev())
         .pipe(config.production ? gzip() : util.noop())
-        .pipe(gulp.dest('public/assets/scripts/build'))
+        .pipe(gulp.dest('public/assets/scripts'))
         .pipe(rev.manifest())
-        .pipe(gulp.dest('public/assets/scripts/build'));
+        .pipe(gulp.dest('public/assets/scripts'));
 });

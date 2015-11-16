@@ -10,50 +10,50 @@ import lambdaRouter from './lambda.js';
 
 import { match, RoutingContext } from 'react-router';
 
-import clientRoutes from './client.jsx';
+import clientRoutes from './client.jsx'
 
-import fingerprintManifest from './utilities/fingerprint_manifest.js';
+var fingerprintManifest
 
-var router = express.Router();
-var resources = [ 'projects', 'project_sections', 'project_templates', 'images' ];
+try {
+	fingerprintManifest = require('./utilities/fingerprint_manifest.js')
+	console.log(fingerprintManifest)
+} catch(e) {
+	console.log(e)
+}
+
+var router = express.Router()
+var resources = [ 'projects', 'project_sections', 'project_templates', 'images' ]
 
 router.use(json2csv.expressDecorator);
 
 router.get('/login', (req, res) => {
 	res.render('login', fingerprintManifest);
-});
+})
 
 router.get('/logout', (req, res) => {
-    req.logout();
-    res.redirect('/');
-});
+    req.logout()
+    res.redirect('/')
+})
 
 // Authentication routes.
-router.use('/auth', authRouter);
+router.use('/auth', authRouter)
 
-router.use('/static', staticRouter);
-router.use('/lambda', lambdaRouter);
+router.use('/static', staticRouter)
+router.use('/lambda', lambdaRouter)
 
 // Use subroutes for data api, requiring resource-specific subrouters.
-resources.forEach(function(resource) {
-	var url = '/api/v1/' + resource;
-	router.use(url, require('.' + url));
-});
+resources.forEach((resource) => {
+	var url = '/api/v1/' + resource
+	router.use(url, require('.' + url))
+})
 
 // Main routes - routing done by client.
 router.get('*', (req, res) => {
 
-	var opt = fingerprintManifest;
-	opt.user = req.user;
+	var opt = fingerprintManifest
+	opt.user = req.user
 
-	// match({ routes: clientRoutes, location: req.url }, (err, redirectLocation, renderProps) => {
-
-	// 	if (!err) {
-	// 		opt.reactOutput = ReactDOMServer.renderToString(<RoutingContext {...renderProps} />);
-	// 	}
-
-		res.render('index.jade', opt);
-	// });
+	res.render('index.jade', opt)
 
 });
 
