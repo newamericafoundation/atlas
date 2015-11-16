@@ -7,10 +7,6 @@ var config = {
     // Code that is shared with other projects such as my.newamerica.org. To be extended into its own CMS.
     boilerplate: [
 
-    	'./app.js',
-
-    	'./app/middleware/**/*',
-    	'./app/assets/scripts/polyfills/**/*',
     	'./app/models/base_crud.js',
 
     	'./app/components/crud/**/*',
