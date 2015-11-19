@@ -48,6 +48,7 @@ class EditBase extends SaveBase {
 		var Model = this.getResourceConstructor();
 		var model = new Model({ id: id });
 		model.getClientFetchPromise({ id: id }).then((model) => {
+			console.log(model)
 			this.setState({ model: model });
 		}).catch((err) => { console.log(err.stack); });
 	}

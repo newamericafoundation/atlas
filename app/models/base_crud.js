@@ -83,13 +83,23 @@ class Model extends Backbone.Model {
 	 */
 	getClientFetchPromise() {
 
-		var url = this.apiUrlRoot + '/' + this.get('id');
+		return new Promise((resolve, reject) => {
 
-		return fetch(url)
-			.then(res => {
-				this.set(res.json())
-				return this
-			})
+			var url = this.apiUrlRoot + '/' + this.get('id');
+
+			$.ajax({
+				url: url,
+				type: 'get',
+				success: (datum) => {
+					this.set(datum);
+					resolve(this);
+				},
+				error: (err) => {
+					reject(err);
+				}
+			});
+
+		});
 
 	}
 
