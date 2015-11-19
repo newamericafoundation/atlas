@@ -9,15 +9,17 @@ var jsFileName, cssFileName
 try {
 	let jsFp = require('./../../../public/assets/scripts/rev-manifest.json')
 	jsFileName = jsFp['bundle.js']
-} catch(e) {
+} catch(err) {
+	console.log(err)
 	jsFileName = 'bundle.js'
 }
 
 // css
 try {
-	cssFp = require('./../../../public/assets/styles/rev-manifest.json')
+	let cssFp = require('./../../../public/assets/styles/rev-manifest.json')
 	cssFileName = cssFp['app.css']
-} catch(e) {
+} catch(err) {
+	console.log(err)
 	cssFileName = 'app.css'
 }
 

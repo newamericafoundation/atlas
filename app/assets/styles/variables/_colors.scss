@@ -1,3 +1,7 @@
+/*
+ * Color palette. For each hue other than the color scheme, always specify a base option.
+ *
+ */
 $palette: (
 
 	turquoise: (
@@ -37,7 +41,10 @@ $palette: (
 
 );
 
-
+/*
+ * Reads a color from the palette based on color name and modifier. Modifier defaults to base.
+ *
+ */
 @function palette-get($key, $type: 'base') {
 	@return map-get(map-get($palette, $key), $type);
 }

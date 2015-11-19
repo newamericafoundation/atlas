@@ -3,7 +3,8 @@ module.exports = {
 	entry: './app/assets/scripts/bundle.jsx',
 
 	output: {
-		path: './public',
+		path: path.resolve('./public/assets/scripts'),
+		publicPath: 'http://localhost:8081/',
 		filename: 'bundle.js'
 	},
 
@@ -22,8 +23,14 @@ module.exports = {
 				loaders: [ "style", "css", "sass" ]
 			}
 		]
-	}, 
+	},
 
-	resolveLoader: [ 'node_modules' ]
+	plugins: [
+		// new webpack.optimize.UglifyJsPlugin({
+		// 	mangle: {
+		// 		except: [ '$super', '$', 'exports', 'require' ]
+		// 	}
+		// })
+	]
 	
 }

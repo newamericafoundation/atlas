@@ -42,7 +42,7 @@
 			@include font-size(14px);
 		}
 
-		border-radius: 2px;
+		border-radius: $border-radius-small;
 		opacity: 0.8;
 		&:hover { opacity: 1; }
 	}

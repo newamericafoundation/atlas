@@ -5,7 +5,16 @@
 // Allow ES6 syntax in all required files.
 require('babel/register');
 
-if (process.env['NODE_ENV'] !== 'production') { require('dotenv').load() }
+// Try loading development environment variables.
+if (process.env['NODE_ENV'] !== 'production') {
+	var dotenv;
+	try {
+		dotenv = require('dotenv');
+		dotenv.load();
+	} catch(err) {
+		console.log(err);
+	}
+}
 
 var express = require('express'),
 	passport = require('passport'),

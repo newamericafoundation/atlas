@@ -128,14 +128,22 @@ class Model extends Backbone.Model {
 
 }
 
+
+/*
+ * Not used.
+ *
+ */
 class Collection extends Backbone.Collection {
 
 	get dbCollection() { return 'atlas_researchers'; }
 
+	/*
+	 *
+	 *
+	 */
 	constructor(options) {
 		super(options);
 		this.model = Model;
-		this.url = '/api/v1/floors';
 	}
 
 }

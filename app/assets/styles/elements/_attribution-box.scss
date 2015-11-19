@@ -4,7 +4,7 @@
 	padding: 10px 20px;
 	background-color: rgba(0,0,0,0.81);
 	color: palette-get(off-white);
-	border-radius: 8px;
+	border-radius: $border-radius-standard;
 	text-align: center;
 	white-space: nowrap;
 	a, p { white-space: nowrap; }

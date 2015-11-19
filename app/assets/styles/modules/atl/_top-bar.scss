@@ -88,6 +88,8 @@
 		&__item {
 			display: block;
 			
+
+
 			text-align: left;
 			min-width: 30px;
 			padding: 0 20px 0 25px;
@@ -99,7 +101,10 @@
 				padding: 23px 20px 0 25px;
 			}
 
-			.button { margin-right: 6px; }
+			.button { 
+				vertical-align: top;
+				margin-right: 6px; 
+			}
 
 			&:last-child > p {
 				font-weight: bold;

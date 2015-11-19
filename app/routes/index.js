@@ -12,14 +12,7 @@ import { match, RoutingContext } from 'react-router';
 
 import clientRoutes from './client.jsx'
 
-var fingerprintManifest
-
-try {
-	fingerprintManifest = require('./utilities/fingerprint_manifest.js')
-	console.log(fingerprintManifest)
-} catch(e) {
-	console.log(e)
-}
+var fingerprintManifest = require('./utilities/fingerprint_manifest.js')
 
 var router = express.Router()
 var resources = [ 'projects', 'project_sections', 'project_templates', 'images' ]

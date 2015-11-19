@@ -1,5 +1,6 @@
 html { 
 	font-size: 100%;
+	// Set default text color.
 	color: palette-get(grey, text);
 }
 
@@ -8,10 +9,6 @@ h1, h2, h3, h4, h5, p, a, li {
 	font-family: 'Simplon';
 	font-weight: normal;
 	line-height: 125%;
-}
-
-h1, h2, h3, h4, h5, p, a, li {
-	
 }
 
 h1 { @include font-size(53px); }
