@@ -24,5 +24,5 @@ Database: ``MongoDB``.
 * [Testing](/docs/testing.md)
 * [Production](/docs/production.md)
 * [Codebase Structure](/docs/codebase_structure.md)
-* [Data Api](/docs/data_api.md)
 * [Code Style Guide](/docs/code_style_guide.md)
+* [Data Api](/docs/data_api.md)

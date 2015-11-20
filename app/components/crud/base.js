@@ -4,7 +4,6 @@ import React from 'react';
 
 import Static from './../general/static.jsx';
 
-
 class Base extends Static {
 
 	/*
@@ -14,6 +13,7 @@ class Base extends Static {
 	render() {
 		return (<div/>);
 	}
+
 
 	/*
 	 * Customize on subclass.

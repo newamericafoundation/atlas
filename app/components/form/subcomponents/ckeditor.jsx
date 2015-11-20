@@ -2,6 +2,8 @@ import React from 'react';
 import Base from './base.jsx';
 import Loader from './../../general/loader.jsx';
 
+const EDITOR_PATH = '/assets/vendor/ckeditor/';
+
 class CKEditor extends Base {
 
 	/*
@@ -10,7 +12,6 @@ class CKEditor extends Base {
 	 */
 	constructor(props) {
 		super(props);
-		this.editorBasePath = '/assets/vendor/ckeditor/';
 	}
 
 
@@ -36,11 +37,11 @@ class CKEditor extends Base {
 
 
 	/*
-	 *
+	 * Run CKEditor configuration.
 	 *
 	 */
 	configureEditor() {
-		CKEDITOR.basePath = this.editorBasePath;
+		CKEDITOR.basePath = EDITOR_PATH;
 		CKEDITOR.config.allowedContent = true;
 		CKEDITOR.config.format_tags = 'p;h1;h2;h3;h4';
 		CKEDITOR.config.format_h4 = { element: 'h4', attributes: { 'class': 'Notes under tables' } };
@@ -53,11 +54,11 @@ class CKEditor extends Base {
 
 
 	/*
-	 *
+	 * Create CKEditor instance.
 	 *
 	 */
 	componentDidMount() {
-		$().ensureScript('CKEDITOR', this.editorBasePath + 'ckeditor.js', () => {
+		$().ensureScript('CKEDITOR', `EDITOR_PATH${ckeditor.js}`, () => {
 			this.configureEditor();
 			this.instance = CKEDITOR.replace(this.props.id);
 			this.instance.on('key', (e) => {
@@ -71,7 +72,7 @@ class CKEditor extends Base {
 
 
 	/*
-	 *
+	 * Destroy CKEditor instance.
 	 *
 	 */
 	componentWillUnmount() {

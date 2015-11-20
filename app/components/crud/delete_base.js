@@ -275,8 +275,4 @@ class DeleteBase extends Base {
 
 }
 
-DeleteBase.contextTypes = {
-	router: React.PropTypes.func
-};
-
 export default DeleteBase;
