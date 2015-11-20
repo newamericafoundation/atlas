@@ -1,16 +1,16 @@
-import _ from 'underscore';
+import _ from 'underscore'
 
-import formatters from './../utilities/formatters.js';
+import formatters from './../utilities/formatters.js'
 
-import base from './base.js';
-import projectSection from './project_section.js';
-import projectTemplate from './project_template.js';
-import filter from './filter.js';
-import variable from './variable.js';
-import variableGroup from './variable_group.js';
-import item from './item.js';
+import * as base from './base.js'
+import * as projectSection from './project_section.js'
+import * as projectTemplate from './project_template.js'
+import * as filter from './filter.js'
+import * as variable from './variable.js'
+import * as variableGroup from './variable_group.js'
+import * as item from './item.js'
 
-class Model extends base.Model {
+export class Model extends base.Model {
 
     get resourceName() { return 'project'; }
 
@@ -437,7 +437,7 @@ class Model extends base.Model {
 
 
 
-class Collection extends base.Collection {
+export class Collection extends base.Collection {
 
     get model() { return Model; }
 
@@ -528,9 +528,4 @@ class Collection extends base.Collection {
 
     }
 
-}
-
-export default {
-    Model: Model,
-    Collection: Collection
 }

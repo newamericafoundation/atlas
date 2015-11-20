@@ -13,7 +13,7 @@
 	}
 
 	&--image {
-		background-color: palette-get(off-white);
+		background-color: palette-get(offwhite);
 		.title, .icon-button__text {
 			color: palette-get(grey);
 		}
@@ -32,7 +32,7 @@
 		content: "";
 		
 		.atl__title-bar--solid & {
-			background-color: nth(map-get($palette, scheme), 8);
+			background-color: nth($palette-scheme, 8);
 			opacity: 0.8;
 		}
 		.atl__title-bar--image & {
@@ -82,7 +82,7 @@
 			padding: 0;
 
 			.atl__title-bar--solid & {
-				color: palette-get(off-white);
+				color: palette-get(offwhite);
 				@media print { color: black; }
 			}
 
@@ -100,7 +100,7 @@
 				margin: auto 10px;
 
 				.atl__title-bar--solid & {
-					color: palette-get(off-white);
+					color: palette-get(offwhite);
 					@media print { color: black; }
 				}
 				

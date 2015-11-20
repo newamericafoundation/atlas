@@ -1,9 +1,14 @@
-import React from 'react';
-import classNames from 'classnames';
+import React from 'react'
+import classNames from 'classnames'
+
 import { No } from './../../../../../general/icons.jsx';
+import Base from './base.jsx'
 
-import Base from './base.jsx';
 
+/*
+ *
+ *
+ */
 class Search extends Base {
 
 	/*
@@ -44,7 +49,7 @@ class Search extends Base {
 	 *
 	 */
 	setSearchTerm(e) {
-		this.props.setUiState({ searchTerm: e.target.value });
+		this.props.setUiState({ searchTerm: e.target.value })
 	}
 
 
@@ -53,10 +58,10 @@ class Search extends Base {
 	 *
 	 */
 	close(e) {
-		if (e) { e.preventDefault(); }
-		this.props.setUiState({ isSearchBarActive: false });
+		if (e) { e.preventDefault() }
+		this.props.setUiState({ isSearchBarActive: false })
 	}
 
 }
 
-export default Search;
+export default Search

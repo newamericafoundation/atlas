@@ -1,3 +1,5 @@
+// Written in old JavaScript for gulp. To be replaced as needed.
+
 var _ = require('underscore'),
 	Backbone = require('backbone');
 

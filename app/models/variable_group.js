@@ -1,11 +1,11 @@
 import _ from 'underscore';
 import Backbone from 'backbone';
 
-import base from './base.js';
+import * as base from './base.js';
 import formatters from './../utilities/formatters.js';
 
 
-class Model extends base.Model {
+export class Model extends base.Model {
 
     /*
      * Parse spreadsheet data, lowercasing and underscore-joining all fields.
@@ -32,7 +32,7 @@ class Model extends base.Model {
  *
  *
  */
-class Collection extends base.Collection {
+export class Collection extends base.Collection {
 
     get model() { return Model; }
 
@@ -45,11 +45,4 @@ class Collection extends base.Collection {
         return - (model1.get(KEY) - model2.get(KEY));
     }
 
-}
-
-
-
-export default {
-    Model: Model,
-    Collection: Collection
 }

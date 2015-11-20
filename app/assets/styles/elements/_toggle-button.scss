@@ -26,20 +26,20 @@
             stroke: none;
         }
         .hexicon__yes { 
-            fill: palette-get(off-white);
+            fill: palette-get(offwhite);
         }
         .hexicon__no { 
             fill: none;
         }
 
         .toggle-button--white & {
-            .hexicon__hex { fill: palette-get(off-white); }
+            .hexicon__hex { fill: palette-get(offwhite); }
             .hexicon__yes { fill: black; }
         }
 
         .toggle-button--black & {
             .hexicon__hex { fill: black; }
-            .hexicon__yes { fill: palette-get(off-white); }
+            .hexicon__yes { fill: palette-get(offwhite); }
         }
 
         .toggle-button--inactive & {

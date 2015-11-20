@@ -1,8 +1,13 @@
-import React from 'react';
-import classNames from 'classnames';
+import React from 'react'
+import classNames from 'classnames'
 
-import Base from './base.jsx';
+import Base from './base.jsx'
 
+
+/*
+ * Popup component.
+ * @extends {class} Base - Base class storing shared functionality in tilemap components.
+ */
 class Popup extends Base {
 
 	/*
@@ -61,8 +66,8 @@ class Popup extends Base {
 		var { radio } = this.props;
 		var hoveredItem, App, position;
 		hoveredItem = this.getHoveredItem();
-		if (hoveredItem == null) { return; }
-		position = radio.reqres.request('item:map:position', hoveredItem);
+		if (hoveredItem == null) { return }
+		position = radio.reqres.request('item:map:position', hoveredItem)
 		return {
 			left: position.x,
 			top: position.y,

@@ -15,7 +15,7 @@ var indexOf = [].indexOf || function(item) {
  * @constructor
  * Note on methods toLatLongPoint, toRichGeoJson: these methods assume that the model instance has a lat and long fields. 
  */
-class Model extends base.Model {
+export class Model extends base.Model {
 	
 	/** 
 	 * Recognize and process data.
@@ -214,7 +214,7 @@ class Model extends base.Model {
 }
 
 
-class Collection extends base.Collection {
+export class Collection extends base.Collection {
 
 	get model() { return Model; }
 	
@@ -424,9 +424,4 @@ class Collection extends base.Collection {
 		return this.richGeoJsonBuilders[type](this, baseGeoData);
 	}
 
-}
-
-export default {
-	Model: Model,
-	Collection: Collection
 }

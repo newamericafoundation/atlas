@@ -1,17 +1,14 @@
-import React from 'react';
-import classNames from 'classnames';
-import { Info, Plus, Minus } from './../../../../../../../../general/icons.jsx';
+import React from 'react'
+import classNames from 'classnames'
 
+import { Info, Plus, Minus } from './../../../../../../../../general/icons.jsx'
+
+
+/*
+ *
+ *
+ */
 class Control extends React.Component {
-
-	/*
-	 *
-	 *
-	 */
-	constructor(props) {
-		super(props);
-	}
-
 
 	/*
 	 *
@@ -43,7 +40,7 @@ class Control extends React.Component {
 	 */
 	zoom(zoomChange) {
 		if (this.props.map) {
-			this.props.map.changeZoom(zoomChange);
+			this.props.map.changeZoom(zoomChange)
 		}
 	}
 
@@ -53,9 +50,9 @@ class Control extends React.Component {
 	 *
 	 */
 	showAttribution() {
-		$('.leaflet-control-attribution').toggle();
+		$('.leaflet-control-attribution').toggle()
 	}
 
 }
 
-export default Control;
+export default Control

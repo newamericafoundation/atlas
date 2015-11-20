@@ -1,18 +1,18 @@
-import Backbone from 'backbone';
-import _ from 'underscore';
-import baseFilter from './base_filter';
-import seed from './../../db/seeds/project_sections.json';
+import Backbone from 'backbone'
+import _ from 'underscore'
+import * as baseFilter from './base_filter'
+
+import seed from './../../db/seeds/project_sections.json'
 
 
-class Model extends baseFilter.Model {
+export class Model extends baseFilter.Model {
 	get resourceName() { return 'project_section'; }
-
 	getEditUrl() { return null; }
 	getNewUrl() { return null; }
 	getDeleteUrl() { return null; }
 }
 
-class Collection extends baseFilter.Collection {
+export class Collection extends baseFilter.Collection {
 
 	get dbSeed() { return seed; }
 
@@ -26,9 +26,4 @@ class Collection extends baseFilter.Collection {
 		this.reset(seed);
 	}
 
-}
-
-export default {
-	Model: Model,
-	Collection: Collection
 }

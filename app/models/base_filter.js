@@ -1,11 +1,11 @@
-import _ from 'underscore';
-import base from './base.js';
+import _ from 'underscore'
+import * as base from './base.js'
 
 /*
  *
  *
  */
-class Model extends base.Model {
+export class Model extends base.Model {
 
 	/** Activates model. Takes no collection filter logic into consideration - hence internal only. */
 	activate() {
@@ -64,7 +64,7 @@ class Model extends base.Model {
  *
  *
  */
-class Collection extends base.Collection {
+export class Collection extends base.Collection {
 
 	get model() { return exports.Model; }
 
@@ -133,9 +133,4 @@ class Collection extends base.Collection {
 		return false;
 	}
 
-}
-
-export default {
-	Model: Model,
-	Collection: Collection
 }

@@ -1,12 +1,12 @@
 // Model used to handle geo shape files, from download and geojson conversion to fetching once the app is running.
 
-import _ from 'underscore';
-import base from './base.js';
-import seed from './../../db/seeds/shape_files.json';
-import $ from 'jquery';
-import topojson from 'topojson';
+import _ from 'underscore'
+import * as base from './base.js'
+import seed from './../../db/seeds/shape_files.json'
+import $ from 'jquery'
+import topojson from 'topojson'
 
-class Model extends base.Model {
+export class Model extends base.Model {
 	
 	/*
 	 * Return promise resolved when GeoJson file is fetched and assembled from TopoJson.
@@ -61,14 +61,9 @@ class Model extends base.Model {
 
 }
 
-class Collection extends base.Collection {
+export class Collection extends base.Collection {
 
 	get model() { return Model; }
 	initialize() { this.reset(seed); }
 
 }
-
-export default {
-	Model: Model,
-	Collection: Collection
-};

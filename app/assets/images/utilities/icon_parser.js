@@ -33,13 +33,14 @@ class IconSvgFile {
 	 *
 	 */
 	defineReactComponent(componentName, renderMarkup) {
+		if (componentName == null || componentName === "") { return ''; }
 		/* multi-line formatted code */
 return `
-	Icons.${componentName} = () => {
-		return (
+export function ${componentName}() {
+	return (
 	${renderMarkup}
-		);
-	}
+	)
+}
 `;
 		/* end of multi-line formatted code */
 	}
@@ -153,6 +154,7 @@ class IconSvgFiles {
 				resolvedCount += 1;
 				console.log(resolvedCount + ' -- ' + this.list.length);
 				if (resolvedCount === this.list.length) {
+					output = `import React from 'react'\n\n${output}`
 					next(output);
 				}
 			}, () => { resolvedCount += 1; console.log('fail'); });
@@ -168,6 +170,6 @@ new IconSvgFiles('/../icons/svg')
 	.setIcons((iconSvgFiles) => {
 		if (iconSvgFiles == null) { return; }
 		iconSvgFiles.getReactComponent((comp) => {
-			fs.writeFile('output.jsx', comp, (err) => { if(err) { return console.dir(err); } return console.log('success'); });
+			fs.writeFile('app/components/general/icons.jsx', comp, (err) => { if(err) { return console.dir(err); } return console.log('success'); });
 		});
 	});

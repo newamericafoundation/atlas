@@ -17,7 +17,7 @@
 		}
 		font-family: 'Platform';
 		font-weight: bold;
-		color: palette-get(off-white);
+		color: palette-get(offwhite);
 	}
 
 	&__close {
@@ -26,7 +26,7 @@
 		right: 25px;
 		width: 20px;
 		height: 20px;
-		svg { fill: palette-get(off-white); }
+		svg { fill: palette-get(offwhite); }
 		opacity: 0.7;
 		&:hover { opacity: 1; }
 	}

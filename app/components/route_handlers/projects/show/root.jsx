@@ -7,7 +7,7 @@ import Explainer from './explainer/root.jsx';
 import Loader from './../../../general/loader.jsx';
 import SideBar from './../../../general/side_bar.jsx';
 
-import project from './../../../../models/project.js';
+import * as project from './../../../../models/project.js';
 import buttonsDataGenerator from './buttons_data_generator.js';
 
 class Show extends React.Component {

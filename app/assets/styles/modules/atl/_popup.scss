@@ -29,7 +29,7 @@
 
 	&__content {
 
-		$c1: palette-get(off-white);
+		$c1: palette-get(offwhite);
 		$c2: palette-get(grey);
 
 		display: inline-block;
@@ -64,7 +64,7 @@
 			top: -65px;
 			.atl__popup--clear-middle & { top: -125px; }
 
-			background-color: map-get(map-get($palette, grey), base);
+			background-color: palette-get(grey, base);
 
 			height: 40px;
 			display: table;

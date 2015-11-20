@@ -3,7 +3,7 @@
 	@include animation(fadein 1s);
 
 	svg {
-		fill: palette-get(off-white);
+		fill: palette-get(offwhite);
 	}
 
 	&__title, &__subtitle, &__strip, &__main-nav {
@@ -35,7 +35,7 @@
 
 		&__name {
 			font-family: 'Platform';
-			color: palette-get(off-white);
+			color: palette-get(offwhite);
 			font-weight: bold;
 			text-align: center;
 		}
@@ -54,7 +54,7 @@
 		padding: 0 30px;
 		text-align: center;
 
-		color: palette-get(off-white);
+		color: palette-get(offwhite);
 
 		@include bp-w-sm {
 			@include font-size(24px);
@@ -90,7 +90,7 @@
 
 		p {
 			@include font-size(16px);
-			color: palette-get(off-white);
+			color: palette-get(offwhite);
 			margin-top: 15px;
 			text-align: center;
 		}

@@ -1,8 +1,8 @@
-import _ from 'underscore';
+import _ from 'underscore'
 
-import base from './base.js';
-import formatters from './../utilities/formatters.js';
-import baseComposite from './base_composite.js';
+import * as base from './base.js'
+import formatters from './../utilities/formatters.js'
+import * as baseComposite from './base_composite.js'
 
 /*
  *
@@ -141,7 +141,7 @@ class LocalBaseModel extends baseComposite.Model {
  *
  *
  */
-class FilterValue extends LocalBaseModel {
+export class FilterValue extends LocalBaseModel {
 
     /*
      *
@@ -224,7 +224,7 @@ class FilterValue extends LocalBaseModel {
  *
  *
  */
-class FilterKey extends LocalBaseModel {
+export class FilterKey extends LocalBaseModel {
 
     get model() { return FilterValue; }
 
@@ -305,7 +305,7 @@ class FilterKey extends LocalBaseModel {
  *
  *
  */
-class FilterTree extends LocalBaseModel {
+export class FilterTree extends LocalBaseModel {
 
     /*
      *
@@ -458,11 +458,4 @@ class FilterTree extends LocalBaseModel {
 
      }
 
-}
-
-
-export default {
-    FilterValue: FilterValue,
-    FilterKey: FilterKey,
-    FilterTree: FilterTree
 }

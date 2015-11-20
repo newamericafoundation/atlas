@@ -1,6 +1,5 @@
 import React from 'react';
 import classNames from 'classnames';
-import * as colors from './../../../../../../utilities/colors.js';
 
 import Control from './subcomponents/control/root.jsx';
 
@@ -54,8 +53,7 @@ class Map extends React.Component {
 			setUiState: this.props.setUiState,
 			setMap: this.setMap.bind(this)
 		};
-		Mapper.colors = colors;
-		Mapper.start();
+		Mapper.start()
 	}
 
 

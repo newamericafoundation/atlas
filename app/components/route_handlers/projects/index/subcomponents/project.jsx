@@ -1,10 +1,14 @@
-import React from 'react';
-import { Link } from 'react-router';
-import classNames from 'classnames';
+import React from 'react'
+import { Link } from 'react-router'
+import classNames from 'classnames'
 
-import * as colors from './../../../../utilities/colors.js';
+import colors from './../../../../utilities/colors.js'
 
 
+/*
+ *
+ *
+ */
 class Project extends React.Component {
 	
 	/*
@@ -15,7 +19,7 @@ class Project extends React.Component {
 		super(props);
 		this.state = {
 			highlightBackgroundColor: 'none'
-		};
+		}
 	}
 
 
@@ -24,16 +28,13 @@ class Project extends React.Component {
 	 *
 	 */
 	render() {
-		var project, cls;
-		if (!this.isVisible()) {
-			return null;
-		}
-		project = this.props.project;
+		var { project } = this.props, cls
+		if (!this.isVisible()) { return null }
 		cls = classNames({
 			'atl__project': true,
 			'atl__project--explainer': (project.get('project_template_id') === '1'),
 			'atl__project--overview': (project.get('is_section_overview') === 'Yes')
-		});
+		})
 		return (
 			<Link 
 				className={ cls } 
@@ -53,7 +54,6 @@ class Project extends React.Component {
 						<h1>{ project.get('title') }</h1>
 					</div>
 				</div>
-				{ this.renderAttribution() }
 			</Link>
 		);
 	}
@@ -63,31 +63,8 @@ class Project extends React.Component {
 	 *
 	 *
 	 */
-	renderAttribution() {
-		return null;
-		var project = this.props.project,
-			imageCredit = project.get('image_credit'),
-			InfoComp = Icons.Info;
-		if (imageCredit == null || (imageCredit === '')) { return; }
-		return (
-			<div className="atl__attribution">
-				<InfoComp />
-				<div className="atl__attribution__link">
-					<p>{ 'Image Credit' }</p>
-					<div>{ 'Shutterstock' }</div>
-				</div>
-			</div>
-		)
-	}
-
-
-	/*
-	 *
-	 *
-	 */
 	getBackgroundStyle() {
-		// return { 'backgroundImage': 'url(/static/images/resize_cache--Stock_Photos_w400--shutterstock_114464926.jpg)' };
-		var project = this.props.project;
+		var { project } = this.props
 		if (project == null || !this.props.shouldDisplayImage) { return; }
 		var style = { 'backgroundImage': project.getImageUrl() };
 		return style;
@@ -99,7 +76,7 @@ class Project extends React.Component {
 	 *
 	 */
 	getInitials() {
-		var project = this.props.project,
+		var { project } = this.props,
 			title, initials;
 		if (project.get('encoded_image') != null) { return ''; }
 		title = project.get('title');
@@ -114,10 +91,8 @@ class Project extends React.Component {
 	 *
 	 */
 	isVisible() {
-		var project = this.props.project,
-			projectSections = this.props.projectSections,
-			projectTemplates = this.props.projectTemplates;
-		if (projectSections == null || projectTemplates == null) { return false; }
+		var { project, projectSections, projectTemplates } = this.props
+		if (projectSections == null || projectTemplates == null) { return false }
 		return (projectSections.test(project, 'project_section') && projectTemplates.test(project, 'project_template'))
 	}
 
@@ -127,8 +102,7 @@ class Project extends React.Component {
 	 *
 	 */
 	launch(e) {
-		var href;
-		href = this.props.project.get('atlas_url')
+		var href = this.props.project.get('atlas_url')
 		// When the following page is rendered, its theme color is set to
 		//   current highlight color.
 		// TODO refactor current theme color assignments
@@ -142,11 +116,10 @@ class Project extends React.Component {
 	 *
 	 */
 	applyBackgroundColor() {
-		var color;
-		color = this.getColor();
-		this.setState({ highlightBackgroundColor: color });
-		var { radio } = this.props;
-		radio.commands.execute('set:header:strip:color', { color: color });
+		var { radio } = this.props, color
+		color = this.getColor()
+		this.setState({ highlightBackgroundColor: color })
+		radio.commands.execute('set:header:strip:color', { color: color })
 	}
 
 
@@ -155,9 +128,9 @@ class Project extends React.Component {
 	 *
 	 */
 	removeBackgroundColor() {
-		this.setState({ highlightBackgroundColor: '' });
-		var { radio } = this.props;
-		radio.commands.execute('set:header:strip:color', 'none');
+		var { radio } = this.props
+		this.setState({ highlightBackgroundColor: '' })
+		radio.commands.execute('set:header:strip:color', 'none')
 	}
 
 
@@ -166,15 +139,13 @@ class Project extends React.Component {
 	 *
 	 */
 	getColor() {
-		var project, projects, index, color;
-		project = this.props.project;
-		projects = this.props.projects;
-		if (project == null || projects == null) { return; }
-		index = projects.indexOf(project);
-		color = colors.toRgba(index % 15, 0.8);
-		return color;
+		var { project, projects } = this.props, index, color
+		if (project == null || projects == null) { return }
+		index = projects.indexOf(project)
+		color = colors.toRgba(index % 15, 0.8)
+		return color
 	}
 
 }
 
-export default Project;
+export default Project

@@ -1,13 +1,16 @@
 // Entry point to client-side app.
 
+// Not yet working
+// import './../styles/app.scss'
+
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { render } from 'react-dom'
 import { Router } from 'react-router'
 import createBrowserHistory from 'history/lib/createBrowserHistory'
 
 import routes from './../../routes/client.jsx'
 
-// Import and configure global libraries
+// Import global libraries
 import $ from 'jquery'
 import selectize from 'selectize'
 import Chartist from 'chartist'
@@ -15,6 +18,7 @@ import chroma from 'chroma-js'
 import numeral from 'numeral'
 import ChartistHtml from 'chartist-html'
 
+// Configure libraries
 import './library_config.js'
 
 global.$ = $

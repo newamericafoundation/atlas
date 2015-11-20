@@ -1,7 +1,7 @@
-import express from 'express';
-import passport from 'passport';
+import express from 'express'
+import passport from 'passport'
 
-var router = express.Router();
+var router = express.Router()
 
 // GET /auth/google
 //   Use passport.authenticate() as route middleware to authenticate the
@@ -15,7 +15,7 @@ router.get('/google',
     function(req, res) {
         // The request will be redirected to Google for authentication, so this
         // function will not be called.
-    });
+    })
 
 // GET /auth/google/callback
 //   Use passport.authenticate() as route middleware to authenticate the
@@ -28,7 +28,7 @@ router.get('/google/callback',
     }),
     function(req, res) {
         // req.session.accessToken = req.user.accessToken;
-        res.redirect('/');
+        res.redirect('/')
     });
 
-export default router;
+export default router

@@ -1,6 +1,6 @@
 @mixin button() {
 
-    $main-color: palette-get(off-white);
+    $main-color: palette-get(offwhite);
     $secondary-color: palette-get(grey);
     $font-size: 16px;
     $is-solid: false;

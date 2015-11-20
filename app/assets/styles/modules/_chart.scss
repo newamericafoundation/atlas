@@ -25,7 +25,7 @@
 			width: 100%;
 			text-align: center;
 			margin: 0;
-			color: palette-get(off-white);
+			color: palette-get(offwhite);
 			@include font-size(18px);
 		}
 
@@ -40,7 +40,7 @@
 		width: 100%;
 		text-align: center;
 		margin: 0;
-		color: map-get($palette, off-white);
+		color: map-get($palette, offwhite);
 	}
 	h1 { @include font-size(18px); padding-top: 6px; }
 	p { @include font-size(18px); padding-top: 5px; }

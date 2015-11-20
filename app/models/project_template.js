@@ -1,10 +1,10 @@
-import Backbone from 'backbone';
-import _ from 'underscore';
-import baseFilter from './base_filter';
-import seed from './../../db/seeds/project_templates.json';
+import Backbone from 'backbone'
+import _ from 'underscore'
+import * as baseFilter from './base_filter'
+import seed from './../../db/seeds/project_templates.json'
 
 
-class Model extends baseFilter.Model {
+export class Model extends baseFilter.Model {
 	get apiUrlRoot() { return '/api/v1/project_templates'; }
 
 	getEditUrl() { return null; }
@@ -13,7 +13,7 @@ class Model extends baseFilter.Model {
 }
 
 
-class Collection extends baseFilter.Collection {
+export class Collection extends baseFilter.Collection {
 
 	get dbSeed() { return seed; }
 
@@ -29,9 +29,4 @@ class Collection extends baseFilter.Collection {
 		this.reset(seed);
 	}
 
-}
-
-export default {
-	Model: Model,
-	Collection: Collection
 }

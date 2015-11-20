@@ -1,15 +1,20 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import classNames from 'classnames';
-import marked from 'marked';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import classNames from 'classnames'
+import marked from 'marked'
 
-import Static from './../../../../../general/static.jsx';
-import Icons from './../../../../../general/icons.jsx';
+import Static from './../../../../../general/static.jsx'
+import * as Icons from './../../../../../general/icons.jsx'
 
-import image from './../../../../../../models/image.js';
+import image from './../../../../../../models/image.js'
 
-import Base from './base.jsx';
+import Base from './base.jsx'
 
+
+/*
+ *
+ *
+ */
 class InfoBox extends Static {
 
 	/*
@@ -17,9 +22,9 @@ class InfoBox extends Static {
 	 *
 	 */
 	constructor(props) {
-		super(props);
-		this.state = this.state || {};
-		this.state.transitionEventNamespace = 0;
+		super(props)
+		this.state = this.state || {}
+		this.state.transitionEventNamespace = 0
 	}
 
 
@@ -416,4 +421,4 @@ class InfoBox extends Static {
 
 }
 
-export default InfoBox;
+export default InfoBox

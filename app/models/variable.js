@@ -1,12 +1,12 @@
-import _ from 'underscore';
-import Backbone from 'backbone';
+import _ from 'underscore'
+import Backbone from 'backbone'
 
-import base from './base.js';
-import formatters from './../utilities/formatters.js';
+import * as base from './base.js'
+import formatters from './../utilities/formatters.js'
 
-var bigNumber = 100000000000;
+const BIG_NUMBER = 100000000000
 
-class Model extends base.Model {
+export class Model extends base.Model {
 
     /*
      * Parse spreadsheet data, lowercasing and underscore-joining all fields.
@@ -86,9 +86,9 @@ class Model extends base.Model {
             member = member.trim();
             if (member === "") {
                 if (index === 0) {
-                    return -bigNumber;
+                    return -BIG_NUMBER;
                 }
-                return +bigNumber;
+                return +BIG_NUMBER;
             }
             return filterFloat(member);
         });
@@ -128,9 +128,9 @@ class Model extends base.Model {
             return filterValue;
         }
 
-        if (min === -bigNumber) {
+        if (min === - BIG_NUMBER) {
             filterValue.value = "Less than " + maxDisplay;
-        } else if (max === +bigNumber) {
+        } else if (max === + BIG_NUMBER) {
             filterValue.value = "Greater than " + minDisplay;
         } else {
             filterValue.value = "Between " + minDisplay + " and " + maxDisplay;
@@ -147,7 +147,7 @@ class Model extends base.Model {
  *
  *
  */
-class Collection extends base.Collection {
+export class Collection extends base.Collection {
 
 	get model() { return Model; }
 
@@ -204,10 +204,4 @@ class Collection extends base.Collection {
         return models;
     }
 
-}
-
-
-export default {
-    Model: Model,
-    Collection: Collection
 }

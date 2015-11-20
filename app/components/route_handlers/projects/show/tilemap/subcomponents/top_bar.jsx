@@ -5,16 +5,12 @@ import Slider from './../../../../../general/slider.jsx';
 import { More } from './../../../../../general/icons.jsx';
 import Base from './base.jsx';
 
+
+/*
+ *
+ *
+ */
 class TopBar extends Base {
-
-	/*
-	 *
-	 *
-	 */
-	constructor(props) {
-		super(props);
-	}
-
 
 	/*
 	 *
@@ -99,8 +95,8 @@ class TopBar extends Base {
 
 
 /*
- *
- *
+ * Control icons for the top bar component.
+ * NOT USED CURRENTLY
  */
 class TopBarIcons extends React.Component {
 
@@ -151,6 +147,12 @@ class TopBarIcons extends React.Component {
 
 }
 
+
+
+/*
+ * Single icon.
+ *
+ */
 class TopBarIcon extends React.Component {
 
 	/*

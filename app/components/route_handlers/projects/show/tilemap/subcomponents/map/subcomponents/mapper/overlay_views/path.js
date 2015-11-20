@@ -1,7 +1,10 @@
-import $ from 'jquery';
+import BaseOverlayView from './base.js'
 
-import BaseOverlayView from './base.js';
 
+/*
+ *
+ *
+ */
 class PathOverlayView extends BaseOverlayView {
 
     /*
@@ -114,4 +117,4 @@ class PathOverlayView extends BaseOverlayView {
 
 }
 
-export default PathOverlayView;
+export default PathOverlayView

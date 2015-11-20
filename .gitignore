@@ -1,4 +1,5 @@
 .env
+.sass-cache
 **/*.pem
 node_modules
 bower_components

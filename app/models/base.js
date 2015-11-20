@@ -1,15 +1,15 @@
-import * as Backbone from 'backbone';
-import * as _ from 'underscore';
-import $ from 'jquery';
-import marked from 'marked';
-import baseCrud from './base_crud.js';
+import Backbone from 'backbone'
+import _ from 'underscore'
+import $ from 'jquery'
+import marked from 'marked'
+import * as baseCrud from './base_crud.js'
 
 
 /*
  *
  *
  */
-class Model extends baseCrud.Model {
+export class Model extends baseCrud.Model {
 
 	get resourceName() { return 'resource'; }
 
@@ -163,7 +163,7 @@ class Model extends baseCrud.Model {
  *
  *
  */
-class Collection extends baseCrud.Collection {
+export class Collection extends baseCrud.Collection {
 	
 	get model() { return Model; }
 
@@ -186,9 +186,4 @@ class Collection extends baseCrud.Collection {
 		return resp;
 	}
 
-}
-
-export default {
-	Model: Model,
-	Collection: Collection
 }

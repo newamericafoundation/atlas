@@ -1,3 +1,7 @@
+// Router handling static file management to and from the AWS S3 bucket.
+// NOT YET FUNCTIONAL.
+// TODO: finisha and test.
+
 import express from 'express';
 import AWS from 'aws-sdk';
 
@@ -15,11 +19,8 @@ router.get('/list', (req, res) => {
 });
 
 var getImageRequest = (req) => {
-
 	var key = req.params.file_name.replace(/--/g, '/');
-	
-
-};
+}
 
 router.get('/images/:file_name', (req, res) => {
 

@@ -1,6 +1,7 @@
-import React from 'react';
-import classNames from 'classnames';
-import Icons from './../../../../general/icons.jsx';
+import React from 'react'
+import classNames from 'classnames'
+import * as Icons from './../../../../general/icons.jsx'
+import HexIcon from './../../../../general/hex_icon.jsx'
 
 class ProjectSections extends React.Component {
 
@@ -28,26 +29,25 @@ class ProjectSections extends React.Component {
 
 }
 
+
 class ProjectSection extends React.Component {
 
 	render() {
-		var projectSection = this.props.projectSection;
+		var { projectSection } = this.props
+		var cls = classNames({
+			"toggle-button": true,
+			"toggle-button--black": true,
+			"toggle-button--inactive": !projectSection.get('_isActive')
+		})
 		return (
-			<li className={ "toggle-button toggle-button--black " + this.getModifierClass() } onClick={ this.toggleActiveState.bind(this) }>
-				<Icons.Hex className={'toggle-button__icon'} />
+			<li className={ cls } onClick={ this.toggleActiveState.bind(this) }>
+				<HexIcon className={'toggle-button__icon'} />
 				<div className="toggle-button__text">
 					<p>{projectSection.get('name')}</p>
 				</div>
 			</li>
 		);
 
-	}
-
-	getModifierClass() {
-		if(!this.props.projectSection.get('_isActive')) {
-			return 'toggle-button--inactive';
-		}
-		return '';
 	}
 
 	toggleActiveState() {
@@ -57,4 +57,4 @@ class ProjectSection extends React.Component {
 
 }
 
-export default ProjectSections;
+export default ProjectSections

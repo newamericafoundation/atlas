@@ -5,8 +5,13 @@ import RootView from './root_view.js'
 import PinOverlayView from './overlay_views/pin.js'
 import PathOverlayView from './overlay_views/path.js'
 
-import shapeFile from './../../../../../../../../../models/shape_file.js'
+import * as shapeFile from './../../../../../../../../../models/shape_file.js'
 
+
+/*
+ *
+ *
+ */
 var Mapper = {
 
     /*
@@ -111,6 +116,7 @@ var Mapper = {
         return PathOverlayView;
     }
 
-};
+}
 
-export default Mapper;
+
+export default Mapper

@@ -3,13 +3,18 @@
 import React from 'react';
 import { Link } from 'react-router';
 import classNames from 'classnames';
-import Static from './../general/static.jsx';
-import Form from './../form/root.jsx';
-import Loader from './../general/loader.jsx';
 
-import Base from './base.js';
-import BaseStatusModal from './base_status_modal.js';
+import Static from './../general/static.jsx'
+import Form from './../form/root.jsx'
+import Loader from './../general/loader.jsx'
+import Base from './base.js'
+import BaseStatusModal from './base_status_modal.js'
 
+
+/*
+ *
+ *
+ */
 class SaveBaseModal extends BaseStatusModal {
 
 	/*
@@ -228,7 +233,6 @@ class SaveBase extends Base {
 		});
 
 	}
-
 
 
 	/*

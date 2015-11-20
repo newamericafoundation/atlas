@@ -41,7 +41,7 @@
         .atl--collapsed & { display: none; }
 
         &__heading > p {
-            color: palette-get(off-white);
+            color: palette-get(offwhite);
             @include font-size(16px);
             font-family: 'Meta Serif'; 
             opacity: 0.7;
@@ -51,8 +51,8 @@
         a {
             @include link;
             @include font-size(16px);
-            color: palette-get(off-white);
-            border-bottom: 2px solid palette-get(off-white);
+            color: palette-get(offwhite);
+            border-bottom: 2px solid palette-get(offwhite);
             font-family: 'Simplon';
         }
 
@@ -60,19 +60,19 @@
     }
 
     .toggle-button__text p {
-        color: palette-get(off-white);
+        color: palette-get(offwhite);
     }
 
     &__var-group {
 
-        h1 { color: palette-get(off-white); }
+        h1 { color: palette-get(offwhite); }
 
         position: relative;
 
         &__description {
             p, li {
                 font-family: 'Meta Serif';
-                color: palette-get(off-white);
+                color: palette-get(offwhite);
                 margin: 10px 0;
                 a {
                     font-family: 'Meta Serif';
@@ -97,7 +97,7 @@
             left: -35px;
             width: $icon-size;
             height: $icon-size;
-            fill: palette-get(off-white);
+            fill: palette-get(offwhite);
             position: absolute; 
         }
     }

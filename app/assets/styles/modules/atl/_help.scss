@@ -13,7 +13,7 @@
 	width: $width;
 	overflow-x: visible;
 	overflow-y: visible;
-	background-color: palette-get(off-white);
+	background-color: palette-get(offwhite);
 	opacity: 1;
 	
 	b {
@@ -52,7 +52,7 @@
 			@include atl__help__pointy;
 			margin-left: -$tip-size;
 			left: +2px;  
-			border-right-color: palette-get(off-white);
+			border-right-color: palette-get(offwhite);
 			border-left-color: transparent;
 			z-index: 10; 
 		}
@@ -64,7 +64,7 @@
 			@include atl__help__pointy;
 			margin-left: 0;
 			right: -$tip-size+2px;
-			border-left-color: palette-get(off-white);
+			border-left-color: palette-get(offwhite);
 			border-right-color: transparent;
 			z-index: 10; 
 		}

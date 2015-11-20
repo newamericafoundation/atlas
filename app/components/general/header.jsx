@@ -1,7 +1,8 @@
-import React from 'react';
-import { Link } from 'react-router';
-import { Naf } from './icons.jsx';
-import classNames from 'classnames';
+import React from 'react'
+import { Link } from 'react-router'
+import classNames from 'classnames'
+
+import { Naf } from './icons.jsx'
 
 class Header extends React.Component {
 
@@ -97,4 +98,4 @@ class Header extends React.Component {
 }
 
 
-export default Header;
+export default Header

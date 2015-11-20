@@ -1,2 +1,7 @@
-export { default as project } from './project.js';
-export { default as image } from './image.js';
+import * as project from './project.js'
+import * as image from './image.js'
+
+export default {
+	project: project,
+	image: image
+}

@@ -1,9 +1,15 @@
 // This is a custom view constructor that uses d3 and Mapbox to render graphics.
 
-import controlHelpers from './control_helpers.js';
-import _ from 'underscore';
-import Backbone from 'backbone';
+import _ from 'underscore'
+import Backbone from 'backbone'
 
+import controlHelpers from './control_helpers.js'
+
+
+/*
+ *
+ *
+ */
 class RootView {
 
 	/*
@@ -37,30 +43,30 @@ class RootView {
 	 */
 	_setupMap() {
 
-		var zoomLevel = this._getZoomLevel();
-		this.map.setView([37.6, -95.665], zoomLevel);
-		this.map.scrollWheelZoom.disable();
+		var zoomLevel = this._getZoomLevel()
+		this.map.setView([37.6, -95.665], zoomLevel)
+		this.map.scrollWheelZoom.disable()
 		// add control convenience methods
 
-		_.extend(this.map, controlHelpers);
+		_.extend(this.map, controlHelpers)
 
-		this.map.ignoreNextClick = false;
+		this.map.ignoreNextClick = false
 		// do not register a map item click event if it is fired due to a map drag end
 
 		this.map.on('dragstart', (e) => { 
-			this.props.setUiState({ isMapDragged: true });
-		});
+			this.props.setUiState({ isMapDragged: true })
+		})
 
 		this.map.on('dragend', (e) => {
 			var items;
-			this.props.setUiState({ isMapDragged: false });
+			this.props.setUiState({ isMapDragged: false })
 			// use functionality only if there is sufficient drag
 			//   as Leaflet sometimes detects slightly imperfect clicks as drags
-			items = this.props.project.get('data').items;
+			items = this.props.project.get('data').items
 			if (e.distance > 15 && items.hovered) {
-				this.map.ignoreNextClick = true;
+				this.map.ignoreNextClick = true
 			}
-		});
+		})
 
 		return this;
 
@@ -85,12 +91,12 @@ class RootView {
 	 *
 	 */
 	render() {
-		L.mapbox.accessToken = 'pk.eyJ1Ijoicm9zc3ZhbmRlcmxpbmRlIiwiYSI6ImRxc0hRR28ifQ.XwCYSPHrGbRvofTV-CIUqw';
-		this.map = L.mapbox.map(this.elId, 'rossvanderlinde.874ab107', this.getMapOptions());
-		this.props.setMap(this.map);
-		this._setupMap();
-		this.hideAttribution();
-		return this;
+		L.mapbox.accessToken = 'pk.eyJ1Ijoicm9zc3ZhbmRlcmxpbmRlIiwiYSI6ImRxc0hRR28ifQ.XwCYSPHrGbRvofTV-CIUqw'
+		this.map = L.mapbox.map(this.elId, 'rossvanderlinde.874ab107', this.getMapOptions())
+		this.props.setMap(this.map)
+		this._setupMap()
+		this.hideAttribution()
+		return this
 	}
 
 
@@ -99,7 +105,7 @@ class RootView {
 	 *
 	 */
 	hideAttribution() {
-		$('.leaflet-control-attribution').hide();
+		$('.leaflet-control-attribution').hide()
 	}
 
 
@@ -108,12 +114,12 @@ class RootView {
 	 *
 	 */
 	destroy() {
-		if (!this.map) { return; }
-		this.map.clearAllEventListeners();
-		this.map.remove();
-		return this;
+		if (!this.map) { return }
+		this.map.clearAllEventListeners()
+		this.map.remove()
+		return this
 	}
 
 }
 
-export default RootView;
+export default RootView

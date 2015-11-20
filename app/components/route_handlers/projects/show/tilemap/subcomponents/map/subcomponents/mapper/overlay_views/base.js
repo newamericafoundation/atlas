@@ -1,9 +1,14 @@
 // overlay view layers inherit from this object
 
-'use strict';
+import $ from 'jquery'
 
-import $ from 'jquery';
+import colors from './../../../../../../../../../utilities/colors.js'
 
+
+/*
+ *
+ *
+ */
 class BaseOverlayView {
 
     /*
@@ -53,13 +58,12 @@ class BaseOverlayView {
      *
      */
     setHeaderStripColor() {
-        var project, indeces;
-        project = this.props.project;
-        indeces = project.getFriendlyIndeces();
+        var { project, radio } = this.props, 
+            indeces = project.getFriendlyIndeces();
         if (indeces.length > 0) {
-            this.props.radio.commands.execute('set:header:strip:color', { color: this.colors.toRgb(indeces[0] - 1) });
+            radio.commands.execute('set:header:strip:color', { color: colors.toRgb(indeces[0] - 1) });
         } else {
-            this.props.radio.commands.execute('set:header:strip:color', 'none');
+            radio.commands.execute('set:header:strip:color', 'none');
         }
     }
 
@@ -313,7 +317,7 @@ class BaseOverlayView {
         valueIndeces = filter.getFriendlyIndeces(feature._model, 15)
         if (!valueIndeces || valueIndeces.length === 0) { return; }
         if (valueIndeces.length === 1) {
-            return this.colors.toRgb(valueIndeces[0]-1);
+            return colors.toRgb(valueIndeces[0]-1);
         }
         // Communicate with Comp.Setup.Component to create and retrieve stripe pattern id
         id = this.props.radio.reqres.request('get:pattern:id', valueIndeces);
@@ -370,4 +374,4 @@ class BaseOverlayView {
 
 }
 
-export default BaseOverlayView;
+export default BaseOverlayView

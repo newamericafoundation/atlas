@@ -1,14 +1,12 @@
-// Compiled from Marionette.Accountant
-
-import Backbone from 'backbone';
-import _ from 'underscore';
-import $ from 'jquery';
+import Backbone from 'backbone'
+import _ from 'underscore'
+import $ from 'jquery'
 
 /*
  *
  *
  */
-class Model extends Backbone.Model {
+export class Model extends Backbone.Model {
 
     /*
      * Find key that holds array values within model.
@@ -107,9 +105,4 @@ class Model extends Backbone.Model {
         }
     }
 
-}
-
-
-export default {
-    Model: Model
 }

@@ -1,7 +1,7 @@
-import base from './base.js';
+import * as base from './base.js';
 import marked from 'marked';
 
-class Model extends base.Model {
+export class Model extends base.Model {
 	
 	get resourceName() { return 'image'; }
 

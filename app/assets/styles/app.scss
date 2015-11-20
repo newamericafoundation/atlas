@@ -47,7 +47,7 @@
  * Vendor styles along with their configurations.
  *
  */
-@import "../../../bower_components/leaflet/dist/leaflet";
+@import "../../../node_modules/leaflet/dist/leaflet";
 @import "vendor/chartist-config";
 @import "../../../node_modules/chartist/dist/scss/chartist";
 @import "vendor/selectize-config";

@@ -1,11 +1,16 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import classNames from 'classnames';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import classNames from 'classnames'
 
-import * as colors from './../../../../../../utilities/colors.js';
-import Icons from './../../../../../../general/icons.jsx';
+import colors from './../../../../../../utilities/colors.js'
+import * as Icons from './../../../../../../general/icons.jsx'
+import HexIcon from './../../../../../../general/hex_icon.jsx'
 
 
+/*
+ *
+ *
+ */
 class FilterValue extends React.Component {
 
 	/*
@@ -25,7 +30,7 @@ class FilterValue extends React.Component {
 				onMouseEnter={ this.setHovered.bind(this) } 
 				onMouseLeave={ this.clearHovered.bind(this) } 
 			>
-				<IconComp className="toggle-button__icon" fillColor={this.getColor()} />
+				<HexIcon className="toggle-button__icon" fillColor={this.getColor()} />
 				<div className="toggle-button__text">
 				   	<p>{ this.props.filterValue.get('value') }</p>
 				</div>
@@ -50,13 +55,13 @@ class FilterValue extends React.Component {
 	 *
 	 */
 	setHovered() {
-		var { radio } = this.props;
-		var modelIndex, color;
-		modelIndex = this.getFilterValueIndex();
-		this.props.filterValue.parent.parent.state.valueHoverIndex = modelIndex;
-		radio.commands.execute('update:tilemap');
-		color = this.getColor();
-		radio.commands.execute('set:header:strip:color', { color: color });
+		var { radio } = this.props
+		var modelIndex, color
+		modelIndex = this.getFilterValueIndex()
+		this.props.filterValue.parent.parent.state.valueHoverIndex = modelIndex
+		radio.commands.execute('update:tilemap')
+		color = this.getColor()
+		radio.commands.execute('set:header:strip:color', { color: color })
 	}
 
 
@@ -65,10 +70,10 @@ class FilterValue extends React.Component {
 	 *
 	 */
 	clearHovered() {
-		var { radio } = this.props;
-		this.props.filterValue.parent.parent.state.valueHoverIndex = -1;
-		radio.commands.execute('update:tilemap');
-		radio.commands.execute('set:header:strip:color', 'none');
+		var { radio } = this.props
+		this.props.filterValue.parent.parent.state.valueHoverIndex = -1
+		radio.commands.execute('update:tilemap')
+		radio.commands.execute('set:header:strip:color', 'none')
 	}
 
 
@@ -77,7 +82,7 @@ class FilterValue extends React.Component {
 	 *
 	 */
 	getFilterValueIndex() {
-		return this.props.filterValue.parent.children.indexOf(this.props.filterValue);
+		return this.props.filterValue.parent.children.indexOf(this.props.filterValue)
 	}
 
 
@@ -86,11 +91,11 @@ class FilterValue extends React.Component {
 	 *
 	 */
 	toggle() {
-		var { radio } = this.props;
-		this.props.filterValue.toggle();
-		radio.commands.execute('update:tilemap');
+		var { radio, filterValue } = this.props
+		filterValue.toggle()
+		radio.commands.execute('update:tilemap')
 	}
 
 }
 
-export default FilterValue;
+export default FilterValue

@@ -3,12 +3,12 @@
 	padding: 0 20px 20px 20px;
 
 	.link {
-		color: palette-get(off-white);
-		border-bottom: 2px solid palette-get(off-white);
+		color: palette-get(offwhite);
+		border-bottom: 2px solid palette-get(offwhite);
 	}
 
 	&__title, &__sections, &__description {
-		color: palette-get(off-white);
+		color: palette-get(offwhite);
 	}
 
 	&__title {
@@ -32,7 +32,7 @@
 		@include bp-unstack-map-settings-bar {
 			display: block;
 			@include font-size(42px);
-			color: map-get($palette, off-white);
+			color: map-get($palette, offwhite);
 			padding-left: 0;
 			padding-top: 0;
 		}

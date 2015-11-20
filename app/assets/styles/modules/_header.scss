@@ -1,6 +1,6 @@
 .header {
 
-	svg { fill: palette-get(off-white); }
+	svg { fill: palette-get(offwhite); }
 
 	overflow: visible;
 	height: $top-bar-height;
@@ -18,7 +18,7 @@
 
 		&__site-name, &__cursive-prefix, &__title { 
 			display: inline-block;
-			color: palette-get(off-white);
+			color: palette-get(offwhite);
 			float: left; 
 		} 
 
@@ -81,7 +81,7 @@
 
 		p, &__logout {
 			@include font-size(15px);
-			color: palette-get(off-white);
+			color: palette-get(offwhite);
 		}
 
 		p {

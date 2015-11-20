@@ -66,7 +66,7 @@
 
 	&__background {
 
-		$c: palette-get(off-white);
+		$c: palette-get(offwhite);
 
 		background-color: $c;
 		.atl--collapsed & {

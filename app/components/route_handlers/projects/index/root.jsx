@@ -1,13 +1,14 @@
 import React from 'react';
 import classNames from 'classnames';
-import Projects from './subcomponents/projects.jsx';
-import ProjectSections from './subcomponents/project_sections.jsx';
-import ProjectTemplates from './subcomponents/project_templates.jsx';
-import SideBar from './../../../general/side_bar.jsx';
 
-import project from './../../../../models/project.js';
-import projectSection from './../../../../models/project_section.js';
-import projectTemplate from './../../../../models/project_template.js';
+import Projects from './subcomponents/projects.jsx'
+import ProjectSections from './subcomponents/project_sections.jsx'
+import ProjectTemplates from './subcomponents/project_templates.jsx'
+import SideBar from './../../../general/side_bar.jsx'
+
+import * as project from './../../../../models/project.js'
+import * as projectSection from './../../../../models/project_section.js'
+import * as projectTemplate from './../../../../models/project_template.js'
 
 var defaultButtons = [
 	{
@@ -20,6 +21,11 @@ var defaultButtons = [
 	}
 ];
 
+
+/*
+ *
+ *
+ */
 class Index extends React.Component {
 
 	/*
@@ -114,8 +120,4 @@ class Index extends React.Component {
 
 }
 
-Index.contextTypes = {
-	router: React.PropTypes.func
-};
-
-export default Index;
+export default Index

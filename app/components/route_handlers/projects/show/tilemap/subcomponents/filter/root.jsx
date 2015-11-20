@@ -3,16 +3,21 @@ import ReactDOM from 'react-dom';
 
 import classNames from 'classnames';
 
-import Help from './../../../../../../general/help.jsx';
-import Icons from './../../../../../../general/icons.jsx';
+import Help from './../../../../../../general/help.jsx'
+import * as Icons from './../../../../../../general/icons.jsx'
 
-import Base from './../base.jsx';
+import Base from './../base.jsx'
 
-import * as formatters from './../../../../../../../utilities/formatters.js';
+import formatters from './../../../../../../../utilities/formatters.js'
 
-import FilterKey from './key.jsx';
-import FilterValue from './value.jsx';
+import FilterKey from './key.jsx'
+import FilterValue from './value.jsx'
 
+
+/*
+ *
+ *
+ */
 class Filter extends Base {
 
 	/*
@@ -138,4 +143,4 @@ class Filter extends Base {
 }
 
 
-export default Filter;
+export default Filter

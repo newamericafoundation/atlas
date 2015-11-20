@@ -1,10 +1,10 @@
 // Do not bundle!
 
-import _ from 'underscore';
-import Backbone from 'backbone';
-import dbConnector from './../../db/connector.js';
+import _ from 'underscore'
+import Backbone from 'backbone'
+import dbConnector from './../../db/connector.js'
 
-class Model extends Backbone.Model {
+export class Model extends Backbone.Model {
 
 	get dbCollection() { return 'atlas_researchers'; }
 
@@ -147,8 +147,3 @@ class Collection extends Backbone.Collection {
 	}
 
 }
-
-export default {
-	Model: Model,
-	Collection: Collection
-};

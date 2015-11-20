@@ -1,9 +1,18 @@
-import React from 'react';
-import classNames from 'classnames';
-import Icons from './../../../../general/icons.jsx';
+import React from 'react'
+import classNames from 'classnames'
 
+import * as Icons from './../../../../general/icons.jsx'
+
+/*
+ *
+ *
+ */
 class ProjectTemplates extends React.Component {
 
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<ul className="atl__project-template-filter">
@@ -12,6 +21,11 @@ class ProjectTemplates extends React.Component {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderList() {
 		if (this.props.projectTemplates == null) { return; }
 		return this.props.projectTemplates.map((item, i) => {
@@ -27,13 +41,29 @@ class ProjectTemplates extends React.Component {
 
 }
 
+
+
+/*
+ *
+ *
+ */
 class ProjectTemplate extends React.Component {
 	
+	/*
+	 *
+	 *
+	 */
 	render() {
-		var projectTemplate = this.props.projectTemplate,
-			IconComp = Icons[this.getIconName()];
+		var { projectTemplate } = this.props,
+			IconComp = Icons[this.getIconName()],
+			cls = classNames({
+				'icon-button': true,
+				'icon-button--active': projectTemplate.get('_isActive'),
+				'hidden': projectTemplate.get('id') === '2'
+
+			})
 		return (
-			<li className={ "icon-button " + this.getModifierClasses() } onClick={this.toggleActiveState.bind(this)} >
+			<li className={ cls } onClick={ this.toggleActiveState.bind(this) } >
 				<div className='icon-button__icon'>
 					<IconComp />
 				</div>
@@ -44,16 +74,11 @@ class ProjectTemplate extends React.Component {
 		);
 	}
 
-	getModifierClasses() {
-		var classes, projectTemplate;
-		classes = [];
-		projectTemplate = this.props.projectTemplate;
-		if (projectTemplate.get('id') === '2') { classes.push('hidden'); }
-		if (projectTemplate.get('_isActive')) { classes.push('icon-button--active');  }
-		if (classes.length === 0) { return ''; }
-		return classes.join(' ');
-	}
 
+	/*
+	 *
+	 *
+	 */
 	getIconName() {
 		var templateName = this.props.projectTemplate.get('name'),
 			dictionary = {
@@ -65,6 +90,11 @@ class ProjectTemplate extends React.Component {
 		return dictionary[templateName];
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	toggleActiveState() {
 		this.props.projectTemplate.toggleActiveState();
 		this.props.updateProjectsIndex();

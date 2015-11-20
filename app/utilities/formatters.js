@@ -1,6 +1,6 @@
-var numeral = require('numeral'),
-	marked = require('marked'),
-	$ = require('jquery');
+import numeral from 'numeral'
+import marked from 'marked'
+import $ from 'jquery'
 
 var formatters = {
 
@@ -151,6 +151,6 @@ var formatters = {
 		return marked(md);
 	}
 
-};
+}
 
-module.exports = formatters;
+export default formatters

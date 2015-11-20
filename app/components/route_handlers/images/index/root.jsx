@@ -1,11 +1,16 @@
-import React from 'react';
-import Static from './../../../general/static.jsx';
-import { Link } from 'react-router';
+import React from 'react'
 
-import image from './../../../../models/image.js';
+import Static from './../../../general/static.jsx'
+import { Link } from 'react-router'
+
+import * as image from './../../../../models/image.js'
 
 class Index extends Static {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -14,10 +19,11 @@ class Index extends Static {
 		};
 	}
 
-	getTitleBarType() {
-		return 'solid';
-	}
 
+	/*
+	 *
+	 *
+	 */
 	renderTitleBarContent() {
 		return (
 			<div className="atl__title-bar__content">
@@ -26,6 +32,11 @@ class Index extends Static {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderPageContent() {
 		return (
 			<div>
@@ -35,6 +46,11 @@ class Index extends Static {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderImages() {
 		return this.state.images.map((image, i) => {
 			return (
@@ -48,16 +64,35 @@ class Index extends Static {
 		});
 	}
 
-	fetchImages() {
-		new image.Collection().getClientFetchPromise({}, { encoded: 0 }).then((coll) => {
-			this.setState({ images: coll });
-		});
+
+	/*
+	 *
+	 *
+	 */
+	componentDidMount() {
+		this.fetchImages()
 	}
 
-	componentDidMount() {
-		this.fetchImages();
+
+	/*
+	 *
+	 *
+	 */
+	getTitleBarType() {
+		return 'solid'
+	}
+	
+
+	/*
+	 *
+	 *
+	 */
+	fetchImages() {
+		new image.Collection().getClientFetchPromise({}, { encoded: 0 }).then((coll) => {
+			this.setState({ images: coll })
+		})
 	}
 
 }
 
-export default Index;
+export default Index

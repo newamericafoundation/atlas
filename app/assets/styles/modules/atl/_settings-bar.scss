@@ -38,7 +38,7 @@
 		@include font-size(16px);
 		border-radius: $border-radius-standard;
 		background-color: palette-get(grey, light);
-		color: palette-get(off-white);
+		color: palette-get(offwhite);
 	}
 
 	@include collapsed;

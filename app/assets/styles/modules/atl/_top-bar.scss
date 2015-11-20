@@ -54,7 +54,7 @@
 			height: 100%;
 			display: table;
 			h1 {
-				color: palette-get(off-white);
+				color: palette-get(offwhite);
 				display: table-cell;
 				vertical-align: middle;
 				margin: 0;
@@ -127,7 +127,7 @@
 
 			li {
 				float: left;
-				fill: map-get($palette, off-white);
+				fill: map-get($palette, offwhite);
 			}
 
 		}

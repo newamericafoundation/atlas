@@ -14,7 +14,7 @@
 		width: 100%;
 		height: 100%;
 		svg {
-			fill: palette-get(off-white);
+			fill: palette-get(offwhite);
 		}
 	}
 
@@ -46,7 +46,7 @@
 		text-align: right;
 		left: -420px;
 		top: 28px;
-		color: palette-get(off-white);
+		color: palette-get(offwhite);
 	}
 
 	&__icons {
@@ -73,7 +73,7 @@
 		opacity: 1;
 
 		&--active {
-			background-color: palette-get(off-white);
+			background-color: palette-get(offwhite);
 			svg { fill: palette-get(grey) !important; }
 		}
 
@@ -102,11 +102,11 @@
 
 	    // background and icon colors - regular theme
 		$c-bg-0: palette-get(grey);
-		$c-ic-0: palette-get(off-white);
+		$c-ic-0: palette-get(offwhite);
 
 		// background and icon colors - naf green theme
 		$c-bg-1: palette-get(turquoise);
-		$c-ic-1: palette-get(off-white);
+		$c-ic-1: palette-get(offwhite);
 
 	    /* initial color setup */
 	    background-color: $c-bg-0;

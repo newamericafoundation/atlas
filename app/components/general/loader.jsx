@@ -1,20 +1,14 @@
-import React from 'react';
-import classNames from 'classnames';
+import React from 'react'
+import classNames from 'classnames'
 
-class Loader extends React.Component {
+function Loader(prop) {
 
-	/*
-	 *
-	 *
-	 */
-	render() {
-		return (
-			<div className='loader'>
-				<img src="/assets/images/spinner.gif" />
-			</div>
-		);
-	}
+	return (
+		<div className='loader'>
+			<img src="/assets/images/spinner.gif" />
+		</div>
+	);
 
 }
 
-export default Loader;
+export default Loader

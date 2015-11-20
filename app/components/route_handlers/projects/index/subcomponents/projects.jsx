@@ -1,13 +1,23 @@
-import React from 'react';
-import classNames from 'classnames';
-import { Link } from 'react-router';
-import * as colors from './../../../../utilities/colors.js';
-import * as Icons from './../../../../general/icons.jsx';
+import React from 'react'
+import classNames from 'classnames'
+import { Link } from 'react-router'
 
-import Project from './project.jsx';
+import * as colors from './../../../../utilities/colors.js'
+import * as Icons from './../../../../general/icons.jsx'
 
+import Project from './project.jsx'
+
+
+/*
+ *
+ *
+ */
 class Projects extends React.Component {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -95,4 +105,4 @@ class Projects extends React.Component {
 
 }
 
-export default Projects;
+export default Projects

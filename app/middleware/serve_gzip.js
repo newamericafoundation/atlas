@@ -14,7 +14,7 @@ var removeQueryString = function(url) {
 
 // Serve gzipped JavaScript if available.
 // This middleware will not work if used before static routes are configured on express.
-export default function(req, res, next) {
+export default function serveGzipMiddleware(req, res, next) {
 	var url, gzipUrl;
 	url = req.url;
 	url = removeQueryString(url);
@@ -28,5 +28,5 @@ export default function(req, res, next) {
 		res.set('Content-Encoding', 'gzip');
 		console.log('Found and served gzip version for: ' + req.url);
 		next();
-	});
-};
+	})
+}

@@ -1,8 +1,14 @@
-import React from 'react';
-import classNames from 'classnames';
+import React from 'react'
+import classNames from 'classnames'
 
-import Base from './base.jsx';
+import Base from './base.jsx'
 
+
+/*
+ * List view component. 
+ * NOT YET USED IN PRODUCTION
+ * @extends {class} Base - Base class storing shared functionality in tilemap components.
+ */
 class List extends Base {
 
 	/*
@@ -23,15 +29,15 @@ class List extends Base {
 	 *
 	 */
 	renderItems() {
-		var project = this.props.project;
-		if (project == null) { return; }
+		var { project } = this.props
+		if (project == null) { return }
 		return project.get('data').items.map((item, i) => {
 			return (
 				<p key={i}>{ item.get('name') }</p>
-			);
-		});
+			)
+		})
 	}
 
 }
 
-export default List;
+export default List

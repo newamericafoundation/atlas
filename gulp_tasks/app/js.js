@@ -7,6 +7,11 @@ import rev from 'gulp-rev';
 
 import config from './../../config.js';
 
+// Clean js build folder.
+gulp.task('js-clean', (next) => {
+    del([ 'public/assets/scripts/**/*' ], next);
+})
+
 // Main js build task. Concatenates partial builds, compresses and gzips in production mode.
 gulp.task('js', [ 'bundle' ], () => {
     return gulp.src([ 'public/assets/scripts/bundle.js' ])

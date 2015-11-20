@@ -1,9 +1,12 @@
-import $ from 'jquery';
+import BaseOverlayView from './base.js'
 
-import BaseOverlayView from './base.js';
+import svgPaths from './../../../../../../../../../utilities/svg_paths.js'
+import colors from './../../../../../../../../../utilities/colors.js'
 
-import * as svgPaths from './../../../../../../../../../utilities/svg_paths.js';
-
+/*
+ *
+ *
+ */
 class PinOverlayView extends BaseOverlayView {
 
     /*
@@ -73,7 +76,7 @@ class PinOverlayView extends BaseOverlayView {
         valueIndeces = filter.getFriendlyIndeces(feature._model, 15);
         if (!valueIndeces || valueIndeces.length === 0) { return; }
         return valueIndeces.map((valueIndex) => {
-            return this.colors.toRgb(valueIndex-1);
+            return colors.toRgb(valueIndex-1);
         });
     }
 
@@ -161,4 +164,4 @@ class PinOverlayView extends BaseOverlayView {
 
 }
 
-export default PinOverlayView;
+export default PinOverlayView
