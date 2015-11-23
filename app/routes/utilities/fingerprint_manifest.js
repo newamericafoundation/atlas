@@ -8,7 +8,7 @@ var jsFileName, cssFileName
 // js
 try {
 	let jsFp = require('./../../../public/assets/scripts/rev-manifest.json')
-	jsFileName = jsFp['bundle.js']
+	jsFileName = jsFp['main']['js']
 } catch(err) {
 	console.log(err)
 	jsFileName = 'bundle.js'

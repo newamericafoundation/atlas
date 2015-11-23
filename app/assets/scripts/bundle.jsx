@@ -1,7 +1,7 @@
 // Entry point to client-side app.
 
 // Not yet working
-// import './../styles/app.scss'
+import './../styles/app.scss'
 
 import React from 'react'
 import { render } from 'react-dom'
@@ -40,5 +40,5 @@ global.startAtlas = () => {
 	// Developer signature :).
 	console.log('Hi, Mom!')
 	var container = global.document.getElementById('site')
-	ReactDOM.render(clientRouter, container)
+	render(clientRouter, container)
 }

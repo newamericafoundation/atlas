@@ -1,8 +1,12 @@
-var assert = require('assert'),
-    Backbone = require('backbone'),
-    _ = require('underscore'),
-    variable = require('./../../app/models/variable.js'),
-    variableGroup = require('./../../app/models/variable_group.js');
+import 'babel-polyfill'
+
+import assert from 'assert'
+import Backbone from 'backbone'
+import _ from 'underscore'
+import $ from 'jquery'
+
+import * as variable from './../variable.js'
+import * as variableGroup from './../variable_group.js'
 
 describe('variable.Model', function() {
 

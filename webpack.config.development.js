@@ -35,18 +35,12 @@ module.exports = {
 				}
 			},
 			{ 
-				test: /\.scss$/, 
-				loaders: [ "style", "css", "sass" ]
+				test: /\.s?css$/, 
+				loaders: [ "style", "css", "resolve-url", "sass" ]
 			}
 		]
 	},
 
-	plugins: [
-		// new webpack.optimize.UglifyJsPlugin({
-		// 	mangle: {
-		// 		except: [ '$super', '$', 'exports', 'require' ]
-		// 	}
-		// })
-	]
+	plugins: []
 	
 }

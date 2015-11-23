@@ -127,7 +127,7 @@
 
 			li {
 				float: left;
-				fill: map-get($palette, offwhite);
+				fill: palette-get(offwhite);
 			}
 
 		}

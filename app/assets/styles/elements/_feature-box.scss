@@ -77,7 +77,7 @@
 		svg, img {
 			width: $w1 - 2 * $p;
 			height: $w1 - 2 * $p;
-			fill: map-get($palette, offwhite);
+			fill: palette-get(offwhite);
 		}
 	}
 

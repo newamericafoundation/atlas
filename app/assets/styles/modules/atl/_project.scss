@@ -130,7 +130,7 @@
 				display: table-cell;
 				vertical-align: middle;
 
-				color: palette-get(grey, text);
+				color: palette-get(grey);
 
 				.atl__project--overview & {
 					color: palette-get(grey);

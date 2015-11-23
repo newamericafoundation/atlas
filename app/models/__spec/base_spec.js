@@ -1,8 +1,12 @@
-var assert = require('assert'),
-	Backbone = require('backbone'),
-	_ = require('underscore'),
-	$ = require('jquery'),
-	base = require('./../../app/models/base.js');
+import 'babel-polyfill'
+
+import assert from 'assert'
+import Backbone from 'backbone'
+import _ from 'underscore'
+import $ from 'jquery'
+
+
+import * as base from './../base.js'
 
 
 describe('base.Model', function() {

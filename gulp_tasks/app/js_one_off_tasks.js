@@ -5,7 +5,7 @@ import copy from 'gulp-copy';
 import concat from 'gulp-concat';
 import gzip from 'gulp-gzip';
 import gulpIf from 'gulp-if';
-import * as config from './../../config.js';
+import * as config from './../config.js';
 
 // One-time task to copy asynchronously loaded library scripts from bower_components to ./public.
 gulp.task('js-vendor-async-single', () => {

@@ -1,11 +1,16 @@
-import React from 'react';
-import classNames from 'classnames';
-import { Link } from 'react-router';
-import Loader from './../../general/loader.jsx';
-import Icons from './../../general/icons.jsx';
+import React from 'react'
+import classNames from 'classnames'
+import { Link } from 'react-router'
 
-var imageSource = "/assets/images/iStock_000065438623_720.jpg";
+import Loader from './../../general/loader.jsx'
+import { Grid } from './../../general/icons.jsx'
 
+const IMAGE_URL = "/assets/images/iStock_000065438623_720.jpg";
+
+/*
+ *
+ *
+ */
 class Welcome extends React.Component {
 
 	/*
@@ -16,7 +21,7 @@ class Welcome extends React.Component {
 		super(props);
 		this.state = {
 			hasImageLoaded: false
-		};
+		}
 	}
 
 
@@ -25,12 +30,11 @@ class Welcome extends React.Component {
 	 *
 	 */
 	render() {
-		var { Grid } = Icons;
 		if (!this.state.hasImageLoaded) { return (<Loader />); }
 		return (
 			<div className="welcome fill-parent" style={ this.getRootVisibilityStyle() }>
 				<div className="welcome__background"></div>
-				<div className="welcome__terrain" style={ this.getBackgroundImageStyle() } /> 
+				<div className="welcome__terrain" style={ { 'backgroundImage': `url('${IMAGE_URL}')` } } /> 
 				<div className="welcome__title">
 					<h1 className="welcome__title__name">ATLAS</h1>
 					<h1 className="welcome__title__alias c-2-0">=ANALYSIS</h1>
@@ -46,28 +50,19 @@ class Welcome extends React.Component {
 					<p className="center">View All Projects</p>
 				</div>
 			</div>
-		);
+		)
 	}
 
 
 	/*
-	 *
+	 * Create an image element not attached to the dom to capture the load event of the hero image.
 	 *
 	 */
 	componentDidMount() {
-		$('<img>').attr({ src: imageSource }).load(() => {
-			this.setState({ hasImageLoaded: true });
-		});
-		this.clearHeaderStripColoring();
-	}
-
-
-	/*
-	 *
-	 *
-	 */
-	getBackgroundImageStyle() {
-		return { 'backgroundImage': `url('${imageSource}')` }
+		$('<img>').attr({ src: IMAGE_URL }).load(() => {
+			this.setState({ hasImageLoaded: true })
+		})
+		this.clearHeaderStripColoring()
 	}
 
 
@@ -76,8 +71,8 @@ class Welcome extends React.Component {
 	 *
 	 */
 	getRootVisibilityStyle() {
-		if (this.state.hasImageLoaded === false) { return { display: 'none' }; }
-		return { display: 'block' };
+		if (this.state.hasImageLoaded === false) { return { display: 'none' } }
+		return { display: 'block' }
 	}
 
 
@@ -86,10 +81,10 @@ class Welcome extends React.Component {
 	 *
 	 */
 	clearHeaderStripColoring() {
-		var { radio } = this.props;
-		radio.commands.execute('set:header:strip:color', {});
+		var { radio } = this.props
+		radio.commands.execute('set:header:strip:color', {})
 	}
 
 }
 
-export default Welcome;
+export default Welcome

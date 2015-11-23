@@ -3,25 +3,9 @@
  *
  */
 $palette: (
-
-	turquoise: (
-		base: #2dbbb3,
-		dark: darken(#2dbbb3, 10)
-	),
-
-	grey: (
-		base: #323232,
-		text: transparentize(#323232, 0.1),
-		light: #4a4a4a,
-		extra-light: #666666,
-		dark: #1e1e1e
-	),
-
-	offwhite: (
-		base: #fffaef,
-		dark: #000
-	)
-
+	turquoise: ( base: #2dbbb3, dark: #23928c ),
+	offwhite:  ( base: #fffaef, dark: #000000 ),
+	grey:      ( base: #323232, light: #4a4a4a, extra-light: #666666, dark: #1e1e1e )
 );
 
 $palette-scheme: (

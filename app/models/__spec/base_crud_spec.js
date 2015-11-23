@@ -1,8 +1,11 @@
-var assert = require('assert'),
-	Backbone = require('backbone'),
-	_ = require('underscore'),
-	$ = require('jquery'),
-	baseCrud = require('./../../app/models/base_crud.js');
+import 'babel-polyfill'
+
+import assert from 'assert'
+import Backbone from 'backbone'
+import _ from 'underscore'
+import $ from 'jquery'
+
+import * as baseCrud from './../base_crud.js'
 
 
 describe('baseCrud.Collection', function() {

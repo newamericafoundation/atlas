@@ -32,7 +32,7 @@
 		@include bp-unstack-map-settings-bar {
 			display: block;
 			@include font-size(42px);
-			color: map-get($palette, offwhite);
+			color: palette-get(offwhite);
 			padding-left: 0;
 			padding-top: 0;
 		}

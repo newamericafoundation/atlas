@@ -6,7 +6,7 @@ import shell from 'gulp-shell';
 import gzip from 'gulp-gzip';
 import del from 'del';
 
-import shapeFile from './../app/models/shape_file.js';
+import * as shapeFile from './../app/models/shape_file.js';
 
 // Clean js build folder.
 gulp.task('geo-clean', (next) => {

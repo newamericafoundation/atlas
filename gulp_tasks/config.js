@@ -5,6 +5,7 @@ var config = {
     production: !!util.env.production,
 
     // Code that is shared with other projects such as my.newamerica.org. To be extended into its own CMS.
+    // NOT UP-TO-DATE
     boilerplate: [
 
     	'./app/models/base_crud.js',

@@ -2,6 +2,7 @@
 .sass-cache
 **/*.pem
 node_modules
+npm-debug.log
 bower_components
 services/lambda/dist
 temp

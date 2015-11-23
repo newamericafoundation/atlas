@@ -1,9 +1,12 @@
-var assert = require('assert'),
-	_ = require('underscore'),
-	Backbone = require('backbone'),
-	$ = require('jquery'),
-	item = require('./../../app/models/item.js'),
-	variable = require('./../../app/models/variable.js');
+import 'babel-polyfill'
+
+import assert from 'assert'
+import Backbone from 'backbone'
+import _ from 'underscore'
+import $ from 'jquery'
+
+import * as item from './../item.js'
+import * as variable from './../variable.js'
 
 var indexOf = [].indexOf || function(item) {
 	for (var i = 0, l = this.length; i < l; i++) {

@@ -10,7 +10,7 @@
  * Normalize
  *
  */
-@import "../../../node_modules/normalize.css/normalize";
+@import "../../../node_modules/normalize.css/normalize.css";
 
 /*
  * Variables for sizes, margins, colors etc.
@@ -47,9 +47,8 @@
  * Vendor styles along with their configurations.
  *
  */
-@import "../../../node_modules/leaflet/dist/leaflet";
+@import "~leaflet/dist/leaflet";
 @import "vendor/chartist-config";
-@import "../../../node_modules/chartist/dist/scss/chartist";
+@import "~chartist/dist/scss/chartist";
 @import "vendor/selectize-config";
 @import "../../../bower_components/selectize-scss/src/selectize.scss";
-@import "vendor/jquery-ui";

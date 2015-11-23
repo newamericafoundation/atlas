@@ -8,8 +8,6 @@ var gulp = require('gulp'),
     copy = require('gulp-copy'),
     rev = require('gulp-rev');
 
-var config = require('./../config.js');
-
 gulp.task('css-clean', function(next) {
     return del([ 'public/assets/styles/**/*' ], next);
 });
@@ -17,7 +15,7 @@ gulp.task('css-clean', function(next) {
 gulp.task('css', ['css-clean'], function() {
     return gulp.src('./app/assets/styles/app.scss')
         .pipe(sass())
-        .pipe(config.production ? minifyCss() : util.noop())
+        .pipe(minifyCss())
         .pipe(rename('app.css'))
         .pipe(gulp.dest('public/assets/styles/'))
         .pipe(rev())

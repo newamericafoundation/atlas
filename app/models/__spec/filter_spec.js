@@ -1,7 +1,11 @@
-var assert = require('assert'),
-    Backbone = require('backbone'),
-    _ = require('underscore'),
-    filter = require('./../../app/models/filter.js');
+import 'babel-polyfill'
+
+import assert from 'assert'
+import Backbone from 'backbone'
+import _ from 'underscore'
+import $ from 'jquery'
+
+import * as filter from './../filter.js'
 
 describe('filter tree', function() {
 

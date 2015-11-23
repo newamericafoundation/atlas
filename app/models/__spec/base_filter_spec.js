@@ -1,8 +1,11 @@
-var assert = require('assert'),
-	_ = require('underscore'),
-	Backbone = require('backbone'),
-	$ = require('jquery'),
-	baseFilter = require('./../../app/models/base_filter.js');
+import 'babel-polyfill'
+
+import assert from 'assert'
+import Backbone from 'backbone'
+import _ from 'underscore'
+import $ from 'jquery'
+
+import * as baseFilter from './../base_filter.js'
 
 var indexOf = [].indexOf || function(item) {
 	for (var i = 0, l = this.length; i < l; i++) {

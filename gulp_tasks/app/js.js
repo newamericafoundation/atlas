@@ -5,19 +5,15 @@ import gzip from 'gulp-gzip';
 import util from 'gulp-util';
 import rev from 'gulp-rev';
 
-import config from './../../config.js';
+import config from './../config.js';
 
-// Clean js build folder.
-gulp.task('js-clean', (next) => {
-    del([ 'public/assets/scripts/**/*' ], next);
-})
-
-// Main js build task. Concatenates partial builds, compresses and gzips in production mode.
-gulp.task('js', [ 'bundle' ], () => {
+// JS uglify and gzip task. Runs right after webpack build.
+// TODO: integrate into webpack build.
+gulp.task('js', () => {
     return gulp.src([ 'public/assets/scripts/bundle.js' ])
-        .pipe(config.production ? uglify().on('error', util.log) : util.noop())
+        .pipe(uglify().on('error', util.log))
         .pipe(rev())
-        .pipe(config.production ? gzip() : util.noop())
+        .pipe(gzip())
         .pipe(gulp.dest('public/assets/scripts'))
         .pipe(rev.manifest())
         .pipe(gulp.dest('public/assets/scripts'));

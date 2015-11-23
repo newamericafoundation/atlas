@@ -51,7 +51,8 @@
 		p {
 			max-width: 95%; 
 			margin-top: 5px;
-			font-family: 'SimplonNorm-Bold-WebS';
+			font-family: 'Simplon';
+			font-weight: bold;
 			@include font-size(32px);
 		}
 		
@@ -61,10 +62,9 @@
 		position: absolute;
 		top: 12.5px;
 		left: 22.5px;
-		svg { fill: map-get($palette, offwhite); }
+		svg { fill: palette-get(offwhite); }
 		.icon-button__text {
-			font-family: 'SimplonNorm-Regular-WebS';
-			// @include font-size(15px);
+			font-family: 'Simplon';
 		}
 	}
 

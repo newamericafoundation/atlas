@@ -4,6 +4,10 @@ Atlas' codebase should be written and refactored towards the following guideline
 
 ## General
 
+JavaScript on Atlas is written spaciously, allowing ample empty space to visually separate different blocks of code. With new compiling tools out there, it started ommitting semicolons, making code look more friendly, open and uninterrupted. It also makes heavy use of ES6 features such as destructuring, fat arrows, native promises and so on.
+
+Here are the specifics:
+
 ### File Heading
 
 The beginning of a file should contain the description, preferably in a single line:
