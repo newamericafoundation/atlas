@@ -1,11 +1,6 @@
-import gulp from 'gulp';
+import gulp from 'gulp'
 
-require('./app/css.js');
-require('./app/js.js');
-require('./app/js_one_off_tasks.js');
-
-require('./geo.js');
-
-require('./services/lambda/index.js');
-
-require('./devops.js');
+import './js_one_off_tasks.js'
+import './geo.js'
+import './services/lambda/index.js'
+import './devops.js'

@@ -1,6 +1,5 @@
 // Entry point to client-side app.
 
-// Not yet working
 import './../styles/app.scss'
 
 import React from 'react'

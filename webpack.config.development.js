@@ -15,6 +15,10 @@ module.exports = {
 	module: {
 		loaders: [
 			{
+				test: /\.png/,
+				loader: 'url?limit=1000'
+			},
+			{
 	            test: /\.json$/,
 	            loader: 'json-loader'
 	        },
@@ -36,7 +40,7 @@ module.exports = {
 			},
 			{ 
 				test: /\.s?css$/, 
-				loaders: [ "style", "css", "resolve-url", "sass" ]
+				loaders: [ "style", "css", "sass" ]
 			}
 		]
 	},

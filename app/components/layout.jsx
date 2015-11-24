@@ -1,28 +1,25 @@
-import React from 'react';
+import React from 'react'
+import { RoutingContext } from 'react-router'
+import classNames from 'classnames'
 
-import { RoutingContext } from 'react-router';
+import Setup from './general/setup.jsx'
+import Header from './general/header.jsx'
 
-import Setup from './general/setup.jsx';
-import Header from './general/header.jsx';
-
-import classNames from 'classnames';
-
-import Backbone from 'backbone';
-import 'backbone.wreqr';
+import Backbone from 'backbone'
+import 'backbone.wreqr'
 
 /*
  * Create radio object with the same fields as a Marionette Application object.
  * This is a temporary setup to support the Marionette transition.
  */
 function createRadio() {
-	var radio = {};
-	radio.vent = new Backbone.Wreqr.EventAggregator();
-	radio.reqres = new Backbone.Wreqr.RequestResponse();
-	radio.commands = new Backbone.Wreqr.Commands();
-	return radio;
+	var radio = {}
+	radio.vent = new Backbone.Wreqr.EventAggregator()
+	radio.reqres = new Backbone.Wreqr.RequestResponse()
+	radio.commands = new Backbone.Wreqr.Commands()
+	return radio
 }
 
-var radio = createRadio();
 
 class Layout extends React.Component {
 
@@ -30,7 +27,18 @@ class Layout extends React.Component {
 	 *
 	 *
 	 */
+	constructor(props) {
+		super(props)
+		this.state = { radio: createRadio() }
+	}
+
+
+	/*
+	 *
+	 *
+	 */
 	render() {
+		var { radio } = this.state
 		return (
 			<div className={this.getClassName()}>
 				<Setup radio={radio} />
@@ -42,34 +50,16 @@ class Layout extends React.Component {
 
 
 	/*
-	 *
-	 *
-	 */
-	componentDidMount() {
-		// console.log(<RoutingContext />);
-	}
-
-
-	/*
-	 *
-	 *
-	 */
-	getPath() {
-		var pth = this.props.location.pathname;
-		return pth;
-	}
-
-	/*
 	 * Add a route-specific class modifiers on the wrapper.
 	 * TODO: get route name to clean up this method.
 	 */
 	getClassName() {
-		var pth = this.getPath();
+		var { pathname } = this.props.location
 		return classNames({
 			'wrapper': true,
-			'atl-route--welcome_index': (['/', '/welcome'].indexOf(pth) > -1),
-			'atl-route--projects_index': (['/menu'].indexOf(pth) > -1),
-			'atl-route--projects_show': (['/', '/welcome', '/menu'].indexOf(pth) === -1)
+			'atl-route--welcome_index': (['/', '/welcome'].indexOf(pathname) > -1),
+			'atl-route--projects_index': (['/menu'].indexOf(pathname) > -1),
+			'atl-route--projects_show': (['/', '/welcome', '/menu'].indexOf(pathname) === -1)
 		});
 	}
 
@@ -79,8 +69,8 @@ class Layout extends React.Component {
 	 *
 	 */
 	isHeaderTransparent() {
-		var pth = this.getPath();
-		if (['/', '/welcome'].indexOf(pth) > -1) { return true; }
+		var { pathname } = this.props.location
+		if (['/', '/welcome'].indexOf(pathname) > -1) { return true; }
 		return false;
 	}
 
@@ -97,4 +87,4 @@ class Layout extends React.Component {
 
 }
 
-export default Layout;
+export default Layout

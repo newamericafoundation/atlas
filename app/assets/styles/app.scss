@@ -47,8 +47,11 @@
  * Vendor styles along with their configurations.
  *
  */
-@import "~leaflet/dist/leaflet";
+// Leaflet's styles cause a url resolution conflict with webpack, as it references images from a relative path. Since we're not using the images, I copied the stylesheet from node_modules and commented out the url references.
+// TODO: fix url resolution issues and replace this with leaflet stylesheet from node modules.
+@import "vendor/leaflet"; 
+// @import "../../../node_modules/leaflet/dist/leaflet"; 
 @import "vendor/chartist-config";
-@import "~chartist/dist/scss/chartist";
+@import "../../../node_modules/chartist/dist/scss/chartist";
 @import "vendor/selectize-config";
 @import "../../../bower_components/selectize-scss/src/selectize.scss";

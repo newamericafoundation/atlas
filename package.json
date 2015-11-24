@@ -1,14 +1,14 @@
 {
-  "name": "node_rewrite",
+  "name": "Atlas",
   "version": "1.0.0",
   "description": "Policy Analysis Tool",
   "main": "index.js",
   "scripts": {
     "server": "node app.js",
-    "dev": "npm run build-clean && webpack --config webpack.config.development.js --watch",
     "spec": "mocha app/**/*_spec.js --compilers js:babel-core/register",
     "build-clean": "rm -f /public/assets/scripts/**/*",
-    "build": "npm run build-clean && gulp css && webpack --config webpack.config.production.js",
+    "dev": "npm run build-clean && webpack --config webpack.config.development.js --watch",
+    "build": "npm run build-clean && webpack --config webpack.config.production.js",
     "deploy": "npm run build && git add . && git commit -m 'fresh deploy' && git push origin master && eb deploy"
   },
   "repository": "",
@@ -22,6 +22,7 @@
     "css-loader": "^0.23.0",
     "del": "^1.2.0",
     "dotenv": "^1.2.0",
+    "file-loader": "^0.8.5",
     "gulp": "^3.8.11",
     "gulp-copy": "0.0.2",
     "gulp-download": "0.0.1",
@@ -46,10 +47,12 @@
     "json-loader": "^0.5.3",
     "mocha": "^2.2.5",
     "node-sass": "^3.4.2",
+    "react-addons-test-utils": "^0.14.3",
     "resolve-url-loader": "^1.4.2",
     "sass-loader": "^3.1.2",
     "should": "^6.0.3",
     "style-loader": "^0.13.0",
+    "url-loader": "^0.5.7",
     "webpack": "^1.12.6"
   },
   "dependencies": {

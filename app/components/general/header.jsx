@@ -4,6 +4,10 @@ import classNames from 'classnames'
 
 import { Naf } from './icons.jsx'
 
+/*
+ *
+ *
+ */
 class Header extends React.Component {
 
 	/*
@@ -11,10 +15,8 @@ class Header extends React.Component {
 	 *
 	 */
 	constructor(props) {
-		super(props);
-		this.state = {
-			stripColor: ''
-		};
+		super(props)
+		this.state = { stripColor: '' }
 	}
 
 
@@ -57,8 +59,8 @@ class Header extends React.Component {
 	 *
 	 */
 	renderAuth() {
-		if (!global.window) { return; }
-		var { researcher } = global.window;
+		if (!global.window) { return }
+		var { researcher } = global.window
 		if (!researcher) { return; }
 		return (
 			<div className="header__auth">
@@ -75,24 +77,24 @@ class Header extends React.Component {
 	 *
 	 */
 	componentDidMount() {
-		this.setStripHandler();
+		this.setStripHandler()
 	}
 
 
 	/*
-	 *
+	 * 
 	 *
 	 */
 	setStripHandler() {
-		var { radio } = this.props;
+		var { radio } = this.props
 		radio.commands.setHandler('set:header:strip:color', (options) => {
 			if (options.color) {
 				// reset class to original
-				this.setState({ stripColor: options.color });
+				this.setState({ stripColor: options.color })
 			} else {
-				this.setState({ stripColor: undefined });
+				this.setState({ stripColor: undefined })
 			}
-		});
+		})
 	}
 
 }

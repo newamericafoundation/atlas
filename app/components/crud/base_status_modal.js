@@ -20,9 +20,9 @@ class BaseStatusModal extends Modal {
 	 *
 	 */
 	renderContent() {
-		if(this.props.status === 'success') { return this.renderSuccessContent(); }
-		if(this.props.status === 'failure') { return this.renderFailureContent(); }
-		return this.renderPendingContent();
+		if(this.props.status === 'success') { return this.renderSuccessContent() }
+		if(this.props.status === 'failure') { return this.renderFailureContent() }
+		return this.renderPendingContent()
 	}
 
 
@@ -60,8 +60,8 @@ class BaseStatusModal extends Modal {
 						{ `${url.name} ${this.props.model.resourceName}` }
 					</a>
 				</li>
-			);
-		});
+			)
+		})
 	}
 
 
@@ -77,7 +77,7 @@ class BaseStatusModal extends Modal {
 					<li><a className='link' onClick={this.reactivateForm.bind(this)} href='/'>Keep Editing</a></li>
 				</ul>
 			</div>
-		);
+		)
 	}
 
 
@@ -90,7 +90,7 @@ class BaseStatusModal extends Modal {
 			<div>
 				<p className='title'>Saving...</p>
 			</div>
-		);
+		)
 	}
 
 
@@ -99,11 +99,11 @@ class BaseStatusModal extends Modal {
 	 *
 	 */
 	reactivateForm(e) {
-		e.preventDefault();
-		this.props.reactivateForm();
+		e.preventDefault()
+		this.props.reactivateForm()
 	}
 
 }
 
 
-export default BaseStatusModal;
+export default BaseStatusModal

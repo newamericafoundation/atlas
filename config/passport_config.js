@@ -1,17 +1,16 @@
-import passport from 'passport';
-import { OAuth2Strategy } from 'passport-google-oauth';
-import researcher from './../app/models/researcher.js';
-import express from 'express';
-
-var getCallbackUrl = function() {
-    var env = process.env.NODE_ENV;
-    var urlBase = (env === 'development') ? '127.0.0.1:8081' : 'atlas.newamerica.org';
-    return 'http://' + urlBase + '/auth/google/callback';
-};
+import passport from 'passport'
+import { OAuth2Strategy } from 'passport-google-oauth'
+import researcher from './../app/models/researcher.js'
+import express from 'express'
 
 // API Access link for creating client ID and secret:
 // https://code.google.com/apis/console/
-var { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env;
+var { NODE_ENV, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env
+
+var getCallbackUrl = function() {
+    var urlBase = (NODE_ENV === 'development') ? '127.0.0.1:8081' : 'atlas.newamerica.org'
+    return 'http://' + urlBase + '/auth/google/callback'
+}
 
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
@@ -21,16 +20,16 @@ var { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env;
 //   have a database of user records, the complete Google profile is
 //   serialized and deserialized.
 passport.serializeUser(function(user, done) {
-    done(null, { id: user.id });
-});
+    done(null, { id: user.id })
+})
 
 passport.deserializeUser(function(obj, done) {
-    var model = new researcher.Model({ id: obj.id });
+    var model = new researcher.Model({ id: obj.id })
     model.getRetrievePromise().then((model) => {
         // console.log('deserealized successfully');
-        done(null, model.toClientJSON());
-    }, () => { console.log('could not deserialize'); });
-});
+        done(null, model.toClientJSON())
+    }, () => { console.log('could not deserialize') })
+})
 
 // Use the GoogleStrategy within Passport.
 //   Strategies in Passport require a `verify` function, which accept
@@ -53,9 +52,8 @@ passport.use(new OAuth2Strategy({
         }
 
         model.getSavePromise().then(() => {
-            //return done(null, model.toJSON());
-            return done(null, model.toSessionJSON());
-        }, (err) => { return done(err); });
+            return done(null, model.toSessionJSON())
+        }, (err) => { return done(err) })
 
     }
-));
+))

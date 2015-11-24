@@ -6,10 +6,13 @@ import _ from 'underscore'
 import $ from 'jquery'
 
 import * as filter from './../filter.js'
+import * as variableGroup from './../variable_group.js'
 
 describe('filter tree', function() {
 
     var obj, filterTree;
+
+    var { FilterTree } = filter
 
     beforeEach(function() {
 
@@ -40,7 +43,7 @@ describe('filter tree', function() {
             }]
         };
 
-        filterTree = new filter.FilterTree(obj);
+        filterTree = new FilterTree(obj);
         filterTree.makeComposite();
 
     });
@@ -94,6 +97,70 @@ describe('filter tree', function() {
         it('tests data that does not have tested data key', function() {
             assert.equal(filterTree.test({ 'roast': 'light' }),false);
         });
+
+    });
+
+    // TODO: fix specs
+    xdescribe('group', function() {
+
+        var filterTree = new FilterTree({
+            variables: [
+                {
+                    id: 'var_1',
+                    variable_group_id: 'grp_1'
+                },
+                {
+                    id: 'var_2',
+                    variable_group_id: 'grp_2'
+                },
+                {
+                    id: 'var_3',
+                    variable_group_id: 'grp_1'
+                }
+            ]}),
+            varGrpCollection = new variableGroup.Collection([
+                {
+                    id: 'grp_1'
+                },
+                {
+                    id: 'grp_2'
+                }
+            ]);
+
+        it('groups with a specified variable group collection', function() {
+
+            var varCollection = filterTree.get('variables')
+
+            assert.deepEqual(filterTree.group(varGrpCollection), [
+                {
+                    variable_group: varGrpCollection[0],
+                    variables: [ varCollection[0], varCollection[2] ]
+                },
+                {
+                    variable_group: varGrpCollection[1],
+                    variables: [ varCollection[1] ]
+                }
+            ]);
+
+        });
+
+        it('groups without a specified variable group collection', function() {
+
+            var varCollection = filterTree.get('variables')
+
+            assert.deepEqual(filterTree.group(), [
+                {
+                    variable_group: 'grp_1',
+                    variables: [ varCollection[0], varCollection[2] ]
+                },
+                {
+                    variable_group: 'grp_2',
+                    variables: [ varCollection[1] ]
+                }
+            ]);
+
+        });
+        
 
     });
 

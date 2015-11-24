@@ -1,10 +1,15 @@
 // Form component backed by a Backbone model.
 
-import React from 'react';
-import _ from 'underscore';
+import React from 'react'
+import _ from 'underscore'
 
-import * as Subcomponents from './subcomponents/index.js';
+import * as Subcomponents from './subcomponents/index.js'
 
+
+/*
+ *
+ *
+ */
 class Form extends React.Component {
 
 	/*
@@ -12,8 +17,8 @@ class Form extends React.Component {
 	 *
 	 */
 	constructor(props) {
-		super(props);
-		this.state = {};
+		super(props)
+		this.state = {}
 	}
 
 
@@ -35,7 +40,7 @@ class Form extends React.Component {
 					value={ this.props.submitButtonText || 'Submit Form' } 
 				/>
 			</form>
-		);
+		)
 	}
 
 
@@ -60,7 +65,7 @@ class Form extends React.Component {
 				/>
 			);
 		});
-		return (<input />);
+		return <input />
 	}
 
 
@@ -78,18 +83,18 @@ class Form extends React.Component {
 		// If the data field is an array, add the incoming value if the array does not contain it but remove it if it does.
 		// This behavior is specific to the ForeignCollectionCheckBox subcomponent.
 		if (_.isArray(currentValue)) {
-			let index = currentValue.indexOf(incomingValue);
+			let index = currentValue.indexOf(incomingValue)
 			if (index < 0) {
-				currentValue.push(incomingValue);
+				currentValue.push(incomingValue)
 			} else {
-				currentValue.splice(index, 1);
+				currentValue.splice(index, 1)
 			}
 			model.set(key, currentValue);
 		} else {
 			model.set(key, incomingValue);
 		}
 
-		this.forceUpdate();
+		this.forceUpdate()
 	}
 
 	
@@ -98,10 +103,10 @@ class Form extends React.Component {
 	 *
 	 */
 	sendFormDataToParent(e) {
-		e.preventDefault();
-		this.props.onSubmit(this.props.model);
+		e.preventDefault()
+		this.props.onSubmit(this.props.model)
 	}
 
 }
 
-export default Form;
+export default Form

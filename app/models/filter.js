@@ -311,8 +311,7 @@ export class FilterTree extends LocalBaseModel {
      *
      *
      */
-
-    get model() { return FilterKey; }
+    get model() { return FilterKey }
 
 
     /*

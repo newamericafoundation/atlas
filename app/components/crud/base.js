@@ -1,8 +1,8 @@
 // Base model extending to all CRUD components. Includes utilities to build up forms (no significant logic).
 
-import React from 'react';
+import React from 'react'
 
-import Static from './../general/static.jsx';
+import Static from './../general/static.jsx'
 
 class Base extends Static {
 
@@ -11,7 +11,7 @@ class Base extends Static {
 	 *
 	 */
 	render() {
-		return (<div/>);
+		return <div/>
 	}
 
 
@@ -20,7 +20,7 @@ class Base extends Static {
 	 *
 	 */
 	getResourceConstructor() {
-		return Backbone.Model;
+		return Backbone.Model
 	}
 
 
@@ -29,10 +29,10 @@ class Base extends Static {
 	 *
 	 */
 	getResourceName() {
-		var Model = this.getResourceConstructor();
-		return Model.prototype.resourceName;
+		var Model = this.getResourceConstructor()
+		return Model.prototype.resourceName
 	}
 
 }
 
-export default Base;
+export default Base

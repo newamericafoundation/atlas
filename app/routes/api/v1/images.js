@@ -10,11 +10,11 @@ import indexMiddleware from './../../../middleware/crud/index.js'
 
 // Unsafe setting to test back-end while in development, skipping the auth step which is required at each server restart.
 //var currentAuthMiddleware = (process.NODE_ENV === 'production') ? authMiddleware.ensureAuthenticated : authMiddleware.ensureNothing;
-var currentAuthMiddleware = authMiddleware.ensureAuthenticated;
+var currentAuthMiddleware = authMiddleware.ensureAuthenticated
 
 var router = express.Router()
 
-var standardResponder = (req, res) => {
+function standardResponder(req, res) {
 	res.json(req.dbResponse)
 }
 

@@ -8,21 +8,21 @@ export default {
 	//   login page.
 	ensureAuthenticated: function(req, res, next) {
 	    if (req.isAuthenticated()) {
-	        return next();
+	        return next()
 	    }
-	    res.redirect('/login');
+	    res.redirect('/login')
 	},
 
 	ensureAdminAuthenticated: function(req, res, next) {
-		if (req.isAuthenticated && req.user && req.user.isAdmin) {
-			return next();
+		if (req.isAuthenticated() && req.user && req.user.isAdmin) {
+			return next()
 		}
-		res.redirect('/login');
+		res.redirect('/login')
 	},
 
 	// Neutral placeholder middleware.
 	ensureNothing: function(req, res, next) {
-	    return next();
+	    return next()
 	}
 
 };

@@ -2,14 +2,14 @@ extend layout
 
 block content
 
+	script(src="/assets/scripts/#{js}")
+
 	//- TODO: isomorphic rendering
 	div(class='fill-parent', id='site')
 		div(class="wrapper")
 			div(class="loader")
 				img(src="/assets/images/spinner.gif")
 			
-	script(src="/assets/scripts/#{js}")
-
 	//- Set an active user if authenticated.
 	- if (user || (process.env.NODE_ENV === 'development')) {
 		script(type='text/javascript').
