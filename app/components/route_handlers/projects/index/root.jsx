@@ -6,9 +6,9 @@ import ProjectSections from './subcomponents/project_sections.jsx'
 import ProjectTemplates from './subcomponents/project_templates.jsx'
 import SideBar from './../../../general/side_bar.jsx'
 
-import * as project from './../../../../models/project.js'
-import * as projectSection from './../../../../models/project_section.js'
-import * as projectTemplate from './../../../../models/project_template.js'
+import models from './../../../../models/index.js'
+
+var { project, projectSection, projectTemplate } = models
 
 var defaultButtons = [
 	{
@@ -19,7 +19,7 @@ var defaultButtons = [
 		reactIconNames: [ 'Comment' ], 
 		isToggleable: false 
 	}
-];
+]
 
 
 /*
@@ -33,8 +33,9 @@ class Index extends React.Component {
 	 *
 	 */
 	constructor(props) {
-		super(props);
-		this.state = {};
+		super(props)
+		this.forceUpdate = this.forceUpdate.bind(this)
+		this.state = {}
 	}
 
 
@@ -53,12 +54,12 @@ class Index extends React.Component {
 							<ProjectTemplates 
 								radio={this.props.radio}
 								projectTemplates={this.state.projectTemplates}
-								updateProjectsIndex={this.forceUpdate.bind(this)}
+								updateProjectsIndex={this.forceUpdate}
 							/>
 							<ProjectSections 
 								radio={this.props.radio}
 								projectSections={this.state.projectSections}
-								updateProjectsIndex={this.forceUpdate.bind(this)}
+								updateProjectsIndex={this.forceUpdate}
 							/>
 						</div>
 						<Projects 
@@ -66,35 +67,40 @@ class Index extends React.Component {
 							projects={this.state.projects} 
 							projectTemplates={this.state.projectTemplates} 
 							projectSections={this.state.projectSections}
-							updateProjectsIndex={this.forceUpdate.bind(this)}
+							updateProjectsIndex={this.forceUpdate}
 						/>
 					</div>
 				</div>
 			</div>
 		)	
-	}	
-
-	componentDidMount() {
-		this.fetchProjects();
-		this.fetchProjectSections();
-		this.fetchProjectTemplates();
 	}
 
 
 	/*
+	 * Fetch entities separately. As soon as things arrive, the page should be populated.
 	 *
+	 */
+	componentDidMount() {
+		this.fetchProjects()
+		this.fetchProjectSections()
+		this.fetchProjectTemplates()
+	}
+
+
+	/*
+	 * Fetch all projects without bulky fields that would take up a lot of bandwidth.
 	 *
 	 */
 	fetchProjects() {
 		var coll = new project.Collection()
-		coll.getClientFetchPromise({  }, { data: 0, body_text: 0, encoded_image: 0 }).then((coll) => {
+		coll.getClientFetchPromise({}, { data: 0, body_text: 0, encoded_image: 0 }).then((coll) => {
 			this.setState({ projects: coll });
 		}).catch((err) => { console.log(err); });
 	}
 
 
 	/*
-	 *
+	 * Fetch all project sections.
 	 *
 	 */
 	fetchProjectSections() {
@@ -107,7 +113,7 @@ class Index extends React.Component {
 
 
 	/*
-	 *
+	 * Fetch all project templates.
 	 *
 	 */
 	fetchProjectTemplates() {

@@ -5,6 +5,8 @@ import { Link } from 'react-router'
 import * as colors from './../../../../utilities/colors.js'
 import * as Icons from './../../../../general/icons.jsx'
 
+import Loader from './../../../../general/loader.jsx'
+
 import Project from './project.jsx'
 
 
@@ -46,7 +48,7 @@ class Projects extends React.Component {
 	 */
 	renderList() {
 		var projects = this.props.projects;
-		if (projects == null) { return; }
+		if (projects == null) { return <Loader /> }
 		return projects.map((project, i) => {
 			return (
 				<Project 
@@ -65,9 +67,9 @@ class Projects extends React.Component {
 	 *
 	 */
 	componentDidUpdate() {
-		var projects = this.props.projects;
-		if (projects == null) { return; }
-		this.ensureProjectImages();
+		var { projects } = this.props
+		if (projects == null) { return }
+		this.ensureProjectImages()
 	}
 
 

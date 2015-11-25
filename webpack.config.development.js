@@ -15,21 +15,9 @@ module.exports = {
 	module: {
 		loaders: [
 			{
-				test: /\.png/,
-				loader: 'url?limit=1000'
-			},
-			{
 	            test: /\.json$/,
 	            loader: 'json-loader'
 	        },
-			{
-				test: /\.js?$/,
-				loader: 'babel-loader',
-				exclude: /node_modules/,
-				query: {
-					presets: [ 'es2015', 'react' ]
-				}
-			},
 			{
 				test: /\.jsx?$/,
 				loader: 'babel-loader',

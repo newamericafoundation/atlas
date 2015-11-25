@@ -80,8 +80,8 @@ class Layout extends React.Component {
 	 *
 	 */
 	getHeaderTitle() {
-		var pth = this.getPath();
-		if (['/', '/welcome'].indexOf(pth) > -1) { return 'New America'; }
+		var { pathname } = this.props.location
+		if (['/', '/welcome'].indexOf(pathname) > -1) { return 'New America'; }
 		return 'Atlas';
 	}
 

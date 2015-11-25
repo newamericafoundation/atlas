@@ -42,7 +42,6 @@ class ForeignCollectionBase extends Base {
 	 *
 	 */
 	navigateToForeignModelEdit(foreignModel) {
-		console.log(foreignModel, foreignModel.getEditUrl());
 		if (!foreignModel || !foreignModel.getEditUrl) { return; }
 		var url = foreignModel.getEditUrl();
 		if (this.props.history) {

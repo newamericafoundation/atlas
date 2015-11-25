@@ -26,7 +26,7 @@ class SpreadsheetFile extends Base {
 		if (!this.state.isParserLoaded) { return (<Loader />); }
 		return (
 			<div className='form__wrapper'>
-				<label for={this.props.id}>{ this.props.labelText }</label>
+				<label htmlFor={this.props.id}>{ this.props.labelText }</label>
 				{ this.renderSummary() }
 				<p className='form__hint'>{ this.props.hint }</p>
 				<input 

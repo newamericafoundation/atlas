@@ -1,9 +1,14 @@
-import React from 'react';
-import classNames from 'classnames';
-import { Link } from 'react-router';
+import React from 'react'
+import classNames from 'classnames'
+import { Link } from 'react-router'
 
-import SaveBase from './save_base.js';
+import SaveBase from './save_base.js'
 
+
+/*
+ *
+ *
+ */
 class EditBase extends SaveBase {
 
 	/*
@@ -11,10 +16,8 @@ class EditBase extends SaveBase {
 	 *
 	 */
 	constructor(props) {
-		super(props);
-		this.state = {
-			saveResponseStatus: undefined
-		};
+		super(props)
+		this.state = { saveResponseStatus: undefined }
 	}
 
 
@@ -23,7 +26,7 @@ class EditBase extends SaveBase {
 	 *
 	 */
 	getCrudMethodName() {
-		return 'edit';
+		return 'edit'
 	}
 
 
@@ -48,7 +51,6 @@ class EditBase extends SaveBase {
 		var Model = this.getResourceConstructor();
 		var model = new Model({ id: id });
 		model.getClientFetchPromise({ id: id }).then((model) => {
-			console.log(model)
 			this.setState({ model: model });
 		}).catch((err) => { console.log(err.stack); });
 	}

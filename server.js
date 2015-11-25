@@ -34,7 +34,7 @@ app.use(methodOverride())
 app.use(cookieParser())
 
 // Use Prerender if in production.
-if (NODE_ENV === 'production') {
+if (NODE_ENV === 'production' && PRERENDER_TOKEN) {
 	app.use(require('prerender-node')
 		.set('prerenderToken', PRERENDER_TOKEN))
 }

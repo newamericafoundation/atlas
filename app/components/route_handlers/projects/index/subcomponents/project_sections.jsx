@@ -2,9 +2,19 @@ import React from 'react'
 import classNames from 'classnames'
 import * as Icons from './../../../../general/icons.jsx'
 import HexIcon from './../../../../general/hex_icon.jsx'
+import Loader from './../../../../general/loader.jsx'
 
+
+/*
+ *
+ *
+ */
 class ProjectSections extends React.Component {
 
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<ul className="atl__project-section-filter">
@@ -13,8 +23,13 @@ class ProjectSections extends React.Component {
 		);
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderList() {
-		if (this.props.projectSections == null) { return; }
+		if (this.props.projectSections == null) { return <Loader /> }
 		return this.props.projectSections.map((item, i) => {
 			return (
 				<ProjectSection
@@ -22,14 +37,18 @@ class ProjectSections extends React.Component {
 					projectSection={item} 
 					key={i}
 				/>
-			);
-		});
+			)
+		})
 
 	}
 
 }
 
 
+/*
+ *
+ *
+ */
 class ProjectSection extends React.Component {
 
 	render() {

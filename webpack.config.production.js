@@ -24,13 +24,12 @@ module.exports = {
 				loader: 'babel-loader',
 				exclude: /node_modules/,
 				query: {
-					presets: [ 'es2015', 'react' ],
-					plugins: [ 'transform-runtime' ]
+					presets: [ 'es2015', 'react' ]
 				}
 			},
 			{ 
 				test: /\.s?css$/,
-				loaders: [ "style", "css", "resolve-url", "sass" ]
+				loaders: [ "style", "css", "sass" ]
 			}
 		]
 	},

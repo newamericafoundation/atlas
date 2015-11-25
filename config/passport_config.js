@@ -1,6 +1,6 @@
 import passport from 'passport'
 import { OAuth2Strategy } from 'passport-google-oauth'
-import researcher from './../app/models/researcher.js'
+import * as researcher from './../app/models/researcher.js'
 import express from 'express'
 
 // API Access link for creating client ID and secret:

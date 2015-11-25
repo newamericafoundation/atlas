@@ -13,7 +13,7 @@ class ImageFile extends Base {
 		return (
 			<div className='form__wrapper'>
 
-				<label>{ this.props.labelText }</label>
+				<label htmlFor={this.props.id}>{ this.props.labelText }</label>
 				{ this.renderThumbnail() }
 				<p className='form__hint'>{ this.props.hint }</p>
 				<input 
