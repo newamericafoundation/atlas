@@ -1,5 +1,6 @@
 import numeral from 'numeral'
 import marked from 'marked'
+import _ from 'underscore'
 import $ from 'jquery'
 
 var formatters = {
@@ -9,10 +10,10 @@ var formatters = {
 	 *
 	 */
 	format: function(v, formatKey) {
-		if (!formatKey) { return v; }
-		var formatter = formatters[formatKey.toLowerCase()];
-		if (!formatter) { return v; }
-		return formatter(v);
+		if (!formatKey) { return v }
+		var formatter = formatters[formatKey.toLowerCase()]
+		if (!formatter) { return v }
+		return formatter(v)
 	},
 
 
@@ -34,9 +35,9 @@ var formatters = {
 	number: function(v) {
 	    var formatter;
 	    if (v === parseInt(v, 10)) {
-	    	formatter = v > 99999 ? '0a' : '0';
+	    	formatter = v > 99999 ? '0a' : '0'
 	    } else {
-		    formatter = v > 99999 ? '0.0a' : '0.0';
+		    formatter = v > 99999 ? '0.0a' : '0.0'
 		}
 	    return numeral(v).format(formatter);
 	},
@@ -50,14 +51,8 @@ var formatters = {
 	    return formatters.number(v * 100) + '%';
 	},
 
-
-	/*
-	 *
-	 *
-	 */
-	percentage: function(v) {
-		return formatters.percent(v);
-	},
+	// Alias
+	percentage: function(v) { return formatters['percent'](v) },
 
 
 	/*
@@ -65,8 +60,11 @@ var formatters = {
 	 *
 	 */
 	 'percent-100': function(v) {
-	 	return formatters.number(v) + '%';
+	 	return formatters.number(v) + '%'
 	 },
+
+	 // Alias
+	 'percentage-100': function(v) { return formatters['percent-100'](v) },
 
 
 	 /*
@@ -74,26 +72,11 @@ var formatters = {
 	 *
 	 */
 	 'percent-1': function(v) {
-	 	return formatters.number(v * 100) + '%';
+	 	return formatters.number(v * 100) + '%'
 	 },
 
-
-	 /*
-	 *
-	 *
-	 */
-	 'percentage-100': function(v) {
-	 	return formatters.number(v) + '%';
-	 },
-
-
-	 /*
-	 *
-	 *
-	 */
-	 'percentage-1': function(v) {
-	 	return formatters.number(v * 100) + '%';
-	 },
+	 // Alias
+	 'percentage-1': function(v) { return formatters['percent-1'](v) },
 
 
 	/*
@@ -114,8 +97,8 @@ var formatters = {
 	 *
 	 */
 	removeLineBreaks: function(string) {
-		if (string == null) { return ''; }
-	    string = String(string);
+		if (string == null) { return '' }
+	    string = String(string)
 	    return string.replace(/(\r\n|\n|\r)/gm, '');
 	},
 
@@ -125,9 +108,9 @@ var formatters = {
 	 *
 	 */
 	removeSpaces: function(string) {
-		if (string == null) { return ''; }
+		if (string == null) { return '' }
 	    string = String(string);
-	    return string.replace(/\s+/g, '');
+	    return string.replace(/\s+/g, '')
 	},
 
 
@@ -147,8 +130,9 @@ var formatters = {
 	 *
 	 */
 	markdown: function(md) {
-		if (!md) { return; }
-		return marked(md);
+		if (!md) { return }
+		md = String(md)
+		return marked(md, { sanitize: true })
 	}
 
 }
