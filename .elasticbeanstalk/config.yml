@@ -4,7 +4,7 @@ branch-defaults:
 global:
   application_name: atlas-new
   default_ec2_keyname: atlas
-  default_platform: Node.js 4.2.1
+  default_platform: Node.js
   default_region: us-west-2
   profile: eb-cli
   sc: git
