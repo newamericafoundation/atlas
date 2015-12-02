@@ -10,6 +10,11 @@ import * as variable from './variable.js'
 import * as variableGroup from './variable_group.js'
 import * as item from './item.js'
 
+
+/*
+ *
+ *
+ */
 export class Model extends base.Model {
 
     get resourceName() { return 'project'; }
@@ -346,13 +351,15 @@ export class Model extends base.Model {
 
         filterVariables = variables.getFilterVariables().map(function(variable, index) {
 
-            var formatter, nd, o, variable;
+            var formatter, nd, o, variable
 
-            if (variable.get('format') != null) {
-                let formatterName = variable.get('format');
-                formatterName = (formatterName === 'markdown') ? 'number' : formatterName;
-                formatter = formatters[formatterName];
+            if (variable.get('format')) {
+                let formatterName = variable.get('format')
+                // formatterName = (formatterName !== 'markdown') ? 'number' : formatterName
+                formatter = formatters[formatterName]
             }
+
+
 
             o = {
                 variable: variable,
@@ -376,22 +383,20 @@ export class Model extends base.Model {
             }
 
             _.map(o.values, function(val) {
-                val._isActive = true;
-                return val;
-            });
+                val._isActive = true
+                return val
+            })
 
-            return o;
+            return o
 
-        });
+        })
 
-        filterTree = {
-            variables: filterVariables
-        };
+        filterTree = { variables: filterVariables }
 
-        data.filter = new filter.FilterTree(filterTree);
-        data.filter.makeComposite();
+        data.filter = new filter.FilterTree(filterTree)
+        data.filter.makeComposite()
 
-        data.filter.state = {};
+        data.filter.state = {}
 
     }
 
@@ -401,9 +406,9 @@ export class Model extends base.Model {
      * @param {object} App - Marionette application instance. 
      */
     prepOnClient() {
-        this.buildData();
-        this.setHtmlToc('body_text');
-        this.embedForeignModelNames();
+        this.buildData()
+        this.setHtmlToc('body_text')
+        this.embedForeignModelNames()
     }
 
 
@@ -415,10 +420,10 @@ export class Model extends base.Model {
         var templates = new projectTemplate.Collection(),
             sections = new projectSection.Collection();
 
-        this.addForeignField('project_template_id', templates, 'name');
-        this.addForeignField('project_section_ids', sections, 'name');
+        this.addForeignField('project_template_id', templates, 'name')
+        this.addForeignField('project_section_ids', sections, 'name')
 
-        return this;
+        return this
     }
 
 
@@ -427,16 +432,19 @@ export class Model extends base.Model {
      * Used in coloring.
      */
     getFriendlyIndeces() {
-        var items = this.get('data').items,
-            filter = this.get('data').filter,
-            item = items.hovered || items.active;
-        return filter.getFriendlyIndeces(item, 15);
+        var { items, filter } = this.get('data')
+        var item = items.hovered || items.active
+        return filter.getFriendlyIndeces(item, 15)
     }
 
 }
 
 
 
+/*
+ *
+ *
+ */
 export class Collection extends base.Collection {
 
     get model() { return Model; }
