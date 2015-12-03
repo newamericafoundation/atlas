@@ -10,7 +10,8 @@ export default new Promise((resolve, reject) => {
 	MongoClient.connect(dbUrl, (err, db) => {
 		if (err) {
 			console.log('Unable to connect to the database.')
-			return reject(err);
+			console.log(err)
+			return reject(err)
 		}
 		console.log('Successfully connected to database.')
 		resolve(db)
