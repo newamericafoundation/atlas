@@ -5,7 +5,7 @@ import { Link } from 'react-router'
 import Loader from './../../general/loader.jsx'
 import { Grid } from './../../general/icons.jsx'
 
-const IMAGE_URL = "/assets/images/iStock_000065438623_720.jpg";
+const IMAGE_URL = "/assets/images/iStock_000065438623_720.jpg"
 
 /*
  *
@@ -18,10 +18,8 @@ class Welcome extends React.Component {
 	 *
 	 */
 	constructor(props) {
-		super(props);
-		this.state = {
-			hasImageLoaded: false
-		}
+		super(props)
+		this.state = { hasImageLoaded: false }
 	}
 
 
