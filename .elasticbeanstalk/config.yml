@@ -1,6 +1,6 @@
 branch-defaults:
   master:
-    environment: atlas-new-dev
+    environment: atlas-dev
 global:
   application_name: atlas-new
   default_ec2_keyname: atlas
