@@ -1,19 +1,27 @@
-import React from 'react';
-import classNames from 'classnames';
+import React from 'react'
+import classNames from 'classnames'
 
-import Tilemap from './tilemap/root.jsx';
-import Explainer from './explainer/root.jsx';
+import Tilemap from './tilemap/root.jsx'
+import Explainer from './explainer/root.jsx'
 
-import Loader from './../../../general/loader.jsx';
-import SideBar from './../../../general/side_bar.jsx';
+import Loader from './../../../general/loader.jsx'
+import SideBar from './../../../general/side_bar.jsx'
 
-import * as project from './../../../../models/project.js';
-import buttonsDataGenerator from './buttons_data_generator.js';
+import * as project from './../../../../models/project.js'
+import buttonsDataGenerator from './buttons_data_generator.js'
 
+/*
+ *
+ *
+ */
 class Show extends React.Component {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
-		super(props);
+		super(props)
 		this.state = {
 			ui: {
 				specifier: '2012', // if time-dependent data is visualized, this field holds the active specifier, such as the year
@@ -29,7 +37,7 @@ class Show extends React.Component {
 				isOptionsTabActive: false
 			},
 			buttons: []
-		};
+		}
 	}
 
 
@@ -59,8 +67,9 @@ class Show extends React.Component {
 	 *
 	 */
 	renderProject() {
-		if (this.state.project == null) { return <Loader />; }
-		var Comp = (this._isModelTilemap()) ? Tilemap : Explainer;
+		var { project } = this.state
+		if (!project) { return <Loader /> }
+		var Comp = (this._isModelTilemap()) ? Tilemap : Explainer
 		return (
 			<Comp
 				radio={this.props.radio} 
@@ -78,7 +87,7 @@ class Show extends React.Component {
 	 *
 	 */
 	componentWillMount() {
-		this.fetchProject();
+		this.fetchProject()
 	}
 
 
@@ -87,23 +96,23 @@ class Show extends React.Component {
 	 *
 	 */
 	componentWillUpdate(nextProps, nextState) {
-		if (this.state.project) { return; }
+		if (this.state.project) { return }
 		if (nextState.project) {
-			this.setState({ buttons: buttonsDataGenerator(nextState.project, global.window.isResearcherAuthenticated, this.state.ui.isCollapsedDueToOverflow) });
+			this.setState({ buttons: buttonsDataGenerator(nextState.project, global.window.isResearcherAuthenticated, this.state.ui.isCollapsedDueToOverflow) })
 		}
 	}
 
 
 	/*
 	 * This is a method passed down to all deep children so they can modify the state of the ui.
-	 *
+	 * TODO: re-write without object mutation.
 	 */
 	setUiState(uiStateChanges) {
-		var currentUiState = this.state.ui;
+		var currentUiState = this.state.ui
 		for (let key in uiStateChanges) {
-			currentUiState[key] = uiStateChanges[key];
+			currentUiState[key] = uiStateChanges[key]
 		}
-		this.forceUpdate();
+		this.forceUpdate()
 	}
 
 
@@ -128,7 +137,7 @@ class Show extends React.Component {
 		}
 
 		if (message === 'print' && global.window) {
-			global.window.print();
+			global.window.print()
 		}
 
 	}
@@ -139,8 +148,8 @@ class Show extends React.Component {
 	 *
 	 */
 	getButtons() {
-		if (!global.window) { return; }
-		return buttonsDataGenerator(this.state.project, global.window.isResearcherAuthenticated, this.state.ui.isCollapsedDueToOverflow);
+		if (!global.window) { return }
+		return buttonsDataGenerator(this.state.project, global.window.isResearcherAuthenticated, this.state.ui.isCollapsedDueToOverflow)
 	}
 
 
@@ -150,9 +159,8 @@ class Show extends React.Component {
 	 */
 	getClassName() {
 
-		var cls, project, data;
+		var cls, data, { project } = this.state
 
-		project = this.state.project;
 		data = (project != null) ? project.get('data') : null;
 
 		// boolean classnames
@@ -174,9 +182,9 @@ class Show extends React.Component {
 	 *
 	 */
 	_isModelTilemap() {
-		var project = this.state.project;
-		if (project == null) { return false; }
-		return (project.get('project_template_name') === 'Tilemap');
+		var { project } = this.state
+		if (!project) { return false }
+		return (project.get('project_template_name') === 'Tilemap')
 	}
 
 
@@ -186,7 +194,7 @@ class Show extends React.Component {
 	 */
 	fetchRelatedProjects() {
 
-		var prj = this.state.project;
+		var prj = this.state.project
 
 		new project.Collection()
 			.getClientFetchPromise({ 
@@ -221,10 +229,11 @@ class Show extends React.Component {
 					this.setState({ project: project });
 					this.fetchRelatedProjects();
 				} else {
-					this.props.history.pushState(null, '/menu');
+					// Redirect to listings page.
+					this.props.history.pushState(null, '/menu')
 				}
 			}).catch((err) => { 
-				console.error('Project error: ', err.stack); 
+				console.error('Project error: ', err.stack)
 			});
 
 	}
@@ -235,10 +244,10 @@ class Show extends React.Component {
 	 *
 	 */
 	getAtlasUrl() {
-		return this.props.atlas_url || this.props.params.atlas_url;
+		return this.props.atlas_url || this.props.params.atlas_url
 	}
 
 
 }
 
-export default Show;
+export default Show
