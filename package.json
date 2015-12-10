@@ -62,7 +62,7 @@
     "d3": "^3.5.9",
     "express": "^4.13.3",
     "express-session": "^1.11.3",
-    "history": "^1.13.0",
+    "history": "1.13.0",
     "jade": "^1.9.2",
     "jquery": "^2.1.4",
     "leaflet": "^0.7.7",
