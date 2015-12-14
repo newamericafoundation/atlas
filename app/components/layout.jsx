@@ -21,6 +21,10 @@ function createRadio() {
 }
 
 
+/*
+ *
+ *
+ */
 class Layout extends React.Component {
 
 	/*
@@ -29,6 +33,7 @@ class Layout extends React.Component {
 	 */
 	constructor(props) {
 		super(props)
+		// Create a new radio instance.
 		this.state = { radio: createRadio() }
 	}
 

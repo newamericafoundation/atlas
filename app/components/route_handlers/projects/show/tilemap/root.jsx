@@ -1,15 +1,19 @@
-import React from 'react';
-import classNames from 'classnames';
+import React from 'react'
+import classNames from 'classnames'
 
-import Map from './subcomponents/map/root.jsx';
-import TopBar from './subcomponents/top_bar.jsx';
-import SettingsBar from './subcomponents/settings_bar.jsx';
-import Popup from './subcomponents/popup.jsx';
-import InfoBox from './subcomponents/info_box.jsx';
-import List from './subcomponents/list.jsx';
-import Search from './subcomponents/search.jsx';
-import OptionsTab from './subcomponents/options_tab/root.jsx';
+import Map from './subcomponents/map/root.jsx'
+import TopBar from './subcomponents/top_bar.jsx'
+import SettingsBar from './subcomponents/settings_bar.jsx'
+import Popup from './subcomponents/popup.jsx'
+import InfoBox from './subcomponents/info_box.jsx'
+import List from './subcomponents/list.jsx'
+import Search from './subcomponents/search.jsx'
+import OptionsTab from './subcomponents/options_tab/root.jsx'
 
+/*
+ *
+ *
+ */
 class Tilemap extends React.Component {
 	
 	/*
@@ -17,11 +21,11 @@ class Tilemap extends React.Component {
 	 *
 	 */
 	constructor(props) {
-		super(props);
+		super(props)
 		this.state = {
 			// Determines whether the custom d3 Mapper module should update the map when the wrapper component updates.
 			ignoreMapItemsOnUpdate: false
-		};
+		}
 	}
 
 
@@ -30,7 +34,9 @@ class Tilemap extends React.Component {
 	 *
 	 */
 	render() {
-		if (!this.isHealthy()) { return (<div className='bg-c-off-white'><p className='title'>Project data is invalid.</p></div>) }
+		if (!this.isHealthy()) { 
+			return <div className='bg-c-off-white'><p className='title'>Project data is invalid.</p></div> 
+		}
 		return (
 			<div className='atl__main fill-parent'>
 				{ this.renderItems() }
@@ -41,7 +47,7 @@ class Tilemap extends React.Component {
 				<InfoBox {...this.props} activeItem={ this.getActiveItem() } />
 				{ this.renderOptionsTab() }
 			</div>
-		);
+		)
 	}
 
 
@@ -50,10 +56,10 @@ class Tilemap extends React.Component {
 	 *
 	 */
 	componentWillMount() {
-		var { radio } = this.props;
+		var { radio } = this.props
 		radio.commands.setHandler('update:tilemap', (args = {}) => {
-			this.setState({ ignoreMapItemsOnUpdate: args.ignoreMapItems });
-		});
+			this.setState({ ignoreMapItemsOnUpdate: args.ignoreMapItems })
+		})
 	}
 
 
@@ -62,8 +68,8 @@ class Tilemap extends React.Component {
 	 *
 	 */
 	componentWillUnmount() {
-		var { radio } = this.props;
-		radio.commands.removeHandler('update:tilemap');
+		var { radio } = this.props
+		radio.commands.removeHandler('update:tilemap')
 	}
 
 
@@ -72,11 +78,11 @@ class Tilemap extends React.Component {
 	 *
 	 */
 	isHealthy() {
-		var project = this.props.project;
-		if (!project) { return false; }
-		if (!project.get('data')) { return false; }
-		if (!project.get('data').items) { return false; }
-		return true;
+		var { project } = this.props
+		if (!project) { return false }
+		if (!project.get('data')) { return false }
+		if (!project.get('data').items) { return false }
+		return true
 	}
 
 
@@ -85,10 +91,10 @@ class Tilemap extends React.Component {
 	 *
 	 */
 	renderOptionsTab() {
-		if (!this.props.uiState.isOptionsTabActive) { return; }
-		var project = this.props.project;
-		if (!project) { return; }
-		var filter = project.get('data').filter;
+		if (!this.props.uiState.isOptionsTabActive) { return }
+		var { project } = this.props
+		if (!project) { return }
+		var { filter } = project.get('data')
 		return (<OptionsTab {...this.props} filter={filter} />);
 	}
 
@@ -99,9 +105,9 @@ class Tilemap extends React.Component {
 	 */
 	renderItems() {
 		if (this.props.uiState.itemsDisplayMode === 'map') {
-			return (<Map {...this.props} ignoreMapItemsOnUpdate={this.state.ignoreMapItemsOnUpdate} />);
+			return <Map {...this.props} ignoreMapItemsOnUpdate={this.state.ignoreMapItemsOnUpdate} />
 		} else {
-			return (<List {...this.props} />);
+			return <List {...this.props} />
 		}
 	}
 
@@ -111,9 +117,9 @@ class Tilemap extends React.Component {
 	 *
 	 */
 	getActiveItem() {
-		return this.props.project.get('data').items.active;
+		return this.props.project.get('data').items.active
 	}
 
 }
 
-export default Tilemap;
+export default Tilemap

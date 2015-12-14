@@ -1,7 +1,9 @@
+// Helper method that generates top-right bar buttons based on current project and authentication information.
+
 export default function buttonsDataGenerator(project, isResearcherAuthenticated, isCollapsedDueToOverflow) {
 
-	var atlas_url = (project) ? (project.get('atlas_url')) : '';
-	var id = (project) ? (project.get('id')) : '';
+	var atlas_url = (project) ? (project.get('atlas_url')) : ''
+	var id = (project) ? (project.get('id')) : ''
 
 	var publicButtons = [
 
@@ -47,7 +49,7 @@ export default function buttonsDataGenerator(project, isResearcherAuthenticated,
 			clickMessage: 'toggle-search-bar'
 		}
 
-	];
+	]
 
 	var authButtons = [
 		{
@@ -64,7 +66,7 @@ export default function buttonsDataGenerator(project, isResearcherAuthenticated,
 		}
 	];
 
-	if (!isResearcherAuthenticated) { return publicButtons; }
-	return publicButtons.concat(authButtons);
+	if (!isResearcherAuthenticated) { return publicButtons }
+	return publicButtons.concat(authButtons)
 
-};
+}

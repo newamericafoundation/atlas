@@ -4,7 +4,6 @@ import gulp from 'gulp';
 import copy from 'gulp-copy';
 import concat from 'gulp-concat';
 import gzip from 'gulp-gzip';
-import gulpIf from 'gulp-if';
 import * as config from './config.js';
 
 // One-time task to copy asynchronously loaded library scripts from bower_components to ./public.
@@ -19,7 +18,6 @@ gulp.task('js-vendor-async-single', () => {
 //   so the entire directory is needed.
 gulp.task('js-vendor-async-ckeditor', () => {
     return gulp.src(config.source.js.vendorAsyncCKEditor)
-        //.pipe(gulpIf(/[.]js$/, gzip()))
         .pipe(copy('public/assets/vendor', { prefix: 1 }));
 });
 
