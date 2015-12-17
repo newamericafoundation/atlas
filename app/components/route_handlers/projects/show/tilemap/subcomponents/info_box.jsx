@@ -23,8 +23,9 @@ class InfoBox extends Static {
 	 */
 	constructor(props) {
 		super(props)
-		this.state = this.state || {}
-		this.state.transitionEventNamespace = 0
+		this.state = {
+			transitionEventNamespace: 0
+		}
 	}
 
 
@@ -33,11 +34,10 @@ class InfoBox extends Static {
 	 *
 	 */
 	render() {
-		var NoIcon = Icons.No;
 		return (
 			<div className="atl__info-box" ref='main' onScroll={ this.setStickyPageNav.bind(this) }>
 				<a href="#" className="atl__info-box__close" onClick={ this.close.bind(this) }>
-					<NoIcon />
+					<Icons.No />
 				</a>
 				{ this.renderTitleBar('image') }
 				{ this.renderContentBar() }
@@ -228,15 +228,17 @@ class InfoBox extends Static {
 	 * Each event is namespaced with an incremental id so that the same events are not reattached over and over again.
 	 */
 	getTransitionEventName() {
-		var eventName, events;
-		events = ['webkitTransitionEnd', 'otransitionend', 'oTransitionEnd', 'msTransitionEnd', 'transitionend'];
+		var eventName
+		const events = ['webkitTransitionEnd', 'otransitionend', 'oTransitionEnd', 'msTransitionEnd', 'transitionend']
+		var { transitionEventNamespace } = this.state
+		transitionEventNamespace += 1
 		this.setState({
-			transitionEventNamespace: this.state.transitionEventNamespace + 1
+			transitionEventNamespace: transitionEventNamespace
 		});
 		eventName = events.map((evnt) => {
-			return (evnt + "." + this.state.transitionEventNamespace);
-		}).join(' ');
-		return eventName;
+			return (evnt + "." + transitionEventNamespace);
+		}).join(' ')
+		return eventName
 	}
 
 
@@ -246,22 +248,22 @@ class InfoBox extends Static {
 	 */
 	setImage() {
 
-		var project = this.props.project,
-			activeItem = project.get('data').items.active;
+		var { project } = this.props
+		var activeItem = project.get('data').items.active
 
-		if (!activeItem) { return; }
+		if (!activeItem) { return }
 		
 		if (!activeItem.image) {
 			let imageName = activeItem.getImageName();
 			let coll = new image.Collection();
 			coll.getClientFetchPromise({ name: imageName })
 				.then((coll) => {
-					var img = coll.models[0];
+					var img = coll.models[0]
 					if (img) {
-						activeItem.image = img;
-						this.forceUpdate();
+						activeItem.image = img
+						this.forceUpdate()
 					} else {
-						activeItem.image = 'not available';
+						activeItem.image = 'not available'
 					}
 				}
 			);
@@ -275,23 +277,22 @@ class InfoBox extends Static {
 	 *
 	 */
 	renderWebsiteLink() {
-		var LinkComp = Icons.Link;
-		var project = this.props.project;
-		if (!project) { return; }
-		var activeItem = project.get('data').items.active;
-		if (!activeItem) { return; }
-		var url = activeItem.get('website') || activeItem.get('state_website');
-		if (!url) { return; }
+		var { project } = this.props
+		if (!project) { return }
+		var activeItem = project.get('data').items.active
+		if (!activeItem) { return }
+		var url = activeItem.get('website') || activeItem.get('state_website')
+		if (!url) { return }
 		return (
 			<li>
 				<a className="icon-button" href={url}>
 					<div className="icon-button__icon">
-						<LinkComp />
+						<Icons.Link />
 					</div>
 					<div className="icon-button__text">Website</div>
 				</a>
 			</li>
-		);
+		)
 	}
 
 
@@ -300,24 +301,21 @@ class InfoBox extends Static {
 	 *
 	 */
 	getContent() {
-		var activeItem, body, cntnt, project, toc;
-		body = '';
-		toc = '';
-		project = this.props.project;
-		activeItem = this.props.activeItem;
+		var body = '', toc = '', cntnt;
+		var { project, activeItem } = this.props
 		if (activeItem != null) {
-			this.ensureActiveItemContent();
-			body = activeItem.get('info_box_content');
-			toc = activeItem.get('info_box_content_toc');
+			this.ensureActiveItemContent()
+			body = activeItem.get('info_box_content')
+			toc = activeItem.get('info_box_content_toc')
 		} else {
-			body = project.get('body_text');
-			toc = project.get('body_text_toc');
+			body = project.get('body_text')
+			toc = project.get('body_text_toc')
 		}
 
 		return cntnt = {
 			body: body,
 			toc: toc
-		};
+		}
 
   	}
 
@@ -328,19 +326,19 @@ class InfoBox extends Static {
   	 */
 	getFilteredVariables(field) {
 
-		var project = this.props.project,
-			variables = project.get('data').variables,
-			filtered;
+		var { project } = this.props
+		var { variables } = project.get('data')
+		var filtered
 
 		filtered = variables.filter((variable) => {
-			return !!variable.get(field);
-		});
+			return !!variable.get(field)
+		})
 
 		filtered = filtered.sort(function(a, b) {
-			return (a.get(field) - b.get(field));
-		});
+			return (a.get(field) - b.get(field))
+		})
 
-		return filtered;
+		return filtered
 
 	}
 

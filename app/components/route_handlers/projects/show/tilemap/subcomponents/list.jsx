@@ -20,7 +20,7 @@ class List extends Base {
 			<div className='atl__list fill-parent bg-c-off-white'>
 				{ this.renderItems() }
 			</div>
-		);
+		)
 	}
 
 
@@ -30,7 +30,7 @@ class List extends Base {
 	 */
 	renderItems() {
 		var { project } = this.props
-		if (project == null) { return }
+		if (!project) { return }
 		return project.get('data').items.map((item, i) => {
 			return (
 				<p key={i}>{ item.get('name') }</p>

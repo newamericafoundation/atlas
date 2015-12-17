@@ -46473,6 +46473,23 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
+	exports.Collection = exports.Model = undefined;
+
+	var _underscore = __webpack_require__(218);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _base = __webpack_require__(238);
+
+	var base = _interopRequireWildcard(_base);
+
+	var _rich_geo_feature = __webpack_require__(250);
+
+	var _rich_geo_feature2 = _interopRequireDefault(_rich_geo_feature);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -46480,18 +46497,7 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var _ = __webpack_require__(218),
-	    Backbone = __webpack_require__(221),
-	    base = __webpack_require__(238),
-	    rgf = __webpack_require__(250),
-	    states = __webpack_require__(251);
-
-	var indexOf = [].indexOf || function (item) {
-		for (var i = 0, l = this.length; i < l; i++) {
-			if (i in this && this[i] === item) return i;
-		}
-		return -1;
-	};
+	var states = __webpack_require__(251);
 
 	/** 
 	 * @constructor
@@ -46545,9 +46551,9 @@
 				var key, value;
 				for (key in data) {
 					value = data[key];
-					if (_.isString(value)) {
+					if (_underscore2.default.isString(value)) {
 						if (value.indexOf("|") > -1 && value.indexOf("\n") === -1) {
-							data[key] = _.map(value.split('|'), function (item) {
+							data[key] = _underscore2.default.map(value.split('|'), function (item) {
 								return item.trim();
 							});
 						} else {
@@ -46587,7 +46593,7 @@
 			value: function _checkUsState(data) {
 				var stateData;
 				if (data.name != null) {
-					stateData = _.where(states, {
+					stateData = _underscore2.default.where(states, {
 						name: data.name
 					});
 					if (stateData != null && stateData.length > 0) {
@@ -46690,7 +46696,7 @@
 				}
 
 				filterIndeces = filter.getValueIndeces(this);
-				valueHoverIndex = filter.state.valueHoverIndex;
+				var valueHoverIndex = filter.state.valueHoverIndex;
 
 				isFiltered = filterIndeces.length > 0;
 
@@ -46714,8 +46720,7 @@
 		}, {
 			key: 'matchesSearchTerm',
 			value: function matchesSearchTerm(searchTerm) {
-				var name;
-				name = this.get('name');
+				var name = this.get('name');
 				if (!searchTerm || searchTerm === "") {
 					return true;
 				}
@@ -46737,6 +46742,11 @@
 		return Model;
 	})(base.Model);
 
+	/*
+	 *
+	 *
+	 */
+
 	var Collection = exports.Collection = (function (_base$Collection) {
 		_inherits(Collection, _base$Collection);
 
@@ -46754,9 +46764,7 @@
 	   * @returns {string} itemType
 	   */
 			value: function getItemType() {
-				var itemType;
-				itemType = this.models[0].get('_itemType');
-				return itemType;
+				return this.models[0].get('_itemType');
 			}
 
 			/** 
@@ -46769,13 +46777,11 @@
 			key: 'setActive',
 			value: function setActive(activeModel) {
 				var id;
-				if (_.isObject(activeModel) && this.models.indexOf(activeModel) >= 0) {
+				if (_underscore2.default.isObject(activeModel) && this.models.indexOf(activeModel) >= 0) {
 					this.active = activeModel;
 				} else {
 					id = parseInt(activeModel, 10);
-					this.active = id === -1 ? void 0 : this.findWhere({
-						id: id
-					});
+					this.active = id === -1 ? void 0 : this.findWhere({ id: id });
 				}
 				return this;
 			}
@@ -46790,13 +46796,11 @@
 			key: 'setHovered',
 			value: function setHovered(hoveredModel) {
 				var id;
-				if (_.isObject(hoveredModel) && this.models.indexOf(hoveredModel) >= 0) {
+				if (_underscore2.default.isObject(hoveredModel) && this.models.indexOf(hoveredModel) >= 0) {
 					this.hovered = hoveredModel;
 				} else {
 					id = parseInt(hoveredModel, 10);
-					this.hovered = id === -1 ? undefined : this.findWhere({
-						id: id
-					});
+					this.hovered = id === -1 ? undefined : this.findWhere({ id: id });
 				}
 				return this;
 			}
@@ -46815,7 +46819,7 @@
 
 				this.models.forEach(function (model) {
 					var value = model.get(key);
-					if (_.isArray(value)) {
+					if (_underscore2.default.isArray(value)) {
 						value.forEach(function (val) {
 							if (valueList.indexOf(val) < 0) {
 								valueList.push(val);
@@ -46891,14 +46895,9 @@
 		}, {
 			key: 'toLatLongMultiPoint',
 			value: function toLatLongMultiPoint() {
-				var j, len, model, ref, res;
-				res = [];
-				ref = this.models;
-				for (j = 0, len = ref.length; j < len; j++) {
-					model = ref[j];
-					res.push(model.toLatLongPoint());
-				}
-				return res;
+				return this.models.map(function (model) {
+					return model.toLatLongPoint();
+				});
 			}
 		}, {
 			key: 'getRichGeoJson',
@@ -46926,7 +46925,7 @@
 					base: function base(collection, baseGeoData, getFeatureId) {
 
 						var data, richGeoJson, setup;
-						richGeoJson = new rgf.Collection();
+						richGeoJson = new _rich_geo_feature2.default.Collection();
 
 						setup = function (data) {
 							var feature, item, j, len, ref;
@@ -46962,7 +46961,7 @@
 
 					pin: function pin(collection) {
 						var item, j, len, ref, richGeoJson;
-						richGeoJson = new rgf.Collection();
+						richGeoJson = new _rich_geo_feature2.default.Collection();
 						ref = collection.models;
 						for (j = 0, len = ref.length; j < len; j++) {
 							item = ref[j];
@@ -46985,23 +46984,34 @@
 
 	'use strict';
 
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _underscore = __webpack_require__(218);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _backbone = __webpack_require__(221);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 	// Written in old JavaScript for gulp. To be replaced as needed.
 
-	var _ = __webpack_require__(218),
-	    Backbone = __webpack_require__(221);
+	var Model = _backbone2.default.Model.extend({});
 
-	exports.Model = Backbone.Model.extend({});
+	var Collection = _backbone2.default.Collection.extend({
 
-	exports.Collection = Backbone.Collection.extend({
-
-		model: exports.Model,
+		model: Model,
 
 		/*
 	     *
 	     *
 	     */
 		initialize: function initialize() {
-			_.extend(this, Backbone.Events);
+			_underscore2.default.extend(this, _backbone2.default.Events);
 			this.type = 'FeatureCollection';
 			return this.features = [];
 		},
@@ -47019,6 +47029,11 @@
 		}
 
 	});
+
+	exports.default = {
+		Model: Model,
+		Collection: Collection
+	};
 
 /***/ },
 /* 251 */
@@ -51098,6 +51113,11 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+	/*
+	 *
+	 *
+	 */
+
 	var Headline = (function (_Base) {
 		_inherits(Headline, _Base);
 
@@ -51228,6 +51248,7 @@
 			key: 'getSectionText',
 			value: function getSectionText() {
 				var project = this.props.project;
+
 				var projectSectionNames;
 				if (project == null) {
 					return;
@@ -52039,8 +52060,9 @@
 
 			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(InfoBox).call(this, props));
 
-			_this.state = _this.state || {};
-			_this.state.transitionEventNamespace = 0;
+			_this.state = {
+				transitionEventNamespace: 0
+			};
 			return _this;
 		}
 
@@ -52052,14 +52074,13 @@
 		_createClass(InfoBox, [{
 			key: 'render',
 			value: function render() {
-				var NoIcon = Icons.No;
 				return _react2.default.createElement(
 					'div',
 					{ className: 'atl__info-box', ref: 'main', onScroll: this.setStickyPageNav.bind(this) },
 					_react2.default.createElement(
 						'a',
 						{ href: '#', className: 'atl__info-box__close', onClick: this.close.bind(this) },
-						_react2.default.createElement(NoIcon, null)
+						_react2.default.createElement(Icons.No, null)
 					),
 					this.renderTitleBar('image'),
 					this.renderContentBar()
@@ -52292,15 +52313,16 @@
 		}, {
 			key: 'getTransitionEventName',
 			value: function getTransitionEventName() {
-				var _this2 = this;
+				var eventName;
+				var events = ['webkitTransitionEnd', 'otransitionend', 'oTransitionEnd', 'msTransitionEnd', 'transitionend'];
+				var transitionEventNamespace = this.state.transitionEventNamespace;
 
-				var eventName, events;
-				events = ['webkitTransitionEnd', 'otransitionend', 'oTransitionEnd', 'msTransitionEnd', 'transitionend'];
+				transitionEventNamespace += 1;
 				this.setState({
-					transitionEventNamespace: this.state.transitionEventNamespace + 1
+					transitionEventNamespace: transitionEventNamespace
 				});
 				eventName = events.map(function (evnt) {
-					return evnt + "." + _this2.state.transitionEventNamespace;
+					return evnt + "." + transitionEventNamespace;
 				}).join(' ');
 				return eventName;
 			}
@@ -52313,10 +52335,11 @@
 		}, {
 			key: 'setImage',
 			value: function setImage() {
-				var _this3 = this;
+				var _this2 = this;
 
-				var project = this.props.project,
-				    activeItem = project.get('data').items.active;
+				var project = this.props.project;
+
+				var activeItem = project.get('data').items.active;
 
 				if (!activeItem) {
 					return;
@@ -52329,7 +52352,7 @@
 						var img = coll.models[0];
 						if (img) {
 							activeItem.image = img;
-							_this3.forceUpdate();
+							_this2.forceUpdate();
 						} else {
 							activeItem.image = 'not available';
 						}
@@ -52345,8 +52368,8 @@
 		}, {
 			key: 'renderWebsiteLink',
 			value: function renderWebsiteLink() {
-				var LinkComp = Icons.Link;
 				var project = this.props.project;
+
 				if (!project) {
 					return;
 				}
@@ -52367,7 +52390,7 @@
 						_react2.default.createElement(
 							'div',
 							{ className: 'icon-button__icon' },
-							_react2.default.createElement(LinkComp, null)
+							_react2.default.createElement(Icons.Link, null)
 						),
 						_react2.default.createElement(
 							'div',
@@ -52386,11 +52409,13 @@
 		}, {
 			key: 'getContent',
 			value: function getContent() {
-				var activeItem, body, cntnt, project, toc;
-				body = '';
-				toc = '';
-				project = this.props.project;
-				activeItem = this.props.activeItem;
+				var body = '',
+				    toc = '',
+				    cntnt;
+				var _props = this.props;
+				var project = _props.project;
+				var activeItem = _props.activeItem;
+
 				if (activeItem != null) {
 					this.ensureActiveItemContent();
 					body = activeItem.get('info_box_content');
@@ -52414,10 +52439,13 @@
 		}, {
 			key: 'getFilteredVariables',
 			value: function getFilteredVariables(field) {
+				var project = this.props.project;
 
-				var project = this.props.project,
-				    variables = project.get('data').variables,
-				    filtered;
+				var _project$get = project.get('data');
+
+				var variables = _project$get.variables;
+
+				var filtered;
 
 				filtered = variables.filter(function (variable) {
 					return !!variable.get(field);
@@ -52748,7 +52776,7 @@
 			value: function renderItems() {
 				var project = this.props.project;
 
-				if (project == null) {
+				if (!project) {
 					return;
 				}
 				return project.get('data').items.map(function (item, i) {
@@ -52801,7 +52829,7 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	/*
-	 *
+	 * Search bar.
 	 *
 	 */
 
@@ -52816,7 +52844,11 @@
 		function Search(props) {
 			_classCallCheck(this, Search);
 
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(Search).call(this, props));
+			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Search).call(this, props));
+
+			_this.setSearchTerm = _this.setSearchTerm.bind(_this);
+			_this.close = _this.close.bind(_this);
+			return _this;
 		}
 
 		/*
@@ -52832,18 +52864,18 @@
 					{ className: 'atl__search' },
 					_react2.default.createElement(
 						'a',
-						{ href: '#', className: 'atl__search__close', onClick: this.close.bind(this) },
+						{ href: '#', className: 'atl__search__close', onClick: this.close },
 						_react2.default.createElement(_icons.No, null)
 					),
 					_react2.default.createElement(
 						'form',
-						{ onSubmit: this.close.bind(this) },
+						{ onSubmit: this.close },
 						_react2.default.createElement('input', {
 							type: 'text',
 							placeholder: 'Search Project',
 							autofocus: true,
 							value: this.props.uiState.searchTerm,
-							onChange: this.setSearchTerm.bind(this)
+							onChange: this.setSearchTerm
 						})
 					)
 				);

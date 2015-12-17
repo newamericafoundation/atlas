@@ -1,10 +1,15 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react'
+import ReactDOM from 'react-dom'
 
-import classNames from 'classnames';
+import classNames from 'classnames'
 
-import Base from './base.jsx';
+import Base from './base.jsx'
 
+
+/*
+ *
+ *
+ */
 class Headline extends Base {
 
 	/*
@@ -12,8 +17,8 @@ class Headline extends Base {
 	 *
 	 */
 	constructor(props) {
-		super(props);
-		this.maxHeight = 0;
+		super(props)
+		this.maxHeight = 0
 	}
 
 
@@ -31,7 +36,7 @@ class Headline extends Base {
 					<a href='#' className='link' onClick={ this.openInfoBox.bind(this) } >More...</a>
 				</h2>
 			</div>
-		);
+		)
 	}
 
 
@@ -40,7 +45,7 @@ class Headline extends Base {
 	 *
 	 */
 	componentDidMount() {
-		this.props.cacheHeight(this.getHeight());
+		this.props.cacheHeight(this.getHeight())
 	}
 
 
@@ -49,7 +54,7 @@ class Headline extends Base {
 	 *
 	 */
 	componentDidUpdate() {
-		this.props.cacheHeight(this.getHeight());
+		this.props.cacheHeight(this.getHeight())
 	}
 
 
@@ -58,11 +63,11 @@ class Headline extends Base {
 	 *
 	 */
 	getHeight() {
-		var $el = $(ReactDOM.findDOMNode(this.refs.root));
-		var height = $el.height();
-		if (height > this.maxHeight) { this.maxHeight = height; }
+		var $el = $(ReactDOM.findDOMNode(this.refs.root))
+		var height = $el.height()
+		if (height > this.maxHeight) { this.maxHeight = height }
 		else { height = this.maxHeight }
-		return height;
+		return height
 	}
 
 
@@ -71,11 +76,11 @@ class Headline extends Base {
 	 *
 	 */
 	openInfoBox(e) {
-		var { project } = this.props;
-		if (!project) { return; }
-		e.preventDefault();
-		this.props.project.get('data').items.active = undefined;
-		this.props.setUiState({ isInfoBoxActive: true });
+		var { project } = this.props
+		if (!project) { return }
+		e.preventDefault()
+		this.props.project.get('data').items.active = undefined
+		this.props.setUiState({ isInfoBoxActive: true })
 	}
 
 
@@ -84,9 +89,9 @@ class Headline extends Base {
 	 *
 	 */
 	getShortDescription() {
-		var { project } = this.props;
-		if (!project) { return; }
-		return project.get('short_description');
+		var { project } = this.props
+		if (!project) { return }
+		return project.get('short_description')
 	}
 
 
@@ -95,12 +100,12 @@ class Headline extends Base {
 	 *
 	 */
 	getSectionText() {
-		var { project } = this.props, 
-			projectSectionNames;
-		if (project == null) { return; }
-		projectSectionNames = project.get('project_section_names');
-		if (projectSectionNames == null) { return ''; }
-		return projectSectionNames.join(',<br>').toUpperCase();
+		var { project } = this.props
+		var projectSectionNames
+		if (project == null) { return }
+		projectSectionNames = project.get('project_section_names')
+		if (projectSectionNames == null) { return '' }
+		return projectSectionNames.join(',<br>').toUpperCase()
 	}
 
 
@@ -109,11 +114,11 @@ class Headline extends Base {
 	 *
 	 */
 	getTitle() {
-		var { project } = this.props;
-		if (project == null) { return; }
-		return project.get('title');
+		var { project } = this.props
+		if (project == null) { return }
+		return project.get('title')
 	}
 
 }
 
-export default Headline;
+export default Headline

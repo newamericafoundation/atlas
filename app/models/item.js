@@ -1,15 +1,9 @@
-var _ = require('underscore'),
-	Backbone = require('backbone'),
-	base = require('./base.js'),
-	rgf = require('./rich_geo_feature.js'),
-	states = require('./../../db/seeds/states.json');
+import _ from 'underscore'
+import * as base from './base.js'
 
-var indexOf = [].indexOf || function(item) {
-	for (var i = 0, l = this.length; i < l; i++) {
-		if (i in this && this[i] === item) return i;
-	}
-	return -1;
-};
+import rgf from './rich_geo_feature.js'
+
+var states = require('./../../db/seeds/states.json')
 
 /** 
  * @constructor
@@ -30,12 +24,12 @@ export class Model extends base.Model {
 			delete data.Name;
 		}
 
-		this._processValues(data);
-		this._checkPin(data);
-		this._checkUsState(data);
-		this._checkUsCongressionalDistrict(data);
+		this._processValues(data)
+		this._checkPin(data)
+		this._checkUsState(data)
+		this._checkUsCongressionalDistrict(data)
 
-		return data;
+		return data
 	}
 
 	
@@ -176,20 +170,18 @@ export class Model extends base.Model {
 
 		var filterIndeces, valueHoverIndex, isFiltered;
 
-		if (!this.matchesSearchTerm(searchTerm)) { return 'inactive'; }
+		if (!this.matchesSearchTerm(searchTerm)) { return 'inactive' }
 
-		filterIndeces = filter.getValueIndeces(this);
-		valueHoverIndex = filter.state.valueHoverIndex;
+		filterIndeces = filter.getValueIndeces(this)
+		var { valueHoverIndex } = filter.state
 
 		isFiltered = (filterIndeces.length > 0);
 
-		if (!isFiltered) { return 'inactive'; }
+		if (!isFiltered) { return 'inactive' }
 
-		if (filterIndeces.indexOf(valueHoverIndex) > -1) {
-			return 'highlighted';
-		}
+		if (filterIndeces.indexOf(valueHoverIndex) > -1) { return 'highlighted' }
 
-		return;
+		return
 
 	}
 
@@ -200,23 +192,27 @@ export class Model extends base.Model {
 	 * @returns {boolean} - Match result.
 	 */
 	matchesSearchTerm(searchTerm) {
-		var name;
-		name = this.get('name');
-		if (!searchTerm || searchTerm === "") { return true; }
-		if (!name) { return false; }
-		name = name.toLowerCase();
-		searchTerm = searchTerm.toLowerCase();
-		if (name === "") { return false; }
-		if (name.indexOf(searchTerm) === -1) { return false; }
-		return true;
+		var name = this.get('name')
+		if (!searchTerm || searchTerm === "") { return true }
+		if (!name) { return false }
+		name = name.toLowerCase()
+		searchTerm = searchTerm.toLowerCase()
+		if (name === "") { return false }
+		if (name.indexOf(searchTerm) === -1) { return false }
+		return true
 	}
 
 }
 
 
+
+/*
+ *
+ *
+ */
 export class Collection extends base.Collection {
 
-	get model() { return Model; }
+	get model() { return Model }
 	
 
 	/** 
@@ -224,9 +220,7 @@ export class Collection extends base.Collection {
 	 * @returns {string} itemType
 	 */
 	getItemType() {
-		var itemType;
-		itemType = this.models[0].get('_itemType');
-		return itemType;
+		return this.models[0].get('_itemType')
 	}
 	
 
@@ -236,16 +230,14 @@ export class Collection extends base.Collection {
 	 * @returns {object} this
 	 */
 	setActive(activeModel) {
-		var id;
+		var id
 		if ((_.isObject(activeModel)) && (this.models.indexOf(activeModel) >= 0)) {
-			this.active = activeModel;
+			this.active = activeModel
 		} else {
-			id = parseInt(activeModel, 10);
-			this.active = id === -1 ? void 0 : this.findWhere({
-				id: id
-			});
+			id = parseInt(activeModel, 10)
+			this.active = id === -1 ? void 0 : this.findWhere({ id: id })
 		}
-		return this;
+		return this
 	}
 	
 
@@ -255,16 +247,14 @@ export class Collection extends base.Collection {
 	 * @returns {object} this
 	 */
 	setHovered(hoveredModel) {
-		var id;
+		var id
 		if ((_.isObject(hoveredModel)) && (this.models.indexOf(hoveredModel) >= 0)) {
-			this.hovered = hoveredModel;
+			this.hovered = hoveredModel
 		} else {
-			id = parseInt(hoveredModel, 10);
-			this.hovered = (id === -1) ? undefined : this.findWhere({
-				id: id
-			});
+			id = parseInt(hoveredModel, 10)
+			this.hovered = (id === -1) ? undefined : this.findWhere({ id: id })
 		}
-		return this;
+		return this
 	}
 	
 
@@ -346,14 +336,7 @@ export class Collection extends base.Collection {
 	 * @returns {array} res - Returns array of arrays. E.g. [[lat, long], [lat, long]]
 	 */
 	toLatLongMultiPoint() {
-		var j, len, model, ref, res;
-		res = [];
-		ref = this.models;
-		for (j = 0, len = ref.length; j < len; j++) {
-			model = ref[j];
-			res.push(model.toLatLongPoint());
-		}
-		return res;
+		return this.models.map(model => model.toLatLongPoint())
 	}
 	
 
@@ -419,9 +402,9 @@ export class Collection extends base.Collection {
 	 * @returns {} - Generic Rich GeoJson feature.
 	 */
 	getRichGeoJson(baseGeoData) {
-		var type;
-		type = this.getItemType();
-		return this.richGeoJsonBuilders[type](this, baseGeoData);
+		var type
+		type = this.getItemType()
+		return this.richGeoJsonBuilders[type](this, baseGeoData)
 	}
 
 }

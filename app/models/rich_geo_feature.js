@@ -1,13 +1,13 @@
 // Written in old JavaScript for gulp. To be replaced as needed.
 
-var _ = require('underscore'),
-	Backbone = require('backbone');
+import _ from 'underscore'
+import Backbone from 'backbone'
 
-exports.Model = Backbone.Model.extend({});
+var Model = Backbone.Model.extend({})
 
-exports.Collection = Backbone.Collection.extend({
+var Collection = Backbone.Collection.extend({
 
-	model: exports.Model,
+	model: Model,
 
 	/*
      *
@@ -32,4 +32,10 @@ exports.Collection = Backbone.Collection.extend({
 		return this.on('sync', next);
 	}
 	
-});
+})
+
+
+export default {
+	Model: Model,
+	Collection: Collection
+}
