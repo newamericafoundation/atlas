@@ -1,6 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
+import selectize from 'selectize'
+
 import Base from './base.jsx'
 
 class SelectizeText extends Base {

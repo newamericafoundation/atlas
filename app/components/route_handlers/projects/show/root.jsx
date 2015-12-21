@@ -105,14 +105,10 @@ class Show extends React.Component {
 
 	/*
 	 * This is a method passed down to all deep children so they can modify the state of the ui.
-	 * TODO: re-write without object mutation.
+	 * 
 	 */
 	setUiState(uiStateChanges) {
-		var currentUiState = this.state.ui
-		for (let key in uiStateChanges) {
-			currentUiState[key] = uiStateChanges[key]
-		}
-		this.forceUpdate()
+		this.setState({ ui: Object.assign({}, this.state.ui, uiStateChanges) })
 	}
 
 
@@ -121,23 +117,22 @@ class Show extends React.Component {
 	 *
 	 */
 	handleMessageFromButtons(message) {
-
-		if (message === 'toggle-search-bar') {
-			return this.setUiState({ isSearchBarActive: !this.state.ui.isSearchBarActive });
-		} 
-
-		if (message === 'toggle-collapsed-state') {
-			this.state.ui.isCollapsedMaster = !this.state.ui.isCollapsedMaster;
-			return this.forceUpdate();
-		} 
-
-		if (message === 'toggle-help') {
-			this.state.ui.isHelpActive = !this.state.ui.isHelpActive;
-			return this.forceUpdate();
-		}
-
-		if (message === 'print' && global.window) {
-			global.window.print()
+		
+		switch(message) {
+			case 'toggle-search-bar':
+				this.setUiState({ isSearchBarActive: !this.state.ui.isSearchBarActive })
+				break
+			case 'toggle-collapsed-state':
+				this.setUiState({ isSearchBarActive: !this.state.ui.isSearchBarActive })
+				break
+			case 'toggle-help':
+				this.setUiState({ isHelpActive: !this.state.ui.isHelpActive })
+				break
+			case 'print':
+				global.window.print()
+				break
+			default:
+				console.log('Unknown message from side bar buttons.')
 		}
 
 	}
@@ -159,20 +154,19 @@ class Show extends React.Component {
 	 */
 	getClassName() {
 
-		var cls, data, { project } = this.state
+		var cls, data
+		var { project } = this.state
 
-		data = (project != null) ? project.get('data') : null;
+		data = (project != null) ? project.get('data') : null
 
 		// boolean classnames
-		cls = classNames({
+		return classNames({
 			'atl': true,
 			'atl--help': this.state.ui.isHelpActive,
 			'atl--collapsed': (this.state.ui.isCollapsedMaster) || (!this.state.ui.isCollapsedMaster && this.state.ui.isCollapsedDueToOverflow),
 			'atl__info-box--active': this.state.ui.isInfoBoxActive,
 			'atl__info-box--narrow': data && (data.variables.getInfoBoxVariableCount() < 2)
-		});
-
-		return cls;
+		})
 
 	}
 
@@ -218,9 +212,9 @@ class Show extends React.Component {
 	 */
 	fetchProject() {
 
-		var atlas_url = this.getAtlasUrl();
+		var { atlas_url } = this.props.params
 
-		new project.Collection()
+		return new project.Collection()
 			.getClientFetchPromise({ atlas_url: atlas_url })
 			.then((coll) => {
 				var project = coll.models[0];
@@ -232,21 +226,9 @@ class Show extends React.Component {
 					// Redirect to listings page.
 					this.props.history.pushState(null, '/menu')
 				}
-			}).catch((err) => { 
-				console.error('Project error: ', err.stack)
-			});
+			}).catch((err) => {  console.error('Project error: ', err.stack) })
 
 	}
-
-
-	/*
-	 * Get project's atlas URL either from props or from props passed from router.
-	 *
-	 */
-	getAtlasUrl() {
-		return this.props.atlas_url || this.props.params.atlas_url
-	}
-
 
 }
 

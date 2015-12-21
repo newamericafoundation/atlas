@@ -1,7 +1,9 @@
-import React from 'react';
-import classNames from 'classnames';
+import React from 'react'
+import classNames from 'classnames'
 
-class Related extends React.Component {
+import RealtedItem from './related_item.jsx'
+
+class RelatedList extends React.Component {
 
 	render() {
 		if (this.isListEmpty()) { return (<div className="atl__related" />); }
@@ -35,23 +37,4 @@ class Related extends React.Component {
 
 }
 
-class RelatedItem extends React.Component {
-
-	render() {
-		var item = this.props.relatedItem;
-		return (
-			<a className="link" href={"/" + item.get('atlas_url')} onClick={ this.navigate.bind(this) }>
-				{ item.get('title') }
-			</a>
-		);
-	}
-
-	navigate(e) {
-		e.preventDefault()
-		var item = this.props.relatedItem;
-		Backbone.history.navigate((`/${item.get('atlas_url')}`), { trigger: true });
-	}
-
-}
-
-export default Related;
+export default RelatedList

@@ -4,15 +4,11 @@ import './../styles/app.scss'
 
 import React from 'react'
 import { render } from 'react-dom'
-import { Router } from 'react-router'
-
-import createBrowserHistory from 'history/lib/createBrowserHistory'
 
 import clientRouter from './client_router.jsx'
 
 // Import global libraries
 import $ from 'jquery'
-import selectize from 'selectize'
 import Chartist from 'chartist'
 import chroma from 'chroma-js'
 import numeral from 'numeral'
@@ -26,7 +22,6 @@ global.chroma = chroma
 global.numeral = numeral
 global.Chartist = Chartist
 global.ChartistHtml = ChartistHtml
-global.selectize = selectize
 
 // App entry point.
 global.startAtlas = () => {
