@@ -1,34 +1,26 @@
 import express from 'express'
 import * as base from './../../../models/base.js'
 
-import authMiddleware from './../../../middleware/auth.js'
-import deleteMiddleware from './../../../middleware/crud/delete.js'
-import newMiddleware from  './../../../middleware/crud/new.js'
-import updateMiddleware from './../../../middleware/crud/update.js'
-import showMiddleware from './../../../middleware/crud/show.js'
-import indexMiddleware from './../../../middleware/crud/index.js'
+import { ensureAuthenticated, ensureNothing } from './../../../middleware/auth.js'
 
-// Unsafe setting to test back-end while in development, skipping the auth step which is required at each server restart.
-//var currentAuthMiddleware = (process.NODE_ENV === 'production') ? authMiddleware.ensureAuthenticated : authMiddleware.ensureNothing;
-var currentAuthMiddleware = authMiddleware.ensureAuthenticated
+import { list, show, create, update, remove } from './../../../middleware/crud/index.js'
+
+import defaultResponder from './../helpers/default_responder.js'
+
+// Researcher is always authenticated if the environment is not production.
+var currentAuthMiddleware = (process.NODE_ENV === 'production') ? ensureAuthenticated : ensureNothing
 
 var router = express.Router()
 
-function standardResponder(req, res) {
-	res.json(req.dbResponse)
-}
+const standardOptions = { dbCollectionName: 'images' }
 
-var standardOptions = { dbCollectionName: 'images' }
+// Public (unauthenticated) API calls.
+router.get('/', list.bind(this, standardOptions), defaultResponder)
+router.get('/:id', show.bind(this, standardOptions), defaultResponder)
 
-router.get('/', indexMiddleware.bind(this, standardOptions), standardResponder)
-
-router.get('/:id', showMiddleware.bind(this, standardOptions), standardResponder)
-
-// authenticated requests
-router.post('/:id/edit', currentAuthMiddleware, updateMiddleware.bind(this, standardOptions), standardResponder)
-
-router.post('/', currentAuthMiddleware, newMiddleware.bind(this, standardOptions), standardResponder)
-
-router.delete('/:id', currentAuthMiddleware, deleteMiddleware.bind(this, standardOptions), standardResponder)
+// Authenticated API calls.
+router.post('/:id/edit', currentAuthMiddleware, update.bind(this, standardOptions), defaultResponder)
+router.post('/', currentAuthMiddleware, create.bind(this, standardOptions), defaultResponder)
+router.delete('/:id', currentAuthMiddleware, remove.bind(this, standardOptions), defaultResponder)
 
 export default router

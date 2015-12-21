@@ -4,22 +4,18 @@ import csv from 'csv'
 import * as project from './../../../models/project.js'
 import * as base from './../../../models/base.js'
 
-import authMiddleware from './../../../middleware/auth.js'
+import { ensureAuthenticated, ensureNothing } from './../../../middleware/auth.js'
 
-import deleteMiddleware from './../../../middleware/crud/delete.js'
-import newMiddleware from  './../../../middleware/crud/new.js'
-import updateMiddleware from './../../../middleware/crud/update.js'
-import showMiddleware from './../../../middleware/crud/show.js'
-import indexMiddleware from './../../../middleware/crud/index.js'
+import { list, show, create, update, remove } from './../../../middleware/crud/index.js'
 
-// Unsafe setting to test back-end while in development, skipping the auth step which is required at each server restart.
-var currentAuthMiddleware = (process.NODE_ENV === 'production') ? authMiddleware.ensureAuthenticated : authMiddleware.ensureNothing
+// Researcher is always authenticated if the environment is not production.
+var currentAuthMiddleware = (process.NODE_ENV === 'production') ? ensureAuthenticated : ensureNothing
 
 var router = express.Router()
 
-router.get('/', indexMiddleware.bind(this, { dbCollectionName: 'projects', authQuery: { is_live: 'Yes' } }), (req, res) => {
+router.get('/', list.bind(this, { dbCollectionName: 'projects', authQuery: { is_live: 'Yes' } }), (req, res) => {
 
-	var models = base.Collection.prototype.parse(req.dbResponse);
+	var models = base.Collection.prototype.parse(req.dbResponse)
 
 	var coll = new project.Collection(models)
 
@@ -32,51 +28,50 @@ router.get('/', indexMiddleware.bind(this, { dbCollectionName: 'projects', authQ
 
 })
 
-router.get('/:id', showMiddleware.bind(this, { dbCollectionName: 'projects', authQuery: { is_live: 'Yes' } }), (req, res) => {
+router.get('/:id', show.bind(this, { dbCollectionName: 'projects', authQuery: { is_live: 'Yes' } }), (req, res) => {
 	res.json(req.dbResponse)
 })
 
 // authenticated requests
-router.post('/:id/edit', currentAuthMiddleware, updateMiddleware.bind(this, { dbCollectionName: 'projects', authQuery: { is_live: 'Yes' } }), (req, res) => {
+router.post('/:id/edit', currentAuthMiddleware, update.bind(this, { dbCollectionName: 'projects', authQuery: { is_live: 'Yes' } }), (req, res) => {
 	res.json(req.dbResponse)
 })
 
-router.post('/', currentAuthMiddleware, newMiddleware.bind(this, { dbCollectionName: 'projects', authQuery: { is_live: 'Yes' } }), (req, res) => {
+router.post('/', currentAuthMiddleware, create.bind(this, { dbCollectionName: 'projects', authQuery: { is_live: 'Yes' } }), (req, res) => {
 	res.json(req.dbResponse)
 })
 
-router.delete('/:id', currentAuthMiddleware, deleteMiddleware.bind(this, { dbCollectionName: 'projects', authQuery: { is_live: 'Yes' } }), (req, res) => {
+router.delete('/:id', currentAuthMiddleware, remove.bind(this, { dbCollectionName: 'projects', authQuery: { is_live: 'Yes' } }), (req, res) => {
 	res.json(req.dbResponse)
 })
 
 
 var shouldHideDraftProjects = function(req) {
 	// Unsafe setting to test back-end while in development, skipping the auth step which is required at each server restart.
-	return (process.env.NODE_ENV === 'production') ? !req.isAuthenticated() : false;
-	// return (!req.isAuthenticated());
-};
+	return (process.env.NODE_ENV === 'production') ? !req.isAuthenticated() : false
+}
 
 // Print project data.
-router.post('/print', function(req, res) {
+router.post('/print', (req, res) => {
 
-	var queryParams = req.body || {},
-		fileName = queryParams.atlas_url || 'file',
-		fields = { data: 1, atlas_url: 1 };
+	var queryParams = req.body || {}
+	var fileName = queryParams.atlas_url || 'file'
+	var fields = { data: 1, atlas_url: 1 }
 
 	if (shouldHideDraftProjects(req)) {
-		queryParams.is_live = "Yes";
+		queryParams.is_live = "Yes"
 	}
 
-	var db = req.db;
+	var { db } = req
 
-	var cursor = db.collection('projects').find(queryParams, fields);
+	var cursor = db.collection('projects').find(queryParams, fields)
 
 	cursor.toArray(function(err, models) {
 		if (err) { console.dir(err) }
 		if ((models[0]) && (models[0].data) && (models[0].data.items)) {
 			return res.csv(models[0].data.items, fileName + '.csv')
 		}
-		res.send();
+		res.send()
 	})
 
 })

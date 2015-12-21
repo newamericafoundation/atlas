@@ -2,6 +2,8 @@ import React from 'react'
 import { RoutingContext } from 'react-router'
 import classNames from 'classnames'
 
+import { connect } from 'react-redux'
+
 import Setup from './general/setup.jsx'
 import Header from './general/header.jsx'
 
@@ -43,6 +45,7 @@ class Layout extends React.Component {
 	 *
 	 */
 	render() {
+		console.log(this.props)
 		var { radio } = this.state
 		return (
 			<div className={this.getClassName()}>
@@ -92,4 +95,4 @@ class Layout extends React.Component {
 
 }
 
-export default Layout
+export default connect(state => ({ routing: state.routing }))(Layout)

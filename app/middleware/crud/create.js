@@ -1,6 +1,6 @@
 import { ObjectID } from 'mongodb';
 
-var newMiddleware = (options, req, res, next) => {
+var createMiddleware = (options, req, res, next) => {
 
 	var db = req.db,
 		dbCollection = db.collection(options.dbCollectionName);
@@ -30,4 +30,4 @@ var newMiddleware = (options, req, res, next) => {
 
 };
 
-export default newMiddleware;
+export default createMiddleware

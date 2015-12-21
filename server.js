@@ -1,5 +1,6 @@
 import express from 'express'
 import passport from 'passport'
+import helmet from 'helmet'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import methodOverride from 'method-override'
@@ -10,10 +11,12 @@ import dbConnector from './db/connector.js'
 import router from './app/routes/index.js'
 import serveGzipMiddleware from './app/middleware/serve_gzip.js'
 
-var app = express(),
-	MongoStore = connectMongo(session);
-
+var app = express()
+var MongoStore = connectMongo(session)
 var { NODE_ENV, PORT, PRERENDER_TOKEN, PORT } = process.env
+
+// Use standard security package.
+app.use(helmet())
 
 app.set('views', __dirname + '/app/views')
 app.set('view engine', 'jade')
@@ -39,11 +42,15 @@ if (NODE_ENV === 'production' && PRERENDER_TOKEN) {
 		.set('prerenderToken', PRERENDER_TOKEN))
 }
 
-dbConnector.then(function(db) {
-	
+/*
+ * Start server.
+ * @param {object} db - Database connection instance.
+ */
+function startServer(db) {
 	// Initialize session with database storage.
 	app.use(session({
 	    secret: 'Super_Big_Secret',
+	    httpOnly: true,
 	    saveUninitialized: false,
 	    resave: true,
 	    store: new MongoStore({ 
@@ -75,5 +82,7 @@ dbConnector.then(function(db) {
 		if(err) { return console.log(err) }
 		console.log(`Listening on port ${PORT}.`)
 	})
+}
 
-})
+// Connect to database.
+dbConnector.then(startServer)

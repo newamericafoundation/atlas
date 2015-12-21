@@ -7,7 +7,7 @@ import * as Subcomponents from './subcomponents/index.js'
 
 
 /*
- *
+ * Generic form component.
  *
  */
 class Form extends React.Component {
@@ -27,7 +27,8 @@ class Form extends React.Component {
 	 *
 	 */
 	render() {
-		var style = this.props.isEnabled ? {} : { opacity: 0.5 };
+		var style = this.props.isEnabled ? {} : { opacity: 0.5 }
+		var { isEnabled, submitButtonText } = this.props
 		return (
 			<form
 				onSubmit={this.sendFormDataToParent.bind(this)}
@@ -36,8 +37,8 @@ class Form extends React.Component {
 				{ this.renderFormComponents() }
 				<input 
 					type='submit'
-					disabled={!this.props.isEnabled}
-					value={ this.props.submitButtonText || 'Submit Form' } 
+					disabled={!isEnabled}
+					value={ submitButtonText || 'Submit Form' } 
 				/>
 			</form>
 		)

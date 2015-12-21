@@ -8,7 +8,7 @@ import { Router } from 'react-router'
 
 import createBrowserHistory from 'history/lib/createBrowserHistory'
 
-import clientRouter from './../../routes/client.jsx'
+import clientRouter from './client_router.jsx'
 
 // Import global libraries
 import $ from 'jquery'

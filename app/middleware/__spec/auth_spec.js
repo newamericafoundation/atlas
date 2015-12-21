@@ -2,7 +2,7 @@ import 'babel-polyfill'
 
 import assert from 'assert'
 
-import auth from './../auth.js'
+import * as auth from './../auth.js'
 
 import { Req, Res } from './req_res_mocks.js'
 

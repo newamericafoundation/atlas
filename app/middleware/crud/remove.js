@@ -1,7 +1,7 @@
 import { ObjectID } from 'mongodb';
 import _ from 'underscore';
 
-var deleteMiddleware = (options, req, res, next) => {
+var removeMiddleware = (options, req, res, next) => {
 
 	var id = req.params.id;
 
@@ -29,4 +29,4 @@ var deleteMiddleware = (options, req, res, next) => {
 
 };
 
-export default deleteMiddleware;
+export default removeMiddleware
