@@ -80,7 +80,7 @@ var formatters = {
 
 
 	/*
-	 *
+	 * Add target blank for all link tags to have links open in a new tab automatically.
 	 *
 	 */
 	html: function(html) {

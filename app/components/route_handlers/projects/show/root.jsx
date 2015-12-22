@@ -1,6 +1,8 @@
 import React from 'react'
 import classNames from 'classnames'
 
+import { connect } from 'react-redux'
+
 import Tilemap from './tilemap/root.jsx'
 import Explainer from './explainer/root.jsx'
 
@@ -35,8 +37,7 @@ class Show extends React.Component {
 				isHelpActive: false,
 				isMapDragging: false,
 				isOptionsTabActive: false
-			},
-			buttons: []
+			}
 		}
 	}
 
@@ -50,11 +51,11 @@ class Show extends React.Component {
 			<div className={ this.getClassName() }>
 				<SideBar 
 					radio={ this.props.radio } 
-					project={ this.state.project } 
+					project={ this.getProject() } 
 					sendMessageToParent={ this.handleMessageFromButtons.bind(this) }
 					uiState={ this.state.ui }
 					setUiState={ this.setUiState.bind(this) }
-					buttons={ this.state.buttons }
+					buttons={ this.getButtons() }
 				/>
 				{ this.renderProject() }
 			</div>
@@ -67,7 +68,7 @@ class Show extends React.Component {
 	 *
 	 */
 	renderProject() {
-		var { project } = this.state
+		var project = this.getProject()
 		if (!project) { return <Loader /> }
 		var Comp = (this._isModelTilemap()) ? Tilemap : Explainer
 		return (
@@ -75,7 +76,7 @@ class Show extends React.Component {
 				radio={this.props.radio} 
 				uiState={ this.state.ui } 
 				setUiState={ this.setUiState.bind(this) } 
-				project={ this.state.project } 
+				project={ project } 
 				related={ this.state.related } 
 			/>
 		);
@@ -87,19 +88,7 @@ class Show extends React.Component {
 	 *
 	 */
 	componentWillMount() {
-		this.fetchProject()
-	}
-
-
-	/*
-	 * If the project just loaded, update the side bar links with appropriate project data.
-	 *
-	 */
-	componentWillUpdate(nextProps, nextState) {
-		if (this.state.project) { return }
-		if (nextState.project) {
-			this.setState({ buttons: buttonsDataGenerator(nextState.project, global.window.isResearcherAuthenticated, this.state.ui.isCollapsedDueToOverflow) })
-		}
+		this.fetchData()
 	}
 
 
@@ -143,8 +132,21 @@ class Show extends React.Component {
 	 *
 	 */
 	getButtons() {
+		var project = this.getProject()
 		if (!global.window) { return }
-		return buttonsDataGenerator(this.state.project, global.window.isResearcherAuthenticated, this.state.ui.isCollapsedDueToOverflow)
+		return buttonsDataGenerator(project, global.window.isResearcherAuthenticated, this.state.ui.isCollapsedDueToOverflow)
+	}
+
+
+	/*
+	 *
+	 *
+	 */
+	getProject() {
+		var { atlas_url } = this.props.params
+		var { byUrl } = this.props.app.entities.projects
+		if (!byUrl) { return }
+		return byUrl[atlas_url]
 	}
 
 
@@ -155,7 +157,7 @@ class Show extends React.Component {
 	getClassName() {
 
 		var cls, data
-		var { project } = this.state
+		var project = this.getProject()
 
 		data = (project != null) ? project.get('data') : null
 
@@ -176,7 +178,7 @@ class Show extends React.Component {
 	 *
 	 */
 	_isModelTilemap() {
-		var { project } = this.state
+		var project = this.getProject()
 		if (!project) { return false }
 		return (project.get('project_template_name') === 'Tilemap')
 	}
@@ -188,7 +190,7 @@ class Show extends React.Component {
 	 */
 	fetchRelatedProjects() {
 
-		var prj = this.state.project
+		var prj = this.getProject()
 
 		new project.Collection()
 			.getClientFetchPromise({ 
@@ -200,8 +202,8 @@ class Show extends React.Component {
 				encoded_image: 0
 			})
 			.then((coll) => {
-				this.setState({ related: coll });
-			}).catch((err) => { console.log(err); });
+				this.setState({ related: coll })
+			}).catch((err) => { console.log(err); })
 
 	}
 
@@ -210,18 +212,18 @@ class Show extends React.Component {
 	 * Send network request to get project data.
 	 *
 	 */
-	fetchProject() {
+	fetchData() {
 
 		var { atlas_url } = this.props.params
 
 		return new project.Collection()
 			.getClientFetchPromise({ atlas_url: atlas_url })
 			.then((coll) => {
-				var project = coll.models[0];
+				var project = coll.models[0]
 				if (project && project.exists()) {
-					project.prepOnClient();
-					this.setState({ project: project });
-					this.fetchRelatedProjects();
+					project.prepOnClient()
+					this.props.dispatch({ type: 'FETCH_PROJECT_SUCCESS', data: project })
+					this.fetchRelatedProjects()
 				} else {
 					// Redirect to listings page.
 					this.props.history.pushState(null, '/menu')
@@ -232,4 +234,7 @@ class Show extends React.Component {
 
 }
 
-export default Show
+export default connect(state => ({ 
+	routing: state.routing,
+	app: state.app
+}))(Show)

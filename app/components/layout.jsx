@@ -94,4 +94,7 @@ class Layout extends React.Component {
 
 }
 
-export default connect(state => ({ routing: state.routing }))(Layout)
+export default connect(state => ({ 
+	routing: state.routing,
+	app: state.app
+}))(Layout)

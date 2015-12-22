@@ -2,7 +2,7 @@
 
 Policy analysis tool for New America's Education Policy Program.
 
-## Basics
+## General Info
 
 Url: http://atlas.newamerica.org/
 

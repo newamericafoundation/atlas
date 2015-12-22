@@ -1,10 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import selectize from 'selectize'
-
 import Base from './base.jsx'
 
+/*
+ *
+ *
+ */
 class SelectizeText extends Base {
 
 	/*
@@ -26,7 +28,7 @@ class SelectizeText extends Base {
 					placeholder={this.props.placeholder}
 				/>
 			</div>
-		);
+		)
 	}
 
 
@@ -39,9 +41,7 @@ class SelectizeText extends Base {
 		$el.selectize({
 			delimiter: ',',
 			persist: true,
-			create: function(input) {
-				return { value: input, text: input };
-			}
+			create: (input) => ({ value: input, text: input })
 		}).on('change', this.saveDataOnParent.bind(this));
 	}
 
@@ -64,9 +64,9 @@ class SelectizeText extends Base {
 		this.props.saveDataOnParent({
 			id: this.props.id,
 			value: e.target.value
-		});
+		})
 	}
 
 }
 
-export default SelectizeText;
+export default SelectizeText

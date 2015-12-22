@@ -9,14 +9,21 @@ import { createStore, combineReducers } from 'redux'
 import { createHistory } from 'history'
 import { syncReduxAndRouter, routeReducer } from 'redux-simple-router'
 
-const reducer = combineReducers({ routing: routeReducer })
+import clientRoutes from './../../routes/client_routes.jsx'
+import appReducer from './../../reducers/index.js'
+
+const reducer = combineReducers({ 
+	routing: routeReducer,
+	app: appReducer
+})
+
 const store = createStore(reducer)
 
 const history = createHistory()
 
 syncReduxAndRouter(history, store)
 
-import clientRoutes from './../../routes/client_routes.jsx'
+
 
 // Main router definition.
 var clientRouter = (

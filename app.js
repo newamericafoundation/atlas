@@ -16,4 +16,5 @@ if (NODE_ENV !== 'production') {
 	}
 }
 
+// Require main server file - form this point onward, server code is written in ES6.
 require('./server.js');

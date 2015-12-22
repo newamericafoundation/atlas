@@ -13,6 +13,7 @@ import Chartist from 'chartist'
 import chroma from 'chroma-js'
 import numeral from 'numeral'
 import ChartistHtml from 'chartist-html'
+import selectize from 'selectize'
 
 // Configure libraries
 import './library_config.js'
@@ -22,6 +23,7 @@ global.chroma = chroma
 global.numeral = numeral
 global.Chartist = Chartist
 global.ChartistHtml = ChartistHtml
+global.selectize = selectize
 
 // App entry point.
 global.startAtlas = () => {

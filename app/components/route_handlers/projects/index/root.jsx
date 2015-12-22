@@ -1,5 +1,7 @@
-import React from 'react';
-import classNames from 'classnames';
+import React from 'react'
+import classNames from 'classnames'
+
+import { connect } from 'react-redux'
 
 import Projects from './subcomponents/projects.jsx'
 import ProjectSections from './subcomponents/project_sections.jsx'
@@ -44,6 +46,7 @@ class Index extends React.Component {
 	 *
 	 */
 	render() {
+		var projects = this.getProjects()
 		return (
 			<div className="atl fill-parent">
 				<SideBar buttons={ defaultButtons } />
@@ -64,7 +67,7 @@ class Index extends React.Component {
 						</div>
 						<Projects 
 							radio={this.props.radio}
-							projects={this.state.projects} 
+							projects={projects} 
 							projectTemplates={this.state.projectTemplates} 
 							projectSections={this.state.projectSections}
 							updateProjectsIndex={this.forceUpdate}
@@ -81,9 +84,18 @@ class Index extends React.Component {
 	 *
 	 */
 	componentDidMount() {
-		this.fetchProjects()
+		if (!this.getProjects()) { this.fetchProjects() }
 		this.fetchProjectSections()
 		this.fetchProjectTemplates()
+	}
+
+
+	/*
+	 *
+	 *
+	 */
+	getProjects() {
+		return this.props.app.entities.projects.summaries
 	}
 
 
@@ -94,7 +106,7 @@ class Index extends React.Component {
 	fetchProjects() {
 		var coll = new project.Collection()
 		coll.getClientFetchPromise({}, { data: 0, body_text: 0, encoded_image: 0 }).then((coll) => {
-			this.setState({ projects: coll });
+			this.props.dispatch({ type: 'FETCH_PROJECT_SUMMARIES_SUCCESS', data: coll })
 		}).catch((err) => { console.log(err); });
 	}
 
@@ -106,9 +118,9 @@ class Index extends React.Component {
 	fetchProjectSections() {
 		var coll = new projectSection.Collection()
 		coll.getClientFetchPromise().then((coll) => {
-			coll.initializeActiveStates();
-			this.setState({ projectSections: coll });
-		}).catch((err) => { console.log(err); });
+			coll.initializeActiveStates()
+			this.setState({ projectSections: coll })
+		}).catch((err) => { console.log(err.stack) })
 	}
 
 
@@ -119,11 +131,15 @@ class Index extends React.Component {
 	fetchProjectTemplates() {
 		var coll = new projectTemplate.Collection()
 		coll.getClientFetchPromise().then((coll) => {
-			coll.initializeActiveStates();
-			this.setState({ projectTemplates: coll });
-		}).catch((err) => { console.log(err); });
+			coll.initializeActiveStates()
+			this.setState({ projectTemplates: coll })
+		}).catch((err) => { console.log(err.stack) })
 	}
 
 }
 
-export default Index
+
+export default connect(state => ({ 
+	routing: state.routing,
+	app: state.app
+}))(Index)
