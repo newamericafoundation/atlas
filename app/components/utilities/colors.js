@@ -23,18 +23,15 @@ export default {
     _hash: {},
 
     get: function(index) {
-        return this._list[index];
+        return this._list[index]
     },
 
     interpolate: function(f) {
         var first, interpolated, last;
         first = this._list[0];
         last = this._list[this._list.length - 1];
-        interpolated = [];
-        interpolated.push(Math.round(first[0] * f + last[0] * (1 - f)));
-        interpolated.push(Math.round(first[1] * f + last[1] * (1 - f)));
-        interpolated.push(Math.round(first[2] * f + last[2] * (1 - f)));
-        return "rgba(" + (interpolated.join(',')) + "," + 1. + ")";
+        interpolated = [ 0, 1, 2 ].map((i) => Math.round(first[i] * f + last[i] * (1 - f)))
+        return `rgba(${interpolated.join(',')}, 1)`
     },
 
     interpolateRgb: function(f) {
@@ -50,7 +47,7 @@ export default {
 
     toRgba: function(index, opacity = 1) {
         if ((index != null) && this.get(index)) {
-            return `rgba(${this.get(index).join(',')}, ${opacity})`;
+            return `rgba(${this.get(index).join(',')}, ${opacity})`
         }
     },
 

@@ -1,8 +1,8 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react'
+import ReactDOM from 'react-dom'
 
-import * as colors from './../utilities/colors.js';
-import classNames from 'classnames';
+import colors from './../utilities/colors.js'
+import classNames from 'classnames'
 
 class Setup extends React.Component {
 	
@@ -197,7 +197,7 @@ class Pattern extends React.Component {
 	 *   this will make the component more general.
 	 */
 	getColor(colorCode) {
-		return colors.toRgb(colorCode - 1);
+		return colors.toRgb(colorCode - 1)
 	}
 
 
@@ -249,4 +249,4 @@ class Pattern extends React.Component {
 
 }
 
-export default Setup;
+export default Setup
