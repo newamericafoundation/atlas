@@ -1,5 +1,5 @@
-import * as base from './base.js';
-import marked from 'marked';
+import * as base from './base.js'
+import marked from 'marked'
 
 export class Model extends base.Model {
 	
@@ -84,7 +84,10 @@ export class Model extends base.Model {
 	}
 
 
-	/** Gets encoded url to use as a CSS background-image. */
+	/*
+	 * Gets encoded url to use as a CSS background-image. 
+	 * 
+	 */
 	getUrl() {
 		// if (this.get('stock_type') && this.get('stock_id')) {
 		// 	return `url(/static/images/resize_cache--Stock_Photos--${this.get('stock_type')}_${this.get('stock_id')})`;
@@ -98,16 +101,20 @@ export class Model extends base.Model {
 	}
 
 
-	/** Gets html attribute. */
+	/* 
+	 * Gets html attribute.
+	 *
+	 */
 	getAttributionHtml() {
 		return marked(this.get('credit'));
 	}
 
 }
 
+
 class Collection extends base.Collection {
 
-	get model() { return Model; }
+	get model() { return Model }
 
 }
 
