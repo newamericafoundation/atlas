@@ -2,6 +2,7 @@ import React from 'react'
 import classNames from 'classnames'
 
 import { connect } from 'react-redux'
+import { pushPath } from 'redux-simple-router'
 
 import Tilemap from './tilemap/root.jsx'
 import Explainer from './explainer/root.jsx'
@@ -88,7 +89,7 @@ class Show extends React.Component {
 	 *
 	 */
 	componentWillMount() {
-		this.fetchData()
+		this.ensureData()
 	}
 
 
@@ -185,6 +186,17 @@ class Show extends React.Component {
 
 
 	/*
+	 * Make sure all data exists on the project.
+	 *
+	 */
+	ensureData() {
+		var project = this.getProject()
+		if (!project) { this.fetchData() }
+		else { this.fetchRelatedProjects() }
+	}
+
+
+	/*
 	 * Send separate network request fetching related projects.
 	 *
 	 */
@@ -226,7 +238,14 @@ class Show extends React.Component {
 					this.fetchRelatedProjects()
 				} else {
 					// Redirect to listings page.
-					this.props.history.pushState(null, '/menu')
+					this.props.dispatch(pushPath('/menu'))
+					this.props.dispatch({
+						type: 'SET_FLASH_MESSAGE',
+						data: 'The page you are looking for is not available.'
+					})
+					setTimeout(() => { 
+						this.props.dispatch({ type: 'REMOVE_FLASH_MESSAGE' })
+					}, 3500)
 				}
 			}).catch((err) => {  console.error('Project error: ', err.stack) })
 

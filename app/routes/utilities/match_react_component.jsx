@@ -29,7 +29,7 @@ export default function matchReactComponent(req, res, next) {
 	// Remove later.
 	var atlas_url = location.pathname.slice(1)
 
-	console.log(atlas_url)
+	// console.log(atlas_url)
 
 	match({ routes: clientRoutes, location: location }, (err, redirectLocation, renderProps) => {
 
@@ -42,7 +42,7 @@ export default function matchReactComponent(req, res, next) {
 		var lastRoute = routes[routes.length - 1]
 		var firstRoute = routes[0]
 
-		console.log(lastRoute)
+		// console.log(lastRoute)
 		var { component } = lastRoute
 
 		var reactOutput

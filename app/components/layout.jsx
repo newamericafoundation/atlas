@@ -50,9 +50,25 @@ class Layout extends React.Component {
 			<div className={this.getClassName()}>
 				<Setup radio={radio} />
 				<Header radio={radio} title={this.getHeaderTitle()} isTransparent={this.isHeaderTransparent()} />
+				{ this.renderFlash() }
 				{ React.cloneElement(this.props.children, { radio: radio }) }
 			</div>
 		);
+	}
+
+
+	/*
+	 *
+	 *
+	 */
+	renderFlash() {
+		var { flash } = this.props.app
+		if (flash === '') { return }
+		return (
+			<div className='flash'>
+				{ flash }
+			</div>
+		)
 	}
 
 

@@ -15,13 +15,13 @@ class Popup extends Base {
 	 *
 	 */
 	render() {
-		var style = this.getStyle();
-		var hoveredItem = this.getHoveredItem();
-		if (this.props.uiState.isMapDragged || !hoveredItem) { return null; }
+		var style = this.getStyle()
+		var hoveredItem = this.getHoveredItem()
+		if (this.props.uiState.isMapDragged || !hoveredItem) { return null }
 		var cls = classNames({
 			'atl__popup': true,
 			'atl__popup--clear-middle': (hoveredItem.get('_itemType') === 'pin')
-		});
+		})
 		return (
 			<div className={ cls } style={ style }>
 				<div className="atl__popup__wrapper">
@@ -36,7 +36,7 @@ class Popup extends Base {
 					</div>
 				</div>
 			</div>
-		);
+		)
 	}
 
 
@@ -63,9 +63,9 @@ class Popup extends Base {
 	 *
 	 */
 	getStyle() {
-		var { radio } = this.props;
-		var hoveredItem, App, position;
-		hoveredItem = this.getHoveredItem();
+		var { radio } = this.props
+		var hoveredItem, position
+		hoveredItem = this.getHoveredItem()
 		if (hoveredItem == null) { return }
 		position = radio.reqres.request('item:map:position', hoveredItem)
 		return {
@@ -77,4 +77,4 @@ class Popup extends Base {
 
 }
 
-export default Popup;
+export default Popup
