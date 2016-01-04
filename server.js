@@ -16,7 +16,7 @@ var MongoStore = connectMongo(session)
 var { NODE_ENV, PORT, PRERENDER_TOKEN, PORT } = process.env
 
 // Use standard security package.
-app.use(helmet())
+// app.use(helmet())
 
 app.set('views', __dirname + '/app/views')
 app.set('view engine', 'jade')
