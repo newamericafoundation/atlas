@@ -23,8 +23,6 @@ const history = createHistory()
 
 syncReduxAndRouter(history, store)
 
-
-
 // Main router definition.
 var clientRouter = (
 	<Provider store={store}>

@@ -122,7 +122,8 @@ class Index extends React.Component {
 		coll.getClientFetchPromise().then((coll) => {
 			coll.initializeActiveStates()
 			this.setState({ projectSections: coll })
-		}).catch((err) => { 
+		}).catch((err) => {
+			window.location.assign('/menu') 
 			console.log(err.stack) 
 		})
 	}
@@ -138,6 +139,7 @@ class Index extends React.Component {
 			coll.initializeActiveStates()
 			this.setState({ projectTemplates: coll })
 		}).catch((err) => { 
+			window.location.assign('/menu') 
 			console.log(err.stack) 
 		})
 	}

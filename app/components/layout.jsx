@@ -45,7 +45,6 @@ class Layout extends React.Component {
 	 *
 	 */
 	render() {
-		console.log(this.props.routing)
 		var { radio } = this.state
 		return (
 			<div className={this.getClassName()}>
