@@ -107,7 +107,9 @@ class Index extends React.Component {
 		var coll = new project.Collection()
 		coll.getClientFetchPromise({}, { data: 0, body_text: 0, encoded_image: 0 }).then((coll) => {
 			this.props.dispatch({ type: 'FETCH_PROJECT_SUMMARIES_SUCCESS', data: coll })
-		}).catch((err) => { console.log(err); });
+		}).catch((err) => { 
+			window.location.assign('/menu') 
+		})
 	}
 
 
@@ -120,7 +122,9 @@ class Index extends React.Component {
 		coll.getClientFetchPromise().then((coll) => {
 			coll.initializeActiveStates()
 			this.setState({ projectSections: coll })
-		}).catch((err) => { console.log(err.stack) })
+		}).catch((err) => { 
+			console.log(err.stack) 
+		})
 	}
 
 
@@ -133,7 +137,9 @@ class Index extends React.Component {
 		coll.getClientFetchPromise().then((coll) => {
 			coll.initializeActiveStates()
 			this.setState({ projectTemplates: coll })
-		}).catch((err) => { console.log(err.stack) })
+		}).catch((err) => { 
+			console.log(err.stack) 
+		})
 	}
 
 }

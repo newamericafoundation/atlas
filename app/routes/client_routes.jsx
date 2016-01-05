@@ -20,7 +20,6 @@ var clientRoutes = (
 		{ resourceRouteGenerator(models.project.Model) }
 		{ resourceRouteGenerator(models.image.Model) }
 		<Route path='/menu' component={ProjectsIndex} />
-		<Route path='/menu/' component={ProjectsIndex} />
 		<Route path=':atlas_url' component={ProjectsShow} />
 	</Route>
 )
