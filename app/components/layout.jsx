@@ -58,7 +58,7 @@ class Layout extends React.Component {
 
 
 	/*
-	 *
+	 * Render flash message if there is one set.
 	 *
 	 */
 	renderFlash() {
@@ -88,7 +88,7 @@ class Layout extends React.Component {
 
 
 	/*
-	 * 
+	 * Header transparency changes from the welcome route to the rest of the site.
 	 *
 	 */
 	isHeaderTransparent() {
@@ -99,7 +99,7 @@ class Layout extends React.Component {
 
 
 	/*
-	 * 
+	 * Header title changes from the welcome route to the rest of the site.
 	 *
 	 */
 	getHeaderTitle() {

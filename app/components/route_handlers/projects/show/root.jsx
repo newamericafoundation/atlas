@@ -113,7 +113,7 @@ class Show extends React.Component {
 				this.setUiState({ isSearchBarActive: !this.state.ui.isSearchBarActive })
 				break
 			case 'toggle-collapsed-state':
-				this.setUiState({ isSearchBarActive: !this.state.ui.isSearchBarActive })
+				this.setUiState({ isCollapsedMaster: !this.state.ui.isCollapsedMaster })
 				break
 			case 'toggle-help':
 				this.setUiState({ isHelpActive: !this.state.ui.isHelpActive })

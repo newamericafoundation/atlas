@@ -23,9 +23,8 @@ class Projects extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			shouldDisplayImage: false,
-			hasDisplayedImage: false
-		};
+			hasProjectImages: false
+		}
 	}
 
 
@@ -47,18 +46,18 @@ class Projects extends React.Component {
 	 *
 	 */
 	renderList() {
-		var projects = this.props.projects;
-		if (projects == null) { return <Loader /> }
+		var { projects } = this.props
+		if (!projects) { return <Loader /> }
 		return projects.map((project, i) => {
 			return (
 				<Project 
 					{...this.props} 
 					key={i}
 					project={project}
-					shouldDisplayImage={this.state.shouldDisplayImage}
+					shouldDisplayImage={this.state.hasProjectImages}
 				/>
-			);
-		});
+			)
+		})
 	}
 
 
@@ -68,8 +67,7 @@ class Projects extends React.Component {
 	 */
 	componentDidUpdate() {
 		var { projects } = this.props
-		if (projects == null) { return }
-		this.ensureProjectImages()
+		if (projects) { this.ensureProjectImages() }
 	}
 
 
@@ -78,31 +76,29 @@ class Projects extends React.Component {
 	 *
 	 */
 	ensureProjectImages() {
-		var projects = this.props.projects;
-		if (projects == null) { return; }
-		if (this.state.hasDisplayedImage) { return; }
-		if (projects.hasImages) {
-			return this.setState({ shouldDisplayImage: true, hasDisplayedImage: true });
-		}
+
+		var { projects } = this.props
+		if (!projects) { return }
+
+		if (this.state.hasProjectImages) { return }
 
 		$.ajax({
 			url: '/api/v1/projects?fields=atlas_url,encoded_image,image_credit',
 			type: 'get',
 			success: (data) => {
 				// filter projects that don't have an image.
-				var dataWithImage = [];
+				var dataWithImage = []
 				data.forEach((datum) => {
-					var project;
-					if (datum.encoded_image != null) {
-						project = projects.findWhere({ atlas_url: datum.atlas_url });
-						project.set('encoded_image', datum.encoded_image);
-						project.set('image_credit', datum.image_credit);
+					var { encoded_image, image_credit, atlas_url } = datum
+					if (encoded_image != null) {
+						let project = projects.findWhere({ atlas_url: atlas_url })
+						project.set('encoded_image', encoded_image)
+						project.set('image_credit', image_credit)
 					}
-				});
-				projects.hasImages = true;
-				this.setState({ shouldDisplayImage: true, hasDisplayedImage: true });
+				})
+				this.setState({ hasProjectImages: true })
 			}
-		});
+		})
 	}
 
 }

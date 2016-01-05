@@ -12,7 +12,7 @@ export class Model extends Backbone.Model {
 	 * Lower-case name of the resource constructed by this constructor.
 	 *
 	 */
-	get resourceName() { return 'resource'; }
+	get resourceName() { return 'resource' }
 
 
 	/*
@@ -110,7 +110,7 @@ export class Model extends Backbone.Model {
 
 		return new Promise((resolve, reject) => {
 
-			var url = this.apiUrlRoot;
+			var url = this.apiUrlRoot
 
 			$.ajax({
 				url: url,
@@ -120,12 +120,10 @@ export class Model extends Backbone.Model {
 				success: (datum) => {
 					resolve(datum);
 				},
-				error: (err) => {
-					reject(err);
-				}
-			});
+				error: (err) => { reject(err) }
+			})
 
-		});
+		})
 
 	}
 
@@ -138,22 +136,18 @@ export class Model extends Backbone.Model {
 
 		return new Promise((resolve, reject) => {
 
-			var url = `${this.apiUrlRoot}/${this.get('id')}/edit`;
+			var url = `${this.apiUrlRoot}/${this.get('id')}/edit`
 
 			$.ajax({
 				url: url,
 				type: 'post',
 				dataType: 'text',
 				data: { jsonString: JSON.stringify(this.toJSON()) },
-				success: (datum) => {
-					resolve(datum);
-				},
-				error: (err) => {
-					reject(err);
-				}
-			});
+				success: (datum) => { resolve(datum) },
+				error: (err) => { reject(err) }
+			})
 
-		});
+		})
 
 	}
 
@@ -166,20 +160,16 @@ export class Model extends Backbone.Model {
 
 		return new Promise((resolve, reject) => {
 
-			var url = `${this.apiUrlRoot}/${this.get('id')}`;
+			var url = `${this.apiUrlRoot}/${this.get('id')}`
 
 			$.ajax({
 				url: url,
 				type: 'delete',
-				success: (datum) => {
-					resolve(datum);
-				},
-				error: (err) => {
-					reject(err);
-				}
-			});
+				success: (datum) => { resolve(datum) },
+				error: (err) => { reject(err) }
+			})
 
-		});
+		})
 
 	}
 
@@ -201,8 +191,8 @@ export class Collection extends Backbone.Collection {
 	 *
 	 */
 	get dbCollectionName() { 
-		var name = this.model.prototype.resourceName;
-		return `${name}s`; 
+		var name = this.model.prototype.resourceName
+		return `${name}s`
 	}
 
 
@@ -211,8 +201,8 @@ export class Collection extends Backbone.Collection {
 	 *
 	 */
 	get apiUrl() {
-		var name = this.model.prototype.resourceName;
-		return `/api/v1/${name}s`; 
+		var name = this.model.prototype.resourceName
+		return `/api/v1/${name}s`
 	}
 
 
@@ -222,16 +212,16 @@ export class Collection extends Backbone.Collection {
 	 */
 	buildQueryString(query) {
 
-		var queryString = '';
+		var queryString = ''
 
-		if (query == null || Object.keys(query).length === 0) { return null; }
+		if (query == null || Object.keys(query).length === 0) { return null }
 
 		for (let key in query) {
-			let value = query[key];
-			queryString += `${key}=${value}&`;
+			let value = query[key]
+			queryString += `${key}=${value}&`
 		}
 
-		return queryString.slice(0, -1);
+		return queryString.slice(0, -1)
 
 	}
 
@@ -242,16 +232,16 @@ export class Collection extends Backbone.Collection {
 	 */
 	buildFieldString(fields) {
 
-		var fieldString = 'fields=';
+		var fieldString = 'fields='
 
-		if (fields == null || Object.keys(fields).length === 0) { return null; }
+		if (fields == null || Object.keys(fields).length === 0) { return null }
 
 		for (let key in fields) {
-			let value = fields[key];
-			fieldString += `${ value === 1 ? '' : '-' }${key},`;
+			let value = fields[key]
+			fieldString += `${ value === 1 ? '' : '-' }${key},`
 		}
 
-		return fieldString.slice(0, -1);
+		return fieldString.slice(0, -1)
 
 	}
 
@@ -262,9 +252,9 @@ export class Collection extends Backbone.Collection {
 	 */
 	getClientFetchPromise(query, fields) {
 
-		var isCompleteQuery = (query != null && fields == null);
+		var isCompleteQuery = (query != null && fields == null)
 
-		var queryString = '?' + (this.buildQueryString(query) || '') + '&' + (this.buildFieldString(fields) || '');
+		var queryString = '?' + (this.buildQueryString(query) || '') + '&' + (this.buildFieldString(fields) || '')
 
 		return new Promise((resolve, reject) => {
 
@@ -272,35 +262,33 @@ export class Collection extends Backbone.Collection {
 
 				// Small, seeded collections are resolved immediately.
 				if (this.dbSeed) {
-					this.reset(this.dbSeed);
-					return resolve(this);
+					this.reset(this.dbSeed)
+					return resolve(this)
 				}
 
 				// Cached collections are resolved immediately.
 				if (this.dbCache) {
-					this.reset(this.dbCache);
-					return resolve(this);
+					this.reset(this.dbCache)
+					return resolve(this)
 				}
 
 			}
 
-			var url = this.apiUrl + queryString;
+			var url = this.apiUrl + queryString
 
 			$.ajax({
 				url: url,
 				type: 'get',
 				success: (data) => {
 					// Set database cache.
-					if (!isCompleteQuery) { this.dbCache = data; }
-					this.reset(data);
-					resolve(this);
+					if (!isCompleteQuery) { this.dbCache = data }
+					this.reset(data)
+					resolve(this)
 				},
-				error: (err) => {
-					reject(err);
-				}
-			});
+				error: (err) => { reject(err) }
+			})
 
-		});
+		})
 
 	}
 

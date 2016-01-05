@@ -47,6 +47,7 @@ class Index extends React.Component {
 	 */
 	render() {
 		var projects = this.getProjects()
+		var { projectSections, projectTemplates } = this.props.app.entities
 		return (
 			<div className="atl fill-parent">
 				<SideBar buttons={ defaultButtons } />
@@ -56,20 +57,20 @@ class Index extends React.Component {
 							<h1 className="title title--compact">Explore Atlas</h1>
 							<ProjectTemplates 
 								radio={this.props.radio}
-								projectTemplates={this.state.projectTemplates}
+								projectTemplates={projectTemplates}
 								updateProjectsIndex={this.forceUpdate}
 							/>
 							<ProjectSections 
 								radio={this.props.radio}
-								projectSections={this.state.projectSections}
+								projectSections={projectSections}
 								updateProjectsIndex={this.forceUpdate}
 							/>
 						</div>
 						<Projects 
 							radio={this.props.radio}
 							projects={projects} 
-							projectTemplates={this.state.projectTemplates} 
-							projectSections={this.state.projectSections}
+							projectTemplates={projectTemplates} 
+							projectSections={projectSections}
 							updateProjectsIndex={this.forceUpdate}
 						/>
 					</div>
@@ -85,8 +86,9 @@ class Index extends React.Component {
 	 */
 	componentDidMount() {
 		if (!this.getProjects()) { this.fetchProjects() }
-		this.fetchProjectSections()
-		this.fetchProjectTemplates()
+		var { projectSections, projectTemplates } = this.props.app.entities
+		if (!projectSections || projectSections.length === 0) { this.fetchProjectSections() }
+		if (!projectTemplates || projectTemplates.length === 0) { this.fetchProjectTemplates() }
 	}
 
 
@@ -121,6 +123,7 @@ class Index extends React.Component {
 		var coll = new projectSection.Collection()
 		coll.getClientFetchPromise().then((coll) => {
 			coll.initializeActiveStates()
+			this.props.dispatch({ type: 'FETCH_PROJECT_SECTIONS_SUCCESS', data: coll })
 			this.setState({ projectSections: coll })
 		}).catch((err) => {
 			window.location.assign('/menu') 
@@ -137,6 +140,7 @@ class Index extends React.Component {
 		var coll = new projectTemplate.Collection()
 		coll.getClientFetchPromise().then((coll) => {
 			coll.initializeActiveStates()
+			this.props.dispatch({ type: 'FETCH_PROJECT_TEMPLATES_SUCCESS', data: coll })
 			this.setState({ projectTemplates: coll })
 		}).catch((err) => { 
 			window.location.assign('/menu') 

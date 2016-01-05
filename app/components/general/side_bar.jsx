@@ -58,7 +58,7 @@ class SideBar extends React.Component {
 	 *
 	 */
 	renderDropdownIcon() {
-		return this.state.isActive ? <DropdownUp /> : <DropdownDown />;
+		return this.state.isActive ? <DropdownUp /> : <DropdownDown />
 	}
 
 
@@ -76,7 +76,7 @@ class SideBar extends React.Component {
 	 *
 	 */
 	toggle() {
-		this.setState({ isActive: !this.state['isActive'] });
+		this.setState({ isActive: !this.state['isActive'] })
 	}
 
 
@@ -106,6 +106,11 @@ class SideBar extends React.Component {
 
 }
 
+
+/*
+ *
+ *
+ */
 class SideBarButton extends React.Component {
 
 	/*
@@ -114,8 +119,9 @@ class SideBarButton extends React.Component {
 	 */
 	constructor(props) {
 		super(props);
-		this.state = this.state || {};
-		this.state.isActive = false;
+		this.state = {
+			isActive: false
+		}
 	}
 
 
@@ -191,7 +197,7 @@ class SideBarButton extends React.Component {
 			<a href={ this.props.options.url }>
 				<IconComp />
 			</a>
-		);
+		)
 	}
 
 
@@ -216,10 +222,10 @@ class SideBarButton extends React.Component {
 	 *
 	 */
 	getIconComp() {
-		var { hasActiveState, isActive, reactIconNames } = this.props.options;
-		var iconNameIndex = (hasActiveState && isActive) ? 1 : 0;
-		var iconName = reactIconNames[iconNameIndex] || 'Build';
-		return Icons[iconName];
+		var { hasActiveState, isActive, reactIconNames } = this.props.options
+		var iconNameIndex = (hasActiveState && isActive) ? 1 : 0
+		var iconName = reactIconNames[iconNameIndex] || 'Build'
+		return Icons[iconName]
 	}
 
 
@@ -234,7 +240,7 @@ class SideBarButton extends React.Component {
 		}
 		// If the parent of the SideBar component passed down its own method to handle a message from the button and if the button has a click message set, call this method.
 		if (clickMessage && this.props.sendMessageToParent) {
-			this.props.sendMessageToParent(clickMessage);
+			this.props.sendMessageToParent(clickMessage)
 		}
 	}
 
@@ -244,7 +250,7 @@ class SideBarButton extends React.Component {
 	 *
 	 */
 	onButtonMouseEnter() {
-		this.props.setHoveredButtonTitle(this.props.options.title);
+		this.props.setHoveredButtonTitle(this.props.options.title)
 	}
 
 
@@ -253,7 +259,7 @@ class SideBarButton extends React.Component {
 	 *
 	 */
 	onButtonMouseLeave() {
-		this.props.setHoveredButtonTitle('');
+		this.props.setHoveredButtonTitle('')
 	}
 
 }

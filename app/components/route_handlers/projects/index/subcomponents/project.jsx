@@ -41,10 +41,11 @@ class Project extends React.Component {
 				onMouseEnter={ this.applyBackgroundColor.bind(this) } 
 				onMouseLeave={ this.removeBackgroundColor.bind(this) } 
 				onClick={ this.launch.bind(this) } 
-				to={ '/' + project.get('atlas_url') }
-				data-id={project.get('id')} 
+				to={ `/${project.get('atlas_url')}` }
+				data-id={ project.get('id') } 
 			>
-				<div className="atl__project__background" style={this.getBackgroundStyle()} >
+				<div className="atl__project__background" >
+					<div className="atl__project__background__image" style={this.getBackgroundStyle()}></div>
 					<div className="center--content">
 						<p className="atl__project__background__initials">{ this.getInitials() }</p>
 					</div>
@@ -65,9 +66,12 @@ class Project extends React.Component {
 	 */
 	getBackgroundStyle() {
 		var { project } = this.props
-		if (project == null || !this.props.shouldDisplayImage) { return; }
-		var style = { 'backgroundImage': project.getImageUrl() };
-		return style;
+		if (!project) { return }
+		var imageUrl = project.getImageUrl()
+		if (imageUrl) {
+			return { 'backgroundImage': project.getImageUrl(), 'opacity': '1' }
+		}
+		return { 'opacity': '0' }
 	}
 
 
@@ -78,9 +82,9 @@ class Project extends React.Component {
 	getInitials() {
 		var { project } = this.props,
 			title, initials;
-		if (project.get('encoded_image') != null) { return ''; }
-		title = project.get('title');
-		if (title == null) { return ''; }
+		if (project.get('encoded_image') != null) { return '' }
+		title = project.get('title')
+		if (title == null) { return '' }
 		initials = (title.substring(0, 1) + title.substring(1, 2).toLowerCase());
 		return initials;
 	}
@@ -92,7 +96,7 @@ class Project extends React.Component {
 	 */
 	isVisible() {
 		var { project, projectSections, projectTemplates } = this.props
-		if (projectSections == null || projectTemplates == null) { return false }
+		if (!projectSections || !projectTemplates) { return false }
 		return (projectSections.test(project, 'project_section') && projectTemplates.test(project, 'project_template'))
 	}
 
@@ -106,7 +110,7 @@ class Project extends React.Component {
 		// When the following page is rendered, its theme color is set to
 		//   current highlight color.
 		// TODO refactor current theme color assignments
-		var { radio } = this.props;
+		var { radio } = this.props
 		radio.currentThemeColor = this.getColor().replace('0.8', '1.0');
 	}
 
