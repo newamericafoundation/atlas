@@ -1,6 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
-import { Route, IndexRoute } from 'react-router'
+import { Route, IndexRoute, Redirect } from 'react-router'
 
 // Route handlers and route handler generators.
 import Layout from './../components/layout.jsx'
@@ -16,10 +16,11 @@ import models from './../models/index.js'
 var clientRoutes = (
 	<Route path='/' component={Layout}>
 		<IndexRoute component={Welcome} />
-		<Route path='admin/images/all' component={ImagesIndex} />
+		<Route path='/admin/images/all' component={ImagesIndex} />
 		{ resourceRouteGenerator(models.project.Model) }
 		{ resourceRouteGenerator(models.image.Model) }
-		<Route path='menu' component={ProjectsIndex} />
+		<Route path='/menu' component={ProjectsIndex} />
+		<Route path='/menu/' component={ProjectsIndex} />
 		<Route path=':atlas_url' component={ProjectsShow} />
 	</Route>
 )
