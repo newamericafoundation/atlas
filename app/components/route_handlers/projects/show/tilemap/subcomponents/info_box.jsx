@@ -42,7 +42,7 @@ class InfoBox extends Static {
 				{ this.renderTitleBar('image') }
 				{ this.renderContentBar() }
 			</div>
-		);
+		)
 	}
 
 
@@ -57,7 +57,7 @@ class InfoBox extends Static {
 				style={ this.getTitleBarBackgroundStyle() } 
 				ref='title-bar-background' 
 			/>
-		);
+		)
 	}
 
 
@@ -67,22 +67,22 @@ class InfoBox extends Static {
 	 */
 	getTitleBarBackgroundStyle() {
 
-		var project = this.props.project;
-		var activeItem = project.get('data').items.active;
+		var { project } = this.props
+		var activeItem = project.get('data').items.active
 		
 		if (!activeItem) {
 			if (project.getImageUrl()) {
-				return { 'backgroundImage': project.getImageUrl() };
+				return { 'backgroundImage': project.getImageUrl() }
 			}
-			return { 'backgroundColor': 'rgba(50, 50, 50, 0.1)' };
+			return { 'backgroundColor': 'rgba(50, 50, 50, 0.1)' }
 		}
 
 		// The image field is set to 'not available' if there was already a network request for the image and it returned empty.
 		if (activeItem.image && activeItem.image !== 'not available') { 
-			return { 'backgroundImage': activeItem.image.getUrl() };
+			return { 'backgroundImage': activeItem.image.getUrl() }
 		}
 
-		return { 'backgroundColor': 'rgba(50, 50, 50, 0.1)' };
+		return { 'backgroundColor': 'rgba(50, 50, 50, 0.1)' }
 	}
 
 
@@ -98,7 +98,7 @@ class InfoBox extends Static {
 					{ this.renderWebsiteLink() }
 				</ul>
 			</div>
-		);
+		)
 	}
 
 
@@ -116,7 +116,7 @@ class InfoBox extends Static {
 					{ this.renderTocList() }
 				</div>
 			</div>
-		);
+		)
 	}
 
 
@@ -125,10 +125,13 @@ class InfoBox extends Static {
 	 *
 	 */
 	renderPageContent() {
-		var content = this.getContent();
+		var content = this.getContent()
 		return (
-			<div className='static-content' dangerouslySetInnerHTML={{ __html: content.body }}></div>
-		);
+			<div 
+				className='static-content' 
+				dangerouslySetInnerHTML={{ __html: content.body }}
+			/>
+		)
 	}
 
 
@@ -137,9 +140,9 @@ class InfoBox extends Static {
   	 *
   	 */
 	renderTocList() {
-		var tocItems = this.getContent().toc;
-		if (!tocItems) { return; }
-		if (tocItems.length < 2) { return; }
+		var tocItems = this.getContent().toc
+		if (!tocItems) { return }
+		if (tocItems.length < 2) { return }
 		return tocItems.map((item, i) => {
 			return (
 				<li className={'toc-'+item.tagName} key={'toc-' + i}>
@@ -147,8 +150,8 @@ class InfoBox extends Static {
 						{ item.content }
 					</a>
 				</li>
-			);
-		});
+			)
+		})
 	}
 
 
@@ -157,7 +160,7 @@ class InfoBox extends Static {
 	 *
 	 */
 	componentDidMount() {
-		this.setImage();
+		this.setImage()
 	}
 
 
@@ -166,10 +169,12 @@ class InfoBox extends Static {
 	 *
 	 */
 	componentDidUpdate() {
-		var activeItem = (this.props.project) ? (this.props.project.get('data').items.active) : undefined;
-		if (this.state.image == null) { return this.setImage(); }
-		if (activeItem == null || activeItem.getImageName() !== this.state.image.get('name')) {
-			this.setImage();
+		var { project} = this.props
+		var activeItem = project.get('data').items.active
+		var { image } = this.state
+		if (!image) { return this.setImage() }
+		if (!activeItem || activeItem.getImageName() !== image.get('name')) {
+			this.setImage()
 		}
 	}
 
@@ -179,11 +184,10 @@ class InfoBox extends Static {
 	 *
 	 */
 	getTitle() {
-		var activeItem, project;
-		project = this.props.project;
-		activeItem = project.get('data').items.active;
-		if (activeItem != null) { return activeItem.get('name'); }
-		return project.get('title');
+		var { project } = this.props
+		var activeItem = project.get('data').items.active
+		if (activeItem) { return activeItem.get('name') }
+		return project.get('title')
 	}
 
 
@@ -192,13 +196,12 @@ class InfoBox extends Static {
 	 *
 	 */
 	getBodyHtml() {
-		var activeItem, project;
-		project = this.props.project;
-		activeItem = project.get('data').items.active;
-		if (activeItem != null) {
-			return '<p>Active Data Html</p>';
+		var { project } = this.props
+		var activeItem = project.get('data').items.active
+		if (activeItem) {
+			return '<p>Active Data Html</p>'
 		}
-		return project.get('body_text');
+		return project.get('body_text')
 	}
 
 
@@ -207,19 +210,19 @@ class InfoBox extends Static {
 	 *
 	 */
 	close(e) {
-		var { radio } = this.props;
-		var $el, transitionEventName, items;
-		items = this.props.project.get('data').items;
-		e.preventDefault();
-		transitionEventName = this.getTransitionEventName();
-		$el = $(ReactDOM.findDOMNode(this.refs.main));
+		var { radio } = this.props
+		var $el, transitionEventName, items
+		items = this.props.project.get('data').items
+		e.preventDefault()
+		transitionEventName = this.getTransitionEventName()
+		$el = $(ReactDOM.findDOMNode(this.refs.main))
 		$el.on(transitionEventName, () => {
-			delete items.active;
-			$el.off(transitionEventName);
-			radio.commands.execute('set:header:strip:color', {});
-			radio.commands.execute('update:tilemap');
-		});
-		this.props.setUiState({ isInfoBoxActive: false });
+			delete items.active
+			$el.off(transitionEventName)
+			radio.commands.execute('set:header:strip:color', {})
+			radio.commands.execute('update:tilemap')
+		})
+		this.props.setUiState({ isInfoBoxActive: false })
 	}
 
 
@@ -236,7 +239,7 @@ class InfoBox extends Static {
 			transitionEventNamespace: transitionEventNamespace
 		});
 		eventName = events.map((evnt) => {
-			return (evnt + "." + transitionEventNamespace);
+			return (evnt + "." + transitionEventNamespace)
 		}).join(' ')
 		return eventName
 	}
@@ -266,7 +269,7 @@ class InfoBox extends Static {
 						activeItem.image = 'not available'
 					}
 				}
-			);
+			)
 		}
 
 	}
@@ -301,21 +304,20 @@ class InfoBox extends Static {
 	 *
 	 */
 	getContent() {
-		var body = '', toc = '', cntnt;
+
+		var content = { body: '', toc: '' }
 		var { project, activeItem } = this.props
-		if (activeItem != null) {
+
+		if (activeItem) {
 			this.ensureActiveItemContent()
-			body = activeItem.get('info_box_content')
-			toc = activeItem.get('info_box_content_toc')
+			content.body = activeItem.get('info_box_content')
+			content.toc = activeItem.get('info_box_content_toc')
 		} else {
-			body = project.get('body_text')
-			toc = project.get('body_text_toc')
+			content.body = project.get('body_text')
+			content.toc = project.get('body_text_toc')
 		}
 
-		return cntnt = {
-			body: body,
-			toc: toc
-		}
+		return content
 
   	}
 
@@ -349,17 +351,17 @@ class InfoBox extends Static {
 	 */
 	getSummaryContent() {
 
-		var activeItem, html, summaryVar;
+		var html, summaryVar
 
-		activeItem = this.props.activeItem;
+		var { activeItem } = this.props
 
-		if (activeItem.get('summary') || activeItem.get('summarytable')) { return; }
+		if (activeItem.get('summary') || activeItem.get('summarytable')) { return }
 
-		summaryVar = this.getFilteredVariables('summary_order');
+		summaryVar = this.getFilteredVariables('summary_order')
 
-		if (summaryVar.length === 0) { return; }
+		if (summaryVar.length === 0) { return }
 
-		html = '<table>';
+		html = '<table>'
 
 		summaryVar.forEach((variable) => {
 			html += `
@@ -371,12 +373,12 @@ class InfoBox extends Static {
 						${variable.getFormattedField(activeItem)}
 					</td>
 				</tr>
-			`;
-		});
+			`
+		})
 
-		html += '</table>';
+		html += '</table>'
 
-		return html;
+		return html
 
 	}
 
@@ -387,20 +389,20 @@ class InfoBox extends Static {
 	 */
 	ensureActiveItemContent() {
 
-		var { radio } = this.props;
-		var activeItem, html, infoBoxVar, project, variables;
+		var { radio } = this.props
+		var html, infoBoxVar, variables
 
-		project = this.props.project;
+		var { project } = this.props
+		var { activeItem } = this.props
 
-		activeItem = this.props.activeItem;
+		var summaryContent = this.getSummaryContent()
 
-		var summaryContent = this.getSummaryContent();
-		html = summaryContent ? `<h1>Overview</h1>${summaryContent}` : '';
+		html = summaryContent ? `<h1>Overview</h1>${summaryContent}` : ''
 
-		if (!activeItem) { return; }
-		if (activeItem.get('info_box_content')) { return; }
+		if (!activeItem) { return }
+		if (activeItem.get('info_box_content')) { return }
 
-		infoBoxVar = this.getFilteredVariables('infobox_order');
+		infoBoxVar = this.getFilteredVariables('infobox_order')
 
 		infoBoxVar.forEach((variable) => {
 			html += `
@@ -408,12 +410,12 @@ class InfoBox extends Static {
 					${variable.get('display_title') || 'Overview'}
 				</h1>
 				${variable.getFormattedField(activeItem)}
-			`;
-		});
+			`
+		})
 
-		activeItem.set('info_box_content', html);
+		activeItem.set('info_box_content', html)
 
-		return activeItem.setHtmlToc('info_box_content');
+		return activeItem.setHtmlToc('info_box_content')
 
 	}
 

@@ -7,7 +7,7 @@ import 'babel-polyfill'
 import React from 'react'
 import { render } from 'react-dom'
 
-import clientRouter from './client_router.jsx'
+import getClientRouter from './get_client_router.jsx'
 
 // Import global libraries
 import $ from 'jquery'
@@ -31,6 +31,7 @@ global.selectize = selectize
 global.startAtlas = () => {
 	// Developer signature :).
 	console.log('Hi, Mom!')
+	var clientRouter = getClientRouter()
 	var container = global.document.getElementById('site')
 	render(clientRouter, container)
 }

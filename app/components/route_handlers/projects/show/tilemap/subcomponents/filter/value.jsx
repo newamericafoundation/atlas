@@ -18,11 +18,11 @@ class FilterValue extends React.Component {
 	 *
 	 */
 	render() {
-		var IconComp = Icons.Hex,
-			className = classNames({
-				'toggle-button': true,
-				'toggle-button--inactive': !this.props.filterValue.isActive()
-			});
+		var IconComp = Icons.Hex
+		var className = classNames({
+			'toggle-button': true,
+			'toggle-button--inactive': !this.props.filterValue.isActive()
+		})
 		return (
 			<li 
 				className={ className }
@@ -44,9 +44,10 @@ class FilterValue extends React.Component {
 	 *
 	 */
 	getColor() {
-		if (!this.props.filterValue.isActive()) { return; }
-		var i = this.props.filterValue.getFriendlySiblingIndex(15);
-		return colors.toRgba(i - 1);
+		var { filterValue } = this.props
+		if (!filterValue.isActive()) { return }
+		var i = filterValue.getFriendlySiblingIndex(15)
+		return colors.toRgba(i - 1)
 	}
 
 

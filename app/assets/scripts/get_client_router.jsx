@@ -17,19 +17,19 @@ const reducer = combineReducers({
 	app: appReducer
 })
 
-const store = createStore(reducer)
-
-const history = createHistory()
-
-syncReduxAndRouter(history, store)
 
 // Main router definition.
-var clientRouter = (
-	<Provider store={store}>
-		<Router history={history}>
-			{ clientRoutes }
-		</Router>
-	</Provider>
-)
+export default function getClientRouter() {
 
-export default clientRouter
+	var store = createStore(reducer, window.STATE_FROM_SERVER || {})
+	var history = createHistory()
+	syncReduxAndRouter(history, store)
+
+	return (
+		<Provider store={store}>
+			<Router history={history}>
+				{ clientRoutes }
+			</Router>
+		</Provider>
+	)
+}

@@ -73,7 +73,7 @@ class ProjectTemplate extends React.Component {
 					{projectTemplate.get('display_name')}
 				</p>
 			</li>
-		);
+		)
 	}
 
 
@@ -88,8 +88,8 @@ class ProjectTemplate extends React.Component {
 				'Explainer': 'Dictionary',
 				'Policy Brief': 'Dictionary',
 				'Polling': 'Graph'
-			};
-		return dictionary[templateName];
+			}
+		return dictionary[templateName]
 	}
 
 

@@ -1,10 +1,10 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react'
+import { findDOMNode } from 'react-dom'
 
 import classNames from 'classnames';
 
 import Help from './../../../../../../general/help.jsx'
-import * as Icons from './../../../../../../general/icons.jsx'
+import { More } from './../../../../../../general/icons.jsx'
 
 import Base from './../base.jsx'
 
@@ -25,8 +25,8 @@ class Filter extends Base {
 	 *
 	 */
 	constructor(props) {
-		super(props);
-		this.maxHeight = 0;
+		super(props)
+		this.maxHeight = 0
 	}
 
 
@@ -35,14 +35,13 @@ class Filter extends Base {
 	 *
 	 */
 	render() {
-		var MoreIcon = Icons.More;
 		return (
 			<div className='atl__filter' ref='root'>
 				<div className="atl__filter__keys">
 					<ul>
 						{ this.renderKeys() }
 						<li className='button' onClick={ this.toggleOptionsTab.bind(this) }>
-							<MoreIcon />
+							<More />
 						</li>
 					</ul>
 					<Help position='right' text='Select the variable you want to filter by.' id='filter-keys' />
@@ -58,7 +57,7 @@ class Filter extends Base {
 					<Help position='right' text='Select the values you want to filter out. Corresponding map colors are indicated.' id='filter-values' />
 				</div>
 			</div>
-		);
+		)
 	}
 
 
@@ -67,14 +66,14 @@ class Filter extends Base {
 	 *
 	 */
 	renderValues() {
-		var activeChild = this.props.filter.getActiveChild();
-		if (!activeChild) { return; }
-		var values = activeChild.children;
+		var activeChild = this.props.filter.getActiveChild()
+		if (!activeChild) { return }
+		var values = activeChild.children
 		return values.map((value, i) => {
 			return (
 				<FilterValue radio={this.props.radio} filterValue={value} key={i} />
-			);
-		});
+			)
+		})
 	}
 
 
@@ -83,11 +82,11 @@ class Filter extends Base {
 	 *
 	 */
 	getHeight() {
-		var $el = $(ReactDOM.findDOMNode(this.refs.root));
-		var height = $el.height();
-		if (height > this.maxHeight) { this.maxHeight = height; }
+		var $el = $(findDOMNode(this.refs.root))
+		var height = $el.height()
+		if (height > this.maxHeight) { this.maxHeight = height }
 		else { height = this.maxHeight }
-		return height;
+		return height
 	}
 
 
@@ -96,7 +95,7 @@ class Filter extends Base {
 	 *
 	 */
 	toggleOptionsTab() {
-		this.props.setUiState({ isOptionsTabActive: !this.props.uiState.isOptionsTabActive });
+		this.props.setUiState({ isOptionsTabActive: !this.props.uiState.isOptionsTabActive })
 	}
 
 
@@ -105,7 +104,7 @@ class Filter extends Base {
 	 *
 	 */
 	componentDidUpdate() {
-		this.props.cacheHeight(this.getHeight());
+		this.props.cacheHeight(this.getHeight())
 	}
 
 
@@ -114,15 +113,15 @@ class Filter extends Base {
 	 *
 	 */
 	renderKeys() {
-		var keys = this.props.filter.children,
-			activeKey = this.props.filter.getActiveChild(),
-			index = keys.indexOf(activeKey),
-			neighborHood = this.props.filter.getActiveChildNeighborhood(0);
+		var keys = this.props.filter.children
+		var activeKey = this.props.filter.getActiveChild()
+		var index = keys.indexOf(activeKey)
+		var neighborHood = this.props.filter.getActiveChildNeighborhood(0)
 		return neighborHood.map((key, i) => {
 			return (
 				<FilterKey radio={this.props.radio} filterKey={key} key={i} />
-			);
-		});
+			)
+		})
 	}
 
 
@@ -131,13 +130,11 @@ class Filter extends Base {
 	 *
 	 */
 	getKeyDescriptionHtml() {
-		var keys = this.props.filter.children,
-			activeKey = this.props.filter.getActiveChild();
-		
-		if (activeKey) {
-			let longDescription = activeKey.get('variable').get('long_description');
-			return formatters.markdown(longDescription);
-		}
+		var keys = this.props.filter.children
+		var activeKey = this.props.filter.getActiveChild()
+		if (!activeKey) { return }
+		var longDescription = activeKey.get('variable').get('long_description')
+		return formatters.markdown(longDescription)
 	}
 
 }

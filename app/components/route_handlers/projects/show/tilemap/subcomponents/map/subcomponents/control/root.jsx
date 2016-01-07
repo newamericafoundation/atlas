@@ -5,7 +5,7 @@ import { Info, Plus, Minus } from './../../../../../../../../general/icons.jsx'
 
 
 /*
- *
+ * Map control.
  *
  */
 class Control extends React.Component {
@@ -14,16 +14,28 @@ class Control extends React.Component {
 	 *
 	 *
 	 */
+	constructor(props) {
+		super(props)
+		this.showAttribution = this.showAttribution.bind(this)
+		this.zoomIn = this.zoom.bind(this, +1)
+		this.zoomOut = this.zoom.bind(this, -1)
+	}
+
+
+	/*
+	 *
+	 *
+	 */
 	render() {
 		return (
 			<div className='atl__map-control'>
-				<div onClick={this.showAttribution.bind(this)} className='atl__map-control__button'>
+				<div onClick={this.showAttribution} className='atl__map-control__button'>
 					<Info />
 				</div> 
-				<div onClick={this.zoom.bind(this, +1)} className='atl__map-control__button'>
+				<div onClick={ this.zoomIn } className='atl__map-control__button'>
 					<Plus />
 				</div>
-				<div onClick={this.zoom.bind(this, -1)} className='atl__map-control__button'>
+				<div onClick={ this.zoomOut } className='atl__map-control__button'>
 					<Minus />
 				</div>
 				<div className='atl__help atl__help--left'>
@@ -39,9 +51,9 @@ class Control extends React.Component {
 	 *
 	 */
 	zoom(zoomChange) {
-		if (this.props.map) {
-			this.props.map.changeZoom(zoomChange)
-		}
+		var { map } = this.props
+		if (!map) { return }
+		map.changeZoom(zoomChange)
 	}
 
 

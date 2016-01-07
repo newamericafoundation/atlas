@@ -20,7 +20,7 @@ class ProjectSections extends React.Component {
 			<ul className="atl__project-section-filter">
 				{ this.renderList() }
 			</ul>
-		);
+		)
 	}
 
 
@@ -51,6 +51,10 @@ class ProjectSections extends React.Component {
  */
 class ProjectSection extends React.Component {
 
+	/*
+	 *
+	 *
+	 */
 	render() {
 		var { projectSection } = this.props
 		var cls = classNames({
@@ -62,16 +66,21 @@ class ProjectSection extends React.Component {
 			<li className={ cls } onClick={ this.toggleActiveState.bind(this) }>
 				<HexIcon className={'toggle-button__icon'} />
 				<div className="toggle-button__text">
-					<p>{projectSection.get('name')}</p>
+					<p>{ projectSection.get('name') }</p>
 				</div>
 			</li>
-		);
+		)
 
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	toggleActiveState() {
-		this.props.projectSection.toggleActiveState();
-		this.props.updateProjectsIndex();
+		this.props.projectSection.toggleActiveState()
+		this.props.updateProjectsIndex()
 	}
 
 }

@@ -1,6 +1,10 @@
-import React from 'react';
-import classNames from 'classnames';
+import React from 'react'
+import classNames from 'classnames'
 
+/*
+ *
+ *
+ */
 class FilterKey extends React.Component {
 
 	/*
@@ -11,14 +15,14 @@ class FilterKey extends React.Component {
 		var cls = classNames({
 			'button': 'true',
 			'button--active': this.props.filterKey.isActive()
-		});
+		})
 		return (
 			<li className={ cls } onClick={ this.toggle.bind(this) }>
 				<p>
 					{ this.getContent() }
 				</p>
 			</li>
-		);
+		)
 	}
 
 
@@ -27,7 +31,7 @@ class FilterKey extends React.Component {
 	 *
 	 */
 	getContent() {
-		return this.props.filterKey.get('variable').get('display_title');
+		return this.props.filterKey.get('variable').get('display_title')
 	}
 
 
@@ -36,11 +40,11 @@ class FilterKey extends React.Component {
 	 *
 	 */
 	toggle() {
-		var { radio } = this.props;
-		this.props.filterKey.clickToggle();
-		radio.commands.execute('update:tilemap');
+		var { radio } = this.props
+		this.props.filterKey.clickToggle()
+		radio.commands.execute('update:tilemap')
 	}
 
 }
 
-export default FilterKey;
+export default FilterKey

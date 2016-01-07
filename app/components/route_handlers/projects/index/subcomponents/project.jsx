@@ -16,7 +16,7 @@ class Project extends React.Component {
 	 *
 	 */
 	constructor(props) {
-		super(props);
+		super(props)
 		this.state = {
 			highlightBackgroundColor: 'none'
 		}
@@ -37,11 +37,11 @@ class Project extends React.Component {
 		})
 		return (
 			<Link 
-				className={ cls } 
+				className={ cls }
+				to={ `/${project.get('atlas_url')}` }
 				onMouseEnter={ this.applyBackgroundColor.bind(this) } 
 				onMouseLeave={ this.removeBackgroundColor.bind(this) } 
 				onClick={ this.launch.bind(this) } 
-				to={ `/${project.get('atlas_url')}` }
 				data-id={ project.get('id') } 
 			>
 				<div className="atl__project__background" >
@@ -56,7 +56,7 @@ class Project extends React.Component {
 					</div>
 				</div>
 			</Link>
-		);
+		)
 	}
 
 
@@ -65,10 +65,10 @@ class Project extends React.Component {
 	 *
 	 */
 	getBackgroundStyle() {
-		var { project } = this.props
+		var { project, shouldDisplayImage } = this.props
 		if (!project) { return }
 		var imageUrl = project.getImageUrl()
-		if (imageUrl) {
+		if (shouldDisplayImage && imageUrl) {
 			return { 'backgroundImage': project.getImageUrl(), 'opacity': '1' }
 		}
 		return { 'opacity': '0' }
@@ -80,9 +80,9 @@ class Project extends React.Component {
 	 *
 	 */
 	getInitials() {
-		var { project } = this.props,
-			title, initials;
-		if (project.get('encoded_image') != null) { return '' }
+		var { project, shouldDisplayImage } = this.props
+		var title, initials
+		if (shouldDisplayImage && project.get('encoded_image')) { return '' }
 		title = project.get('title')
 		if (title == null) { return '' }
 		initials = (title.substring(0, 1) + title.substring(1, 2).toLowerCase());

@@ -1,10 +1,14 @@
-import React from 'react';
-import classNames from 'classnames';
+import React from 'react'
+import classNames from 'classnames'
 
-import Control from './subcomponents/control/root.jsx';
+import Control from './subcomponents/control/root.jsx'
+import Mapper from './subcomponents/mapper/mapper.js'
 
-import Mapper from './subcomponents/mapper/mapper.js';
 
+/*
+ * Container for the Leaflet map object.
+ *
+ */
 class Map extends React.Component {
 
 	/*
@@ -12,10 +16,11 @@ class Map extends React.Component {
 	 *
 	 */
 	constructor(props) {
-		super(props);
+		super(props)
 		this.state = {
+			// Map instance (Leaflet)
 			map: undefined
-		};
+		}
 	}
 
 
@@ -28,7 +33,7 @@ class Map extends React.Component {
 			<div className="fill-parent" id="atl__map">
 				<Control map={this.state.map} />
 			</div>
-		);
+		)
 	}
 
 
@@ -37,12 +42,12 @@ class Map extends React.Component {
 	 *
 	 */
 	shouldComponentUpdate(nextProps, nextState) {
-		return !nextProps.ignoreMapItemsOnUpdate;
+		return !nextProps.ignoreMapItemsOnUpdate
 	}
 
 
 	/*
-	 *
+	 * Add props and React parent component methods to d3 Mapper module.
 	 *
 	 */
 	componentDidMount() {
@@ -52,27 +57,8 @@ class Map extends React.Component {
 			uiState: this.props.uiState,
 			setUiState: this.props.setUiState,
 			setMap: this.setMap.bind(this)
-		};
+		}
 		Mapper.start()
-	}
-
-
-	/*
-	 * Set Mapbox map instance. On the component state.
-	 *
-	 */
-	setMap(map) {
-		this.setState({ map: map });
-	}
-
-
-	/*
-	 *
-	 *
-	 */
-	componentWillUnmount() {
-		Mapper.props = {};
-		Mapper.stop();
 	}
 
 
@@ -82,10 +68,29 @@ class Map extends React.Component {
 	 */
 	componentDidUpdate() {
 		if (!this.props.uiState.isMapDragged && Mapper.overlayView) { 
-			Mapper.overlayView.update(); 
+			Mapper.overlayView.update()
 		}
+	}
+
+
+	/*
+	 * Remove passed props from mapper and stop.
+	 *
+	 */
+	componentWillUnmount() {
+		delete Mapper.props
+		Mapper.stop()
+	}
+
+
+	/*
+	 * Set Mapbox map instance. On the component state.
+	 *
+	 */
+	setMap(map) {
+		this.setState({ map: map })
 	}
 
 }
 
-export default Map;
+export default Map

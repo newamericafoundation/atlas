@@ -1,7 +1,11 @@
 // Base class holding utility methods needed for project overview components.
 
-import React from 'react';
+import React from 'react'
 
+/*
+ *
+ *
+ */
 class Base extends React.Component {
 
 	/*
@@ -9,9 +13,7 @@ class Base extends React.Component {
 	 *
 	 */
 	render() {
-		return (
-			<div></div>
-		);
+		return <div></div>
 	}
 
 
@@ -20,9 +22,9 @@ class Base extends React.Component {
 	 *
 	 */
 	getName() {
-		var hoveredItem = this.getHoveredItem();
-		if (!hoveredItem) { return ''; }
-		return hoveredItem.get('name');
+		var hoveredItem = this.getHoveredItem()
+		if (!hoveredItem) { return '' }
+		return hoveredItem.get('name')
 	}
 
 
@@ -31,13 +33,13 @@ class Base extends React.Component {
 	 *
 	 */
 	getValue() {
-		var hoveredItem = this.getHoveredItem(),
-			filter = this.getFilter(),
-			filterActiveChild = filter.getActiveChild(),
-			variable;
-		if (!hoveredItem || !filter || !filterActiveChild) { return; }
-		variable = filter.getActiveChild().get('variable');
-		return variable.getFormattedField(hoveredItem);
+		var hoveredItem = this.getHoveredItem()
+		var filter = this.getFilter()
+		var filterActiveChild = filter.getActiveChild()
+		var variable
+		if (!hoveredItem || !filter || !filterActiveChild) { return }
+		variable = filter.getActiveChild().get('variable')
+		return variable.getFormattedField(hoveredItem)
 	}
 
 
@@ -46,10 +48,10 @@ class Base extends React.Component {
 	 *
 	 */
 	getKey() {
-		var filter = this.getFilter(),
-			filterActiveChild = filter.getActiveChild();
-		if (!filterActiveChild) { return ''; }
-		return filterActiveChild.get('variable').get('display_title');
+		var filter = this.getFilter()
+		var filterActiveChild = filter.getActiveChild()
+		if (!filterActiveChild) { return '' }
+		return filterActiveChild.get('variable').get('display_title')
 	}
 
 
@@ -58,7 +60,7 @@ class Base extends React.Component {
 	 *
 	 */
 	getHoveredItem() {
-		return this.props.project.get('data').items.hovered;
+		return this.props.project.get('data').items.hovered
 	}
 
 
@@ -67,9 +69,9 @@ class Base extends React.Component {
 	 *
 	 */
 	getFilter() {
-		return this.props.project.get('data').filter;
+		return this.props.project.get('data').filter
 	}
 
 }
 
-export default Base;
+export default Base

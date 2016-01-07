@@ -60,7 +60,7 @@ class Show extends React.Component {
 				/>
 				{ this.renderProject() }
 			</div>
-		);
+		)
 	}
 
 

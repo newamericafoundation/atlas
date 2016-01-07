@@ -23,7 +23,8 @@ class Projects extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			hasProjectImages: false
+			hasProjectImages: false,
+			shouldDisplayProjectImages: false
 		}
 	}
 
@@ -47,6 +48,7 @@ class Projects extends React.Component {
 	 */
 	renderList() {
 		var { projects } = this.props
+		var { hasProjectImages, shouldDisplayProjectImages } = this.state
 		if (!projects) { return <Loader /> }
 		return projects.map((project, i) => {
 			return (
@@ -54,10 +56,21 @@ class Projects extends React.Component {
 					{...this.props} 
 					key={i}
 					project={project}
-					shouldDisplayImage={this.state.hasProjectImages}
+					shouldDisplayImage={ hasProjectImages && shouldDisplayProjectImages }
 				/>
 			)
 		})
+	}
+
+
+	/*
+	 * Delay displaying images so that page renders faster.
+	 *
+	 */
+	componentDidMount() {
+		setTimeout(() => {
+			this.setState({ shouldDisplayProjectImages: true })
+		}, 250)
 	}
 
 
