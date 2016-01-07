@@ -73,11 +73,11 @@
 
 		display: block;
 		position: absolute;
-		bottom: 15%;
+		bottom: 25px;
 		width: 100%;
 
 		@include bp-h(600px) {
-			bottom: 25px;
+			bottom: 10%;
 		}
 
 		a {
