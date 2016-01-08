@@ -19,7 +19,7 @@ var Mapper = {
      *
      */
     start: function() {
-        return $.fn.ensureScript('L', '/assets/vendor/mapbox.js', this.showMain.bind(this));
+        return $.fn.ensureScript('L', '/assets/vendor/mapbox.js', this.showMain.bind(this))
     },
 
 
@@ -28,8 +28,8 @@ var Mapper = {
      *
      */
     stop: function() {
-        if (Mapper.overlayView) { Mapper.overlayView.destroy(); }
-        if (Mapper.rootView) { return Mapper.rootView.destroy(); }
+        if (Mapper.overlayView) { Mapper.overlayView.destroy() }
+        if (Mapper.rootView) { return Mapper.rootView.destroy() }
     },
 
 
@@ -39,17 +39,17 @@ var Mapper = {
      */
     showMain: function() {
 
-        var rootView = new RootView({ el: '#atl__map' });
+        var rootView = new RootView({ el: '#atl__map' })
 
-        rootView.props = Mapper.props;
+        rootView.props = Mapper.props
 
-        Mapper.rootView = rootView;
-        rootView.render();
+        Mapper.rootView = rootView
+        rootView.render()
 
-        this.$loading = $("<div class='loader'><img src='/assets/images/spinner.gif'></div>");
-        $('.atl__main').append(this.$loading);
+        this.$loading = $("<div class='loader'><img src='/assets/images/spinner.gif'></div>")
+        $('.atl__main').append(this.$loading)
         
-        return $.fn.ensureScript('d3', '/assets/vendor/d3.min.js', this.showOverlay.bind(this));
+        return $.fn.ensureScript('d3', '/assets/vendor/d3.min.js', this.showOverlay.bind(this))
 
     },
 
@@ -60,17 +60,14 @@ var Mapper = {
      */
     showOverlay: function() {
 
-        var View, itemType, items, launch;
-        items = Mapper.props.project.get('data').items;
-        itemType = items.getItemType();
+        var { items } = Mapper.props.project.get('data')
+        var itemType = items.getItemType()
 
-        var OverlayView = this.getOverlayViewConstructor(itemType);
+        var OverlayView = this.getOverlayViewConstructor(itemType)
 
-        launch = function(baseGeoData) {
+        function launch(baseGeoData) {
 
-            var coll;
-
-            coll = items.getRichGeoJson(baseGeoData);
+            var coll = items.getRichGeoJson(baseGeoData)
 
             return coll.onReady(function() {
                 var overlayView = new OverlayView({
@@ -79,30 +76,28 @@ var Mapper = {
                     props: Mapper.props,
                     colors: Mapper.colors,
                     svgPaths: Mapper.svgPaths
-                });
-                Mapper.overlayView = overlayView;
-                return overlayView.render();
-            });
+                })
+                Mapper.overlayView = overlayView
+                return overlayView.render()
+            })
 
-        };
-
-        if (itemType === 'pin') {
-            launch();
-            return this;
         }
 
-        var shps = new shapeFile.Collection();
+        if (itemType === 'pin') {
+            launch()
+            return this
+        }
 
-        var shp = shps.findWhere({
-            name: `${itemType}s`
-        });
+        var shps = new shapeFile.Collection()
+
+        var shp = shps.findWhere({ name: `${itemType}s` })
 
         // Fetch shape file and launch.
         shp.getGeoJsonFetchPromise().then((data) => {
-            launch(data);
-        }).catch((err) => { console.log(err); });
+            launch(data)
+        }).catch((err) => { console.log(err) })
 
-        return this;
+        return this
 
     },
 
@@ -112,8 +107,8 @@ var Mapper = {
      *
      */
     getOverlayViewConstructor: function(itemType) {
-        if (itemType === 'pin') { return PinOverlayView; }
-        return PathOverlayView;
+        if (itemType === 'pin') { return PinOverlayView }
+        return PathOverlayView
     }
 
 }

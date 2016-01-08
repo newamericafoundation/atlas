@@ -25,13 +25,11 @@ class Header extends React.Component {
 	 *
 	 */
 	render() {
-		var stripStyle = {
-			'backgroundColor': this.state.stripColor
-		};
+		var stripStyle = { 'backgroundColor': this.state.stripColor }
 		var className = classNames({
 			'header': true,
 			'bg-c-grey--base': (!this.props.isTransparent)
-		});
+		})
 		return (
 			<div className={ className }>
 				<div className="header__corner">
@@ -59,13 +57,13 @@ class Header extends React.Component {
 	 *
 	 */
 	renderAuth() {
-		if (!global.window) { return }
-		var { researcher } = global.window
-		if (!researcher) { return; }
+		var { authenticatedResearcher } = this.props
+		var { name, image } = authenticatedResearcher
+		if (!name || !image) { return }
 		return (
 			<div className="header__auth">
-				<img src={researcher.image.url} alt='Researcher Photo'></img>
-				<p>{ `Hi, ${researcher.name.givenName}!` }</p>
+				<img src={image.url} alt='Researcher Photo'></img>
+				<p>{ `Hi, ${name.givenName}!` }</p>
 				<a href='/logout' className='header__auth__logout'>Log out</a>
 			</div>
 		);

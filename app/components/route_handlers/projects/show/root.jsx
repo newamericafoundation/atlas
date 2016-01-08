@@ -27,7 +27,7 @@ class Show extends React.Component {
 		super(props)
 		this.state = {
 			ui: {
-				specifier: '2012', // if time-dependent data is visualized, this field holds the active specifier, such as the year
+				dataSpecifier: '2012', // if time-dependent data is visualized, this field holds the active specifier, such as the year
 				searchTerm: '',
 				isSearchBarActive: false,
 				itemsDisplayMode: 'map',
@@ -48,11 +48,12 @@ class Show extends React.Component {
 	 *
 	 */
 	render() {
+		console.log(this.props)
 		return (
 			<div className={ this.getClassName() }>
 				<SideBar 
-					radio={ this.props.radio } 
-					project={ this.getProject() } 
+					radio={ this.props.radio }
+					project={ this.getProject() }
 					sendMessageToParent={ this.handleMessageFromButtons.bind(this) }
 					uiState={ this.state.ui }
 					setUiState={ this.setUiState.bind(this) }
@@ -135,7 +136,9 @@ class Show extends React.Component {
 	getButtons() {
 		var project = this.getProject()
 		if (!global.window) { return }
-		return buttonsDataGenerator(project, global.window.isResearcherAuthenticated, this.state.ui.isCollapsedDueToOverflow)
+		var { authenticatedResearcher } = this.props
+		var isResearcherAuthenticated = authenticatedResearcher.name && authenticatedResearcher.image
+		return buttonsDataGenerator(project, isResearcherAuthenticated, this.state.ui.isCollapsedDueToOverflow)
 	}
 
 

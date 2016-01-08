@@ -14,17 +14,17 @@ class PinOverlayView extends BaseOverlayView {
      *
      */
     getShapes() {
-        var shp = svgPaths.shapes.pindrop;
+        var { paths } = svgPaths.shapes.pindrop
         return [
-            { path: shp.paths.slice_1_of_2, className: 'map-pin__1-of-2' },
-            { path: shp.paths.slice_2_of_2,  className: 'map-pin__2-of-2' },
-            { path: shp.paths.slice_1_of_3, className: 'map-pin__1-of-3' },
-            { path: shp.paths.slice_2_of_3_a,  className: 'map-pin__2-of-3' },
-            { path: shp.paths.slice_2_of_3_b,  className: 'map-pin__2-of-3' },
-            { path: shp.paths.slice_3_of_3,  className: 'map-pin__3-of-3' }, 
-            { path: shp.paths.outer, className: 'map-pin__outer' },
-            { path: shp.paths.inner, className: 'map-pin__inner' }
-        ];
+            { path: paths.slice_1_of_2, className: 'map-pin__1-of-2' },
+            { path: paths.slice_2_of_2,  className: 'map-pin__2-of-2' },
+            { path: paths.slice_1_of_3, className: 'map-pin__1-of-3' },
+            { path: paths.slice_2_of_3_a,  className: 'map-pin__2-of-3' },
+            { path: paths.slice_2_of_3_b,  className: 'map-pin__2-of-3' },
+            { path: paths.slice_3_of_3,  className: 'map-pin__3-of-3' }, 
+            { path: paths.outer, className: 'map-pin__outer' },
+            { path: paths.inner, className: 'map-pin__inner' }
+        ]
     }
 
 

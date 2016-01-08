@@ -94,6 +94,7 @@ class FilterValue extends React.Component {
 	toggle() {
 		var { radio, filterValue } = this.props
 		filterValue.toggle()
+		console.log('updating')
 		radio.commands.execute('update:tilemap')
 	}
 

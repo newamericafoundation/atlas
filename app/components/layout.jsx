@@ -35,6 +35,7 @@ class Layout extends React.Component {
 	 */
 	constructor(props) {
 		super(props)
+		this.setUiDimensions = this.setUiDimensions.bind(this)
 		// Create a new radio instance.
 		this.state = { radio: createRadio() }
 	}
@@ -45,15 +46,25 @@ class Layout extends React.Component {
 	 *
 	 */
 	render() {
+		var { authenticatedResearcher, ui } = this.props.app
 		var { radio } = this.state
 		return (
 			<div className={this.getClassName()}>
 				<Setup radio={radio} />
-				<Header radio={radio} title={this.getHeaderTitle()} isTransparent={this.isHeaderTransparent()} />
+				<Header 
+					radio={radio} 
+					title={this.getHeaderTitle()} 
+					isTransparent={this.isHeaderTransparent()}
+					authenticatedResearcher={authenticatedResearcher}
+				/>
 				{ this.renderFlash() }
-				{ React.cloneElement(this.props.children, { radio: radio }) }
+				{ React.cloneElement(this.props.children, { 
+					radio: radio, 
+					authenticatedResearcher: authenticatedResearcher,
+					app: this.props.app
+				}) }
 			</div>
-		);
+		)
 	}
 
 
@@ -63,12 +74,38 @@ class Layout extends React.Component {
 	 */
 	renderFlash() {
 		var { flash } = this.props.app
-		if (flash === '') { return }
+		if (flash.length === 0) { return }
 		return (
 			<div className='flash'>
 				{ flash }
 			</div>
 		)
+	}
+
+
+	/*
+	 * Set ui dimensions.
+	 * Note: since this component always stays alive in the browser session, there is no need to remove event listeners.
+	 */
+	componentDidMount() {
+		this.setUiDimensions()
+		$(window).on('resize', this.setUiDimensions)
+	}
+
+
+	/*
+	 *
+	 *
+	 */
+	setUiDimensions() {
+		var dim = {
+			width: $(window).width(),
+			height: $(window).height()
+		}
+		this.props.dispatch({
+			type: 'SET_UI_DIMENSIONS',
+			data: dim
+		})
 	}
 
 
@@ -83,7 +120,7 @@ class Layout extends React.Component {
 			'atl-route--welcome_index': (['/', '/welcome'].indexOf(pathname) > -1),
 			'atl-route--projects_index': (['/menu'].indexOf(pathname) > -1),
 			'atl-route--projects_show': (['/', '/welcome', '/menu'].indexOf(pathname) === -1)
-		});
+		})
 	}
 
 
@@ -93,8 +130,8 @@ class Layout extends React.Component {
 	 */
 	isHeaderTransparent() {
 		var { pathname } = this.props.location
-		if (['/', '/welcome'].indexOf(pathname) > -1) { return true; }
-		return false;
+		if (['/', '/welcome'].indexOf(pathname) > -1) { return true }
+		return false
 	}
 
 
@@ -104,8 +141,8 @@ class Layout extends React.Component {
 	 */
 	getHeaderTitle() {
 		var { pathname } = this.props.location
-		if (['/', '/welcome'].indexOf(pathname) > -1) { return 'New America'; }
-		return 'Atlas';
+		if (['/', '/welcome'].indexOf(pathname) > -1) { return 'New America' }
+		return 'Atlas'
 	}
 
 }

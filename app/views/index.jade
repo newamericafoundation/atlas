@@ -13,8 +13,6 @@ block content
 	//- Set an active user if authenticated.
 	- if (user || (process.env.NODE_ENV === 'development')) {
 		script(type='text/javascript').
-			window.isResearcherAuthenticated = true;
-			window.researcher = !{JSON.stringify(user || { image: { url: '' }, name: {} })};
 			window.STATE_FROM_SERVER = {
 				app: {
 					authenticatedResearcher: !{JSON.stringify(user || { image: { url: '' }, name: {} })}

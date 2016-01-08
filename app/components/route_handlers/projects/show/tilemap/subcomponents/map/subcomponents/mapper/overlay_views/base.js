@@ -1,6 +1,7 @@
 // overlay view layers inherit from this object
 
 import $ from 'jquery'
+import classNames from 'classnames'
 
 import colors from './../../../../../../../../../utilities/colors.js'
 
@@ -16,11 +17,9 @@ class BaseOverlayView {
      *
      */
     constructor(options = {}) {
-        for (let key in options) {
-            this[key] = options[key];
-        }
-        this.props.radio.reqres.setHandler('item:map:position', (item) => { return this.getItemMapPosition(item); });
-        return this;
+        for (let key in options) { this[key] = options[key] }
+        this.props.radio.reqres.setHandler('item:map:position', item => this.getItemMapPosition(item))
+        return this
     }
 
 
@@ -29,8 +28,8 @@ class BaseOverlayView {
      *
      */
     setMapEventListeners() {
-        this.map.on('viewreset', this.update.bind(this));
-        this.map.on('click', this.onMapClick.bind(this));
+        this.map.on('viewreset', this.update.bind(this))
+        this.map.on('click', this.onMapClick.bind(this))
     }
 
 
@@ -58,12 +57,12 @@ class BaseOverlayView {
      *
      */
     setHeaderStripColor() {
-        var { project, radio } = this.props, 
-            indeces = project.getFriendlyIndeces();
+        var { project, radio } = this.props
+        var indeces = project.getFriendlyIndeces()
         if (indeces.length > 0) {
-            radio.commands.execute('set:header:strip:color', { color: colors.toRgb(indeces[0] - 1) });
+            radio.commands.execute('set:header:strip:color', { color: colors.toRgb(indeces[0] - 1) })
         } else {
-            radio.commands.execute('set:header:strip:color', 'none');
+            radio.commands.execute('set:header:strip:color', 'none')
         }
     }
 
@@ -74,31 +73,29 @@ class BaseOverlayView {
      */
     getItemMapPosition(item) {
 
-        var identityPath, feature, longLatArrayCentroid, latLong, options;
-
-        feature = this.getFeatureByModel(item);
+        var feature = this.getFeatureByModel(item)
 
         // Get feature centroid.
-        identityPath = d3.geo.path().projection((d) => { return d; });
-        longLatArrayCentroid = identityPath.centroid(feature);
+        var identityPath = d3.geo.path().projection((d) => { return d })
+        var longLatArrayCentroid = identityPath.centroid(feature)
 
-        latLong = L.latLng(longLatArrayCentroid[1], longLatArrayCentroid[0]);
+        var latLong = L.latLng(longLatArrayCentroid[1], longLatArrayCentroid[0])
 
         // Call options generator.
-        options = this.getFeaturePathOptions(feature);
+        var options = this.getFeaturePathOptions(feature)
 
-        return this.latLongToModifiedLayerPoint([ longLatArrayCentroid[1], longLatArrayCentroid[0] ], options);
+        return this.latLongToModifiedLayerPoint([ longLatArrayCentroid[1], longLatArrayCentroid[0] ], options)
 
     }
 
 
     /*
-     * Get modifier layer point.
+     * Get modified layer point.
      * @param {array} latLongPosition - Latitude longitude array.
      */
     latLongToModifiedLayerPoint(latLongPosition, options = {}) {
 
-        var map = this.map;
+        var { map } = this
 
         var { 
             latLongOriginCenter, // point to which scaling is specified. Typically the centroid of a shape.
@@ -106,15 +103,15 @@ class BaseOverlayView {
             scale, // scale factor
             pixelOffset, // final offset in pixels. Used to position map pins.
             leafletConvertMethodName
-        } = options;
+        } = options
 
-        leafletConvertMethodName = leafletConvertMethodName || 'latLngToContainerPoint';
+        leafletConvertMethodName = leafletConvertMethodName || 'latLngToContainerPoint'
 
         // Default pixel offset to zero and scale to 1.
-        pixelOffset = pixelOffset || [ 0, 0 ];
-        scale = scale || 1;
+        pixelOffset = pixelOffset || [ 0, 0 ]
+        scale = scale || 1
 
-        var position = map[leafletConvertMethodName](new L.LatLng(latLongPosition[0], latLongPosition[1]));
+        var position = map[leafletConvertMethodName](new L.LatLng(latLongPosition[0], latLongPosition[1]))
 
         if (!latLongOriginCenter || !latLongDestinationCenter) {
             return { 
@@ -128,12 +125,10 @@ class BaseOverlayView {
         var destinationCenter = map[leafletConvertMethodName](new L.LatLng(latLongDestinationCenter[0], latLongDestinationCenter[1]));
         
         // Scale coordinates with respect to origin, move to destination and add offset.
-        var destination = {
+        return {
             x: (position.x - originCenter.x) * scale + destinationCenter.x + pixelOffset[0],
             y: (position.y - originCenter.y) * scale + destinationCenter.y + pixelOffset[1]
-        };
-
-        return destination;
+        }
 
     }
 
@@ -144,24 +139,20 @@ class BaseOverlayView {
      */
     getPath(options = {}) {
 
-        var self = this, 
-            transform, path;
+        var self = this
 
-        options.leafletConvertMethodName = 'latLngToLayerPoint';
+        options.leafletConvertMethodName = 'latLngToLayerPoint'
 
         var projectPoint = function(lng, lat) {
-
-            var point = self.latLongToModifiedLayerPoint([ lat, lng ], options);
-
-            this.stream.point(point.x, point.y);
-            return this;
-
+            var point = self.latLongToModifiedLayerPoint([ lat, lng ], options)
+            this.stream.point(point.x, point.y)
+            return this
         }
 
-        transform = d3.geo.transform({ point: projectPoint });
-        path = d3.geo.path().projection(transform);
+        var transform = d3.geo.transform({ point: projectPoint })
+        var path = d3.geo.path().projection(transform)
 
-        return path;
+        return path
 
     }
 
@@ -171,10 +162,9 @@ class BaseOverlayView {
      *
      */
     getFeatureClassName(feature, baseClassName) {
-        var displayState, cls;
-        displayState = this.getFeatureDisplayState(feature);
-        cls = `${baseClassName} ${baseClassName}__element`;
-        if (displayState) { cls += ` ${baseClassName}--${displayState}`; }
+        var displayState = this.getFeatureDisplayState(feature)
+        var cls = `${baseClassName} ${baseClassName}__element`
+        if (displayState) { cls += ` ${baseClassName}--${displayState}` }
         return cls;
     }
 
@@ -196,9 +186,9 @@ class BaseOverlayView {
         var $el = $('.leaflet-overlay-pane')
         // call stop() to reset previously started animations
         $el.stop().animate({ opacity: 0 }, 750, 'swing', () => {
-            this.update();
-            $el.animate({ opacity: 1 }, 750);
-        });
+            this.update()
+            $el.animate({ opacity: 1 }, 750)
+        })
     }
 
 
@@ -221,16 +211,15 @@ class BaseOverlayView {
      *
      */
     onFeatureMouseOver(feature) {
-        var project, items, model;
         if (this.bringFeatureToFront) {
-            this.bringFeatureToFront(feature);
+            this.bringFeatureToFront(feature)
         }
-        project = this.props.project;
-        items = project.get('data').items;
-        model = feature._model ? feature._model : feature.id;
-        items.setHovered(model);
-        this.setHeaderStripColor();
-        this.props.radio.commands.execute('update:tilemap', { ignoreMapItems: true });
+        var { project } = this.props
+        var { items } = project.get('data')
+        var model = feature._model ? feature._model : feature.id
+        items.setHovered(model)
+        this.setHeaderStripColor()
+        this.props.radio.commands.execute('update:tilemap', { ignoreMapItems: true })
     }
 
 
@@ -239,22 +228,22 @@ class BaseOverlayView {
      *
      */
     onFeatureClick(feature) {
-        var model, project, items;
+        // Set whether the next map click should be ignored. If this was set to true, exit callback right away.
         if(this.map && this.map.ignoreNextClick) {
-            this.map.ignoreNextClick = false;
-            return;
+            this.map.ignoreNextClick = false
+            return
         }
-        if (d3.event.stopPropagation) {
-            d3.event.stopPropagation();
-        }
-        model = feature._model;
-        project = this.props.project;
-        items = project.get('data').items;
-        items.setActive(model);
-        this.props.setUiState({ isInfoBoxActive: true });
-        this.map.ignoreNextClick = false;
-        this.activeFeature = feature;
-        return this;
+
+        if (d3.event.stopPropagation) { d3.event.stopPropagation() }
+
+        var model = feature._model
+        var { project } = this.props
+        var { items } = project.get('data')
+        items.setActive(model)
+        this.props.setUiState({ isInfoBoxActive: true })
+        this.map.ignoreNextClick = false
+        this.activeFeature = feature
+        return this
     }
 
 
@@ -263,7 +252,7 @@ class BaseOverlayView {
      *
      */
     onRender() {
-        $('.loading-icon').remove();
+        $('.loading-icon').remove()
     }
 
 
@@ -273,8 +262,8 @@ class BaseOverlayView {
      */
     onMapClick(e) { 
         if (this.activeFeature) {
-            this.activeFeature = undefined;
-            this.props.radio.vent.trigger('item:deactivate');
+            delete this.activeFeature
+            this.props.radio.vent.trigger('item:deactivate')
         }
     }
 
@@ -285,7 +274,7 @@ class BaseOverlayView {
      */
     getFeatureByModel(model) {
         for (let feature of this.collection.features) {
-            if (feature._model === model) { return feature; }
+            if (feature._model === model) { return feature }
         }
     }
 
@@ -312,16 +301,16 @@ class BaseOverlayView {
      * @returns {string} fill - Color string or stripe pattern url.
      */
     getFill(feature) {
-        var filter, valueIndeces, id;
-        filter = this.props.project.get('data').filter
-        valueIndeces = filter.getFriendlyIndeces(feature._model, 15)
-        if (!valueIndeces || valueIndeces.length === 0) { return; }
+        var { filter } = this.props.project.get('data')
+        var valueIndeces = filter.getFriendlyIndeces(feature._model, 15)
+        if (!valueIndeces || valueIndeces.length === 0) { return }
         if (valueIndeces.length === 1) {
-            return colors.toRgb(valueIndeces[0]-1);
+            return colors.toRgb(valueIndeces[0]-1)
         }
+
         // Communicate with Comp.Setup.Component to create and retrieve stripe pattern id
-        id = this.props.radio.reqres.request('get:pattern:id', valueIndeces);
-        return `url(#stripe-pattern-${id})`;
+        var id = this.props.radio.reqres.request('get:pattern:id', valueIndeces)
+        return `url(#stripe-pattern-${id})`
     }
 
 
@@ -343,19 +332,25 @@ class BaseOverlayView {
      * @param {number} extraExpansion - Pixel amount the svg container is to be expanded by, in order to avoid clipping off parts of shapes close to the edge.
      */ 
     resizeContainer(geoJson, path, extraExpansion) {
-        var bounds = path.bounds(geoJson),
-            topLeft, bottomRight;
-        if (!this._areBoundsFinite(bounds)) { return; }
-        bounds[0][0] -= extraExpansion;
-        bounds[0][1] -= extraExpansion;
-        bounds[1][0] += extraExpansion;
-        bounds[1][1] += extraExpansion;
-        topLeft = bounds[0];
-        bottomRight = bounds[1];
-        this.svg.attr({ 'width': bottomRight[0] - topLeft[0], 'height': bottomRight[1] - topLeft[1] + 50 });
-        this.svg.style({ 'left': topLeft[0] + 'px', 'top': topLeft[1] + 'px' });
-        this.g.attr("transform", `translate(${-topLeft[0]},${-topLeft[1]})`);
-        return this;
+
+        var bounds = path.bounds(geoJson)
+        if (!this._areBoundsFinite(bounds)) { return }
+        bounds[0][0] -= extraExpansion
+        bounds[0][1] -= extraExpansion
+        bounds[1][0] += extraExpansion
+        bounds[1][1] += extraExpansion
+
+        var topLeft = bounds[0]
+        var bottomRight = bounds[1]
+
+        this.svg
+            .attr({ 'width': bottomRight[0] - topLeft[0], 'height': bottomRight[1] - topLeft[1] + 50 })
+            .style({ 'left': topLeft[0] + 'px', 'top': topLeft[1] + 'px' })
+
+        this.g
+            .attr("transform", `translate(${-topLeft[0]},${-topLeft[1]})`)
+        return this
+
     }
 
 
@@ -364,12 +359,11 @@ class BaseOverlayView {
      *
      */
     destroy() {
-        if (this.stopListening)
-            this.stopListening();
-        this.g.selectAll('path').remove();
-        this.g.remove();
-        this.svg.remove();
-        return this;
+        if (this.stopListening) { this.stopListening() }
+        this.g.selectAll('path').remove()
+        this.g.remove()
+        this.svg.remove()
+        return this
     }
 
 }
