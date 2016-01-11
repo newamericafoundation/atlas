@@ -112,14 +112,8 @@ export class Model extends base.Model {
 }
 
 
-class Collection extends base.Collection {
+export class Collection extends base.Collection {
 
 	get model() { return Model }
 
-}
-
-
-export default {
-	Model: Model,
-	Collection: Collection
 }

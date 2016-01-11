@@ -1,13 +1,15 @@
-import React from 'react';
-import classNames from 'classnames';
-import marked from 'marked';
+import React from 'react'
+import classNames from 'classnames'
+import _ from 'underscore'
+import marked from 'marked'
 
-import _ from 'underscore';
+import { Plus, Minus } from './../../../../../../general/icons.jsx'
+import FilterKey from './filter_key.jsx'
 
-import { Plus, Minus } from './../../../../../../general/icons.jsx';
-
-import FilterKey from './filter_key.jsx';
-
+/*
+ *
+ *
+ */
 class FilterKeyGroup extends React.Component {
 
 	/*
@@ -15,10 +17,10 @@ class FilterKeyGroup extends React.Component {
 	 *
 	 */
 	constructor(props) {
-		super(props);
+		super(props)
 		this.state = {
 			isExpanded: false
-		};
+		}
 	}
 
 
@@ -27,7 +29,6 @@ class FilterKeyGroup extends React.Component {
 	 *
 	 */
 	render() {
-
 		return (
 			<li className='atl__filter__var-group'>
 				{ this.renderHeading() }
@@ -35,13 +36,12 @@ class FilterKeyGroup extends React.Component {
 					{ this.renderKeys() }
 				</ul>
 			</li>
-		);
-
+		)
 	}
 
 
 	renderHeading() {
-		if (!this.props.shouldDisplayHeader) { return; }
+		if (!this.props.shouldDisplayHeader) { return }
 		var info = this.getGroupInfo();
 		return (
 			<div>
@@ -57,7 +57,7 @@ class FilterKeyGroup extends React.Component {
 						null 
 				}
 			</div>
-		);
+		)
 	}
 
 
@@ -66,8 +66,8 @@ class FilterKeyGroup extends React.Component {
 	 *
 	 */
 	renderToggleIcon(hasDescription) {
-		if (!hasDescription) { return; }
-		var ToggleIcon = this.state.isExpanded ? Minus : Plus;
+		if (!hasDescription) { return }
+		var ToggleIcon = this.state.isExpanded ? Minus : Plus
 		return (
 			<div 
 				className='atl__filter__var-group__toggle-icon'
@@ -75,7 +75,7 @@ class FilterKeyGroup extends React.Component {
 			>
 				<ToggleIcon />
 			</div>
-		);
+		)
 	}
 
 
@@ -84,12 +84,16 @@ class FilterKeyGroup extends React.Component {
 	 *
 	 */
 	renderKeys() {
-		var keys = this.props.group.filterKeys;
-		return keys.map((key, i) => {
+		var { filterKeys } = this.props.group
+		return filterKeys.map((key, i) => {
 			return (
-				<FilterKey radio={this.props.radio} filterKey={key} key={i} />
-			);
-		});
+				<FilterKey 
+					key={i}
+					radio={this.props.radio} 
+					filterKey={key} 
+				/>
+			)
+		})
 	}
 
 
@@ -99,18 +103,18 @@ class FilterKeyGroup extends React.Component {
 	 */
 	getGroupInfo() {
 
-		var varGroup = this.props.group.variable_group,
-			info = {};
+		var varGroup = this.props.group.variable_group
+		var info = {}
 
 		if (_.isObject(varGroup)) {
-			info.name = varGroup.get('display_title') || varGroup.get('id');
-			info.description = varGroup.get('long_description');
+			info.name = varGroup.get('display_title') || varGroup.get('id')
+			info.description = varGroup.get('long_description')
 		} else {
-			info.name = varGroup || 'Other variables';
-			info.description = '';
+			info.name = varGroup || 'Other variables'
+			info.description = ''
 		}
 
-		return info;
+		return info
 
 	}
 
@@ -120,9 +124,9 @@ class FilterKeyGroup extends React.Component {
 	 *
 	 */
 	toggleExpandedState() {
-		this.setState({ isExpanded: !this.state.isExpanded });
+		this.setState({ isExpanded: !this.state.isExpanded })
 	}
 
 }
 
-export default FilterKeyGroup;
+export default FilterKeyGroup

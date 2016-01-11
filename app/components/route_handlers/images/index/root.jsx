@@ -5,6 +5,10 @@ import { Link } from 'react-router'
 
 import * as image from './../../../../models/image.js'
 
+/*
+ *
+ *
+ */
 class Index extends Static {
 
 	/*
@@ -12,11 +16,11 @@ class Index extends Static {
 	 *
 	 */
 	constructor(props) {
-		super(props);
+		super(props)
 		this.state = {
 			scrollTop: 0,
 			images: 0
-		};
+		}
 	}
 
 
@@ -29,7 +33,7 @@ class Index extends Static {
 			<div className="atl__title-bar__content">
 				<h1 className='title'>All Images</h1>
 			</div>
-		);
+		)
 	}
 
 
@@ -43,7 +47,7 @@ class Index extends Static {
 				<p>All images.</p>
 				{ this.state.images ? this.renderImages() : null } 
 			</div>
-		);
+		)
 	}
 
 
@@ -54,14 +58,19 @@ class Index extends Static {
 	renderImages() {
 		return this.state.images.map((image, i) => {
 			return (
-				<Link key={i} to={image.getEditUrl()} className='feature-box' style={{ margin: '20px', display: 'inline-block' }}>
+				<Link 
+					key={i} 
+					to={image.getEditUrl()} 
+					className='feature-box' 
+					style={{ margin: '20px', display: 'inline-block' }}
+				>
 					<div className='feature-box__top-content'>
 						<p>{ image.get('name') }</p>
 					</div>
 					
 				</Link>
-			);
-		});
+			)
+		})
 	}
 
 

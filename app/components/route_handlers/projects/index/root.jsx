@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import Projects from './subcomponents/projects.jsx'
 import ProjectSections from './subcomponents/project_sections.jsx'
 import ProjectTemplates from './subcomponents/project_templates.jsx'
-import SideBar from './../../../general/side_bar.jsx'
+import SideBar from './../../../general/side_bar/root.jsx'
 
 import models from './../../../../models/index.js'
 
@@ -150,8 +150,4 @@ class Index extends React.Component {
 
 }
 
-
-export default connect(state => ({ 
-	routing: state.routing,
-	app: state.app
-}))(Index)
+export default Index

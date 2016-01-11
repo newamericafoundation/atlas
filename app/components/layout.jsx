@@ -4,7 +4,7 @@ import classNames from 'classnames'
 
 import { connect } from 'react-redux'
 
-import Setup from './general/setup.jsx'
+import Setup from './general/setup/root.jsx'
 import Header from './general/header.jsx'
 
 import Backbone from 'backbone'
@@ -61,7 +61,9 @@ class Layout extends React.Component {
 				{ React.cloneElement(this.props.children, { 
 					radio: radio, 
 					authenticatedResearcher: authenticatedResearcher,
-					app: this.props.app
+					routing: this.props.routing,
+					app: this.props.app,
+					dispatch: this.props.dispatch
 				}) }
 			</div>
 		)

@@ -17,11 +17,11 @@ class RootView {
 	 *
 	 */
 	constructor(options) {
-		this.el = options.el;
-		this.elId = this.el.substr(1);
-		this.$el = $(this.el);
-		_.extend(this, Backbone.Events);
-		return this;
+		this.el = options.el
+		this.elId = this.el.substr(1)
+		this.$el = $(this.el)
+		_.extend(this, Backbone.Events)
+		return this
 	}
 			
 
@@ -29,11 +29,11 @@ class RootView {
 	 * Get optimal start zoom level corresponding to the width of the container.
 	 *
 	 */
-	_getZoomLevel() {
-		var width = this.$el.width();
-		if (width > 1350) { return 5; }
-		if (width > 700) { return 4; }
-		return 3;
+	getZoomLevel() {
+		var width = this.$el.width()
+		if (width > 1350) { return 5 }
+		if (width > 700) { return 4 }
+		return 3
 	}
 
 
@@ -41,9 +41,9 @@ class RootView {
 	 * Set up map.
 	 *
 	 */
-	_setupMap() {
+	setupMap() {
 
-		var zoomLevel = this._getZoomLevel()
+		var zoomLevel = this.getZoomLevel()
 		this.map.setView([37.6, -95.665], zoomLevel)
 		this.map.scrollWheelZoom.disable()
 		// add control convenience methods
@@ -58,7 +58,7 @@ class RootView {
 		})
 
 		this.map.on('dragend', (e) => {
-			var items;
+			var items
 			this.props.setUiState({ isMapDragged: false })
 			// use functionality only if there is sufficient drag
 			//   as Leaflet sometimes detects slightly imperfect clicks as drags
@@ -68,7 +68,7 @@ class RootView {
 			}
 		})
 
-		return this;
+		return this
 
 	}
 
@@ -82,7 +82,7 @@ class RootView {
 			attributionControl: true,
 			zoomControl: false,
 			inertia: false
-		};
+		}
 	}
 
 
@@ -94,7 +94,7 @@ class RootView {
 		L.mapbox.accessToken = 'pk.eyJ1Ijoicm9zc3ZhbmRlcmxpbmRlIiwiYSI6ImRxc0hRR28ifQ.XwCYSPHrGbRvofTV-CIUqw'
 		this.map = L.mapbox.map(this.elId, 'rossvanderlinde.874ab107', this.getMapOptions())
 		this.props.setMap(this.map)
-		this._setupMap()
+		this.setupMap()
 		this.hideAttribution()
 		return this
 	}

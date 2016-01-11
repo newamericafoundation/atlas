@@ -1,7 +1,8 @@
 import BaseOverlayView from './base.js'
 
-import svgPaths from './../../../../../../../../../utilities/svg_paths.js'
-import colors from './../../../../../../../../../utilities/colors.js'
+import colors from './../../../../../../../../../../utilities/colors.js'
+
+import svgPaths from './svg_paths/pin.json'
 
 /*
  *
@@ -14,7 +15,7 @@ class PinOverlayView extends BaseOverlayView {
      *
      */
     getShapes() {
-        var { paths } = svgPaths.shapes.pindrop
+        var { paths } = svgPaths.pindrop
         return [
             { path: paths.slice_1_of_2, className: 'map-pin__1-of-2' },
             { path: paths.slice_2_of_2,  className: 'map-pin__2-of-2' },
@@ -34,14 +35,12 @@ class PinOverlayView extends BaseOverlayView {
      */
     render() {
 
-        var pindrop;
+        this.renderSvgContainer()
 
-        this.renderSvgContainer();
-
-        this.shape = svgPaths.shapes.pindrop;
+        this.shape = svgPaths.pindrop
 
         // Get halves and thirds of the pin to apply corresponding coloring.
-        pindrop = this.getShapes();
+        var pindrop = this.getShapes()
 
         this.g.selectAll('g')
             .data(this.collection.features)

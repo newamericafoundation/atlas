@@ -1,5 +1,5 @@
-import React from 'react';
-import classNames from 'classnames';
+import React from 'react'
+import classNames from 'classnames'
 
 /*
  * This a base class and example setup for a standard, static page.
@@ -7,25 +7,40 @@ import classNames from 'classnames';
  */
 class Static extends React.Component {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
-		super(props);
+		super(props)
+		this.setStickyPageNav = this.setStickyPageNav.bind(this)
 		// Make sure there is a scrollTop state value on the subclass.
 		// Otherwise, setting sticky page layout will not work.
 		this.state = { 
 			scrollTop: 0
-		};
+		}
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	render() {
-		var style = { 'overflowY': 'scroll' };
+		var style = { 'overflowY': 'scroll' }
 		return (
-			<div className='atl__main' style={style} onScroll={ this.setStickyPageNav.bind(this) }>
+			<div className='atl__main' style={style} onScroll={ this.setStickyPageNav }>
 				{ this.renderTitleBar(this.getTitleBarType()) }
 				{ this.renderContentBar() }
 			</div>
-		);
+		)
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderTitleBar(state) {
 		var cls = classNames({
 			'atl__title-bar': true,
@@ -37,16 +52,30 @@ class Static extends React.Component {
 				{ this.renderTitleBarBackground() }
 				{ this.renderTitleBarContent() }
 			</div>			
-		);
+		)
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderTitleBarBackground() {
-		var color = this.props.radio ? this.props.radio.currentThemeColor : '#2dbbb3';
+		var color = this.props.radio ? this.props.radio.currentThemeColor : '#2dbbb3'
 		return (
-			<div className="atl__title-bar__background" ref='title-bar__background' style={{backgroundColor: color}} />
-		);
+			<div 
+				className="atl__title-bar__background" 
+				ref='title-bar__background' 
+				style={{backgroundColor: color}} 
+			/>
+		)
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderTitleBarContent() {
 		return (
 			<div className="atl__title-bar__content">
@@ -55,9 +84,14 @@ class Static extends React.Component {
 					{ this.renderWebsite() }
 				</ul>
 			</div>
-		);
+		)
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderContentBar() {
 		return (
 			<div className="atl__content-bar bg-c-off-white">
@@ -73,37 +107,55 @@ class Static extends React.Component {
 					</div>
 				</div>
 			</div>
-		);
+		)
 	}
 
 
+	/*
+	 *
+	 *
+	 */
 	renderPageNav() {
 		var cls = classNames({
 			'atl__page-nav': true,
 			'atl__page-nav--fixed': (this.state.scrollTop > 300)
-		});
+		})
 		return (
 			<div className={ cls } ref="page-nav">
 				{ this.renderPageNavContent() }		
 			</div>
-		);
+		)
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderPageNavContent() {
 		return (
 			<p>Page Nav Content</p>
-		);
+		)
 	}
 
+
+	/*
+	 *
+	 *
+	 */
 	renderPageContent() {
 		return (
 			<p>Page Content</p>
-		);
+		)
 	}
 
-	// This method should not be overridden on the subclass in order to keep sticky page nav logic DRY.
+
+	/*
+	 * This method should not be overridden on the subclass in order to keep sticky page nav logic DRY.
+	 *
+	 */
 	setStickyPageNav(e) {
-		this.setState({ scrollTop: e.target.scrollTop });
+		this.setState({ scrollTop: e.target.scrollTop })
 	}
 
 }

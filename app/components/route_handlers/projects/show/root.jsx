@@ -8,7 +8,7 @@ import Tilemap from './tilemap/root.jsx'
 import Explainer from './explainer/root.jsx'
 
 import Loader from './../../../general/loader.jsx'
-import SideBar from './../../../general/side_bar.jsx'
+import SideBar from './../../../general/side_bar/root.jsx'
 
 import * as project from './../../../../models/project.js'
 import buttonsDataGenerator from './buttons_data_generator.js'
@@ -48,7 +48,6 @@ class Show extends React.Component {
 	 *
 	 */
 	render() {
-		console.log(this.props)
 		return (
 			<div className={ this.getClassName() }>
 				<SideBar 
@@ -75,6 +74,7 @@ class Show extends React.Component {
 		var Comp = (this._isModelTilemap()) ? Tilemap : Explainer
 		return (
 			<Comp
+				app={this.props.app}
 				radio={this.props.radio} 
 				uiState={ this.state.ui } 
 				setUiState={ this.setUiState.bind(this) } 
@@ -256,7 +256,8 @@ class Show extends React.Component {
 
 }
 
-export default connect(state => ({ 
-	routing: state.routing,
-	app: state.app
-}))(Show)
+export default Show
+// export default connect(state => ({ 
+// 	routing: state.routing,
+// 	app: state.app
+// }))(Show)

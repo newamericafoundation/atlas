@@ -1,7 +1,6 @@
 import React from 'react'
 import { findDOMNode } from 'react-dom'
-
-import classNames from 'classnames';
+import classNames from 'classnames'
 
 import Help from './../../../../../../general/help.jsx'
 import { More } from './../../../../../../general/icons.jsx'
@@ -26,6 +25,7 @@ class Filter extends Base {
 	 */
 	constructor(props) {
 		super(props)
+		this.toggleOptionsTab = this.toggleOptionsTab.bind(this)
 		this.maxHeight = 0
 	}
 
@@ -40,7 +40,7 @@ class Filter extends Base {
 				<div className="atl__filter__keys">
 					<ul>
 						{ this.renderKeys() }
-						<li className='button' onClick={ this.toggleOptionsTab.bind(this) }>
+						<li className='button' onClick={ this.toggleOptionsTab }>
 							<More />
 						</li>
 					</ul>

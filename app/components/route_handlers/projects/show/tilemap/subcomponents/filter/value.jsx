@@ -2,8 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import classNames from 'classnames'
 
-import colors from './../../../../../../utilities/colors.js'
-import * as Icons from './../../../../../../general/icons.jsx'
+import colors from './../../../../../../../utilities/colors.js'
+import { Hex } from './../../../../../../general/icons.jsx'
 import HexIcon from './../../../../../../general/hex_icon.jsx'
 
 
@@ -14,25 +14,37 @@ import HexIcon from './../../../../../../general/hex_icon.jsx'
 class FilterValue extends React.Component {
 
 	/*
+	 * 
+	 *
+	 */
+	constructor(props) {
+		super(props)
+		this.toggle = this.toggle.bind(this)
+		this.setHovered = this.setHovered.bind(this)
+		this.clearHovered = this.clearHovered.bind(this)
+	}
+
+
+	/*
 	 *
 	 *
 	 */
 	render() {
-		var IconComp = Icons.Hex
+		var { filterValue } = this.props
 		var className = classNames({
 			'toggle-button': true,
-			'toggle-button--inactive': !this.props.filterValue.isActive()
+			'toggle-button--inactive': !filterValue.isActive()
 		})
 		return (
 			<li 
 				className={ className }
-				onClick={ this.toggle.bind(this) } 
-				onMouseEnter={ this.setHovered.bind(this) } 
-				onMouseLeave={ this.clearHovered.bind(this) } 
+				onClick={ this.toggle } 
+				onMouseEnter={ this.setHovered } 
+				onMouseLeave={ this.clearHovered } 
 			>
-				<HexIcon className="toggle-button__icon" fillColor={this.getColor()} />
+				<HexIcon className="toggle-button__icon" fillColor={ this.getColor() } />
 				<div className="toggle-button__text">
-				   	<p>{ this.props.filterValue.get('value') }</p>
+				   	<p>{ filterValue.get('value') }</p>
 				</div>
 			</li>
 		);
@@ -94,7 +106,6 @@ class FilterValue extends React.Component {
 	toggle() {
 		var { radio, filterValue } = this.props
 		filterValue.toggle()
-		console.log('updating')
 		radio.commands.execute('update:tilemap')
 	}
 

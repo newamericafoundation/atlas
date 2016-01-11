@@ -1,7 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import classNames from 'classnames';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import classNames from 'classnames'
 
+/*
+ *
+ *
+ */
 class Slider extends React.Component {
 
     /*
@@ -9,10 +13,10 @@ class Slider extends React.Component {
      *
      */
     constructor(props) {
-        super(props);
+        super(props)
         this.state = {
             valueIndex: 1
-        };
+        }
     }
 
 
@@ -24,7 +28,7 @@ class Slider extends React.Component {
         return (
             <div className='atl__slider' ref='root'>
             </div>
-        );
+        )
     }
 
 
@@ -33,7 +37,7 @@ class Slider extends React.Component {
      *
      */
     componentDidMount() {
-        this.buildSlider();
+        this.buildSlider()
     }
 
 
@@ -42,7 +46,7 @@ class Slider extends React.Component {
      *
      */
     componentWillUnmount() {
-        this.destroySlider();
+        this.destroySlider()
     }
 
 
@@ -51,7 +55,7 @@ class Slider extends React.Component {
      *
      */
     componentDidUpdate() {
-        this.setSliderValueText();
+        this.setSliderValueText()
     }
 
 
@@ -60,7 +64,7 @@ class Slider extends React.Component {
      *
      */
     buildSlider() {
-        var $el = $(ReactDOM.findDOMNode(this.refs.root));
+        var $el = $(ReactDOM.findDOMNode(this.refs.root))
         $el.slider({
             value: this.state.valueIndex,
             min: 0,
@@ -70,8 +74,8 @@ class Slider extends React.Component {
                 this.setState({ valueIndex: ui.value });
                 this.props.setUiState({ specifier: this.getSliderValueText() });
             }
-        });
-        this.setSliderValueText();
+        })
+        this.setSliderValueText()
     }
 
 
@@ -80,8 +84,8 @@ class Slider extends React.Component {
      *
      */
     destroySlider() {
-        var $el = $(React.findDOMNode(this.refs.root));
-        $el.unbind();
+        var $el = $(React.findDOMNode(this.refs.root))
+        $el.unbind()
     }
 
 
@@ -90,8 +94,8 @@ class Slider extends React.Component {
      *
      */
     setSliderValueText() {
-        var $el = $(React.findDOMNode(this.refs.root));
-        $el.find('span').html(this.getSliderValueText());
+        var $el = $(React.findDOMNode(this.refs.root))
+        $el.find('span').html(this.getSliderValueText())
     }
 
 
@@ -100,9 +104,9 @@ class Slider extends React.Component {
      *
      */
     getSliderValueText() {
-        return this.props.values[this.state.valueIndex];
+        return this.props.values[this.state.valueIndex]
     }
 
 }
 
-export default Slider;
+export default Slider

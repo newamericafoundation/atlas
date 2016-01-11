@@ -2,7 +2,7 @@ import React from 'react'
 import classNames from 'classnames'
 import { Link } from 'react-router'
 
-import * as colors from './../../../../utilities/colors.js'
+import * as colors from './../../../../../utilities/colors.js'
 import * as Icons from './../../../../general/icons.jsx'
 
 import Loader from './../../../../general/loader.jsx'

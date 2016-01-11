@@ -1,12 +1,10 @@
-//
+import _ from 'underscore'
+import React from 'react'
+import classNames from 'classnames'
 
-import _ from 'underscore';
-import React from 'react';
-import classNames from 'classnames';
-
-import Base from './../base.jsx';
-import FilterKeyGroup from './filter_key_group.jsx';
-import { No } from './../../../../../../general/icons.jsx';
+import Base from './../base.jsx'
+import FilterKeyGroup from './filter_key_group.jsx'
+import { No } from './../../../../../../general/icons.jsx'
 
 /*
  *
@@ -39,7 +37,7 @@ class OptionsTab extends Base {
 	 *
 	 */
 	componentWillMount() {
-		this.computeVariableGroups();
+		this.computeVariableGroups()
 	}
 
 
@@ -48,8 +46,8 @@ class OptionsTab extends Base {
 	 *
 	 */
 	close(e) {
-		e.preventDefault();
-		this.props.setUiState({ isOptionsTabActive: false });
+		e.preventDefault()
+		this.props.setUiState({ isOptionsTabActive: false })
 	}
 
 
@@ -58,14 +56,14 @@ class OptionsTab extends Base {
 	 * TODO: extract to model code.
 	 */
 	computeVariableGroups() {
-		var { filter, project } = this.props;
-		var keys = filter.children;
-		var groups = filter.group(project.get('data').variable_groups);
-		var shouldDisplayHeader = (groups.length > 1);
+		var { filter, project } = this.props
+		var keys = filter.children
+		var groups = filter.group(project.get('data').variable_groups)
+		var shouldDisplayHeader = (groups.length > 1)
 		this.setState({
 			groups: groups,
 			shouldDisplayHeader: shouldDisplayHeader
-		});
+		})
 	}
 
 
@@ -74,7 +72,7 @@ class OptionsTab extends Base {
 	 *
 	 */
 	renderKeyGroups() {
-		var { radio } = this.props;
+		var { radio } = this.props
 		return this.state.groups.map((group, i) => {
 			return (
 				<FilterKeyGroup
@@ -83,10 +81,10 @@ class OptionsTab extends Base {
 					shouldDisplayHeader={this.state.shouldDisplayHeader}
 					key={i}
 				/>
-			);
-		});
+			)
+		})
 	}
 
 }
 
-export default OptionsTab;
+export default OptionsTab

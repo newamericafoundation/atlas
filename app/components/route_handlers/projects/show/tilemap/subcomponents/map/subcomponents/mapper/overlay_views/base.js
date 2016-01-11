@@ -3,7 +3,7 @@
 import $ from 'jquery'
 import classNames from 'classnames'
 
-import colors from './../../../../../../../../../utilities/colors.js'
+import colors from './../../../../../../../../../../utilities/colors.js'
 
 
 /*

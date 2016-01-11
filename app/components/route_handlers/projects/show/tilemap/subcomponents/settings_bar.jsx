@@ -83,7 +83,4 @@ class SettingsBar extends Base {
 
 }
 
-
-export default connect(state => ({ 
-	uiDimensions: state.app.ui.dimensions
-}))(SettingsBar)
+export default SettingsBar

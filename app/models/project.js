@@ -17,7 +17,7 @@ import * as item from './item.js'
  */
 export class Model extends base.Model {
 
-    get resourceName() { return 'project'; }
+    get resourceName() { return 'project' }
 
     get defaults() { 
         return {
@@ -179,7 +179,7 @@ export class Model extends base.Model {
      * API queries that need to be handled custom. For every key, there is a this.is_#{key} method that filters a model. 
      *
      */
-    get customQueryKeys() { return ['related_to']; }
+    get customQueryKeys() { return [ 'related_to' ] }
 
 
     /*
@@ -187,7 +187,7 @@ export class Model extends base.Model {
      *
      */
     getIndexUrl() {
-        return '/menu';
+        return '/menu'
     }
 
 
@@ -196,7 +196,7 @@ export class Model extends base.Model {
      *
      */
     getViewUrl() {
-        return '/' + this.get('atlas_url');
+        return '/' + this.get('atlas_url')
     }
 
 
@@ -206,8 +206,8 @@ export class Model extends base.Model {
      * returns {boolean} - Whether madatory fields exist
      */
     exists() {
-        var keyCount = Object.keys(this.toJSON()).length;
-        return (keyCount > 1);
+        var keyCount = Object.keys(this.toJSON()).length
+        return (keyCount > 1)
     }
 
 
@@ -216,11 +216,11 @@ export class Model extends base.Model {
      *
      */
     getImageUrl() {
-        var encodedImage = this.get('encoded_image');
-        if (encodedImage == null) { return; }
-        encodedImage = encodedImage.replace(/(\r\n|\n|\r)/gm, '');
-        if (encodedImage.indexOf('base64') > -1) { return "url(" + encodedImage + ")"; }
-        return "url('data:image/png;base64," + encodedImage + "')";
+        var encodedImage = this.get('encoded_image')
+        if (encodedImage == null) { return }
+        encodedImage = encodedImage.replace(/(\r\n|\n|\r)/gm, '')
+        if (encodedImage.indexOf('base64') > -1) { return `url(${encodedImage})` }
+        return `url('data:image/png;base64,${encodedImage}')`
     }
 
 
@@ -231,11 +231,10 @@ export class Model extends base.Model {
      * @returns {boolean} filter - Whether both project sections and templates are in filter variable.
      */
     compositeFilter(projectSections, projectTemplates) {
-        var filter, sectionsFilter, templatesFilter;
-        sectionsFilter = this.filter(projectSections, 'project_section');
-        templatesFilter = this.filter(projectTemplates, 'project_template');
-        filter = sectionsFilter && templatesFilter;
-        return filter;
+        var sectionsFilter = this.filter(projectSections, 'project_section')
+        var templatesFilter = this.filter(projectTemplates, 'project_template')
+        var filter = sectionsFilter && templatesFilter
+        return filter
     }
 
 
@@ -245,17 +244,17 @@ export class Model extends base.Model {
      * @returns {boolean} - Related status.
      */
     isRelatedTo(project) {
-        var prj, tags0, tags1, i, max;
+        var prj, tags0, tags1, i, max
         // Project is not related to itself, it is itself :).
-        if (this === project) { return false; }
-        tags0 = this.get('tags');
-        tags1 = project.get('tags');
-        if (tags0 === '' || tags1 === '') { return false; }
-        tags0 = tags0.split(',');
-        tags1 = tags1.split(',');
+        if (this === project) { return false }
+        tags0 = this.get('tags')
+        tags1 = project.get('tags')
+        if (tags0 === '' || tags1 === '') { return false }
+        tags0 = tags0.split(',')
+        tags1 = tags1.split(',')
         for (i = 0, max = tags0.length; i < max; i += 1) {
             if (tags1.indexOf(tags0[i]) > -1) {
-                return true;
+                return true
             }
         }
         return false;
@@ -270,9 +269,9 @@ export class Model extends base.Model {
      */
     filter(collection, foreignKey) {
         if ((collection != null) && (collection.test != null)) {
-            return collection.test(this, foreignKey);
+            return collection.test(this, foreignKey)
         }
-        return true;
+        return true
     }
 
 
@@ -281,8 +280,8 @@ export class Model extends base.Model {
      *
      */
     getImageAttributionHtml() {
-        var cred = this.get('image_credit');
-        return formatters.markdown(cred);
+        var cred = this.get('image_credit')
+        return formatters.markdown(cred)
     }
 
 
@@ -292,41 +291,39 @@ export class Model extends base.Model {
      */
     beforeSave() {
 
-        var varModel = new variable.Model(),
-            varGroupModel = new variableGroup.Model(),
-            data = this.get('data');
+        var varModel = new variable.Model()
+        var varGroupModel = new variableGroup.Model()
+        var data = this.get('data')
 
         function parseDataField(data, fieldName, parserModel) {
             if (data[fieldName]) {
-                let fieldValues = data[fieldName];
-                fieldValues = fieldValues.map((fieldValue) => {
-                    return parserModel.parse(fieldValue);
-                });
-                data[fieldName] = fieldValues;
+                let fieldValues = data[fieldName]
+                fieldValues = fieldValues.map((fieldValue) => parserModel.parse(fieldValue))
+                data[fieldName] = fieldValues
             }
         }
 
         if (data) {
-
-            parseDataField(data, 'variables', varModel);
-            parseDataField(data, 'variable_groups', varGroupModel);
-
+            parseDataField(data, 'variables', varModel)
+            parseDataField(data, 'variable_groups', varGroupModel)
+            // Rename data field to items (per name conflict from spreadsheet format convention).
             if (data.data) {
-                data.items = data.data;
-                delete data.data;
+                data.items = data.data
+                delete data.data
             }
-
         }
 
     }
 
 
-    /** If there is a data field, convert to appropriate collections. */
+    /** 
+     * If there is a data field, convert to appropriate collections.
+     *
+     */
     buildData() {
-        var data;
-        data = this.get('data');
-        if (data != null) {
-            data.variables = new variable.Collection(data.variables);
+        var data = this.get('data')
+        if (data) {
+            data.variables = new variable.Collection(data.variables)
             if (data.variable_groups) {
                 data.variable_groups = new variableGroup.Collection(data.variable_groups);
                 data.variable_groups.sort();
@@ -344,10 +341,9 @@ export class Model extends base.Model {
      */
     buildFilterTree() {
 
-        var filterTree, filterVariables,
-            data = this.get('data'),
-            items = data.items,
-            variables = data.variables;
+        var filterTree, filterVariables
+        var data = this.get('data')
+        var { items, variables } = data
 
         filterVariables = variables.getFilterVariables().map(function(variable, index) {
 
@@ -359,27 +355,22 @@ export class Model extends base.Model {
                 formatter = formatters[formatterName]
             }
 
-
-
             o = {
                 variable: variable,
                 variable_id: variable.get('id'),
                 _isActive: (index === 0 ? true : false)
-            };
+            }
 
-            nd = variable.get('numerical_filter_dividers');
+            nd = variable.get('numerical_filter_dividers')
 
             if (nd != null) {
-                o.values = variable.getNumericalFilter(formatter);
+                o.values = variable.getNumericalFilter(formatter)
             } else {
                 o.values = _.map(items.getValueList(variable), function(item) {
-                    if (formatter != null) {
-                        item = formatter(item);
+                    return { 
+                        value: formatter ? formatter(item) : item 
                     }
-                    return {
-                        value: item
-                    };
-                });
+                })
             }
 
             _.map(o.values, function(val) {
@@ -417,12 +408,10 @@ export class Model extends base.Model {
      *
      */
     embedForeignModelNames() {
-        var templates = new projectTemplate.Collection(),
-            sections = new projectSection.Collection();
-
+        var templates = new projectTemplate.Collection()
+        var sections = new projectSection.Collection()
         this.addForeignField('project_template_id', templates, 'name')
         this.addForeignField('project_section_ids', sections, 'name')
-
         return this
     }
 
@@ -449,6 +438,7 @@ export class Collection extends base.Collection {
 
     get model() { return Model; }
 
+
     /**
      * Used to compare two models when sorting.
      * @param {object} model1
@@ -456,16 +446,16 @@ export class Collection extends base.Collection {
      * @returns {number} comparator - A comparator whose sign determines the sorting order.
      */
     comparator(model1, model2) {
-        var i1, i2;
-        i1 = model1.get('is_section_overview') === 'Yes' ? 10 : 0;
-        i2 = model2.get('is_section_overview') === 'Yes' ? 10 : 0;
+        var i1 = model1.get('is_section_overview') === 'Yes' ? 10 : 0
+        var i2 = model2.get('is_section_overview') === 'Yes' ? 10 : 0
         if (model1.get('title') < model2.get('title')) {
-            i1 += 1;
+            i1 += 1
         } else {
-            i2 += 1;
+            i2 += 1
         }
-        return i2 - i1;
+        return i2 - i1
     }
+
 
     /** 
      * Filter all children by project sections and templates.
@@ -474,23 +464,15 @@ export class Collection extends base.Collection {
      * @returns {object} this
      */
     filter(projectSections, projectTemplates) {
-        var i, len, model, ref;
-        if ((projectSections.models == null) || (projectSections.models.length === 0)) {
-            return;
-        }
-        if ((projectTemplates.models == null) || (projectTemplates.models.length === 0)) {
-            return;
-        }
-        if (this.models.length === 0) {
-            return;
-        }
-        ref = this.models;
-        for (i = 0, len = ref.length; i < len; i++) {
-            model = ref[i];
-            model.compositeFilter(projectSections, projectTemplates);
-        }
-        return this;
+        if ((projectSections.models == null) || (projectSections.models.length === 0)) { return }
+        if ((projectTemplates.models == null) || (projectTemplates.models.length === 0)) { return }
+        if (this.models.length === 0) { return }
+        this.models.forEach((model) => {
+            model.compositeFilter(projectSections, projectTemplates)
+        })
+        return this
     }
+
 
     /**
      * Recognize and process server response.
@@ -498,17 +480,10 @@ export class Collection extends base.Collection {
      * @returns {object} resp - Modified response.
      */
     parse(resp) {
-        var i, max,
-            item;
-        if (exports.Model.prototype.parse == null) {
-            return resp;
-        }
-        for (i = 0, max = resp.length; i < max; i += 1) {
-            item = resp[i];
-            resp[i] = exports.Model.prototype.parse(item);
-        }
-        return resp;
+        if (exports.Model.prototype.parse == null) { return resp }
+        return resp.map(item => exports.Model.prototype.parse(item))
     }
+
 
     /*
      * API query filter.
@@ -516,23 +491,21 @@ export class Collection extends base.Collection {
      */
     related_to(id) {
 
-        var referenceModel, resp;
+        var resp = []
 
-        if (id == null) { return this.toJSON(); }
+        if (id == null) { return this.toJSON() }
 
-        referenceModel =  this.findWhere({ id: id });
+        var referenceModel =  this.findWhere({ id: id })
 
-        if (referenceModel == null) { return []; }
-
-        resp = [];
+        if (referenceModel == null) { return resp }
 
         this.each((model) => {
             if (model.isRelatedTo(referenceModel)) {
-                resp.push(model.toJSON());
+                resp.push(model.toJSON())
             }
-        });
+        })
 
-        return resp;
+        return resp
 
     }
 

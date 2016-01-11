@@ -1,6 +1,6 @@
-// Base form component.
+// Base form component - add shared behavior here.
 
-import React from 'react';
+import React from 'react'
 
 class Base extends React.Component {
 
@@ -9,20 +9,9 @@ class Base extends React.Component {
 	 *
 	 */
 	render() {
-		return (
-			<div />
-		);
-	}
-
-
-	/*
-	 *
-	 *
-	 */
-	shouldComponentUpdate() {
-		return true;
+		return <div />
 	}
 
 }
 
-export default Base;
+export default Base

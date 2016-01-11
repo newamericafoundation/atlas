@@ -6,7 +6,7 @@ import marked from 'marked'
 import Static from './../../../../../general/static.jsx'
 import * as Icons from './../../../../../general/icons.jsx'
 
-import image from './../../../../../../models/image.js'
+import * as image from './../../../../../../models/image.js'
 
 import Base from './base.jsx'
 

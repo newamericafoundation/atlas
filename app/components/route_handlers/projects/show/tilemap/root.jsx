@@ -41,7 +41,7 @@ class Tilemap extends React.Component {
 			<div className='atl__main fill-parent'>
 				{ this.renderItems() }
 				<TopBar {...this.props} />			
-				<SettingsBar {...this.props} />
+				<SettingsBar {...this.props} uiDimensions={this.props.app.ui.dimensions} />
 				<Popup {...this.props} />
 				{ this.props.uiState.isSearchBarActive ? <Search {...this.props} /> : null }
 				<InfoBox {...this.props} activeItem={ this.getActiveItem() } />
