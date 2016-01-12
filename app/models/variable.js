@@ -6,6 +6,10 @@ import formatters from './../utilities/formatters.js'
 
 const BIG_NUMBER = 100000000000
 
+/*
+ *
+ *
+ */
 export class Model extends base.Model {
 
     /*
@@ -15,15 +19,15 @@ export class Model extends base.Model {
     parse(resp) {
         for(let key in resp) {
             let value = resp[key];
-            let newKey = key.toLowerCase().replace(/ /g, '_');
-            if (['variable name', 'name'].indexOf(key.toLowerCase()) > -1) { newKey = 'id'; }
-            if (['variable group name', 'group name', 'group'].indexOf(key.toLowerCase()) > -1) { newKey = 'variable_group_id'; }
+            let newKey = key.toLowerCase().replace(/ /g, '_')
+            if (['variable name', 'name'].indexOf(key.toLowerCase()) > -1) { newKey = 'id' }
+            if (['variable group name', 'group name', 'group'].indexOf(key.toLowerCase()) > -1) { newKey = 'variable_group_id' }
             if (key !== newKey) {
-                resp[newKey] = value;
-                delete resp[key];
+                resp[newKey] = value
+                delete resp[key]
             }
         }
-        return resp;
+        return resp
     }
 
 
@@ -32,13 +36,13 @@ export class Model extends base.Model {
      *
      */
     extractFilter() {
-        if (this.get('filter_menu_order') == null) { return undefined; }
+        if (this.get('filter_menu_order') == null) { return }
         return {
             'variable_id': this.get('id'),
             'type': this.get('filter_type'),
             'menu_order': this.get('filter_menu_order'),
             'numerical_dividers': this.get('numerical_filter_dividers')
-        };
+        }
     }
 
 
@@ -49,12 +53,12 @@ export class Model extends base.Model {
      * @returns {string} formattedField
      */
     getFormattedField(item, defaultFormat) {
-        var rawField = item.get(this.get('id')),
-            format = this.get('format') || defaultFormat;
+        var rawField = item.get(this.get('id'))
+        var format = this.get('format') || defaultFormat
         if (_.isArray(rawField)) {
-            return rawField.map((item) => { return formatters.format(item, format); }).join(', ');
+            return rawField.map((item) => formatters.format(item, format)).join(', ')
         }
-        return formatters.format(rawField, format);
+        return formatters.format(rawField, format)
     }
 
 
@@ -65,43 +69,36 @@ export class Model extends base.Model {
      */
     getNumericalFilter(formatter) {
 
-        var filterFloat = function (value) {
-            if(/^(\-|\+)?([0-9]*(\.[0-9]+)?|Infinity)$/
-              .test(value))
-              return Number(value);
-          return NaN;
+        function filterFloat(value) {
+            if(/^(\-|\+)?([0-9]*(\.[0-9]+)?|Infinity)$/.test(value)) { return Number(value) }
+            return NaN
         }
 
-        var i, len, numericalFilter, values,
-            numericalDividers = this.get('numerical_filter_dividers'),
-            numericalAliases = this.get('numerical_filter_aliases');
+        var i, len, numericalFilter, values
 
-        numericalAliases = numericalAliases ? numericalAliases.split('|') : [];
+        var numericalDividers = this.get('numerical_filter_dividers')
+        var numericalAliases = this.get('numerical_filter_aliases')
 
-        if (formatter == null) {
-            formatter = formatters['number'];
-        }
+        numericalAliases = numericalAliases ? numericalAliases.split('|') : []
+
+        if (!formatter) { formatter = formatters['number'] }
 
         values = _.map(numericalDividers.split('|'), function(member, index) {
-            member = member.trim();
+            member = member.trim()
             if (member === "") {
-                if (index === 0) {
-                    return -BIG_NUMBER;
-                }
-                return +BIG_NUMBER;
+                if (index === 0) { return -BIG_NUMBER }
+                return +BIG_NUMBER
             }
-            return filterFloat(member);
-        });
+            return filterFloat(member)
+        })
 
-        numericalFilter = [];
+        numericalFilter = []
 
         for (i = 0, len = values.length; i < (len - 1); i += 1) {
-            numericalFilter.push(
-                this.getNumericalFilterValue(values[i], values[i + 1], formatter, numericalAliases[i])
-            );
+            numericalFilter.push(this.getNumericalFilterValue(values[i], values[i + 1], formatter, numericalAliases[i]))
         }
 
-        return numericalFilter;
+        return numericalFilter
 
     }
 
@@ -114,29 +111,26 @@ export class Model extends base.Model {
      * @returns {object}
      */
     getNumericalFilterValue(min, max, formatter, value) {
-        var filterValue, maxDisplay, minDisplay;
 
-        filterValue = { min: min, max: max };
+        var filterValue = { min: min, max: max }
 
-        minDisplay = min;
-        maxDisplay = max;
-        minDisplay = formatter(minDisplay);
-        maxDisplay = formatter(maxDisplay);
+        var minDisplay = formatter(min)
+        var maxDisplay = formatter(max)
 
         if (value) {
-            filterValue.value = value;
-            return filterValue;
+            filterValue.value = value
+            return filterValue
         }
 
         if (min === - BIG_NUMBER) {
-            filterValue.value = "Less than " + maxDisplay;
+            filterValue.value = `Less than ${maxDisplay}`
         } else if (max === + BIG_NUMBER) {
-            filterValue.value = "Greater than " + minDisplay;
+            filterValue.value = `Greater than ${minDisplay}`
         } else {
-            filterValue.value = "Between " + minDisplay + " and " + maxDisplay;
+            filterValue.value = `Between ${minDisplay} and ${maxDisplay}`
         }
 
-        return filterValue;
+        return filterValue
     }
 
 }
@@ -149,7 +143,7 @@ export class Model extends base.Model {
  */
 export class Collection extends base.Collection {
 
-	get model() { return Model; }
+	get model() { return Model }
 
 
     /*
@@ -158,15 +152,13 @@ export class Collection extends base.Collection {
      */
     getInfoBoxVariableCount() {
 
-        var count = 0;
+        var count = 0
 
         this.models.forEach((model) => {
-            if (model.get('infobox_order')) {
-                count += 1;
-            }
-        });
+            if (model.get('infobox_order')) { count += 1 }
+        })
 
-        return count;
+        return count
 
     }
 
@@ -177,12 +169,12 @@ export class Collection extends base.Collection {
      */
     extractFilters() {
 
-        var filters = [];
+        var filters = []
 
         this.models.forEach((model) => {
-            var filter = model.extractFilter();
-            if (filter) { filters.push(filter); }
-        });
+            var filter = model.extractFilter()
+            if (filter) { filters.push(filter) }
+        })
 
         return filters.sort((f1, f2) => { return (f1['filter_menu_order'] - f2['filter_menu_order']) });
 
@@ -194,14 +186,9 @@ export class Collection extends base.Collection {
      *
      */
     getFilterVariables() {
-        var models;
-        models = this.filter(function(item) {
-            return (item.get('filter_menu_order') != null);
-        });
-        models.sort(function(a, b) {
-            return (a.get('filter_menu_order') - b.get('filter_menu_order'));
-        });
-        return models;
+        var models = this.filter((item) => (item.get('filter_menu_order') != null))
+        models.sort((a, b) => (a.get('filter_menu_order') - b.get('filter_menu_order')))
+        return models
     }
 
 }

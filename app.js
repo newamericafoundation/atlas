@@ -3,7 +3,7 @@
 // Allow ES6 syntax in all required files.
 require('babel-core/register');
 
-var NODE_ENV = process.env['NODE_ENV']
+var NODE_ENV = process.env['NODE_ENV'];
 
 // Try loading development environment variables.
 if (NODE_ENV !== 'production') {

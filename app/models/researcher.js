@@ -6,11 +6,7 @@ import dbConnector from './../../db/connector.js'
 
 export class Model extends Backbone.Model {
 
-	get dbCollection() { return 'atlas_researchers'; }
-
-	constructor(options) {
-		super(options);
-	}
+	get dbCollection() { return 'atlas_researchers' }
 
 
 	/*
@@ -27,10 +23,10 @@ export class Model extends Backbone.Model {
      */
 	parse(raw) {
 		if (raw._id) {
-			raw.id = raw._id;
-			delete raw._id;
+			raw.id = raw._id
+			delete raw._id
 		}
-		return raw;
+		return raw
 	}
 
 
@@ -39,10 +35,10 @@ export class Model extends Backbone.Model {
      *
      */
 	toMongoJSON() {
-		var json = this.toJSON();
-		json._id = json.id;
-		delete json.id;
-		return json;
+		var json = this.toJSON()
+		json._id = json.id
+		delete json.id
+		return json
 	}
 
 
@@ -51,9 +47,7 @@ export class Model extends Backbone.Model {
      *
      */
 	toSessionJSON() {
-		return {
-			id: this.get('id')
-		};
+		return { id: this.get('id') }
 	}
 
 
@@ -66,7 +60,7 @@ export class Model extends Backbone.Model {
 			displayName: this.get('displayName'),
 			name: this.get('name'),
 			image: this.get('image')
-		};
+		}
 	}
 
 
@@ -84,15 +78,15 @@ export class Model extends Backbone.Model {
 
 				collection.update({ _id: this.get('id') }, this.toMongoJSON(), { upsert: true }, (err, json) => {
 
-					if (err) { return reject(err); }
-					console.log('user saved successfully');
-					resolve(this);
+					if (err) { return reject(err) }
+					console.log('user saved successfully')
+					resolve(this)
 
 				});
 
-			}, (err) => { reject(err); });
+			}, (err) => { reject(err) })
 
-		});
+		})
 		
 	}
 
@@ -103,26 +97,24 @@ export class Model extends Backbone.Model {
      */
 	getRetrievePromise() {
 
-		console.log('retrieving');
-
 		return new Promise((resolve, reject) => {
 
 			return dbConnector.then((db) => {
 
-				var collection = db.collection('atlas_researchers'),
-					cursor = collection.find({ _id: this.get('id') });
+				var collection = db.collection('atlas_researchers')
+				var cursor = collection.find({ _id: this.get('id') })
 
 				cursor.toArray((err, json) => {
 
-					if (err) { return reject(err); }
-					this.set(this.parse(json[0]));
-					resolve(this);
+					if (err) { return reject(err) }
+					this.set(this.parse(json[0]))
+					resolve(this)
 
 				});
 
-			}, (err) => { reject(err); });
+			}, (err) => { reject(err) })
 
-		});
+		})
 
 	}
 
@@ -142,8 +134,8 @@ class Collection extends Backbone.Collection {
 	 *
 	 */
 	constructor(options) {
-		super(options);
-		this.model = Model;
+		super(options)
+		this.model = Model
 	}
 
 }

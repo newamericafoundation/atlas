@@ -20,10 +20,19 @@ var list = [
 
 export default {
 
+    /*
+     *
+     *
+     */
     get: function(index) {
         return list[index]
     },
 
+
+    /*
+     *
+     *
+     */
     interpolate: function(f) {
         var first = list[0]
         var last = list[list.length - 1]
@@ -31,6 +40,11 @@ export default {
         return `rgba(${interpolated.join(',')}, 1)`
     },
 
+
+    /*
+     *
+     *
+     */
     interpolateRgb: function(f) {
         var first = list[0]
         var last = list[list.length - 1]
@@ -41,12 +55,22 @@ export default {
         return `rgb(${interpolated.join(',')})`
     },
 
+
+    /*
+     *
+     *
+     */
     toRgba: function(index, opacity = 1) {
         if ((index != null) && this.get(index)) {
             return `rgba(${this.get(index).join(',')}, ${opacity})`
         }
     },
 
+
+    /*
+     *
+     *
+     */
     toRgb: function(index) {
         if ((index != null) && this.get(index)) {
             return `rgb(${this.get(index).join(',')})`

@@ -140,7 +140,7 @@ export class Model extends Backbone.Model {
 
 			$.ajax({
 				url: url,
-				type: 'post',
+				type: 'put',
 				dataType: 'text',
 				data: { jsonString: JSON.stringify(this.toJSON()) },
 				success: (datum) => { resolve(datum) },
@@ -232,16 +232,15 @@ export class Collection extends Backbone.Collection {
 	 */
 	buildFieldString(fields) {
 
-		var fieldString = 'fields='
+		if (!fields) { return }
 
-		if (fields == null || Object.keys(fields).length === 0) { return null }
+		var keys = Object.keys(fields)
 
-		for (let key in fields) {
-			let value = fields[key]
-			fieldString += `${ value === 1 ? '' : '-' }${key},`
-		}
+		if (keys.length === 0) { return null }
 
-		return fieldString.slice(0, -1)
+		var fieldString = 'fields=' + keys.map((key) => `${ fields[key] === 1 ? '' : '-' }${key}`).join(',')
+
+		return fieldString
 
 	}
 

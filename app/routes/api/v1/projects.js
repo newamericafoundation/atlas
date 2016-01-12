@@ -33,7 +33,7 @@ router.get('/:id', show.bind(this, { dbCollectionName: 'projects', authQuery: { 
 })
 
 // authenticated requests
-router.post('/:id/edit', currentAuthMiddleware, update.bind(this, { dbCollectionName: 'projects', authQuery: { is_live: 'Yes' } }), (req, res) => {
+router.put('/:id/edit', currentAuthMiddleware, update.bind(this, { dbCollectionName: 'projects', authQuery: { is_live: 'Yes' } }), (req, res) => {
 	res.json(req.dbResponse)
 })
 

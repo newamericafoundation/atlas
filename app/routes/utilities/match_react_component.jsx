@@ -14,7 +14,7 @@ var history = createHistory()
 var { createLocation } = history
 
 /*
- *
+ * Match React Component to current route for server rendering.
  *
  */
 export default function matchReactComponent(req, res, next) {

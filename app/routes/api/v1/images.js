@@ -19,7 +19,7 @@ router.get('/', list.bind(this, standardOptions), defaultResponder)
 router.get('/:id', show.bind(this, standardOptions), defaultResponder)
 
 // Authenticated API calls.
-router.post('/:id/edit', currentAuthMiddleware, update.bind(this, standardOptions), defaultResponder)
+router.put('/:id/edit', currentAuthMiddleware, update.bind(this, standardOptions), defaultResponder)
 router.post('/', currentAuthMiddleware, create.bind(this, standardOptions), defaultResponder)
 router.delete('/:id', currentAuthMiddleware, remove.bind(this, standardOptions), defaultResponder)
 

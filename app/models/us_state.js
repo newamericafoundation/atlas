@@ -1,5 +1,5 @@
-var base = require('./base.js'),
-	seed = require('./../../db/seeds/us_states.json');
+var base = require('./base.js')
+var seed = require('./../../db/seeds/us_states.json')
 
 exports.Model = base.Model.extend({});
 

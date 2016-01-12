@@ -15,7 +15,8 @@ var app = express()
 var MongoStore = connectMongo(session)
 var { NODE_ENV, PORT, PRERENDER_TOKEN, PORT } = process.env
 
-// Use standard security package.
+// Use standard security package
+// TODO: disable parts that make app not work in production.
 // app.use(helmet())
 
 app.set('views', __dirname + '/app/views')
@@ -69,8 +70,9 @@ function startServer(db) {
 		saveUninitialized: false
 	}))
 
+	// Set db connection instance as a request object field to access in queries and middleware.
 	app.use(function(req, res, next) {
-		req.db = db;
+		req.db = db
 		next()
 	})
 
@@ -82,6 +84,7 @@ function startServer(db) {
 		if(err) { return console.log(err) }
 		console.log(`Listening on port ${PORT}.`)
 	})
+
 }
 
 // Connect to database.
