@@ -38,9 +38,3 @@ Fetch all projects, excluding the ``data`` and ``encoded_image`` fields:
 Fetch all projects from the database, but apply a filtering method ``related_to`` implemented on the project model before sending response to the client:
 
 	/api/v1/projects?special_query_params=related_to&related_to=123
-
-# Api Call Options Docs
-
-## Fields
-
-## Special Query Params

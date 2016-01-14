@@ -4,17 +4,12 @@ Policy analysis tool for New America's Education Policy Program.
 
 ## General Info
 
-Url: http://atlas.newamerica.org/
-
-Server: ``node.js v0.12.2``.
-
-Client: ``React.js``, ``react-router``, ``Backbone``.
-
-Build: ``gulp.js``.
-
-Authentication: ``passport.js`` with ``passport-google-oauth``.
-
-Database: ``MongoDB``.
+* url: http://atlas.newamerica.org/
+* server: ``node.js``.
+* client: ``React.js``, ``react-router``, ``Backbone``.
+* build: ``webpack``.
+* authentication: ``passport.js`` with ``passport-google-oauth``.
+* database: ``MongoDB``.
 
 ## Docs
 
