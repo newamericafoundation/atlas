@@ -8,7 +8,7 @@
     "spec": "NODE_ENV=test mocha --compilers js:babel-core/register app/**/*_spec.js db/**/*_spec.js __spec/**/*_spec.js",
     "build-clean": "rm -f public/assets/scripts/*",
     "dev": "npm run build-clean && webpack --config webpack.config.development.js --watch",
-    "build": "npm run build-clean && webpack --config webpack.config.production.js",
+    "build": "npm run spec && npm run build-clean && webpack --config webpack.config.production.js",
     "deploy": "npm run build && git add . && git commit -m 'fresh deploy' && git push origin master && eb deploy"
   },
   "repository": "",
