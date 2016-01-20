@@ -2,7 +2,6 @@ import React from 'react'
 import classNames from 'classnames'
 
 import Loader from './../../../../general/loader.jsx'
-
 import * as Icons from './../../../../general/icons.jsx'
 
 /*

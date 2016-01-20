@@ -1,27 +1,23 @@
 // Base class for a modal window that pops up when a model is saved.
 
-import React from 'react';
-import Modal from './../general/modal.jsx';
+import React from 'react'
 
+import Modal from './../general/modal.jsx'
 
+/*
+ *
+ *
+ */
 class BaseStatusModal extends Modal {
 
 	/*
 	 *
 	 *
 	 */
-	constructor(props) {
-		super(props);
-	}
-
-
-	/*
-	 *
-	 *
-	 */
 	renderContent() {
-		if(this.props.status === 'success') { return this.renderSuccessContent() }
-		if(this.props.status === 'failure') { return this.renderFailureContent() }
+		var { status } = this.props
+		if(status === 'success') { return this.renderSuccessContent() }
+		if(status === 'failure') { return this.renderFailureContent() }
 		return this.renderPendingContent()
 	}
 
@@ -31,7 +27,7 @@ class BaseStatusModal extends Modal {
 	 *
 	 */
 	renderSuccessContent() {
-		var resourceName = this.props.model.name;
+		var resourceName = this.props.model.name
 		return (
 			<div>
 				<p className='title'>Save successful</p>
@@ -39,7 +35,7 @@ class BaseStatusModal extends Modal {
 					{ this.renderLinks() }
 				</ul>
 			</div>
-		);
+		)
 	}
 
 
@@ -51,9 +47,9 @@ class BaseStatusModal extends Modal {
 		var urls = [ 
 			{ name: 'edit', url: this.props.model.getEditUrl() }, 
 			{ name: 'view', url: this.props.model.getViewUrl() } 
-		];
+		]
 		return urls.map((url, i) => {
-			if (!url.url) { return; }
+			if (!url.url) { return }
 			return (
 				<li key={i}>
 					<a className='link' href={url.url}>

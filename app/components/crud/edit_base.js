@@ -17,7 +17,7 @@ class EditBase extends SaveBase {
 	 */
 	constructor(props) {
 		super(props)
-		this.state = { saveResponseStatus: undefined }
+		this.state = { saveResponseStatus: null }
 	}
 
 
@@ -36,7 +36,7 @@ class EditBase extends SaveBase {
 	 */
 	componentWillMount() {
 		if(!this.state.model) {
-			this.fetchModel();
+			this.fetchModel()
 		}
 	}
 
@@ -47,12 +47,22 @@ class EditBase extends SaveBase {
 	 */
 	fetchModel() {
 		if (!this.props.params) { return; }
-		var id = this.props.params.id;
-		var Model = this.getResourceConstructor();
-		var model = new Model({ id: id });
+		var { id } = this.props.params
+		var Model = this.getResourceConstructor()
+		var model = new Model({ id: id })
 		model.getClientFetchPromise({ id: id }).then((model) => {
-			this.setState({ model: model });
-		}).catch((err) => { console.log(err.stack); });
+			this.setState({ model: model })
+		}).catch((err) => { console.log(err.stack); })
+	}
+
+
+	/*
+	 *
+	 *
+	 */
+	addModelTimeStamp() {
+		var { model } = this.state
+		model.set('updated_at', new Date().toISOString())
 	}
 
 
@@ -62,25 +72,22 @@ class EditBase extends SaveBase {
 	 */
 	saveModel() {
 		
-		var model = this.state.model;
+		var { model } = this.state
 
-		this.setState({ saveResponseStatus: 'pending' });
+		this.setState({ saveResponseStatus: 'pending' })
 
-		if (model.beforeSave) {
-			model.beforeSave();
-		}
+		if (model.beforeSave) { model.beforeSave() }
 
-		model.set('updated_at', new Date().toISOString());
+		this.addModelTimeStamp()
 
 		model.getClientUpdatePromise().then((res) => {
-			res = JSON.parse(res);
-			this.setState({ saveResponseStatus: res.status });
-		}, (err) => { 
-			this.setState({ saveResponseStatus: 'error' });
-		});
+			res = JSON.parse(res)
+			if (res.id != null) { model.set('id', res.id) }
+			this.setState({ saveResponseStatus: res.status })
+		}).catch((err) => { this.setState({ saveResponseStatus: 'error' }) })
 
 	}
 
 }
 
-export default EditBase;
+export default EditBase

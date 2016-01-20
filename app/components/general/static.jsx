@@ -46,7 +46,7 @@ class Static extends React.Component {
 			'atl__title-bar': true,
 			'atl__title-bar--image': (state === 'image'),
 			'atl__title-bar--solid': (state === 'solid')
-		});
+		})
 		return (
 			<div className={ cls } ref='title-bar'>
 				{ this.renderTitleBarBackground() }
@@ -160,4 +160,4 @@ class Static extends React.Component {
 
 }
 
-export default Static;
+export default Static

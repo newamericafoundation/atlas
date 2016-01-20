@@ -66,7 +66,7 @@ class Header extends React.Component {
 				<p>{ `Hi, ${name.givenName}!` }</p>
 				<a href='/logout' className='header__auth__logout'>Log out</a>
 			</div>
-		);
+		)
 	}
 
 

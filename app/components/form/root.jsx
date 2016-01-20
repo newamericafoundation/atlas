@@ -51,9 +51,9 @@ class Form extends React.Component {
 	 */
 	renderFormComponents() {
 		return this.props.model.fields.map((field, i) => {
-			var FormComp = Subcomponents[field.formComponentName] || Subcomponents.Text,
-				id = field.formComponentProps.id,
-				props = field.formComponentProps || {};
+			var FormComp = Subcomponents[field.formComponentName] || Subcomponents.Text
+			var id = field.formComponentProps.id
+			var props = field.formComponentProps || {}
 			return (
 				<FormComp
 					{...props}
@@ -64,8 +64,8 @@ class Form extends React.Component {
 					saveDataOnParent={this.saveDataFromChild.bind(this)}
 					initialValue={this.props.model.get(id)}
 				/>
-			);
-		});
+			)
+		})
 		return <input />
 	}
 
@@ -76,10 +76,10 @@ class Form extends React.Component {
 	 */
 	saveDataFromChild(childData) {
 
-		var model = this.props.model,
-			key = childData.id,
-			currentValue = this.props.model.get(key),
-			incomingValue = childData.value;
+		var { model } = this.props
+		var key = childData.id
+		var currentValue = model.get(key)
+		var incomingValue = childData.value
 
 		// If the data field is an array, add the incoming value if the array does not contain it but remove it if it does.
 		// This behavior is specific to the ForeignCollectionCheckBox subcomponent.
@@ -90,12 +90,13 @@ class Form extends React.Component {
 			} else {
 				currentValue.splice(index, 1)
 			}
-			model.set(key, currentValue);
+			model.set(key, currentValue)
 		} else {
-			model.set(key, incomingValue);
+			model.set(key, incomingValue)
 		}
 
 		this.forceUpdate()
+		
 	}
 
 	

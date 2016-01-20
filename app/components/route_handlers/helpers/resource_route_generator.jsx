@@ -17,7 +17,7 @@ export default function(Model) {
 	 *
 	 */
 	class New extends NewBase {
-		getResourceConstructor() { return Model; }
+		getResourceConstructor() { return Model }
 	}
 
 
@@ -26,7 +26,7 @@ export default function(Model) {
 	 *
 	 */
 	class Edit extends EditBase {
-		getResourceConstructor() { return Model; }
+		getResourceConstructor() { return Model }
 	}
 
 
@@ -35,7 +35,7 @@ export default function(Model) {
 	 *
 	 */
 	class Delete extends DeleteBase {
-		getResourceConstructor() { return Model; }
+		getResourceConstructor() { return Model }
 	}
 
 
@@ -46,6 +46,7 @@ export default function(Model) {
 	class Wrapper extends React.Component {
 		render() { return (<div className='fill-parent'>{ this.props.children }</div>); }
 	}
+
 
 	var rootRouteName = `admin/${Model.prototype.resourceName}s`
 

@@ -257,7 +257,3 @@ class Show extends React.Component {
 }
 
 export default Show
-// export default connect(state => ({ 
-// 	routing: state.routing,
-// 	app: state.app
-// }))(Show)

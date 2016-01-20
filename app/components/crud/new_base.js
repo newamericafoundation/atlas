@@ -15,9 +15,9 @@ class NewBase extends SaveBase {
 	 *
 	 */
 	constructor(props) {
-		super(props);
+		super(props)
 		this.state = {
-			saveResponseStatus: undefined
+			saveResponseStatus: null
 		};
 	}
 
@@ -27,9 +27,9 @@ class NewBase extends SaveBase {
 	 *
 	 */
 	componentWillMount() {
-		var Model = this.getResourceConstructor();
+		var Model = this.getResourceConstructor()
 		if (!this.state.model) {
-			this.setState({ model: new Model() });
+			this.setState({ model: new Model() })
 		}
 	}
 
@@ -39,7 +39,7 @@ class NewBase extends SaveBase {
 	 *
 	 */
 	getCrudMethodName() {
-		return 'new';
+		return 'new'
 	}
 
 
@@ -48,7 +48,17 @@ class NewBase extends SaveBase {
 	 *
 	 */
 	getSubmitButtonText() {
-		return `Create ${this.getResourceName()}`;
+		return `Create ${this.getResourceName()}`
+	}
+
+
+	/*
+	 *
+	 *
+	 */
+	addModelTimeStamp() {
+		var { model } = this.state
+		model.set('created_at', new Date().toISOString())
 	}
 
 
@@ -58,29 +68,25 @@ class NewBase extends SaveBase {
 	 */
 	saveModel(formData) {
 
-		var model = this.state.model;
+		var { model } = this.state
 
 		// Set status to pending.
-		this.setState({ saveResponseStatus: 'pending' });
+		this.setState({ saveResponseStatus: 'pending' })
 
 		// Call before save method on the model.
-		if (model.beforeSave) {
-			model.beforeSave();
-		}
+		if (model.beforeSave) { model.beforeSave() }
 
-		model.set('created_at', new Date().toISOString());
+		this.addModelTimeStamp()
 
 		// While pending, save form data using the instance method on the model.
 		model.getClientSavePromise().then((res) => {
-			res = JSON.parse(res);
-			model.set('id', res.id);
-			this.setState({ saveResponseStatus: res.status });
-		}, (err) => { 
-			if (err) { 
-				console.log(err.stack); 
-			} 
+			res = JSON.parse(res)
+			if (res.id != null) { model.set('id', res.id) }
+			this.setState({ saveResponseStatus: res.status })
+		}).catch((err) => { 
+			console.log(err.stack)
 			this.setState({ saveResponseStatus: 'error' }) 
-		}).catch((err) => { console.log(err.stack); }); 
+		})
 
 	}
 

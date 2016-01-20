@@ -1,34 +1,34 @@
-import React from 'react';
-import classNames from 'classnames';
-import Static from './../general/static.jsx';
-import Form from './../form/root.jsx';
-import Loader from './../general/loader.jsx';
-import _ from 'underscore';
+import React from 'react'
+import classNames from 'classnames'
+import _ from 'underscore'
+import { Link } from 'react-router'
 
-import Base from './base.js';
-import BaseStatusModal from './base_status_modal.js';
+import Static from './../general/static.jsx'
+import Form from './../form/root.jsx'
+import Loader from './../general/loader.jsx'
 
-import { Link } from 'react-router';
+import Base from './base.js'
+import BaseStatusModal from './base_status_modal.js'
 
+
+/*
+ *
+ *
+ */
 class FormModal extends BaseStatusModal {
-
-	constructor(props) {
-		super(props);
-	}
-
 
 	/*
 	 *
 	 *
 	 */
 	renderSuccessContent() {
-		var resourceName = this.props.model.resourceName;
+		var { resourceName } = this.props.model
 		return (
 			<div>
 				<p className='title'>Delete successful</p>
 				{ this.renderLinks() }
 			</div>
-		);
+		)
 	}
 
 
@@ -37,13 +37,13 @@ class FormModal extends BaseStatusModal {
 	 *
 	 */
 	renderFailureContent() {
-		var resourceName = this.props.model.resourceName;
+		var { resourceName } = this.props.model
 		return (
 			<div>
 				<p className='title'>Delete failed</p>
 				{ this.renderLinks() }
 			</div>
-		);
+		)
 	}
 
 
@@ -56,7 +56,7 @@ class FormModal extends BaseStatusModal {
 			<div>
 				<p className='title'>Deleting...</p>
 			</div>
-		);
+		)
 	}
 
 
@@ -65,23 +65,39 @@ class FormModal extends BaseStatusModal {
 	 *
 	 */
 	renderLinks() {
-		var resourceName = this.props.model.resourceName;
+		var { resourceName } = this.props.model
 		return (
 			<ul>
-				<li><a className='link' href={this.props.model.getIndexUrl()}>View Resources</a></li>
+				<li>
+					<a 
+						className='link' 
+						href={this.props.model.getIndexUrl()}
+					>
+						View Resources
+					</a>
+				</li>
 			</ul>
-		);
+		)
 	}
 
 }
 
+
+/*
+ *
+ *
+ */
 class DeleteBase extends Base {
 
+	/*
+	 *
+	 *
+	 */
 	constructor(props) {
-		super(props);
+		super(props)
 		this.state = {
-			saveResponseStatus: undefined
-		};
+			saveResponseStatus: null
+		}
 	}
 
 
@@ -149,7 +165,7 @@ class DeleteBase extends Base {
 	 *
 	 */
 	getViewUrl() {
-		if (!this.state.model) { return '/'; }
+		if (!this.state.model) { return '/' }
 		return this.state.model.getViewUrl();
 	}
 
@@ -159,7 +175,7 @@ class DeleteBase extends Base {
 	 *
 	 */
 	getEditUrl() {
-		if (!this.state.model) { return '/'; }
+		if (!this.state.model) { return '/' }
 		return this.state.model.getEditUrl();
 	}
 
@@ -173,7 +189,7 @@ class DeleteBase extends Base {
 			<div>
 				<p>I navigate the page!</p>
 			</div>
-		);
+		)
 	}
 
 
@@ -187,7 +203,7 @@ class DeleteBase extends Base {
 			<div className="static-content">
 				{ bulk }
 			</div>
-		);
+		)
 	}
 
 
@@ -203,7 +219,7 @@ class DeleteBase extends Base {
 				<p>If you are still positive, hit the link below:</p>
 				<a onClick={this.handleDeleteClick.bind(this)} href='#' className='link'>Sure?</a>
 			</div>
-		);
+		)
 	}
 
 
@@ -212,7 +228,7 @@ class DeleteBase extends Base {
 	 *
 	 */
 	reactivateForm() {
-		this.setState({ saveResponseStatus: undefined });
+		this.setState({ saveResponseStatus: null })
 	}
 
 
@@ -222,7 +238,7 @@ class DeleteBase extends Base {
 	 */
 	componentDidMount() {
 		if(!this.state.model) {
-			this.fetchModel();
+			this.fetchModel()
 		}
 	}
 
@@ -232,13 +248,13 @@ class DeleteBase extends Base {
 	 *
 	 */
 	fetchModel() {
-		if (!this.props.params) { return; }
-		var id = this.props.params.id;
-		var Model = this.getResourceConstructor();
-		var model = new Model({ id: id });
+		if (!this.props.params) { return }
+		var { id } = this.props.params
+		var Model = this.getResourceConstructor()
+		var model = new Model({ id: id })
 		model.getClientFetchPromise({ id: id }).then((model) => {
-			this.setState({ model: model });
-		});
+			this.setState({ model: model })
+		})
 	}
 
 
@@ -247,8 +263,8 @@ class DeleteBase extends Base {
 	 *
 	 */
 	handleDeleteClick(e) {
-		e.preventDefault();
-		this.deleteModel();
+		e.preventDefault()
+		this.deleteModel()
 	}
 
 
@@ -258,21 +274,21 @@ class DeleteBase extends Base {
 	 */
 	deleteModel() {
 		
-		var model = this.state.model;
+		var { model } = this.state
 
-		this.setState({ saveResponseStatus: 'pending' });
+		this.setState({ saveResponseStatus: 'pending' })
 
 		model.getClientDeletePromise().then((res) => {
 			if (!_.isObject(res)) {
 				res = JSON.parse(res);
 			}
-			this.setState({ saveResponseStatus: res.status });
+			this.setState({ saveResponseStatus: res.status })
 		}, (err) => { 
-			this.setState({ saveResponseStatus: 'error' });
-		});
+			this.setState({ saveResponseStatus: 'error' })
+		})
 
 	}
 
 }
 
-export default DeleteBase;
+export default DeleteBase

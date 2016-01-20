@@ -1,5 +1,5 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { findDOMNode } from 'react-dom'
 import classNames from 'classnames'
 
 /*
@@ -84,7 +84,7 @@ class Slider extends React.Component {
      *
      */
     destroySlider() {
-        var $el = $(React.findDOMNode(this.refs.root))
+        var $el = $(findDOMNode(this.refs.root))
         $el.unbind()
     }
 
@@ -94,7 +94,7 @@ class Slider extends React.Component {
      *
      */
     setSliderValueText() {
-        var $el = $(React.findDOMNode(this.refs.root))
+        var $el = $(findDOMNode(this.refs.root))
         $el.find('span').html(this.getSliderValueText())
     }
 

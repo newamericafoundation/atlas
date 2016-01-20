@@ -1,8 +1,8 @@
 // This component is used generically for crud forms on any resource.
 
-import React from 'react';
-import { Link } from 'react-router';
-import classNames from 'classnames';
+import React from 'react'
+import { Link } from 'react-router'
+import classNames from 'classnames'
 
 import Static from './../general/static.jsx'
 import Form from './../form/root.jsx'
@@ -21,17 +21,7 @@ class SaveBaseModal extends BaseStatusModal {
 	 *
 	 *
 	 */
-	constructor(props) {
-		super(props);
-	}
-
-
-	/*
-	 *
-	 *
-	 */
 	renderSuccessContent() {
-		var resourceName = this.props.model.name;
 		return (
 			<div>
 				<p className='title'>Save successful</p>
@@ -39,7 +29,7 @@ class SaveBaseModal extends BaseStatusModal {
 					{ this.renderLinks() }
 				</ul>
 			</div>
-		);
+		)
 	}
 
 
@@ -55,7 +45,7 @@ class SaveBaseModal extends BaseStatusModal {
 					<li><a className='link' onClick={this.reactivateForm.bind(this)} href='/'>Keep Editing</a></li>
 				</ul>
 			</div>
-		);
+		)
 	}
 
 
@@ -68,7 +58,7 @@ class SaveBaseModal extends BaseStatusModal {
 			<div>
 				<p className='title'>Saving...</p>
 			</div>
-		);
+		)
 	}
 
 }
@@ -86,11 +76,13 @@ class SaveBase extends Base {
 	 *
 	 */
 	constructor(props) {
-		super(props);
+		super(props)
+		this.setStickyPageNav = this.setStickyPageNav.bind(this)
+		this.reactivateForm = this.reactivateForm.bind(this)
 		this.state = {
-			model: undefined,
-			saveResponseStatus: undefined
-		};
+			model: null,
+			saveResponseStatus: null
+		}
 	}
 
 	/*
@@ -98,16 +90,16 @@ class SaveBase extends Base {
 	 *
 	 */
 	render() {
-		var style = { 'overflowY': 'scroll' };
+		var style = { 'overflowY': 'scroll' }
 		return (
 			<div className='atl'>
-				<div className='atl__main fill-parent' style={style} onScroll={ this.setStickyPageNav.bind(this) }>
+				<div className='atl__main fill-parent' style={style} onScroll={ this.setStickyPageNav }>
 					{ this.renderTitleBar('solid') }
 					{ this.renderContentBar() }
 				</div>
 				{ this.renderModal() }
 			</div>
-		);
+		)
 	}
 
 
@@ -116,15 +108,15 @@ class SaveBase extends Base {
 	 *
 	 */
 	renderModal() {
-		if (this.state.saveResponseStatus) {
-			return (
-				<SaveBaseModal
-					model={this.state.model}
-					status={this.state.saveResponseStatus}
-					reactivateForm={this.reactivateForm.bind(this)}
-				/>
-			);
-		}
+		var { saveResponseStatus, model } = this.state
+		if (!saveResponseStatus) { return }
+		return (
+			<SaveBaseModal
+				model={model}
+				status={saveResponseStatus}
+				reactivateForm={this.reactivateForm}
+			/>
+		)
 	}
 
 
@@ -138,7 +130,7 @@ class SaveBase extends Base {
 				<h1 className='title'>{ `${this.getCrudMethodName()} ${this.getResourceName()}` }</h1>
 				{ this.renderLinks() }
 			</div>
-		);
+		)
 	}
 
 
@@ -147,20 +139,20 @@ class SaveBase extends Base {
 	 *
 	 */
 	renderLinks() {
-		var model = this.state.model;
-		if (!model) { return; }
-		var name = model.resourceName,
-			indexLink = (model.getIndexUrl()) ? (<li><Link className='link' to={model.getIndexUrl()}>{ `View all ${name}s` }</Link></li>) : null,
+		var { model } = this.state
+		if (!model) { return }
+		var name = model.resourceName
+		var indexLink = (model.getIndexUrl()) ? (<li><Link className='link' to={model.getIndexUrl()}>{ `View all ${name}s` }</Link></li>) : null
 			// there should be no edit or delete links if the model is empty
-			newLink = (model.get('id') && model.getNewUrl()) ? (<li><Link className='link' to={model.getNewUrl()}>{ `Create new ${name}` }</Link></li>) : null,
-			deleteLink = (model.get('id') && model.getDeleteUrl()) ? (<li><Link className='link' to={model.getDeleteUrl()}>{ `Delete this ${name}` }</Link></li>) : null;
+		var newLink = (model.get('id') && model.getNewUrl()) ? (<li><Link className='link' to={model.getNewUrl()}>{ `Create new ${name}` }</Link></li>) : null
+		var deleteLink = (model.get('id') && model.getDeleteUrl()) ? (<li><Link className='link' to={model.getDeleteUrl()}>{ `Delete this ${name}` }</Link></li>) : null
 		return (
 			<ul>
 				{ indexLink }
 				{ newLink }
 				{ deleteLink }
 			</ul>
-		);
+		)
 	}
 
 
@@ -173,7 +165,7 @@ class SaveBase extends Base {
 			<div>
 				<p>Later on, we can put things here that help navigate the entry form.</p>
 			</div>
-		);
+		)
 	}
 
 
@@ -182,8 +174,9 @@ class SaveBase extends Base {
 	 *
 	 */
 	renderPageContent() {
-		var isFormEnabled = (this.state.saveResponseStatus == null);
-		if (!this.state.model) { return (<Loader />); }
+		var { model, saveResponseStatus } = this.state
+		var isFormEnabled = (saveResponseStatus == null)
+		if (!model) { return <Loader /> }
 		return (
 			<div className="static-content">
 				<Form
@@ -194,43 +187,42 @@ class SaveBase extends Base {
 					onSubmit={ this.saveModel.bind(this) }
 				/>
 			</div>
-		);
+		)
 	}
 
 
 	// Define on subclass.
-	componentWillMount() {
-		// obtain project model, either by creating a new one or fetching one from the db
-	}
+	getCrudMethodName() { return 'new' }
 
 	// Define on subclass.
-	getCrudMethodName() {
-		return 'new';
-	}
+	getSubmitButtonText() { return 'Submit' }
 
-	// Define on subclass.
-	getSubmitButtonText() {
-		return 'Submit';
-	}
 
-	// Define on subclass.
+	/*
+	 *
+	 *
+	 */
 	saveModel(formData) {
 
-		var model = this.state.model;
+		var { model } = this.state
 
 		// Set status to pending.
-		this.setState({ saveResponseStatus: 'pending' });
+		this.setState({ saveResponseStatus: 'pending' })
 
 		// Call before save method on the model.
-		model.beforeSave();
+		if (model.beforeSave) { model.beforeSave() }
+
+		this.addModelTimeStamp()
 
 		// While pending, save form data using the instance method on the model.
 		model.getClientSavePromise().then((res) => {
-			res = JSON.parse(res);
-			model.set('id', res.id);
-			this.setState({ saveResponseStatus: res.status });
-		}, (err) => { this.setState({ saveResponseStatus: 'error' }); 
-		});
+			res = JSON.parse(res)
+			if (res.id != null) { model.set('id', res.id) }
+			this.setState({ saveResponseStatus: res.status })
+		}).catch((err) => { 
+			console.log(err.stack)
+			this.setState({ saveResponseStatus: 'error' }) 
+		})
 
 	}
 
@@ -240,9 +232,9 @@ class SaveBase extends Base {
 	 *
 	 */
 	reactivateForm() {
-		this.setState({ saveResponseStatus: undefined });
+		this.setState({ saveResponseStatus: null })
 	}
 
 }
 
-export default SaveBase;
+export default SaveBase

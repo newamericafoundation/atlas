@@ -3,15 +3,12 @@ import json2csv from 'nice-json2csv'
 
 import React from 'react'
 
-
 import authRouter from './auth.js'
 import apiRouter from './api/v1/index.js'
 
-
-
 import fingerprintManifest from './utilities/fingerprint_manifest.js'
-
 import matchReactComponent from './utilities/match_react_component.jsx'
+
 
 var router = express.Router()
 
@@ -35,7 +32,7 @@ router.use('/api/v1', apiRouter)
 
 
 // Main routes - routing done by client.
-router.get('*', matchReactComponent, (req, res) => {
+router.get('*', /* matchReactComponent, */ (req, res) => {
 	console.log(req.reactOutput)
 	var opt = fingerprintManifest
 	opt.user = req.user
