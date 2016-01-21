@@ -18,15 +18,6 @@ var Mapper = {
      *
      *
      */
-    start: function() {
-        return $.fn.ensureScript('L', '/assets/vendor/mapbox.js', this.showMain.bind(this))
-    },
-
-
-    /*
-     *
-     *
-     */
     stop: function() {
         if (Mapper.overlayView) { Mapper.overlayView.destroy() }
         if (Mapper.rootView) { return Mapper.rootView.destroy() }
@@ -37,7 +28,7 @@ var Mapper = {
      *
      *
      */
-    showMain: function() {
+    start: function() {
 
         var rootView = new RootView({ el: '#atl__map' })
 
@@ -48,8 +39,8 @@ var Mapper = {
 
         this.$loading = $("<div class='loader'><img src='/assets/images/spinner.gif'></div>")
         $('.atl__main').append(this.$loading)
-        
-        return $.fn.ensureScript('d3', '/assets/vendor/d3.min.js', this.showOverlay.bind(this))
+
+        this.showOverlay()
 
     },
 

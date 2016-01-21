@@ -11,10 +11,12 @@ import ChartistHtml from 'chartist-html'
 
 	$.fn.ensureScript = function(globalName, path, next) {
 		
+		// The exposed global is already defined on window.
 		if (window[globalName]) {
 			return next()
 		}
 
+		// If the script is not yet loaded, load it now.
 		$.ajax({
 			url: path,
 			contentType: 'text/javascript; charset=utf-8',

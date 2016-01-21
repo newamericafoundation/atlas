@@ -1,1 +1,0 @@
-// This filder contains microservices prototypes to make Atlas serverless.

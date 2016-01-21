@@ -17,6 +17,9 @@ import numeral from 'numeral'
 import ChartistHtml from 'chartist-html'
 import selectize from 'selectize'
 
+import 'd3'
+import 'mapbox.js'
+
 // Configure libraries
 import './library_config.js'
 
