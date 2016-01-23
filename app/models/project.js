@@ -8,7 +8,7 @@ import * as projectTemplate from './project_template.js'
 import * as filter from './filter.js'
 import * as variable from './variable.js'
 import * as variableGroup from './variable_group.js'
-import * as item from './item.js'
+import * as item from './item/index.js'
 
 
 /*

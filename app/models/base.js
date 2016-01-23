@@ -90,23 +90,19 @@ export class Model extends baseCrud.Model {
 	 * @param {array} keyFormatList - List of possible keys, e.g. [latitude, lat, Latitude] for latitude.
 	 * @returns {boolean} found - Whether the key is found in the data.
 	 */
-	findAndReplaceKey(data, standardKey, keyFormatList) {
-		var found, i, kf, len;
-		found = false;
-		if (keyFormatList == null) {
-			keyFormatList = [ standardKey ]; 
-		}
-		for (i = 0, len = keyFormatList.length; i < len; i++) {
-			kf = keyFormatList[i];
-			if (data[kf]) {
-				found = true;
-				if (kf !== standardKey) {
-					data[standardKey] = data[kf];
-					delete data[kf];
+	findAndReplaceKey(data, standardKey, keyAliases) {
+		var found = false
+		if (keyAliases == null) { keyAliases = [ standardKey ] }
+		for (let keyAlias in keyAliases) {
+			if (data[keyAlias]) {
+				found = true
+				if (keyAlias !== standardKey) {
+					data[standardKey] = data[keyAlias]
+					delete data[keyAlias]
 				}
 			}
 		}
-		return found;
+		return found
 	}
 
 
@@ -148,10 +144,10 @@ export class Model extends baseCrud.Model {
 				});
 			}
 
-		});
+		})
 
-		this.set(saveKey, $containedHtml.html());
-		this.set(saveKey + '_toc', arr);
+		this.set(saveKey, $containedHtml.html())
+		this.set(saveKey + '_toc', arr)
 
 	}
 
@@ -165,7 +161,7 @@ export class Model extends baseCrud.Model {
  */
 export class Collection extends baseCrud.Collection {
 	
-	get model() { return Model; }
+	get model() { return Model }
 
 
 	/**
@@ -174,16 +170,10 @@ export class Collection extends baseCrud.Collection {
 	 * @returns {object} resp - Modified response.
 	 */
 	parse(resp) {
-		var i, max,
-			item;
-		var model = new this.model(),
-			modelParseMethod = model.parse.bind(model);
-		if (modelParseMethod == null) { return resp; }
-		for (i = 0, max = resp.length; i < max; i += 1) {
-			item = resp[i];
-			resp[i] = modelParseMethod(item);
-		}
-		return resp;
+		var model = new this.model()
+		var modelParseMethod = model.parse.bind(model)
+		if (!modelParseMethod) { return resp }
+		return resp.map(item => modelParseMethod(item))
 	}
 
 }

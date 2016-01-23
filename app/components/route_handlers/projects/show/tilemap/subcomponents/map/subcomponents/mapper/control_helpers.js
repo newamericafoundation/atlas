@@ -1,5 +1,5 @@
 // This is an object mixed into Leaflet's maps to provide additional functionality.
-var controlHelpers = {
+export default {
 
 	/*
      * Centers map on specified target specified as latitude-longitude array.
@@ -8,22 +8,15 @@ var controlHelpers = {
      * @param {number} heightRatio=0.5 - Relative vertical position the map is centered to (0 -> top, 1 -> bottom).
      * @returns {object} this
      */
-    center: function(latLng, widthRatio, heightRatio) {
-        var map, mapSize, pt;
-        if (widthRatio == null) {
-            widthRatio = 0.5;
-        }
-        if (heightRatio == null) {
-            heightRatio = 0.5;
-        }
-        map = this;
-        pt = map.latLngToContainerPoint(latLng);
-        mapSize = map.getSize();
+    center: function(latLng, widthRatio = 0.5, heightRatio = 0.5) {
+        var map = this
+        var pt = map.latLngToContainerPoint(latLng)
+        var mapSize = map.getSize()
         map.panBy([-mapSize.x * widthRatio + pt.x, -mapSize.y * heightRatio + pt.y], {
             animate: true,
             duration: 0.5
-        });
-        return this;
+        })
+        return this
     },
 
 
@@ -34,22 +27,15 @@ var controlHelpers = {
      * @param {number} heightRatio=0.5 - Relative vertical position the map is centered to (0 -> top, 1 -> bottom).
      * @returns {object} this
      */
-    centerToPixel: function(location, widthRatio, heightRatio) {
-        var map, mapSize, pt;
-        if (widthRatio == null) {
-            widthRatio = 0.5;
-        }
-        if (heightRatio == null) {
-            heightRatio = 0.5;
-        }
-        map = this;
-        pt = location;
-        mapSize = map.getSize();
+    centerToPixel: function(location, widthRatio = 0.5, heightRatio = 0.5) {
+        var map = this;
+        var pt = location;
+        var mapSize = map.getSize();
         map.panBy([-mapSize.x * widthRatio + pt.x, -mapSize.y * heightRatio + pt.y], {
             animate: true,
             duration: 0.5
-        });
-        return this;
+        })
+        return this
     },
 
 
@@ -58,10 +44,9 @@ var controlHelpers = {
      * @returns {Array} latLng - Array of latitude and longitude.
      */
     getView: function() {
-        var ll, map;
-        map = this;
-        ll = map.getBounds().getCenter();
-        return [ll.lat, ll.lng];
+        var map = this
+        var latLong = map.getBounds().getCenter()
+        return [ latLong.lat, latLong.lng ]
     },
 
 
@@ -71,11 +56,10 @@ var controlHelpers = {
      * @returns {Array} this
      */
     changeZoom: function(dZoom) {
-        var map, z;
-        map = this;
-        z = map.getZoom();
-        map.setView(map.getView(), z + dZoom);
-        return this;
+        var map = this;
+        var zoom = map.getZoom()
+        map.setView(map.getView(), zoom + dZoom)
+        return this
     },
 
 
@@ -85,12 +69,9 @@ var controlHelpers = {
      * @returns {Array} this
      */
     setZoom: function(zoom) {
-        var map;
-        map = this;
-        map.setView(map.getView(), zoom);
-        return this;
+        var map = this
+        map.setView(map.getView(), zoom)
+        return this
     }
 
-};
-
-export default controlHelpers;
+}
