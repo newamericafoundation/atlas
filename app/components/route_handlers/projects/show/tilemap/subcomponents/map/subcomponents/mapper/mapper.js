@@ -86,7 +86,7 @@ var Mapper = {
         // Fetch shape file and launch.
         shp.getGeoJsonFetchPromise().then((data) => {
             launch(data)
-        }).catch((err) => { console.log(err) })
+        }).catch((err) => { console.log(err.stack) })
 
         return this
 

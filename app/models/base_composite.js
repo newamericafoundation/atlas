@@ -13,12 +13,12 @@ export class Model extends Backbone.Model {
      *
      */
     getChildrenKey() {
-        var key, ref, value;
-        ref = this.attributes;
+        var key, ref, value
+        ref = this.attributes
         for (key in ref) {
-            value = ref[key];
+            value = ref[key]
             if (_.isArray(value)) {
-                return key;
+                return key
             }
         }
     }
@@ -59,10 +59,8 @@ export class Model extends Backbone.Model {
      *
      */
     getChildIndex() {
-        if (this.parent) {
-            return this.parent.children.indexOf(this);
-        }
-        return -1;
+        if (this.parent) { return this.parent.children.indexOf(this) }
+        return -1
     }
 
 
@@ -71,10 +69,8 @@ export class Model extends Backbone.Model {
      *
      */
     getSiblingCount() {
-        if (this.parent) {
-            return this.parent.children.length;
-        }
-        return -1;
+        if (this.parent) { return this.parent.children.length }
+        return -1
     }
 
 
@@ -83,11 +79,10 @@ export class Model extends Backbone.Model {
      *
      */
     getNextSibling() {
-        var ci, sc;
-        ci = this.getChildIndex();
-        sc = this.getSiblingCount();
+        var ci = this.getChildIndex()
+        var sc = this.getSiblingCount()
         if ((ci !== -1) && (sc !== -1) && (ci < sc)) {
-            return this.parent.children[ci + 1];
+            return this.parent.children[ci + 1]
         }
     }
 
@@ -97,11 +92,10 @@ export class Model extends Backbone.Model {
      *
      */
     getPreviousSibling() {
-        var ci, sc;
-        ci = this.getChildIndex();
-        sc = this.getSiblingCount();
+        var ci = this.getChildIndex()
+        var sc = this.getSiblingCount()
         if ((ci !== -1) && (sc !== -1) && (ci > 0)) {
-            return this.parent.children[ci - 1];
+            return this.parent.children[ci - 1]
         }
     }
 

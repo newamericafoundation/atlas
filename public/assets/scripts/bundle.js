@@ -51692,8 +51692,6 @@
 
 		_createClass(Model, [{
 			key: 'activate',
-
-			/** Activates model. Takes no collection filter logic into consideration - hence internal only. */
 			value: function activate() {
 				return this.set('_isActive', true);
 			}
@@ -51706,23 +51704,6 @@
 				return this.set('_isActive', false);
 			}
 
-			/** Toggle the model's active state. */
-
-		}, {
-			key: 'toggleActiveState',
-			value: function toggleActiveState() {
-				if (this.isActive()) {
-					if (!(this.collection != null && this.collection.hasSingleActiveChild)) {
-						return this.deactivate();
-					}
-				} else {
-					this.activate();
-					if (this.collection != null && this.collection.hasSingleActiveChild) {
-						return this.collection.deactivateSiblings(this);
-					}
-				}
-			}
-
 			/** Get active state. */
 
 		}, {
@@ -51731,8 +51712,25 @@
 				return this.get('_isActive');
 			}
 
+			/** Toggle the model's active state. */
+
+		}, {
+			key: 'toggleActiveState',
+			value: function toggleActiveState() {
+				if (this.isActive()) {
+					if (!(this.collection && this.collection.hasSingleActiveChild)) {
+						return this.deactivate();
+					}
+				} else {
+					this.activate();
+					if (this.collection && this.collection.hasSingleActiveChild) {
+						return this.collection.deactivateSiblings(this);
+					}
+				}
+			}
+
 			/** 
-	   * Tests whether a tested model satisfies a belongs_to relation with the model instance under a specified foreign key. 
+	   * Tests whether the model satisfies a belongs_to relation with the model instance under a specified foreign key. 
 	   * Example: this.get('id') === testedModel.get('user_id') if the foreign key is 'user'.
 	   * @param {object} testedModel
 	   * @param {string} foreignKey
@@ -51754,7 +51752,7 @@
 				}
 				// If there are multiple ids, test for inclusion.
 				foreignIds = testedModel.get(foreignKey + '_ids');
-				if (foreignIds != null) {
+				if (foreignIds) {
 					return foreignIds.indexOf(id) >= 0;
 				}
 				return false;
@@ -51797,18 +51795,11 @@
 		}, {
 			key: 'deactivateSiblings',
 			value: function deactivateSiblings(activeChild) {
-				var i, len, model, ref, results;
-				ref = this.models;
-				results = [];
-				for (i = 0, len = ref.length; i < len; i++) {
-					model = ref[i];
+				return this.models.forEach(function (model) {
 					if (model !== activeChild) {
-						results.push(model.deactivate());
-					} else {
-						results.push(void 0);
+						model.deactivate();
 					}
-				}
-				return results;
+				});
 			}
 
 			/** 
@@ -51820,13 +51811,11 @@
 		}, {
 			key: 'initializeActiveStates',
 			value: function initializeActiveStates() {
-				var i, index, len, model, ref;
-				ref = this.models;
-				for (index = i = 0, len = ref.length; i < len; index = ++i) {
-					model = ref[index];
-					model.set('_isActive', !this.hasSingleActiveChild ? true : index === 0 ? true : false);
-				}
-				return this.trigger('initialize:active:states');
+				var _this3 = this;
+
+				this.models.forEach(function (model, i) {
+					model.set('_isActive', !_this3.hasSingleActiveChild ? true : i === 0 ? true : false);
+				});
 			}
 
 			/**
@@ -51839,14 +51828,33 @@
 		}, {
 			key: 'test',
 			value: function test(testedModel, foreignKey) {
-				var i, len, model, ref;
-				ref = this.models;
-				for (i = 0, len = ref.length; i < len; i++) {
-					model = ref[i];
-					if (model.test(testedModel, foreignKey)) {
-						return true;
+				var _iteratorNormalCompletion = true;
+				var _didIteratorError = false;
+				var _iteratorError = undefined;
+
+				try {
+					for (var _iterator = this.models[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+						var model = _step.value;
+
+						if (model.test(testedModel, foreignKey)) {
+							return true;
+						}
+					}
+				} catch (err) {
+					_didIteratorError = true;
+					_iteratorError = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion && _iterator.return) {
+							_iterator.return();
+						}
+					} finally {
+						if (_didIteratorError) {
+							throw _iteratorError;
+						}
 					}
 				}
+
 				return false;
 			}
 		}, {
@@ -52829,9 +52837,8 @@
 	    }, {
 	        key: 'getNextSibling',
 	        value: function getNextSibling() {
-	            var ci, sc;
-	            ci = this.getChildIndex();
-	            sc = this.getSiblingCount();
+	            var ci = this.getChildIndex();
+	            var sc = this.getSiblingCount();
 	            if (ci !== -1 && sc !== -1 && ci < sc) {
 	                return this.parent.children[ci + 1];
 	            }
@@ -52845,9 +52852,8 @@
 	    }, {
 	        key: 'getPreviousSibling',
 	        value: function getPreviousSibling() {
-	            var ci, sc;
-	            ci = this.getChildIndex();
-	            sc = this.getSiblingCount();
+	            var ci = this.getChildIndex();
+	            var sc = this.getSiblingCount();
 	            if (ci !== -1 && sc !== -1 && ci > 0) {
 	                return this.parent.children[ci - 1];
 	            }
@@ -53314,17 +53320,21 @@
 	   */
 			value: function parse(data) {
 
-				// Protect for uppercase Name typo.
-				if (data.Name && !data.name) {
-					data.name = data.Name;
-					delete data.Name;
-				}
-
+				this._standardizeName(data);
 				this._processValues(data);
 				this._checkPin(data);
 				this._checkUsState(data);
 				this._checkUsCongressionalDistrict(data);
 
+				return data;
+			}
+		}, {
+			key: '_standardizeName',
+			value: function _standardizeName(data) {
+				if (data.Name && !data.name) {
+					data.name = data.Name;
+					delete data.Name;
+				}
 				return data;
 			}
 
@@ -53344,7 +53354,7 @@
 					value = data[key];
 					if (_underscore2.default.isString(value)) {
 						if (value.indexOf("|") > -1 && value.indexOf("\n") === -1) {
-							data[key] = _underscore2.default.map(value.split('|'), function (item) {
+							data[key] = value.split('|').map(function (item) {
 								return item.trim();
 							});
 						} else {
@@ -53364,9 +53374,8 @@
 		}, {
 			key: '_checkPin',
 			value: function _checkPin(data) {
-				var foundLat, foundLong;
-				foundLat = this.findAndReplaceKey(data, 'lat', ['latitude', 'Latitude', 'lat', 'Lat']);
-				foundLong = this.findAndReplaceKey(data, 'long', ['longitude', 'Longitude', 'long', 'Long']);
+				var foundLat = this.findAndReplaceKey(data, 'lat', ['latitude', 'Latitude', 'lat', 'Lat']);
+				var foundLong = this.findAndReplaceKey(data, 'long', ['longitude', 'Longitude', 'long', 'Long']);
 				if (foundLat && foundLong) {
 					data._itemType = 'pin';
 				}
@@ -53382,9 +53391,8 @@
 		}, {
 			key: '_checkUsState',
 			value: function _checkUsState(data) {
-				var stateData;
 				if (data.name != null) {
-					stateData = _underscore2.default.where(states, {
+					var stateData = _underscore2.default.where(states, {
 						name: data.name
 					});
 					if (stateData != null && stateData.length > 0) {
@@ -53427,9 +53435,8 @@
 		}, {
 			key: 'toLatLongPoint',
 			value: function toLatLongPoint() {
-				var lat, long;
-				lat = this.get('lat');
-				long = this.get('long');
+				var lat = this.get('lat');
+				var long = this.get('long');
 				if (lat == null) {
 					lat = -37.8602828;
 				}
@@ -53458,8 +53465,7 @@
 		}, {
 			key: 'toRichGeoJsonFeature',
 			value: function toRichGeoJsonFeature() {
-				var geoJson;
-				geoJson = {
+				var geoJson = {
 					type: 'Feature',
 					_model: this,
 					geometry: {
@@ -53605,8 +53611,8 @@
 		}, {
 			key: 'getValueList',
 			value: function getValueList(variable) {
-				var key = variable.get('id'),
-				    valueList = [];
+				var key = variable.get('id');
+				var valueList = [];
 
 				this.models.forEach(function (model) {
 					var value = model.get(key);
@@ -53656,25 +53662,45 @@
 		}, {
 			key: 'getLatLongBounds',
 			value: function getLatLongBounds() {
-				var j, lat, len, long, maxLat, maxLong, minLat, minLong, model, ref;
-				ref = this.models;
-				for (j = 0, len = ref.length; j < len; j++) {
-					model = ref[j];
-					lat = model.get('lat');
-					long = model.get('long');
-					if (typeof minLat === "undefined" || minLat === null || minLat > lat) {
-						minLat = lat;
+				var maxLat, maxLong, minLat, minLong;
+				var _iteratorNormalCompletion = true;
+				var _didIteratorError = false;
+				var _iteratorError = undefined;
+
+				try {
+					for (var _iterator = this.models[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+						var model = _step.value;
+
+						var lat = model.get('lat');
+						var long = model.get('long');
+						if (typeof minLat === "undefined" || minLat === null || minLat > lat) {
+							minLat = lat;
+						}
+						if (typeof maxLat === "undefined" || maxLat === null || maxLat < lat) {
+							maxLat = lat;
+						}
+						if (typeof minLong === "undefined" || minLong === null || minLong > long) {
+							minLong = long;
+						}
+						if (typeof maxLong === "undefined" || maxLong === null || maxLong < long) {
+							maxLong = long;
+						}
 					}
-					if (typeof maxLat === "undefined" || maxLat === null || maxLat < lat) {
-						maxLat = lat;
-					}
-					if (typeof minLong === "undefined" || minLong === null || minLong > long) {
-						minLong = long;
-					}
-					if (typeof maxLong === "undefined" || maxLong === null || maxLong < long) {
-						maxLong = long;
+				} catch (err) {
+					_didIteratorError = true;
+					_iteratorError = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion && _iterator.return) {
+							_iterator.return();
+						}
+					} finally {
+						if (_didIteratorError) {
+							throw _iteratorError;
+						}
 					}
 				}
+
 				return [[minLat, minLong], [maxLat, maxLong]];
 			}
 
@@ -53715,23 +53741,41 @@
 
 					base: function base(collection, baseGeoData, getFeatureId) {
 
-						var data, richGeoJson, setup;
-						richGeoJson = new _rich_geo_feature2.default.Collection();
+						var data, richGeoJson;
+						var richGeoJson = new _rich_geo_feature2.default.Collection();
 
-						setup = function (data) {
-							var feature, item, j, len, ref;
+						function setup(data) {
 							richGeoJson.features = baseGeoData.features;
-							ref = richGeoJson.features;
-							for (j = 0, len = ref.length; j < len; j++) {
-								feature = ref[j];
-								var featureId = getFeatureId(feature);
-								item = collection.findWhere({
-									id: featureId
-								});
-								feature._model = item;
+							console.log(baseGeoData);
+							var _iteratorNormalCompletion2 = true;
+							var _didIteratorError2 = false;
+							var _iteratorError2 = undefined;
+
+							try {
+								for (var _iterator2 = richGeoJson.features[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+									var feature = _step2.value;
+
+									var featureId = getFeatureId(feature);
+									var item = collection.findWhere({ id: featureId });
+									feature._model = item;
+								}
+							} catch (err) {
+								_didIteratorError2 = true;
+								_iteratorError2 = err;
+							} finally {
+								try {
+									if (!_iteratorNormalCompletion2 && _iterator2.return) {
+										_iterator2.return();
+									}
+								} finally {
+									if (_didIteratorError2) {
+										throw _iteratorError2;
+									}
+								}
 							}
+
 							return richGeoJson.trigger('sync');
-						};
+						}
 
 						setup(baseGeoData);
 						return richGeoJson;
@@ -53739,7 +53783,7 @@
 
 					us_state: function us_state(collection, baseGeoData) {
 						return this.base(collection, baseGeoData, function (feature) {
-							return parseInt(feature.properties.id);
+							return parseInt(feature.properties.id, 10);
 						});
 					},
 
@@ -53751,13 +53795,32 @@
 					},
 
 					pin: function pin(collection) {
-						var item, j, len, ref, richGeoJson;
-						richGeoJson = new _rich_geo_feature2.default.Collection();
-						ref = collection.models;
-						for (j = 0, len = ref.length; j < len; j++) {
-							item = ref[j];
-							richGeoJson.features.push(item.toRichGeoJsonFeature());
+						var richGeoJson = new _rich_geo_feature2.default.Collection();
+						var _iteratorNormalCompletion3 = true;
+						var _didIteratorError3 = false;
+						var _iteratorError3 = undefined;
+
+						try {
+							for (var _iterator3 = collection.models[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+								var item = _step3.value;
+
+								richGeoJson.features.push(item.toRichGeoJsonFeature());
+							}
+						} catch (err) {
+							_didIteratorError3 = true;
+							_iteratorError3 = err;
+						} finally {
+							try {
+								if (!_iteratorNormalCompletion3 && _iterator3.return) {
+									_iterator3.return();
+								}
+							} finally {
+								if (_didIteratorError3) {
+									throw _iteratorError3;
+								}
+							}
 						}
+
 						richGeoJson.trigger('sync');
 						return richGeoJson;
 					}
@@ -53813,8 +53876,7 @@
 	  */
 		onReady: function onReady(next) {
 			if (this.features.length > 0) {
-				next();
-				return;
+				return next();
 			}
 			return this.on('sync', next);
 		}
@@ -55243,7 +55305,7 @@
 	        shp.getGeoJsonFetchPromise().then(function (data) {
 	            launch(data);
 	        }).catch(function (err) {
-	            console.log(err);
+	            console.log(err.stack);
 	        });
 
 	        return this;

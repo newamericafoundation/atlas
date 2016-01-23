@@ -4,6 +4,8 @@ import _ from 'underscore'
 import Backbone from 'backbone'
 import dbConnector from './../../db/connector.js'
 
+const AUTHORIZED_DOMAINS = [ 'newamerica.org', 'opentechinstitute.org', 'wiredcraft.com' ]
+
 export class Model extends Backbone.Model {
 
 	get dbCollection() { return 'atlas_researchers' }
@@ -13,7 +15,7 @@ export class Model extends Backbone.Model {
 	 *
 	 */
 	isDomainAuthorized() {
-		return ([ 'newamerica.org', 'opentechinstitute.org', 'wiredcraft.com' ].indexOf(this.get('domain')) > -1);
+		return (AUTHORIZED_DOMAINS.indexOf(this.get('domain')) > -1)
 	}
 
 
@@ -116,26 +118,6 @@ export class Model extends Backbone.Model {
 
 		})
 
-	}
-
-}
-
-
-/*
- * Not used.
- *
- */
-class Collection extends Backbone.Collection {
-
-	get dbCollection() { return 'atlas_researchers'; }
-
-	/*
-	 *
-	 *
-	 */
-	constructor(options) {
-		super(options)
-		this.model = Model
 	}
 
 }

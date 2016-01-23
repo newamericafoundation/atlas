@@ -1,6 +1,5 @@
 import express from 'express'
 import json2csv from 'nice-json2csv'
-
 import React from 'react'
 
 import authRouter from './auth.js'
@@ -33,7 +32,6 @@ router.use('/api/v1', apiRouter)
 
 // Main routes - routing done by client.
 router.get('*', /* matchReactComponent, */ (req, res) => {
-	console.log(req.reactOutput)
 	var opt = fingerprintManifest
 	opt.user = req.user
 	res.render('index.jade', opt)

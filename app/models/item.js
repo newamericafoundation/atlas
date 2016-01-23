@@ -18,17 +18,21 @@ export class Model extends base.Model {
 	 */
 	parse(data) {
 
-		// Protect for uppercase Name typo.
-		if (data.Name && !data.name) {
-			data.name = data.Name;
-			delete data.Name;
-		}
-
+		this._standardizeName(data)
 		this._processValues(data)
 		this._checkPin(data)
 		this._checkUsState(data)
 		this._checkUsCongressionalDistrict(data)
 
+		return data
+	}
+
+
+	_standardizeName(data) {
+		if (data.Name && !data.name) {
+			data.name = data.Name
+			delete data.Name
+		}
 		return data
 	}
 
@@ -46,15 +50,13 @@ export class Model extends base.Model {
 			value = data[key];
 			if (_.isString(value)) {
 				if ((value.indexOf("|") > -1) && (value.indexOf("\n") === -1)) {
-					data[key] = _.map(value.split('|'), function(item) {
-						return item.trim();
-					});
+					data[key] = value.split('|').map(item => item.trim())
 				} else {
-					data[key] = value.trim();
+					data[key] = value.trim()
 				}
 			}
 		}
-		return data;
+		return data
 	}
 
 	
@@ -64,13 +66,12 @@ export class Model extends base.Model {
 	 * @returns {object} - Validation summary object.
 	 */
 	_checkPin(data) {
-		var foundLat, foundLong;
-		foundLat = this.findAndReplaceKey(data, 'lat', ['latitude', 'Latitude', 'lat', 'Lat']);
-		foundLong = this.findAndReplaceKey(data, 'long', ['longitude', 'Longitude', 'long', 'Long']);
+		var foundLat = this.findAndReplaceKey(data, 'lat', ['latitude', 'Latitude', 'lat', 'Lat'])
+		var foundLong = this.findAndReplaceKey(data, 'long', ['longitude', 'Longitude', 'long', 'Long'])
 		if (foundLat && foundLong) {
-			data._itemType = 'pin';
+			data._itemType = 'pin'
 		}
-		return data;
+		return data
 	}
 
 	
@@ -80,27 +81,26 @@ export class Model extends base.Model {
 	 * @returns {object} - Validation summary object.
 	 */
 	_checkUsState(data) {
-		var stateData;
 		if (data.name != null) {
-			stateData = _.where(states, {
+			let stateData = _.where(states, {
 				name: data.name
-			});
+			})
 			if ((stateData != null) && stateData.length > 0) {
-				data.id = stateData[0].id;
-				data.code = stateData[0].code;
-				data._itemType = 'us_state';
+				data.id = stateData[0].id
+				data.code = stateData[0].code
+				data._itemType = 'us_state'
 			}
 		}
-		return data;
+		return data
 	}
 
 
 	_checkUsCongressionalDistrict(data) {
 		if (data.cngdstcd != null) {
-			data.id = data.cngdstcd;
-			data._itemType = 'us_congressional_district';
+			data.id = data.cngdstcd
+			data._itemType = 'us_congressional_district'
 		}
-		return data;
+		return data
 	}
 
 
@@ -110,9 +110,9 @@ export class Model extends base.Model {
 	 */
 	getImageName() {
 		if (this.get('image') != null) {
-			return this.get('image');
+			return this.get('image')
 		}
-		return this.get('name').replace(/(\r\n|\n|\r)/gm, "").toLowerCase();
+		return this.get('name').replace(/(\r\n|\n|\r)/gm, "").toLowerCase()
 	}
 
 	
@@ -121,16 +121,11 @@ export class Model extends base.Model {
 	 * @returns {array} - Spatial data point as simple array [Lat, Long].
 	 */
 	toLatLongPoint() {
-		var lat, long;
-		lat = this.get('lat');
-		long = this.get('long');
-		if (lat == null) {
-			lat = -37.8602828;
-		}
-		if (long == null) {
-			long = 145.0796161;
-		}
-		return [lat, long];
+		var lat = this.get('lat');
+		var long = this.get('long');
+		if (lat == null) { lat = -37.8602828 }
+		if (long == null) { long = 145.0796161 }
+		return [lat, long]
 	}
 
 	
@@ -139,7 +134,7 @@ export class Model extends base.Model {
 	 * @returns {array} - Spatial data point as simple array [Long, Lat].
 	 */
 	toLongLatPoint() {
-		return this.toLatLongPoint().reverse();
+		return this.toLatLongPoint().reverse()
 	}
 
 	
@@ -148,16 +143,15 @@ export class Model extends base.Model {
 	 * @returns {object} geoJson.
 	 */
 	toRichGeoJsonFeature() {
-		var geoJson;
-		geoJson = {
+		var geoJson = {
 			type: 'Feature',
 			_model: this,
 			geometry: {
 				type: 'Point',
 				coordinates: this.toLongLatPoint()
 			}
-		};
-		return geoJson;
+		}
+		return geoJson
 	}
 
 
@@ -168,14 +162,14 @@ export class Model extends base.Model {
 	 */
 	getDisplayState(filter, searchTerm) {
 
-		var filterIndeces, valueHoverIndex, isFiltered;
+		var filterIndeces, valueHoverIndex, isFiltered
 
 		if (!this.matchesSearchTerm(searchTerm)) { return 'inactive' }
 
 		filterIndeces = filter.getValueIndeces(this)
 		var { valueHoverIndex } = filter.state
 
-		isFiltered = (filterIndeces.length > 0);
+		isFiltered = (filterIndeces.length > 0)
 
 		if (!isFiltered) { return 'inactive' }
 
@@ -264,38 +258,34 @@ export class Collection extends base.Collection {
 	 * @returns {array} valueList - List of values for specified key.
 	 */
 	getValueList(variable) {
-		var key = variable.get('id'),
-			valueList = [];
+		var key = variable.get('id')
+		var valueList = []
 
 		this.models.forEach((model) => {
-			var value = model.get(key);
+			var value = model.get(key)
 			if (_.isArray(value)) {
 				value.forEach((val) => {
-					if (valueList.indexOf(val) < 0) {
-						valueList.push(val);
-					}
-				});
+					if (valueList.indexOf(val) < 0) { valueList.push(val) }
+				})
 			} else {
-				if (valueList.indexOf(value) < 0) {
-					valueList.push(value);
-				}
+				if (valueList.indexOf(value) < 0) { valueList.push(value) }
 			}
-		});
+		})
 
 		// Sort value list if there is a value_order array set on the variable.
 		if (variable && variable.get('value_order')) {
-			let valueOrderArray = variable.get('value_order').split('|').map((s) => { return s.trim(); });
+			let valueOrderArray = variable.get('value_order').split('|').map(s => s.trim())
 			valueList = valueList.sort((val_1, val_2) => {
-				var index_1 = valueOrderArray.indexOf(val_1);
-				var index_2 = valueOrderArray.indexOf(val_2);
+				var index_1 = valueOrderArray.indexOf(val_1)
+				var index_2 = valueOrderArray.indexOf(val_2)
 				// If the value is not present in the value_order array, place it at the end of the list.
-				if (index_1 < 0) { index_1 = 1000; }
-				if (index_2 < 0) { index_2 = 1000; }
+				if (index_1 < 0) { index_1 = 1000 }
+				if (index_2 < 0) { index_2 = 1000 }
 				return (index_1 - index_2);
-			});
+			})
 		}
 
-		return valueList;
+		return valueList
 	}
 	
 
@@ -305,29 +295,28 @@ export class Collection extends base.Collection {
 	 * @returns {array} array of arrays - Latitude and longitude bounds, two arrays with two elements each.
 	 */
 	getLatLongBounds() {
-		var j, lat, len, long, maxLat, maxLong, minLat, minLong, model, ref;
-		ref = this.models;
-		for (j = 0, len = ref.length; j < len; j++) {
-			model = ref[j];
-			lat = model.get('lat');
-			long = model.get('long');
+		var maxLat, maxLong, minLat, minLong
+		for (let model of this.models) {
+			let lat = model.get('lat')
+			let long = model.get('long')
 			if ((typeof minLat === "undefined" || minLat === null) || (minLat > lat)) {
-				minLat = lat;
+				minLat = lat
 			}
 			if ((typeof maxLat === "undefined" || maxLat === null) || (maxLat < lat)) {
-				maxLat = lat;
+				maxLat = lat
 			}
 			if ((typeof minLong === "undefined" || minLong === null) || (minLong > long)) {
-				minLong = long;
+				minLong = long
 			}
 			if ((typeof maxLong === "undefined" || maxLong === null) || (maxLong < long)) {
-				maxLong = long;
+				maxLong = long
 			}
 		}
+
 		return [
 			[minLat, minLong],
 			[maxLat, maxLong]
-		];
+		]
 	}
 	
 
@@ -346,50 +335,45 @@ export class Collection extends base.Collection {
 
 			base: function(collection, baseGeoData, getFeatureId) {
 
-				var data, richGeoJson, setup;
-				richGeoJson = new rgf.Collection();
+				var data, richGeoJson
+				var richGeoJson = new rgf.Collection()
 
-				setup = function(data) {
-					var feature, item, j, len, ref;
-					richGeoJson.features = baseGeoData.features;
-					ref = richGeoJson.features;
-					for (j = 0, len = ref.length; j < len; j++) {
-						feature = ref[j];
-						let featureId = getFeatureId(feature);
-						item = collection.findWhere({
-							id: featureId
-						});
-						feature._model = item;
+				function setup(data) {
+					richGeoJson.features = baseGeoData.features
+					console.log(baseGeoData)
+					for (let feature of richGeoJson.features) {
+						let featureId = getFeatureId(feature)
+						let item = collection.findWhere({ id: featureId })
+						feature._model = item
 					}
-					return richGeoJson.trigger('sync');
-				};
+					return richGeoJson.trigger('sync')
+				}
 
-				setup(baseGeoData);
-				return richGeoJson;
+				setup(baseGeoData)
+				return richGeoJson
 
 			},
 
 			us_state: function(collection, baseGeoData) {
-				return this.base(collection, baseGeoData, (feature) => { return parseInt(feature.properties.id); });
+				return this.base(collection, baseGeoData, (feature) => {
+					return parseInt(feature.properties.id, 10)
+				});
 			},
 
 			us_congressional_district: function(collection, baseGeoData) {
 				return this.base(collection, baseGeoData, (feature) => { 
-					var props = feature.properties;
-					return parseInt(`${parseInt(props.state_id, 10)}${props.id}`, 10); 
-				});
+					var props = feature.properties
+					return parseInt(`${parseInt(props.state_id, 10)}${props.id}`, 10)
+				})
 			},
 
 			pin: function(collection) {
-				var item, j, len, ref, richGeoJson;
-				richGeoJson = new rgf.Collection();
-				ref = collection.models;
-				for (j = 0, len = ref.length; j < len; j++) {
-					item = ref[j];
+				var richGeoJson = new rgf.Collection()
+				for (let item of collection.models) {
 					richGeoJson.features.push(item.toRichGeoJsonFeature());
 				}
-				richGeoJson.trigger('sync');
-				return richGeoJson;
+				richGeoJson.trigger('sync')
+				return richGeoJson
 			}
 
 		}

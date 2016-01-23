@@ -14,9 +14,9 @@ var Collection = Backbone.Collection.extend({
      *
      */
 	initialize: function() {
-		_.extend(this, Backbone.Events);
-		this.type = 'FeatureCollection';
-		return this.features = [];
+		_.extend(this, Backbone.Events)
+		this.type = 'FeatureCollection'
+		return this.features = []
 	},
 
 
@@ -26,10 +26,9 @@ var Collection = Backbone.Collection.extend({
      */
 	onReady: function(next) {
 		if (this.features.length > 0) {
-			next();
-			return;
+			return next()
 		}
-		return this.on('sync', next);
+		return this.on('sync', next)
 	}
 	
 })
