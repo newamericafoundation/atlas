@@ -15,7 +15,7 @@ class LocalBaseModel extends baseComposite.Model {
      *
      */
     isActive() {
-        return this.get('_isActive');
+        return this.get('_isActive')
     }
 
 
@@ -24,8 +24,8 @@ class LocalBaseModel extends baseComposite.Model {
      *
      */
     activate() {
-        this.set('_isActive', true);
-        return this;
+        this.set('_isActive', true)
+        return this
     }
 
 
@@ -34,8 +34,8 @@ class LocalBaseModel extends baseComposite.Model {
      *
      */
     deactivate() {
-        this.set('_isActive', false);
-        return this;
+        this.set('_isActive', false)
+        return this
     }
 
 
@@ -44,8 +44,8 @@ class LocalBaseModel extends baseComposite.Model {
      *
      */
     toggle() {
-        this.set('_isActive', !this.isActive());
-        return this;
+        this.set('_isActive', !this.isActive())
+        return this
     }
 
 
@@ -54,10 +54,8 @@ class LocalBaseModel extends baseComposite.Model {
      *
      */
     activateAllChildren() {
-        this.children.forEach(function(child) {
-            child.activate();
-        });
-        return this;
+        this.children.forEach((child) => { child.activate() })
+        return this
     }
 
 
@@ -66,10 +64,8 @@ class LocalBaseModel extends baseComposite.Model {
      *
      */
     deactivateAllChildren() {
-        this.children.forEach(function(child) {
-            child.deactivate();
-        });
-        return this;
+        this.children.forEach((child) => { child.deactivate() })
+        return this
     }
 
 
@@ -78,10 +74,8 @@ class LocalBaseModel extends baseComposite.Model {
      *
      */
     toggleAllChildren() {
-        this.children.forEach(function(child) {
-            child.toggle();
-        });
-        return this;
+        this.children.forEach((child) => { child.toggle() })
+        return this
     }
 
 
@@ -90,15 +84,11 @@ class LocalBaseModel extends baseComposite.Model {
      *
      */
     deactivateSiblings() {
-        var self = this,
-            siblingsIncludingSelf;
-        if (this.parent == null) { return; }
-        siblingsIncludingSelf = this.parent.children;
-        siblingsIncludingSelf.forEach(function(sibling) {
-            if (sibling !== self) {
-                sibling.deactivate();
-            }
-        });
+        if (!this.parent) { return }
+        var siblingsIncludingSelf = this.parent.children;
+        siblingsIncludingSelf.forEach((sibling) => {
+            if (sibling !== this) { sibling.deactivate() }
+        })
     }
 
 
@@ -107,8 +97,8 @@ class LocalBaseModel extends baseComposite.Model {
      *
      */
     getSiblingIndex() {
-        var siblingsIncludingSelf = this.parent.children;
-        return siblingsIncludingSelf.indexOf(this);
+        var siblingsIncludingSelf = this.parent.children
+        return siblingsIncludingSelf.indexOf(this)
     }
 
 
@@ -118,10 +108,10 @@ class LocalBaseModel extends baseComposite.Model {
      * @returns {number}
      */
     getFriendlySiblingIndex(n) {
-        var i = this.getSiblingIndex(),
-            max = this.getSiblingCountIncludingSelf();
-        if (max === 1) { return 1; }
-        return Math.round(i * (n - 1) / (max - 1) + 1);
+        var i = this.getSiblingIndex()
+        var max = this.getSiblingCountIncludingSelf()
+        if (max === 1) { return 1 }
+        return Math.round(i * (n - 1) / (max - 1) + 1)
     }
 
 
@@ -130,7 +120,7 @@ class LocalBaseModel extends baseComposite.Model {
      *
      */
     getSiblingCountIncludingSelf() {
-        return this.parent.children.length;
+        return this.parent.children.length
     }
 
 }
@@ -172,18 +162,17 @@ export class FilterValue extends LocalBaseModel {
      *
      */
     testValue(value) {
-        var res;
-        res = false;
+        var res = false
         if (this._isNumericFilter()) {
             if ((value < this.get('max')) && (value >= this.get('min'))) {
-                res = true;
+                res = true
             }
         } else {
             if (value === this.get('value')) {
-                res = true;
+                res = true
             }
         }
-        return res;
+        return res
     }
 
 
@@ -192,7 +181,7 @@ export class FilterValue extends LocalBaseModel {
      *
      */
     _isNumericFilter() {
-        return (this.get('min') != null) && (this.get('max') != null);
+        return (this.get('min') != null) && (this.get('max') != null)
     }
 
 
@@ -201,7 +190,7 @@ export class FilterValue extends LocalBaseModel {
      *
      */
     isParentActive() {
-        return this.parent === this.parent.parent.getActiveChild();
+        return this.parent === this.parent.parent.getActiveChild()
     }
 
 
@@ -210,10 +199,10 @@ export class FilterValue extends LocalBaseModel {
      *
      */
     handleClick() {
-        var activeKeyIndex, keyIndex;
-        this.toggle();
-        keyIndex = this.parent.get('_index');
-        return activeKeyIndex = this.parent.parent.get('activeIndex');
+        var activeKeyIndex, keyIndex
+        this.toggle()
+        keyIndex = this.parent.get('_index')
+        return activeKeyIndex = this.parent.parent.get('activeIndex')
     }
 
 }
@@ -226,7 +215,7 @@ export class FilterValue extends LocalBaseModel {
  */
 export class FilterKey extends LocalBaseModel {
 
-    get model() { return FilterValue; }
+    get model() { return FilterValue }
 
     /*
      * Toggle item as it were 'clicked on'. 
@@ -237,8 +226,8 @@ export class FilterKey extends LocalBaseModel {
         if (this.isActive()) {
             return;
         } else {
-            this.deactivateSiblings();
-            this.activate();
+            this.deactivateSiblings()
+            this.activate()
         }
     }
 
@@ -248,11 +237,11 @@ export class FilterKey extends LocalBaseModel {
      *
      */
     deactivate() {
-        this.set('_isActive', false);
+        this.set('_isActive', false)
         this.children.forEach(function(childModel) {
-            childModel.activate();
-        });
-        return this;
+            childModel.activate()
+        })
+        return this
     }
 
 
@@ -280,7 +269,7 @@ export class FilterKey extends LocalBaseModel {
      *
      */
     getValue(index) {
-        return this.children[index].get('value');
+        return this.children[index].get('value')
     }
 
 
@@ -289,12 +278,12 @@ export class FilterKey extends LocalBaseModel {
      *
      */
     test(data, options) {
-        var child, result;
-        result = false;
+        var child, result
+        result = false
         for (let child of this.children) {
-            if (child.test(data, options)) { result = true; }
+            if (child.test(data, options)) { result = true }
         }
-        return result;
+        return result
     }
 
 }
@@ -319,7 +308,7 @@ export class FilterTree extends LocalBaseModel {
      *
      */
     test(data) {
-        return this.getActiveChild().test(data);
+        return this.getActiveChild().test(data)
     }
 
 
@@ -328,13 +317,13 @@ export class FilterTree extends LocalBaseModel {
      * E.g. if the active child is the third and countOnEitherSide = 1, return [ second, third, fourth ]
      */
     getActiveChildNeighborhood(countOnEitherSide) {
-        var keys = this.children,
-            activeKey = this.getActiveChild(),
-            keysLength = keys.length,
-            activeKeyIndex = keys.indexOf(activeKey),
-            neighborhoodLength = (2 * countOnEitherSide + 1);
+        var keys = this.children
+        var activeKey = this.getActiveChild()
+        var keysLength = keys.length
+        var activeKeyIndex = keys.indexOf(activeKey)
+        var neighborhoodLength = (2 * countOnEitherSide + 1)
 
-        if (neighborhoodLength > keysLength) { return keys; }
+        if (neighborhoodLength > keysLength) { return keys }
 
         if ((activeKeyIndex - countOnEitherSide) < 0) { return keys.slice(0, neighborhoodLength); } 
         if ((activeKeyIndex + countOnEitherSide > keysLength - 1)) { return keys.slice(keysLength - neighborhoodLength); }
@@ -363,10 +352,9 @@ export class FilterTree extends LocalBaseModel {
      *
      */
     getMatchingValue(model) {
-        var ind;
-        ind = this.getValueIndeces(model)[0];
-        if (this.getActiveChild().children[ind] == null) { return; }
-        return this.getActiveChild().children[ind].get('value');
+        var index = this.getValueIndeces(model)[0]
+        if (this.getActiveChild().children[index] == null) { return }
+        return this.getActiveChild().children[index].get('value')
     }
 
 
@@ -375,9 +363,9 @@ export class FilterTree extends LocalBaseModel {
      *
      */
     getValueCountOnActiveKey() {
-        var activeChild = this.getActiveChild();
-        if (!activeChild) { return 0; }
-        return activeChild.children.length;
+        var activeChild = this.getActiveChild()
+        if (!activeChild) { return 0 }
+        return activeChild.children.length
     }
 
 
@@ -386,10 +374,9 @@ export class FilterTree extends LocalBaseModel {
      *
      */
     getValueIndeces(model) {
-        var ach;
-        ach = this.getActiveChild();
-        if (!ach) { return []; }
-        return ach.getValueIndeces(model);
+        var activeChild = this.getActiveChild()
+        if (!activeChild) { return [] }
+        return activeChild.getValueIndeces(model)
     }
 
     /*
@@ -414,46 +401,46 @@ export class FilterTree extends LocalBaseModel {
      group(variableGroupCollection) {
 
         var grpObj = _.groupBy(this.children, (child) => {
-            var vari = child.get('variable');
-            return vari.get('variable_group_id') || vari.get('group_name');
+            var variable = child.get('variable')
+            return variable.get('variable_group_id') || variable.get('group_name')
         });
 
         var groupArray = Object.keys(grpObj).map((groupId) => {
 
-            var variable_group;
+            var variable_group
 
             // If the group is found, return group instance. Otherwise, return groupId as string.
             if (variableGroupCollection) {
-                variable_group = variableGroupCollection.findWhere({ id: groupId });
+                variable_group = variableGroupCollection.findWhere({ id: groupId })
             }
 
-            variable_group = variable_group || groupId;
+            variable_group = variable_group || groupId
 
             return {
                 variable_group: variable_group,
                 filterKeys: grpObj[groupId]
-            };
+            }
 
         })
 
         groupArray.sort(function(v1, v2) {
 
-            const GROUP_KEY = 'variable_group',
-                GROUP_ORDER_KEY = 'variable_group_order';
+            const GROUP_KEY = 'variable_group'
+            const GROUP_ORDER_KEY = 'variable_group_order'
 
-            var vg1 = v1[GROUP_KEY],
-                vg2 = v2[GROUP_KEY];
+            var vg1 = v1[GROUP_KEY]
+            var vg2 = v2[GROUP_KEY]
             
-            if (vg1 == null) { return 1; }
-            if (vg2 == null) { return -1; }
-            if (vg1.get == null) { return 1; }
-            if (vg2.get == null) { return -1; }
+            if (vg1 == null) { return 1 }
+            if (vg2 == null) { return -1 }
+            if (vg1.get == null) { return 1 }
+            if (vg2.get == null) { return -1 }
 
-            return + vg1.get(GROUP_ORDER_KEY) - vg2.get(GROUP_ORDER_KEY);
+            return + vg1.get(GROUP_ORDER_KEY) - vg2.get(GROUP_ORDER_KEY)
 
-        });
+        })
 
-        return groupArray;
+        return groupArray
 
      }
 

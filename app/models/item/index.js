@@ -4,7 +4,7 @@ import * as base from './../base.js'
 import rgf from './../rich_geo_feature.js'
 
 import * as richGeoJsonBuilders from './rich_geo_json_builder.js'
-import { setType } from './type_checker.js'
+import setType from './type_checker.js'
 
 import standardizeKey from './../utilities/standardize_key.js'
 
@@ -24,7 +24,7 @@ export class Model extends base.Model {
 		this._standardizeName(data)
 		this._processValues(data)
 		setType(data)
-		
+
 		return data
 	}
 

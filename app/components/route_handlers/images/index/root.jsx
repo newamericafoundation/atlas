@@ -3,7 +3,9 @@ import React from 'react'
 import Static from './../../../general/static.jsx'
 import { Link } from 'react-router'
 
-import * as image from './../../../../models/image.js'
+import { image } from './../../../../models/index.js'
+
+console.log(image)
 
 /*
  *

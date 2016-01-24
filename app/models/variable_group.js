@@ -1,8 +1,5 @@
-import _ from 'underscore';
-import Backbone from 'backbone';
-
-import * as base from './base.js';
-import formatters from './../utilities/formatters.js';
+import * as base from './base.js'
+import formatters from './../utilities/formatters.js'
 
 
 export class Model extends base.Model {
@@ -13,15 +10,15 @@ export class Model extends base.Model {
      */
     parse(resp) {
         for(let key in resp) {
-            let value = resp[key];
-            let newKey = key.toLowerCase().replace(/ /g, '_');
-            if (['variable group name', 'group name', 'name'].indexOf(key.toLowerCase()) > -1) { newKey = 'id'; }
+            let value = resp[key]
+            let newKey = key.toLowerCase().replace(/ /g, '_')
+            if (['variable group name', 'group name', 'name'].indexOf(key.toLowerCase()) > -1) { newKey = 'id' }
             if (key !== newKey) {
-                resp[newKey] = value;
-                delete resp[key];
+                resp[newKey] = value
+                delete resp[key]
             }
         }
-        return resp;
+        return resp
     }
 
 }
@@ -34,15 +31,15 @@ export class Model extends base.Model {
  */
 export class Collection extends base.Collection {
 
-    get model() { return Model; }
+    get model() { return Model }
 
     /*
      *
      *
      */
     comparator(model1, model2) {
-        const KEY = 'variable_group_order';
-        return - (model1.get(KEY) - model2.get(KEY));
+        const KEY = 'variable_group_order'
+        return - (model1.get(KEY) - model2.get(KEY))
     }
 
 }

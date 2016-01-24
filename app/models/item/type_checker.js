@@ -3,7 +3,7 @@ import _ from 'underscore'
 import states from './../../../db/seeds/states.json'
 import standardizeKey from './../utilities/standardize_key.js'
 
-function checkPin(data) {
+export function checkPin(data) {
 	var foundLat = standardizeKey(data, 'lat', ['latitude', 'Latitude', 'lat', 'Lat'])
 	var foundLong = standardizeKey(data, 'long', ['longitude', 'Longitude', 'long', 'Long'])
 	if (foundLat && foundLong) {
@@ -12,7 +12,7 @@ function checkPin(data) {
 	return data
 }
 
-function checkUsState(data) {
+export function checkUsState(data) {
 	if (data.name != null) {
 		let stateData = _.where(states, {
 			name: data.name
@@ -26,7 +26,7 @@ function checkUsState(data) {
 	return data
 }
 
-function checkUsCongressionalDistrict(data) {
+export function checkUsCongressionalDistrict(data) {
 	if (data.cngdstcd != null) {
 		data.id = data.cngdstcd
 		data._itemType = 'us_congressional_district'
@@ -34,7 +34,7 @@ function checkUsCongressionalDistrict(data) {
 	return data
 }
 
-export function setType(data) {
+export default function setType(data) {
 	checkPin(data)
 	checkUsState(data)
 	checkUsCongressionalDistrict(data)

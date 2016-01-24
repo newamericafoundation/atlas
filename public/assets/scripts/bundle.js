@@ -48070,6 +48070,10 @@
 		value: true
 	});
 	
+	var _base = __webpack_require__(452);
+	
+	var base = _interopRequireWildcard(_base);
+	
 	var _project = __webpack_require__(448);
 	
 	var project = _interopRequireWildcard(_project);
@@ -48082,22 +48086,33 @@
 	
 	var projectTemplate = _interopRequireWildcard(_project_template);
 	
-	var _image = __webpack_require__(469);
+	var _index = __webpack_require__(675);
 	
-	var image = _interopRequireWildcard(_image);
+	var image = _interopRequireWildcard(_index);
 	
-	var _index = __webpack_require__(463);
+	var _index2 = __webpack_require__(463);
 	
-	var item = _interopRequireWildcard(_index);
+	var item = _interopRequireWildcard(_index2);
+	
+	var _variable = __webpack_require__(461);
+	
+	var variable = _interopRequireWildcard(_variable);
+	
+	var _filter = __webpack_require__(459);
+	
+	var filter = _interopRequireWildcard(_filter);
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
 	exports.default = {
+		base: base,
 		project: project,
 		projectSection: projectSection,
 		projectTemplate: projectTemplate,
 		image: image,
-		item: item
+		item: item,
+		variable: variable,
+		filter: filter
 	};
 
 /***/ },
@@ -52205,14 +52220,14 @@
 	    }, {
 	        key: 'deactivateSiblings',
 	        value: function deactivateSiblings() {
-	            var self = this,
-	                siblingsIncludingSelf;
-	            if (this.parent == null) {
+	            var _this2 = this;
+	
+	            if (!this.parent) {
 	                return;
 	            }
-	            siblingsIncludingSelf = this.parent.children;
+	            var siblingsIncludingSelf = this.parent.children;
 	            siblingsIncludingSelf.forEach(function (sibling) {
-	                if (sibling !== self) {
+	                if (sibling !== _this2) {
 	                    sibling.deactivate();
 	                }
 	            });
@@ -52239,8 +52254,8 @@
 	    }, {
 	        key: 'getFriendlySiblingIndex',
 	        value: function getFriendlySiblingIndex(n) {
-	            var i = this.getSiblingIndex(),
-	                max = this.getSiblingCountIncludingSelf();
+	            var i = this.getSiblingIndex();
+	            var max = this.getSiblingCountIncludingSelf();
 	            if (max === 1) {
 	                return 1;
 	            }
@@ -52312,8 +52327,7 @@
 	    }, {
 	        key: 'testValue',
 	        value: function testValue(value) {
-	            var res;
-	            res = false;
+	            var res = false;
 	            if (this._isNumericFilter()) {
 	                if (value < this.get('max') && value >= this.get('min')) {
 	                    res = true;
@@ -52526,11 +52540,11 @@
 	    }, {
 	        key: 'getActiveChildNeighborhood',
 	        value: function getActiveChildNeighborhood(countOnEitherSide) {
-	            var keys = this.children,
-	                activeKey = this.getActiveChild(),
-	                keysLength = keys.length,
-	                activeKeyIndex = keys.indexOf(activeKey),
-	                neighborhoodLength = 2 * countOnEitherSide + 1;
+	            var keys = this.children;
+	            var activeKey = this.getActiveChild();
+	            var keysLength = keys.length;
+	            var activeKeyIndex = keys.indexOf(activeKey);
+	            var neighborhoodLength = 2 * countOnEitherSide + 1;
 	
 	            if (neighborhoodLength > keysLength) {
 	                return keys;
@@ -52571,12 +52585,11 @@
 	    }, {
 	        key: 'getMatchingValue',
 	        value: function getMatchingValue(model) {
-	            var ind;
-	            ind = this.getValueIndeces(model)[0];
-	            if (this.getActiveChild().children[ind] == null) {
+	            var index = this.getValueIndeces(model)[0];
+	            if (this.getActiveChild().children[index] == null) {
 	                return;
 	            }
-	            return this.getActiveChild().children[ind].get('value');
+	            return this.getActiveChild().children[index].get('value');
 	        }
 	
 	        /*
@@ -52602,12 +52615,11 @@
 	    }, {
 	        key: 'getValueIndeces',
 	        value: function getValueIndeces(model) {
-	            var ach;
-	            ach = this.getActiveChild();
-	            if (!ach) {
+	            var activeChild = this.getActiveChild();
+	            if (!activeChild) {
 	                return [];
 	            }
-	            return ach.getValueIndeces(model);
+	            return activeChild.getValueIndeces(model);
 	        }
 	
 	        /*
@@ -52639,8 +52651,8 @@
 	        value: function group(variableGroupCollection) {
 	
 	            var grpObj = _underscore2.default.groupBy(this.children, function (child) {
-	                var vari = child.get('variable');
-	                return vari.get('variable_group_id') || vari.get('group_name');
+	                var variable = child.get('variable');
+	                return variable.get('variable_group_id') || variable.get('group_name');
 	            });
 	
 	            var groupArray = Object.keys(grpObj).map(function (groupId) {
@@ -52662,11 +52674,11 @@
 	
 	            groupArray.sort(function (v1, v2) {
 	
-	                var GROUP_KEY = 'variable_group',
-	                    GROUP_ORDER_KEY = 'variable_group_order';
+	                var GROUP_KEY = 'variable_group';
+	                var GROUP_ORDER_KEY = 'variable_group_order';
 	
-	                var vg1 = v1[GROUP_KEY],
-	                    vg2 = v2[GROUP_KEY];
+	                var vg1 = v1[GROUP_KEY];
+	                var vg2 = v2[GROUP_KEY];
 	
 	                if (vg1 == null) {
 	                    return 1;
@@ -53163,14 +53175,6 @@
 	});
 	exports.Collection = exports.Model = undefined;
 	
-	var _underscore = __webpack_require__(431);
-	
-	var _underscore2 = _interopRequireDefault(_underscore);
-	
-	var _backbone = __webpack_require__(434);
-	
-	var _backbone2 = _interopRequireDefault(_backbone);
-	
 	var _base = __webpack_require__(452);
 	
 	var base = _interopRequireWildcard(_base);
@@ -53179,9 +53183,9 @@
 	
 	var _formatters2 = _interopRequireDefault(_formatters);
 	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -53290,6 +53294,8 @@
 	
 	var _type_checker = __webpack_require__(466);
 	
+	var _type_checker2 = _interopRequireDefault(_type_checker);
+	
 	var _standardize_key = __webpack_require__(468);
 	
 	var _standardize_key2 = _interopRequireDefault(_standardize_key);
@@ -53330,7 +53336,7 @@
 	
 				this._standardizeName(data);
 				this._processValues(data);
-				(0, _type_checker.setType)(data);
+				(0, _type_checker2.default)(data);
 	
 				return data;
 			}
@@ -53778,7 +53784,6 @@
 	
 	    function setup(data) {
 	        richGeoJson.features = baseGeoData.features;
-	        console.log(baseGeoData);
 	        var _iteratorNormalCompletion = true;
 	        var _didIteratorError = false;
 	        var _iteratorError = undefined;
@@ -53868,7 +53873,10 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-	exports.setType = setType;
+	exports.checkPin = checkPin;
+	exports.checkUsState = checkUsState;
+	exports.checkUsCongressionalDistrict = checkUsCongressionalDistrict;
+	exports.default = setType;
 	
 	var _underscore = __webpack_require__(431);
 	
@@ -54263,171 +54271,7 @@
 	}
 
 /***/ },
-/* 469 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.Collection = exports.Model = undefined;
-	
-	var _base = __webpack_require__(452);
-	
-	var base = _interopRequireWildcard(_base);
-	
-	var _marked = __webpack_require__(451);
-	
-	var _marked2 = _interopRequireDefault(_marked);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var Model = exports.Model = (function (_base$Model) {
-		_inherits(Model, _base$Model);
-	
-		function Model() {
-			_classCallCheck(this, Model);
-	
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(Model).apply(this, arguments));
-		}
-	
-		_createClass(Model, [{
-			key: 'getViewUrl',
-	
-			/*
-	   *
-	   *
-	   */
-			value: function getViewUrl() {
-				return null;
-			}
-	
-			/*
-	   * Gets encoded url to use as a CSS background-image. 
-	   * 
-	   */
-	
-		}, {
-			key: 'getUrl',
-			value: function getUrl() {
-				// if (this.get('stock_type') && this.get('stock_id')) {
-				// 	return `url(/static/images/resize_cache--Stock_Photos--${this.get('stock_type')}_${this.get('stock_id')})`;
-				// }
-				var encoded;
-				encoded = this.get('encoded');
-				encoded = encoded.replace(/(\r\n|\n|\r)/gm, '');
-				if (encoded != null) {
-					return "url('data:image/png;base64," + encoded + "')";
-				}
-			}
-	
-			/* 
-	   * Gets html attribute.
-	   *
-	   */
-	
-		}, {
-			key: 'getAttributionHtml',
-			value: function getAttributionHtml() {
-				return (0, _marked2.default)(this.get('credit'));
-			}
-		}, {
-			key: 'resourceName',
-			get: function get() {
-				return 'image';
-			}
-		}, {
-			key: 'defaults',
-			get: function get() {
-	
-				return {
-					name: 'image',
-					encoded: '',
-					credit: ''
-				};
-			}
-		}, {
-			key: 'fields',
-			get: function get() {
-	
-				return [{
-					formComponentName: 'Text',
-					formComponentProps: {
-						id: 'name',
-						labelText: 'Image Name',
-						hint: 'Enter simple image name - no need to add a .jpg extension.',
-						placeholder: 'Enter Image Name'
-					}
-				}, {
-					formComponentName: 'ImageFile',
-					formComponentProps: {
-						id: 'encoded',
-						labelText: 'Direct image upload',
-						hint: 'Size limit: 3MB.'
-					}
-				}, {
-					formComponentName: 'Radio',
-					formComponentProps: {
-						id: 'stock_type',
-						labelText: 'Stock photo platform.',
-						options: ['shutterstock', 'unsplash'],
-						hint: "Stock photo platform",
-						placeholder: 'Image Credit'
-					}
-				}, {
-					formComponentName: 'Text',
-					formComponentProps: {
-						id: 'stock_id',
-						labelText: 'Stock photo identifier.',
-						hint: "Stock photo id.",
-						placeholder: 'Id'
-					}
-				}, {
-					formComponentName: 'Upload',
-					formComponentProps: {
-						id: 'file',
-						labelText: 'Stock photo identifier.',
-						hint: "Upload file here.",
-						placeholder: 'Id'
-					}
-				}];
-			}
-		}]);
-	
-		return Model;
-	})(base.Model);
-	
-	var Collection = exports.Collection = (function (_base$Collection) {
-		_inherits(Collection, _base$Collection);
-	
-		function Collection() {
-			_classCallCheck(this, Collection);
-	
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(Collection).apply(this, arguments));
-		}
-	
-		_createClass(Collection, [{
-			key: 'model',
-			get: function get() {
-				return Model;
-			}
-		}]);
-	
-		return Collection;
-	})(base.Collection);
-
-/***/ },
+/* 469 */,
 /* 470 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -55390,8 +55234,6 @@
 	        }
 	
 	        var shps = new shapeFile.Collection();
-	
-	        console.log(shps);
 	
 	        var shp = shps.findWhere({ name: itemType + 's' });
 	
@@ -58950,9 +58792,7 @@
 	
 	var Icons = _interopRequireWildcard(_icons);
 	
-	var _image = __webpack_require__(469);
-	
-	var image = _interopRequireWildcard(_image);
+	var _index = __webpack_require__(447);
 	
 	var _base = __webpack_require__(486);
 	
@@ -59280,7 +59120,7 @@
 	
 				if (!activeItem.image) {
 					var imageName = activeItem.getImageName();
-					var coll = new image.Collection();
+					var coll = new _index.image.Collection();
 					coll.getClientFetchPromise({ name: imageName }).then(function (coll) {
 						var img = coll.models[0];
 						if (img) {
@@ -59289,6 +59129,8 @@
 						} else {
 							activeItem.image = 'not available';
 						}
+					}).catch(function (err) {
+						console.log(err.stack);
 					});
 				}
 			}
@@ -73561,11 +73403,7 @@
 	
 	var _reactRouter = __webpack_require__(355);
 	
-	var _image = __webpack_require__(469);
-	
-	var image = _interopRequireWildcard(_image);
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	var _index = __webpack_require__(447);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -73574,6 +73412,8 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	console.log(_index.image);
 	
 	/*
 	 *
@@ -73701,7 +73541,7 @@
 			value: function fetchImages() {
 				var _this2 = this;
 	
-				new image.Collection().getClientFetchPromise({}, { encoded: 0 }).then(function (coll) {
+				new _index.image.Collection().getClientFetchPromise({}, { encoded: 0 }).then(function (coll) {
 					_this2.setState({ images: coll });
 				});
 			}
@@ -112727,6 +112567,180 @@
 		_chartistHtml2.default.config.chartOptions.bar.options.base.seriesBarDistance = 28;
 		_chartistHtml2.default.config.labelOffsetCoefficient = 5;
 	})();
+
+/***/ },
+/* 675 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.Collection = exports.Model = undefined;
+	
+	var _base = __webpack_require__(452);
+	
+	var base = _interopRequireWildcard(_base);
+	
+	var _marked = __webpack_require__(451);
+	
+	var _marked2 = _interopRequireDefault(_marked);
+	
+	var _fields = __webpack_require__(676);
+	
+	var _fields2 = _interopRequireDefault(_fields);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Model = exports.Model = (function (_base$Model) {
+		_inherits(Model, _base$Model);
+	
+		function Model() {
+			_classCallCheck(this, Model);
+	
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(Model).apply(this, arguments));
+		}
+	
+		_createClass(Model, [{
+			key: 'getViewUrl',
+			value: function getViewUrl() {
+				return null;
+			}
+	
+			/*
+	   * Gets encoded url to use as a CSS background-image. 
+	   * 
+	   */
+	
+		}, {
+			key: 'getUrl',
+			value: function getUrl() {
+				var encoded = this.get('encoded');
+				encoded = encoded.replace(/(\r\n|\n|\r)/gm, '');
+				if (encoded != null) {
+					return 'url(\'data:image/png;base64,' + encoded + '\')';
+				}
+			}
+	
+			/* 
+	   * Gets html attribute.
+	   *
+	   */
+	
+		}, {
+			key: 'getAttributionHtml',
+			value: function getAttributionHtml() {
+				return (0, _marked2.default)(this.get('credit'));
+			}
+		}, {
+			key: 'resourceName',
+			get: function get() {
+				return 'image';
+			}
+		}, {
+			key: 'defaults',
+			get: function get() {
+	
+				return {
+					name: 'image',
+					encoded: '',
+					credit: ''
+				};
+			}
+		}, {
+			key: 'fields',
+			get: function get() {
+				return _fields2.default;
+			}
+		}]);
+	
+		return Model;
+	})(base.Model);
+	
+	var Collection = exports.Collection = (function (_base$Collection) {
+		_inherits(Collection, _base$Collection);
+	
+		function Collection() {
+			_classCallCheck(this, Collection);
+	
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(Collection).apply(this, arguments));
+		}
+	
+		_createClass(Collection, [{
+			key: 'model',
+			get: function get() {
+				return Model;
+			}
+		}]);
+	
+		return Collection;
+	})(base.Collection);
+
+/***/ },
+/* 676 */
+/***/ function(module, exports) {
+
+	module.exports = [
+		{
+			"formComponentName": "Text",
+			"formComponentProps": {
+				"id": "name",
+				"labelText": "Image Name",
+				"hint": "Enter simple image name - no need to add a .jpg extension.",
+				"placeholder": "Enter Image Name"
+			}
+		},
+		{
+			"formComponentName": "ImageFile",
+			"formComponentProps": {
+				"id": "encoded",
+				"labelText": "Direct image upload",
+				"hint": "Size limit: 3MB."
+			}
+		},
+		{
+			"formComponentName": "Radio",
+			"formComponentProps": {
+				"id": "stock_type",
+				"labelText": "Stock photo platform.",
+				"options": [
+					"shutterstock",
+					"unsplash"
+				],
+				"hint": "Stock photo platform",
+				"placeholder": "Image Credit"
+			}
+		},
+		{
+			"formComponentName": "Text",
+			"formComponentProps": {
+				"id": "stock_id",
+				"labelText": "Stock photo identifier.",
+				"hint": "Stock photo id.",
+				"placeholder": "Id"
+			}
+		},
+		{
+			"formComponentName": "Upload",
+			"formComponentProps": {
+				"id": "file",
+				"labelText": "Stock photo identifier.",
+				"hint": "Upload file here.",
+				"placeholder": "Id"
+			}
+		}
+	];
 
 /***/ }
 /******/ ]);

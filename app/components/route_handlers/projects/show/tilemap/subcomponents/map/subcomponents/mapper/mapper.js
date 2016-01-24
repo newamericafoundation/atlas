@@ -81,8 +81,6 @@ var Mapper = {
 
         var shps = new shapeFile.Collection()
 
-        console.log(shps)
-
         var shp = shps.findWhere({ name: `${itemType}s` })
 
         // Fetch shape file and launch.

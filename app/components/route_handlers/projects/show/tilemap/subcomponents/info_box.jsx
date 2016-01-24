@@ -6,7 +6,7 @@ import marked from 'marked'
 import Static from './../../../../../general/static.jsx'
 import * as Icons from './../../../../../general/icons.jsx'
 
-import * as image from './../../../../../../models/image.js'
+import { image } from './../../../../../../models/index.js'
 
 import Base from './base.jsx'
 
@@ -257,8 +257,8 @@ class InfoBox extends Static {
 		if (!activeItem) { return }
 		
 		if (!activeItem.image) {
-			let imageName = activeItem.getImageName();
-			let coll = new image.Collection();
+			let imageName = activeItem.getImageName()
+			let coll = new image.Collection()
 			coll.getClientFetchPromise({ name: imageName })
 				.then((coll) => {
 					var img = coll.models[0]
@@ -268,8 +268,7 @@ class InfoBox extends Static {
 					} else {
 						activeItem.image = 'not available'
 					}
-				}
-			)
+				}).catch((err) => { console.log(err.stack) })
 		}
 
 	}

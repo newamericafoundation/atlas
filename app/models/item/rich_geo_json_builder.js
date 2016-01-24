@@ -7,7 +7,6 @@ function base(collection, baseGeoData, getFeatureId) {
 
     function setup(data) {
         richGeoJson.features = baseGeoData.features
-        console.log(baseGeoData)
         for (let feature of richGeoJson.features) {
             let featureId = getFeatureId(feature)
             let item = collection.findWhere({

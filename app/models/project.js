@@ -436,7 +436,7 @@ export class Model extends base.Model {
  */
 export class Collection extends base.Collection {
 
-    get model() { return Model; }
+    get model() { return Model }
 
 
     /**
