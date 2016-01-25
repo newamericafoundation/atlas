@@ -4,28 +4,16 @@ import classNames from 'classnames';
 
 import SaveBase from './save_base.js';
 
-/*
- *
- *
- */
-class NewBase extends SaveBase {
 
-	/*
-	 *
-	 *
-	 */
+export default class NewBase extends SaveBase {
+
 	constructor(props) {
 		super(props)
 		this.state = {
 			saveResponseStatus: null
-		};
+		}
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	componentWillMount() {
 		var Model = this.getResourceConstructor()
 		if (!this.state.model) {
@@ -33,39 +21,19 @@ class NewBase extends SaveBase {
 		}
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	getCrudMethodName() {
 		return 'new'
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	getSubmitButtonText() {
 		return `Create ${this.getResourceName()}`
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	addModelTimeStamp() {
 		var { model } = this.state
 		model.set('created_at', new Date().toISOString())
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	saveModel(formData) {
 
 		var { model } = this.state
@@ -91,5 +59,3 @@ class NewBase extends SaveBase {
 	}
 
 }
-
-export default NewBase;

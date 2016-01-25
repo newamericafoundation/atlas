@@ -5,12 +5,8 @@ import classNames from 'classnames'
  * This a base class and example setup for a standard, static page.
  * It has several sub-render methods that can be overridden on the subclass, or left along on the superclass.
  */
-class Static extends React.Component {
+export default class Static extends React.Component {
 
-	/*
-	 *
-	 *
-	 */
 	constructor(props) {
 		super(props)
 		this.setStickyPageNav = this.setStickyPageNav.bind(this)
@@ -21,11 +17,6 @@ class Static extends React.Component {
 		}
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	render() {
 		var style = { 'overflowY': 'scroll' }
 		return (
@@ -36,11 +27,6 @@ class Static extends React.Component {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderTitleBar(state) {
 		var cls = classNames({
 			'atl__title-bar': true,
@@ -55,11 +41,6 @@ class Static extends React.Component {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderTitleBarBackground() {
 		var color = this.props.radio ? this.props.radio.currentThemeColor : '#2dbbb3'
 		return (
@@ -71,11 +52,6 @@ class Static extends React.Component {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderTitleBarContent() {
 		return (
 			<div className="atl__title-bar__content">
@@ -87,11 +63,6 @@ class Static extends React.Component {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderContentBar() {
 		return (
 			<div className="atl__content-bar bg-c-off-white">
@@ -110,11 +81,6 @@ class Static extends React.Component {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderPageNav() {
 		var cls = classNames({
 			'atl__page-nav': true,
@@ -127,37 +93,20 @@ class Static extends React.Component {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderPageNavContent() {
 		return (
 			<p>Page Nav Content</p>
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderPageContent() {
 		return (
 			<p>Page Content</p>
 		)
 	}
 
-
-	/*
-	 * This method should not be overridden on the subclass in order to keep sticky page nav logic DRY.
-	 *
-	 */
 	setStickyPageNav(e) {
 		this.setState({ scrollTop: e.target.scrollTop })
 	}
 
 }
-
-export default Static

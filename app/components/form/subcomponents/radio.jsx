@@ -1,11 +1,7 @@
-import React from 'react';
-import Base from './base.jsx';
+import React from 'react'
 
-class Radio extends Base {
 
-	constructor(props) {
-		super(props);
-	}
+export default class Radio extends React.Component {
 
 	render() {
 		return (
@@ -14,7 +10,7 @@ class Radio extends Base {
 				<p className='form__hint'>{ this.props.hint }</p>
 				{ this.renderOptions() }
 			</div>
-		);
+		)
 	}
 
 	renderOptions() {
@@ -33,13 +29,13 @@ class Radio extends Base {
 					/>
 					<p>{ option }</p>
 				</div>
-			);
-		});
+			)
+		})
 	}
 
 	isOptionChecked(option, i) {
-		if(this.props.initialValue) { return (option === this.props.initialValue); }
-		return (i === 0);
+		if(this.props.initialValue) { return (option === this.props.initialValue) }
+		return (i === 0)
 	}
 
 	componentDidMount() {
@@ -48,7 +44,7 @@ class Radio extends Base {
 			this.props.saveDataOnParent({
 				id: this.props.id,
 				value: this.props.options[0]
-			});
+			})
 		}
 	}
 
@@ -56,9 +52,7 @@ class Radio extends Base {
 		this.props.saveDataOnParent({
 			id: this.props.id,
 			value: e.target.value
-		});
+		})
 	}
 
 }
-
-export default Radio;

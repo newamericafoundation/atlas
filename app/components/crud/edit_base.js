@@ -5,46 +5,23 @@ import { Link } from 'react-router'
 import SaveBase from './save_base.js'
 
 
-/*
- *
- *
- */
-class EditBase extends SaveBase {
+export default class EditBase extends SaveBase {
 
-	/*
-	 *
-	 *
-	 */
 	constructor(props) {
 		super(props)
 		this.state = { saveResponseStatus: null }
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	getCrudMethodName() {
 		return 'edit'
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	componentWillMount() {
 		if(!this.state.model) {
 			this.fetchModel()
 		}
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	fetchModel() {
 		if (!this.props.params) { return; }
 		var { id } = this.props.params
@@ -55,21 +32,11 @@ class EditBase extends SaveBase {
 		}).catch((err) => { console.log(err.stack); })
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	addModelTimeStamp() {
 		var { model } = this.state
 		model.set('updated_at', new Date().toISOString())
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	saveModel() {
 		
 		var { model } = this.state
@@ -89,5 +56,3 @@ class EditBase extends SaveBase {
 	}
 
 }
-
-export default EditBase

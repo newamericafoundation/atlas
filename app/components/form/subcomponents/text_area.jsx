@@ -1,7 +1,7 @@
-import React from 'react';
-import Base from './base.jsx';
+import React from 'react'
 
-class TextArea extends Base {
+
+export default class TextArea extends React.Component {
 
 	render() {
 		return (
@@ -17,16 +17,14 @@ class TextArea extends Base {
 					placeholder={this.props.placeholder} 
 				/>
 			</div>
-		);
+		)
 	}
 
 	saveDataOnParent(e) {
 		this.props.saveDataOnParent({
 			id: this.props.id,
 			value: e.target.value
-		});
+		})
 	}
 
 }
-
-export default TextArea;

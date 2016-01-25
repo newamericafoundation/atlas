@@ -11,16 +11,8 @@ import Base from './base.js'
 import BaseStatusModal from './base_status_modal.js'
 
 
-/*
- *
- *
- */
 class SaveBaseModal extends BaseStatusModal {
 
-	/*
-	 *
-	 *
-	 */
 	renderSuccessContent() {
 		return (
 			<div>
@@ -32,11 +24,6 @@ class SaveBaseModal extends BaseStatusModal {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderFailureContent() {
 		return (
 			<div>
@@ -48,11 +35,6 @@ class SaveBaseModal extends BaseStatusModal {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderPendingContent() {
 		return (
 			<div>
@@ -65,16 +47,8 @@ class SaveBaseModal extends BaseStatusModal {
 
 
 
-/*
- *
- *
- */
-class SaveBase extends Base {
+export default class SaveBase extends Base {
 
-	/*
-	 *
-	 *
-	 */
 	constructor(props) {
 		super(props)
 		this.setStickyPageNav = this.setStickyPageNav.bind(this)
@@ -85,10 +59,6 @@ class SaveBase extends Base {
 		}
 	}
 
-	/*
-	 *
-	 *
-	 */
 	render() {
 		var style = { 'overflowY': 'scroll' }
 		return (
@@ -102,11 +72,6 @@ class SaveBase extends Base {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderModal() {
 		var { saveResponseStatus, model } = this.state
 		if (!saveResponseStatus) { return }
@@ -119,11 +84,6 @@ class SaveBase extends Base {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderTitleBarContent() {
 		return (
 			<div className="atl__title-bar__content">
@@ -133,11 +93,6 @@ class SaveBase extends Base {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderLinks() {
 		var { model } = this.state
 		if (!model) { return }
@@ -155,11 +110,6 @@ class SaveBase extends Base {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderPageNavContent() {
 		return (
 			<div>
@@ -168,11 +118,6 @@ class SaveBase extends Base {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderPageContent() {
 		var { model, saveResponseStatus } = this.state
 		var isFormEnabled = (saveResponseStatus == null)
@@ -190,18 +135,12 @@ class SaveBase extends Base {
 		)
 	}
 
-
 	// Define on subclass.
 	getCrudMethodName() { return 'new' }
 
 	// Define on subclass.
 	getSubmitButtonText() { return 'Submit' }
 
-
-	/*
-	 *
-	 *
-	 */
 	saveModel(formData) {
 
 		var { model } = this.state
@@ -226,15 +165,8 @@ class SaveBase extends Base {
 
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	reactivateForm() {
 		this.setState({ saveResponseStatus: null })
 	}
 
 }
-
-export default SaveBase

@@ -13,16 +13,9 @@ import SideBar from './../../../general/side_bar/root.jsx'
 import models from './../../../../models/index.js'
 import buttonsDataGenerator from './buttons_data_generator.js'
 
-/*
- *
- *
- */
-class Show extends React.Component {
 
-	/*
-	 *
-	 *
-	 */
+export default class Show extends React.Component {
+
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -42,11 +35,6 @@ class Show extends React.Component {
 		}
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	render() {
 		return (
 			<div className={ this.getClassName() }>
@@ -63,11 +51,6 @@ class Show extends React.Component {
 		)
 	}
 
-
-	/*
-	 * Pick and render template-specific project.
-	 *
-	 */
 	renderProject() {
 		var project = this.getProject()
 		if (!project) { return <Loader /> }
@@ -81,32 +64,17 @@ class Show extends React.Component {
 				project={ project } 
 				related={ this.state.related } 
 			/>
-		);
+		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	componentWillMount() {
 		this.ensureData()
 	}
 
-
-	/*
-	 * This is a method passed down to all deep children so they can modify the state of the ui.
-	 * 
-	 */
 	setUiState(uiStateChanges) {
 		this.setState({ ui: Object.assign({}, this.state.ui, uiStateChanges) })
 	}
 
-
-	/*
-	 * This method is bound to the component and passed to the side bar buttons subcomponent that call it with a message. Each type of message is handled appropriately.
-	 *
-	 */
 	handleMessageFromButtons(message) {
 		
 		switch(message) {
@@ -128,11 +96,6 @@ class Show extends React.Component {
 
 	}
 
-
-	/*
-	 * Get side bar buttons.
-	 *
-	 */
 	getButtons() {
 		var project = this.getProject()
 		if (!global.window) { return }
@@ -141,11 +104,6 @@ class Show extends React.Component {
 		return buttonsDataGenerator(project, isResearcherAuthenticated, this.state.ui.isCollapsedDueToOverflow)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	getProject() {
 		var { atlas_url } = this.props.params
 		var { byUrl } = this.props.app.entities.projects
@@ -153,11 +111,6 @@ class Show extends React.Component {
 		return byUrl[atlas_url]
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	getClassName() {
 
 		var cls, data
@@ -176,33 +129,18 @@ class Show extends React.Component {
 
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	_isModelTilemap() {
 		var project = this.getProject()
 		if (!project) { return false }
 		return (project.get('project_template_name') === 'Tilemap')
 	}
 
-
-	/*
-	 * Make sure all data exists on the project.
-	 *
-	 */
 	ensureData() {
 		var project = this.getProject()
 		if (!project) { this.fetchData() }
 		else { this.fetchRelatedProjects() }
 	}
 
-
-	/*
-	 * Send separate network request fetching related projects.
-	 *
-	 */
 	fetchRelatedProjects() {
 
 		var prj = this.getProject()
@@ -222,11 +160,6 @@ class Show extends React.Component {
 
 	}
 
-
-	/*
-	 * Send network request to get project data.
-	 *
-	 */
 	fetchData() {
 
 		var { atlas_url } = this.props.params
@@ -255,5 +188,3 @@ class Show extends React.Component {
 	}
 
 }
-
-export default Show

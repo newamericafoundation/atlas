@@ -2,16 +2,9 @@ import React from 'react'
 import { findDOMNode } from 'react-dom'
 import classNames from 'classnames'
 
-/*
- *
- *
- */
-class Slider extends React.Component {
 
-    /*
-     *
-     *
-     */
+export default class Slider extends React.Component {
+
     constructor(props) {
         super(props)
         this.state = {
@@ -19,11 +12,6 @@ class Slider extends React.Component {
         }
     }
 
-
-    /*
-     *
-     *
-     */
     render() {
         return (
             <div className='atl__slider' ref='root'>
@@ -31,38 +19,18 @@ class Slider extends React.Component {
         )
     }
 
-
-    /*
-     *
-     *
-     */
     componentDidMount() {
         this.buildSlider()
     }
 
-
-    /*
-     *
-     *
-     */
     componentWillUnmount() {
         this.destroySlider()
     }
 
-
-    /*
-     *
-     *
-     */
     componentDidUpdate() {
         this.setSliderValueText()
     }
 
-
-    /*
-     *
-     *
-     */
     buildSlider() {
         var $el = $(ReactDOM.findDOMNode(this.refs.root))
         $el.slider({
@@ -78,35 +46,18 @@ class Slider extends React.Component {
         this.setSliderValueText()
     }
 
-
-    /*
-     *
-     *
-     */
     destroySlider() {
         var $el = $(findDOMNode(this.refs.root))
         $el.unbind()
     }
 
-
-    /*
-     *
-     *
-     */
     setSliderValueText() {
         var $el = $(findDOMNode(this.refs.root))
         $el.find('span').html(this.getSliderValueText())
     }
 
-
-    /*
-     *
-     *
-     */
     getSliderValueText() {
         return this.props.values[this.state.valueIndex]
     }
 
 }
-
-export default Slider

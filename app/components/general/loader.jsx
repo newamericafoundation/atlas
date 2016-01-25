@@ -1,7 +1,7 @@
 import React from 'react'
-import classNames from 'classnames'
 
-function Loader(props) {
+
+export default function Loader(props) {
 
 	return (
 		<div className='loader'>
@@ -10,5 +10,3 @@ function Loader(props) {
 	)
 
 }
-
-export default Loader

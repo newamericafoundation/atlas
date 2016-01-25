@@ -1,18 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import Base from './base.jsx'
 
-/*
- *
- *
- */
-class SelectizeText extends Base {
+export default class SelectizeText extends React.Component {
 
-	/*
-	 *
-	 *
-	 */
 	render() {
 		return (
 			<div className='form__wrapper'>
@@ -31,11 +22,6 @@ class SelectizeText extends Base {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	componentDidMount() {
 		var $el = $(ReactDOM.findDOMNode(this.refs.input));
 		$el.selectize({
@@ -45,21 +31,11 @@ class SelectizeText extends Base {
 		}).on('change', this.saveDataOnParent.bind(this));
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	componentWillUnmount() {
 		var $el = $(ReactDOM.findDOMNode(this.refs.input));
 		$el[0].selectize.destroy();
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	saveDataOnParent(e) {
 		this.props.saveDataOnParent({
 			id: this.props.id,
@@ -68,5 +44,3 @@ class SelectizeText extends Base {
 	}
 
 }
-
-export default SelectizeText

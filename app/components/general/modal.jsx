@@ -1,15 +1,8 @@
 import React from 'react'
 
-/*
- *
- *
- */
-class Modal extends React.Component {
 
-	/*
-	 *
-	 *
-	 */
+export default class Modal extends React.Component {
+
 	render() {
 		return (
 			<div className='modal'>
@@ -22,11 +15,6 @@ class Modal extends React.Component {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderContent() {
 		return (
 			<p>It is not nice to leave a modal empty.</p>
@@ -34,5 +22,3 @@ class Modal extends React.Component {
 	}
 
 }
-
-export default Modal

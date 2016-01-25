@@ -4,35 +4,21 @@ import React from 'react'
 
 import Static from './../general/static.jsx'
 
-class Base extends Static {
 
-	/*
-	 * Customize on subclass.
-	 *
-	 */
+export default class Base extends Static {
+
+	// This is a dummy, and should always be set on the subclass.
 	render() {
 		return <div/>
 	}
 
-
-	/*
-	 * Customize on subclass.
-	 *
-	 */
 	getResourceConstructor() {
 		return Backbone.Model
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	getResourceName() {
 		var Model = this.getResourceConstructor()
 		return Model.prototype.resourceName
 	}
 
 }
-
-export default Base

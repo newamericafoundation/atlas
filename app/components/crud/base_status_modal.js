@@ -4,16 +4,9 @@ import React from 'react'
 
 import Modal from './../general/modal.jsx'
 
-/*
- *
- *
- */
-class BaseStatusModal extends Modal {
 
-	/*
-	 *
-	 *
-	 */
+export default class BaseStatusModal extends Modal {
+
 	renderContent() {
 		var { status } = this.props
 		if(status === 'success') { return this.renderSuccessContent() }
@@ -21,11 +14,6 @@ class BaseStatusModal extends Modal {
 		return this.renderPendingContent()
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderSuccessContent() {
 		var resourceName = this.props.model.name
 		return (
@@ -38,11 +26,6 @@ class BaseStatusModal extends Modal {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderLinks() {
 		var urls = [ 
 			{ name: 'edit', url: this.props.model.getEditUrl() }, 
@@ -60,11 +43,6 @@ class BaseStatusModal extends Modal {
 		})
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderFailureContent() {
 		return (
 			<div>
@@ -76,11 +54,6 @@ class BaseStatusModal extends Modal {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderPendingContent() {
 		return (
 			<div>
@@ -89,17 +62,9 @@ class BaseStatusModal extends Modal {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	reactivateForm(e) {
 		e.preventDefault()
 		this.props.reactivateForm()
 	}
 
 }
-
-
-export default BaseStatusModal

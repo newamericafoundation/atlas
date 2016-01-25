@@ -11,16 +11,8 @@ import Base from './base.js'
 import BaseStatusModal from './base_status_modal.js'
 
 
-/*
- *
- *
- */
 class FormModal extends BaseStatusModal {
 
-	/*
-	 *
-	 *
-	 */
 	renderSuccessContent() {
 		var { resourceName } = this.props.model
 		return (
@@ -31,11 +23,6 @@ class FormModal extends BaseStatusModal {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderFailureContent() {
 		var { resourceName } = this.props.model
 		return (
@@ -46,11 +33,6 @@ class FormModal extends BaseStatusModal {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderPendingContent() {
 		return (
 			<div>
@@ -59,11 +41,6 @@ class FormModal extends BaseStatusModal {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderLinks() {
 		var { resourceName } = this.props.model
 		return (
@@ -83,16 +60,9 @@ class FormModal extends BaseStatusModal {
 }
 
 
-/*
- *
- *
- */
-class DeleteBase extends Base {
 
-	/*
-	 *
-	 *
-	 */
+export default class DeleteBase extends Base {
+
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -100,11 +70,6 @@ class DeleteBase extends Base {
 		}
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	render() {
 		return (
 			<div className='atl atl--explainer'>
@@ -114,14 +79,9 @@ class DeleteBase extends Base {
 				</div>
 				{ this.renderModal() }
 			</div>
-		);
+		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderModal() {
 		if (this.state.saveResponseStatus) {
 			return (
@@ -130,15 +90,10 @@ class DeleteBase extends Base {
 					status={this.state.saveResponseStatus}
 					reactivateForm={this.reactivateForm.bind(this)}
 				/>
-			);
+			)
 		}
 	} 
 
-
-	/*
-	 *
-	 *
-	 */
 	renderTitleBarContent() {
 		return (
 			<div className="atl__title-bar__content">
@@ -156,34 +111,19 @@ class DeleteBase extends Base {
 					</li>
 				</ul>
 			</div>
-		);
+		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	getViewUrl() {
 		if (!this.state.model) { return '/' }
 		return this.state.model.getViewUrl();
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	getEditUrl() {
 		if (!this.state.model) { return '/' }
 		return this.state.model.getEditUrl();
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderPageNavContent() {
 		return (
 			<div>
@@ -192,11 +132,6 @@ class DeleteBase extends Base {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderPageContent() {
 		var bulk = this.state.model ? this.renderSummary() : <Loader />
 		return (
@@ -206,11 +141,6 @@ class DeleteBase extends Base {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderSummary() {
 		return (
 			<div>
@@ -222,31 +152,16 @@ class DeleteBase extends Base {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	reactivateForm() {
 		this.setState({ saveResponseStatus: null })
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	componentDidMount() {
 		if(!this.state.model) {
 			this.fetchModel()
 		}
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	fetchModel() {
 		if (!this.props.params) { return }
 		var { id } = this.props.params
@@ -257,21 +172,11 @@ class DeleteBase extends Base {
 		})
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	handleDeleteClick(e) {
 		e.preventDefault()
 		this.deleteModel()
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	deleteModel() {
 		
 		var { model } = this.state
@@ -290,5 +195,3 @@ class DeleteBase extends Base {
 	}
 
 }
-
-export default DeleteBase

@@ -1,24 +1,12 @@
-import React from 'react';
-import Base from './base.jsx';
-import Loader from './../../general/loader.jsx';
+import React from 'react'
 
-const EDITOR_PATH = '/assets/vendor/ckeditor/';
+import Loader from './../../general/loader.jsx'
 
-class CKEditor extends Base {
-
-	/*
-	 *
-	 *
-	 */
-	constructor(props) {
-		super(props);
-	}
+const EDITOR_PATH = '/assets/vendor/ckeditor/'
 
 
-	/*
-	 *
-	 *
-	 */
+export default class CKEditor extends React.Component {
+
 	render() {
 		return (
 			<div className='form__wrapper'>
@@ -35,28 +23,18 @@ class CKEditor extends Base {
 		);
 	}
 
-
-	/*
-	 * Run CKEditor configuration.
-	 *
-	 */
 	configureEditor() {
-		CKEDITOR.basePath = EDITOR_PATH;
-		CKEDITOR.config.allowedContent = true;
-		CKEDITOR.config.format_tags = 'p;h1;h2;h3;h4';
+		CKEDITOR.basePath = EDITOR_PATH
+		CKEDITOR.config.allowedContent = true
+		CKEDITOR.config.format_tags = 'p;h1;h2;h3;h4'
 		CKEDITOR.config.format_h4 = { element: 'h4', attributes: { 'class': 'Notes under tables' } };
 		CKEDITOR.config.toolbar = [
 			[ 'Source','-','Undo','Redo','Cut','Copy','Paste','-','Find','Replace', 'Timestamp'],
 			[ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote','-','Link','Unlink','-','Format','-','TextColor','BGColor' ]
 		]
-		CKEDITOR.config.height = '500px';
+		CKEDITOR.config.height = '500px'
 	}
 
-
-	/*
-	 * Create CKEditor instance.
-	 *
-	 */
 	componentDidMount() {
 		$().ensureScript('CKEDITOR', `${EDITOR_PATH}ckeditor.js`, () => {
 			this.configureEditor();
@@ -65,20 +43,13 @@ class CKEditor extends Base {
 				this.props.saveDataOnParent({
 					id: this.props.id,
 					value: this.instance.getData()
-				});
-			});
-		});
+				})
+			})
+		})
 	}
 
-
-	/*
-	 * Destroy CKEditor instance.
-	 *
-	 */
 	componentWillUnmount() {
-		this.instance.destroy();
+		this.instance.destroy()
 	}
 
 }
-
-export default CKEditor;

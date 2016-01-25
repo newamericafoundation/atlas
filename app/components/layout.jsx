@@ -23,16 +23,8 @@ function createRadio() {
 }
 
 
-/*
- *
- *
- */
 class Layout extends React.Component {
 
-	/*
-	 *
-	 *
-	 */
 	constructor(props) {
 		super(props)
 		this.setUiDimensions = this.setUiDimensions.bind(this)
@@ -40,11 +32,6 @@ class Layout extends React.Component {
 		this.state = { radio: createRadio() }
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	render() {
 		var { authenticatedResearcher, ui } = this.props.app
 		var { radio } = this.state
@@ -69,11 +56,6 @@ class Layout extends React.Component {
 		)
 	}
 
-
-	/*
-	 * Render flash message if there is one set.
-	 *
-	 */
 	renderFlash() {
 		var { flash } = this.props.app
 		if (flash.length === 0) { return }
@@ -84,21 +66,11 @@ class Layout extends React.Component {
 		)
 	}
 
-
-	/*
-	 * Set ui dimensions.
-	 * Note: since this component always stays alive in the browser session, there is no need to remove event listeners.
-	 */
 	componentDidMount() {
 		this.setUiDimensions()
 		$(window).on('resize', this.setUiDimensions)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	setUiDimensions() {
 		var dim = {
 			width: $(window).width(),
@@ -110,11 +82,7 @@ class Layout extends React.Component {
 		})
 	}
 
-
-	/*
-	 * Add a route-specific class modifiers on the wrapper.
-	 * TODO: get route name to clean up this method.
-	 */
+	// TODO: get route name to clean up this method.
 	getClassName() {
 		var { pathname } = this.props.location
 		return classNames({
@@ -125,22 +93,12 @@ class Layout extends React.Component {
 		})
 	}
 
-
-	/*
-	 * Header transparency changes from the welcome route to the rest of the site.
-	 *
-	 */
 	isHeaderTransparent() {
 		var { pathname } = this.props.location
 		if (['/', '/welcome'].indexOf(pathname) > -1) { return true }
 		return false
 	}
 
-
-	/*
-	 * Header title changes from the welcome route to the rest of the site.
-	 *
-	 */
 	getHeaderTitle() {
 		var { pathname } = this.props.location
 		if (['/', '/welcome'].indexOf(pathname) > -1) { return 'New America' }

@@ -7,26 +7,16 @@ import { Grid } from './../../general/icons.jsx'
 
 const IMAGE_URL = "/assets/images/iStock_000065438623_720.jpg"
 
-/*
- *
- *
- */
-class Welcome extends React.Component {
 
-	/*
-	 *
-	 *
-	 */
+export default class Welcome extends React.Component {
+
 	constructor(props) {
 		super(props)
-		this.state = { hasImageLoaded: false }
+		this.state = { 
+			hasImageLoaded: false 
+		}
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	render() {
 		if (!this.state.hasImageLoaded) { return (<Loader />); }
 		return (
@@ -51,11 +41,6 @@ class Welcome extends React.Component {
 		)
 	}
 
-
-	/*
-	 * Create an image element not attached to the dom to capture the load event of the hero image.
-	 *
-	 */
 	componentDidMount() {
 		$('<img>').attr({ src: IMAGE_URL }).load(() => {
 			this.setState({ hasImageLoaded: true })
@@ -63,26 +48,14 @@ class Welcome extends React.Component {
 		this.clearHeaderStripColoring()
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	getRootVisibilityStyle() {
 		if (this.state.hasImageLoaded === false) { return { display: 'none' } }
 		return { display: 'block' }
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	clearHeaderStripColoring() {
 		var { radio } = this.props
 		radio.commands.execute('set:header:strip:color', {})
 	}
 
 }
-
-export default Welcome

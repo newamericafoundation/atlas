@@ -24,27 +24,14 @@ var defaultButtons = [
 ]
 
 
-/*
- *
- *
- */
-class Index extends React.Component {
+export default class Index extends React.Component {
 
-	/*
-	 *
-	 *
-	 */
 	constructor(props) {
 		super(props)
 		this.forceUpdate = this.forceUpdate.bind(this)
 		this.state = {}
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	render() {
 		var projects = this.getProjects()
 		var { projectSections, projectTemplates } = this.props.app.entities
@@ -79,11 +66,6 @@ class Index extends React.Component {
 		)	
 	}
 
-
-	/*
-	 * Fetch entities separately. As soon as things arrive, the page should be populated.
-	 *
-	 */
 	componentDidMount() {
 		if (!this.getProjects()) { this.fetchProjects() }
 		var { projectSections, projectTemplates } = this.props.app.entities
@@ -91,20 +73,10 @@ class Index extends React.Component {
 		if (!projectTemplates || projectTemplates.length === 0) { this.fetchProjectTemplates() }
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	getProjects() {
 		return this.props.app.entities.projects.summaries
 	}
 
-
-	/*
-	 * Fetch all projects without bulky fields that would take up a lot of bandwidth.
-	 *
-	 */
 	fetchProjects() {
 		var coll = new project.Collection()
 		coll.getClientFetchPromise({}, { data: 0, body_text: 0, encoded_image: 0 }).then((coll) => {
@@ -114,11 +86,6 @@ class Index extends React.Component {
 		})
 	}
 
-
-	/*
-	 * Fetch all project sections.
-	 *
-	 */
 	fetchProjectSections() {
 		var coll = new projectSection.Collection()
 		coll.getClientFetchPromise().then((coll) => {
@@ -131,11 +98,6 @@ class Index extends React.Component {
 		})
 	}
 
-
-	/*
-	 * Fetch all project templates.
-	 *
-	 */
 	fetchProjectTemplates() {
 		var coll = new projectTemplate.Collection()
 		coll.getClientFetchPromise().then((coll) => {
@@ -149,5 +111,3 @@ class Index extends React.Component {
 	}
 
 }
-
-export default Index

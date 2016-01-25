@@ -19,6 +19,6 @@ export default function HexIcon(props) {
 				57.8,50"/>
 			</g>
 		</svg>
-	);
+	)
 
 }

@@ -5,35 +5,16 @@ import HexIcon from './../../../../general/hex_icon.jsx'
 import Loader from './../../../../general/loader.jsx'
 
 
-/*
- *
- *
- */
-class ProjectSections extends React.Component {
+function ProjectSections(props) {
 
-	/*
-	 *
-	 *
-	 */
-	render() {
-		return (
-			<ul className="atl__project-section-filter">
-				{ this.renderList() }
-			</ul>
-		)
-	}
+	var { projectSections } = props
 
-
-	/*
-	 *
-	 *
-	 */
-	renderList() {
-		if (this.props.projectSections == null) { return <Loader /> }
-		return this.props.projectSections.map((item, i) => {
+	function renderList() {
+		if (projectSections == null) { return <Loader /> }
+		return projectSections.map((item, i) => {
 			return (
 				<ProjectSection
-					{...this.props} 
+					{...props} 
 					projectSection={item} 
 					key={i}
 				/>
@@ -42,46 +23,38 @@ class ProjectSections extends React.Component {
 
 	}
 
+	return (
+		<ul className="atl__project-section-filter">
+			{ renderList() }
+		</ul>
+	)
+
 }
 
 
-/*
- *
- *
- */
-class ProjectSection extends React.Component {
+function ProjectSection(props) {
 
-	/*
-	 *
-	 *
-	 */
-	render() {
-		var { projectSection } = this.props
-		var cls = classNames({
-			"toggle-button": true,
-			"toggle-button--black": true,
-			"toggle-button--inactive": !projectSection.get('_isActive')
-		})
-		return (
-			<li className={ cls } onClick={ this.toggleActiveState.bind(this) }>
-				<HexIcon className={'toggle-button__icon'} />
-				<div className="toggle-button__text">
-					<p>{ projectSection.get('name') }</p>
-				</div>
-			</li>
-		)
-
+	function toggleActiveState() {
+		props.projectSection.toggleActiveState()
+		props.updateProjectsIndex()
 	}
 
+	var { projectSection } = props
 
-	/*
-	 *
-	 *
-	 */
-	toggleActiveState() {
-		this.props.projectSection.toggleActiveState()
-		this.props.updateProjectsIndex()
-	}
+	var cls = classNames({
+		"toggle-button": true,
+		"toggle-button--black": true,
+		"toggle-button--inactive": !projectSection.get('_isActive')
+	})
+
+	return (
+		<li className={ cls } onClick={ toggleActiveState }>
+			<HexIcon className={'toggle-button__icon'} />
+			<div className="toggle-button__text">
+				<p>{ projectSection.get('name') }</p>
+			</div>
+		</li>
+	)
 
 }
 

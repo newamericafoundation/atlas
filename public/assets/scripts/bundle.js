@@ -31510,18 +31510,8 @@
 		return radio;
 	}
 	
-	/*
-	 *
-	 *
-	 */
-	
 	var Layout = (function (_React$Component) {
 		_inherits(Layout, _React$Component);
-	
-		/*
-	  *
-	  *
-	  */
 	
 		function Layout(props) {
 			_classCallCheck(this, Layout);
@@ -31533,11 +31523,6 @@
 			_this.state = { radio: createRadio() };
 			return _this;
 		}
-	
-		/*
-	  *
-	  *
-	  */
 	
 		_createClass(Layout, [{
 			key: 'render',
@@ -31567,12 +31552,6 @@
 					})
 				);
 			}
-	
-			/*
-	   * Render flash message if there is one set.
-	   *
-	   */
-	
 		}, {
 			key: 'renderFlash',
 			value: function renderFlash() {
@@ -31587,24 +31566,12 @@
 					flash
 				);
 			}
-	
-			/*
-	   * Set ui dimensions.
-	   * Note: since this component always stays alive in the browser session, there is no need to remove event listeners.
-	   */
-	
 		}, {
 			key: 'componentDidMount',
 			value: function componentDidMount() {
 				this.setUiDimensions();
 				$(window).on('resize', this.setUiDimensions);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'setUiDimensions',
 			value: function setUiDimensions() {
@@ -31618,10 +31585,7 @@
 				});
 			}
 	
-			/*
-	   * Add a route-specific class modifiers on the wrapper.
-	   * TODO: get route name to clean up this method.
-	   */
+			// TODO: get route name to clean up this method.
 	
 		}, {
 			key: 'getClassName',
@@ -31635,12 +31599,6 @@
 					'atl-route--projects_show': ['/', '/welcome', '/menu'].indexOf(pathname) === -1
 				});
 			}
-	
-			/*
-	   * Header transparency changes from the welcome route to the rest of the site.
-	   *
-	   */
-	
 		}, {
 			key: 'isHeaderTransparent',
 			value: function isHeaderTransparent() {
@@ -31651,12 +31609,6 @@
 				}
 				return false;
 			}
-	
-			/*
-	   * Header title changes from the welcome route to the rest of the site.
-	   *
-	   */
-	
 		}, {
 			key: 'getHeaderTitle',
 			value: function getHeaderTitle() {
@@ -31701,6 +31653,10 @@
 	
 	var _root2 = _interopRequireDefault(_root);
 	
+	var _root3 = __webpack_require__(678);
+	
+	var _root4 = _interopRequireDefault(_root3);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -31708,11 +31664,6 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	/*
-	 *
-	 *
-	 */
 	
 	var Setup = (function (_React$Component) {
 		_inherits(Setup, _React$Component);
@@ -31725,16 +31676,12 @@
 	
 		_createClass(Setup, [{
 			key: 'render',
-	
-			/*
-	   *
-	   *
-	   */
 			value: function render() {
 				return _react2.default.createElement(
 					'div',
 					{ className: 'atl__setup' },
-					_react2.default.createElement(_root2.default, _extends({}, this.props, { size: 30 }))
+					_react2.default.createElement(_root2.default, _extends({}, this.props, { size: 30 })),
+					_react2.default.createElement(_root4.default, null)
 				);
 			}
 		}]);
@@ -46428,32 +46375,19 @@
 	
 	var IMAGE_URL = "/assets/images/iStock_000065438623_720.jpg";
 	
-	/*
-	 *
-	 *
-	 */
-	
 	var Welcome = (function (_React$Component) {
 		_inherits(Welcome, _React$Component);
-	
-		/*
-	  *
-	  *
-	  */
 	
 		function Welcome(props) {
 			_classCallCheck(this, Welcome);
 	
 			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Welcome).call(this, props));
 	
-			_this.state = { hasImageLoaded: false };
+			_this.state = {
+				hasImageLoaded: false
+			};
 			return _this;
 		}
-	
-		/*
-	  *
-	  *
-	  */
 	
 		_createClass(Welcome, [{
 			key: 'render',
@@ -46502,12 +46436,6 @@
 					)
 				);
 			}
-	
-			/*
-	   * Create an image element not attached to the dom to capture the load event of the hero image.
-	   *
-	   */
-	
 		}, {
 			key: 'componentDidMount',
 			value: function componentDidMount() {
@@ -46518,12 +46446,6 @@
 				});
 				this.clearHeaderStripColoring();
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'getRootVisibilityStyle',
 			value: function getRootVisibilityStyle() {
@@ -46532,12 +46454,6 @@
 				}
 				return { display: 'block' };
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'clearHeaderStripColoring',
 			value: function clearHeaderStripColoring() {
@@ -46561,14 +46477,11 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
+	exports.default = Loader;
 	
 	var _react = __webpack_require__(196);
 	
 	var _react2 = _interopRequireDefault(_react);
-	
-	var _classnames = __webpack_require__(354);
-	
-	var _classnames2 = _interopRequireDefault(_classnames);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -46580,8 +46493,6 @@
 			_react2.default.createElement('img', { src: '/assets/images/spinner.gif' })
 		);
 	}
-	
-	exports.default = Loader;
 
 /***/ },
 /* 439 */
@@ -46646,18 +46557,8 @@
 		isToggleable: false
 	}];
 	
-	/*
-	 *
-	 *
-	 */
-	
 	var Index = (function (_React$Component) {
 		_inherits(Index, _React$Component);
-	
-		/*
-	  *
-	  *
-	  */
 	
 		function Index(props) {
 			_classCallCheck(this, Index);
@@ -46668,11 +46569,6 @@
 			_this.state = {};
 			return _this;
 		}
-	
-		/*
-	  *
-	  *
-	  */
 	
 		_createClass(Index, [{
 			key: 'render',
@@ -46722,12 +46618,6 @@
 					)
 				);
 			}
-	
-			/*
-	   * Fetch entities separately. As soon as things arrive, the page should be populated.
-	   *
-	   */
-	
 		}, {
 			key: 'componentDidMount',
 			value: function componentDidMount() {
@@ -46745,23 +46635,11 @@
 					this.fetchProjectTemplates();
 				}
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'getProjects',
 			value: function getProjects() {
 				return this.props.app.entities.projects.summaries;
 			}
-	
-			/*
-	   * Fetch all projects without bulky fields that would take up a lot of bandwidth.
-	   *
-	   */
-	
 		}, {
 			key: 'fetchProjects',
 			value: function fetchProjects() {
@@ -46774,12 +46652,6 @@
 					window.location.assign('/menu');
 				});
 			}
-	
-			/*
-	   * Fetch all project sections.
-	   *
-	   */
-	
 		}, {
 			key: 'fetchProjectSections',
 			value: function fetchProjectSections() {
@@ -46795,12 +46667,6 @@
 					console.log(err.stack);
 				});
 			}
-	
-			/*
-	   * Fetch all project templates.
-	   *
-	   */
-	
 		}, {
 			key: 'fetchProjectTemplates',
 			value: function fetchProjectTemplates() {
@@ -47276,8 +47142,6 @@
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
@@ -47306,126 +47170,58 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	function ProjectSections(props) {
+		var projectSections = props.projectSections;
 	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	/*
-	 *
-	 *
-	 */
-	
-	var ProjectSections = (function (_React$Component) {
-		_inherits(ProjectSections, _React$Component);
-	
-		function ProjectSections() {
-			_classCallCheck(this, ProjectSections);
-	
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(ProjectSections).apply(this, arguments));
+		function renderList() {
+			if (projectSections == null) {
+				return _react2.default.createElement(_loader2.default, null);
+			}
+			return projectSections.map(function (item, i) {
+				return _react2.default.createElement(ProjectSection, _extends({}, props, {
+					projectSection: item,
+					key: i
+				}));
+			});
 		}
 	
-		_createClass(ProjectSections, [{
-			key: 'render',
+		return _react2.default.createElement(
+			'ul',
+			{ className: 'atl__project-section-filter' },
+			renderList()
+		);
+	}
 	
-			/*
-	   *
-	   *
-	   */
-			value: function render() {
-				return _react2.default.createElement(
-					'ul',
-					{ className: 'atl__project-section-filter' },
-					this.renderList()
-				);
-			}
+	function ProjectSection(props) {
 	
-			/*
-	   *
-	   *
-	   */
-	
-		}, {
-			key: 'renderList',
-			value: function renderList() {
-				var _this2 = this;
-	
-				if (this.props.projectSections == null) {
-					return _react2.default.createElement(_loader2.default, null);
-				}
-				return this.props.projectSections.map(function (item, i) {
-					return _react2.default.createElement(ProjectSection, _extends({}, _this2.props, {
-						projectSection: item,
-						key: i
-					}));
-				});
-			}
-		}]);
-	
-		return ProjectSections;
-	})(_react2.default.Component);
-	
-	/*
-	 *
-	 *
-	 */
-	
-	var ProjectSection = (function (_React$Component2) {
-		_inherits(ProjectSection, _React$Component2);
-	
-		function ProjectSection() {
-			_classCallCheck(this, ProjectSection);
-	
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(ProjectSection).apply(this, arguments));
+		function toggleActiveState() {
+			props.projectSection.toggleActiveState();
+			props.updateProjectsIndex();
 		}
 	
-		_createClass(ProjectSection, [{
-			key: 'render',
+		var projectSection = props.projectSection;
 	
-			/*
-	   *
-	   *
-	   */
-			value: function render() {
-				var projectSection = this.props.projectSection;
+		var cls = (0, _classnames2.default)({
+			"toggle-button": true,
+			"toggle-button--black": true,
+			"toggle-button--inactive": !projectSection.get('_isActive')
+		});
 	
-				var cls = (0, _classnames2.default)({
-					"toggle-button": true,
-					"toggle-button--black": true,
-					"toggle-button--inactive": !projectSection.get('_isActive')
-				});
-				return _react2.default.createElement(
-					'li',
-					{ className: cls, onClick: this.toggleActiveState.bind(this) },
-					_react2.default.createElement(_hex_icon2.default, { className: 'toggle-button__icon' }),
-					_react2.default.createElement(
-						'div',
-						{ className: 'toggle-button__text' },
-						_react2.default.createElement(
-							'p',
-							null,
-							projectSection.get('name')
-						)
-					)
-				);
-			}
-	
-			/*
-	   *
-	   *
-	   */
-	
-		}, {
-			key: 'toggleActiveState',
-			value: function toggleActiveState() {
-				this.props.projectSection.toggleActiveState();
-				this.props.updateProjectsIndex();
-			}
-		}]);
-	
-		return ProjectSection;
-	})(_react2.default.Component);
+		return _react2.default.createElement(
+			'li',
+			{ className: cls, onClick: toggleActiveState },
+			_react2.default.createElement(_hex_icon2.default, { className: 'toggle-button__icon' }),
+			_react2.default.createElement(
+				'div',
+				{ className: 'toggle-button__text' },
+				_react2.default.createElement(
+					'p',
+					null,
+					projectSection.get('name')
+				)
+			)
+		);
+	}
 	
 	exports.default = ProjectSections;
 
@@ -54500,18 +54296,8 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	/*
-	 *
-	 *
-	 */
-	
 	var Show = (function (_React$Component) {
 		_inherits(Show, _React$Component);
-	
-		/*
-	  *
-	  *
-	  */
 	
 		function Show(props) {
 			_classCallCheck(this, Show);
@@ -54536,11 +54322,6 @@
 			return _this;
 		}
 	
-		/*
-	  *
-	  *
-	  */
-	
 		_createClass(Show, [{
 			key: 'render',
 			value: function render() {
@@ -54558,12 +54339,6 @@
 					this.renderProject()
 				);
 			}
-	
-			/*
-	   * Pick and render template-specific project.
-	   *
-	   */
-	
 		}, {
 			key: 'renderProject',
 			value: function renderProject() {
@@ -54581,34 +54356,16 @@
 					related: this.state.related
 				});
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'componentWillMount',
 			value: function componentWillMount() {
 				this.ensureData();
 			}
-	
-			/*
-	   * This is a method passed down to all deep children so they can modify the state of the ui.
-	   * 
-	   */
-	
 		}, {
 			key: 'setUiState',
 			value: function setUiState(uiStateChanges) {
 				this.setState({ ui: Object.assign({}, this.state.ui, uiStateChanges) });
 			}
-	
-			/*
-	   * This method is bound to the component and passed to the side bar buttons subcomponent that call it with a message. Each type of message is handled appropriately.
-	   *
-	   */
-	
 		}, {
 			key: 'handleMessageFromButtons',
 			value: function handleMessageFromButtons(message) {
@@ -54630,12 +54387,6 @@
 						console.log('Unknown message from side bar buttons.');
 				}
 			}
-	
-			/*
-	   * Get side bar buttons.
-	   *
-	   */
-	
 		}, {
 			key: 'getButtons',
 			value: function getButtons() {
@@ -54648,12 +54399,6 @@
 				var isResearcherAuthenticated = authenticatedResearcher.name && authenticatedResearcher.image;
 				return (0, _buttons_data_generator2.default)(project, isResearcherAuthenticated, this.state.ui.isCollapsedDueToOverflow);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'getProject',
 			value: function getProject() {
@@ -54665,12 +54410,6 @@
 				}
 				return byUrl[atlas_url];
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'getClassName',
 			value: function getClassName() {
@@ -54689,12 +54428,6 @@
 					'atl__info-box--narrow': data && data.variables.getInfoBoxVariableCount() < 2
 				});
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: '_isModelTilemap',
 			value: function _isModelTilemap() {
@@ -54704,12 +54437,6 @@
 				}
 				return project.get('project_template_name') === 'Tilemap';
 			}
-	
-			/*
-	   * Make sure all data exists on the project.
-	   *
-	   */
-	
 		}, {
 			key: 'ensureData',
 			value: function ensureData() {
@@ -54720,12 +54447,6 @@
 					this.fetchRelatedProjects();
 				}
 			}
-	
-			/*
-	   * Send separate network request fetching related projects.
-	   *
-	   */
-	
 		}, {
 			key: 'fetchRelatedProjects',
 			value: function fetchRelatedProjects() {
@@ -54746,12 +54467,6 @@
 					console.log(err);
 				});
 			}
-	
-			/*
-	   * Send network request to get project data.
-	   *
-	   */
-	
 		}, {
 			key: 'fetchData',
 			value: function fetchData() {
@@ -57626,18 +57341,8 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	/*
-	 *
-	 *
-	 */
-	
 	var Slider = (function (_React$Component) {
 	    _inherits(Slider, _React$Component);
-	
-	    /*
-	     *
-	     *
-	     */
 	
 	    function Slider(props) {
 	        _classCallCheck(this, Slider);
@@ -57650,55 +57355,26 @@
 	        return _this;
 	    }
 	
-	    /*
-	     *
-	     *
-	     */
-	
 	    _createClass(Slider, [{
 	        key: 'render',
 	        value: function render() {
 	            return _react2.default.createElement('div', { className: 'atl__slider', ref: 'root' });
 	        }
-	
-	        /*
-	         *
-	         *
-	         */
-	
 	    }, {
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
 	            this.buildSlider();
 	        }
-	
-	        /*
-	         *
-	         *
-	         */
-	
 	    }, {
 	        key: 'componentWillUnmount',
 	        value: function componentWillUnmount() {
 	            this.destroySlider();
 	        }
-	
-	        /*
-	         *
-	         *
-	         */
-	
 	    }, {
 	        key: 'componentDidUpdate',
 	        value: function componentDidUpdate() {
 	            this.setSliderValueText();
 	        }
-	
-	        /*
-	         *
-	         *
-	         */
-	
 	    }, {
 	        key: 'buildSlider',
 	        value: function buildSlider() {
@@ -57717,36 +57393,18 @@
 	            });
 	            this.setSliderValueText();
 	        }
-	
-	        /*
-	         *
-	         *
-	         */
-	
 	    }, {
 	        key: 'destroySlider',
 	        value: function destroySlider() {
 	            var $el = $((0, _reactDom.findDOMNode)(this.refs.root));
 	            $el.unbind();
 	        }
-	
-	        /*
-	         *
-	         *
-	         */
-	
 	    }, {
 	        key: 'setSliderValueText',
 	        value: function setSliderValueText() {
 	            var $el = $((0, _reactDom.findDOMNode)(this.refs.root));
 	            $el.find('span').html(this.getSliderValueText());
 	        }
-	
-	        /*
-	         *
-	         *
-	         */
-	
 	    }, {
 	        key: 'getSliderValueText',
 	        value: function getSliderValueText() {
@@ -59507,11 +59165,6 @@
 	var Static = (function (_React$Component) {
 		_inherits(Static, _React$Component);
 	
-		/*
-	  *
-	  *
-	  */
-	
 		function Static(props) {
 			_classCallCheck(this, Static);
 	
@@ -59526,11 +59179,6 @@
 			return _this;
 		}
 	
-		/*
-	  *
-	  *
-	  */
-	
 		_createClass(Static, [{
 			key: 'render',
 			value: function render() {
@@ -59542,12 +59190,6 @@
 					this.renderContentBar()
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderTitleBar',
 			value: function renderTitleBar(state) {
@@ -59563,12 +59205,6 @@
 					this.renderTitleBarContent()
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderTitleBarBackground',
 			value: function renderTitleBarBackground() {
@@ -59579,12 +59215,6 @@
 					style: { backgroundColor: color }
 				});
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderTitleBarContent',
 			value: function renderTitleBarContent() {
@@ -59603,12 +59233,6 @@
 					)
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderContentBar',
 			value: function renderContentBar() {
@@ -59632,12 +59256,6 @@
 					)
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderPageNav',
 			value: function renderPageNav() {
@@ -59651,12 +59269,6 @@
 					this.renderPageNavContent()
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderPageNavContent',
 			value: function renderPageNavContent() {
@@ -59666,12 +59278,6 @@
 					'Page Nav Content'
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderPageContent',
 			value: function renderPageContent() {
@@ -59681,12 +59287,6 @@
 					'Page Content'
 				);
 			}
-	
-			/*
-	   * This method should not be overridden on the subclass in order to keep sticky page nav logic DRY.
-	   *
-	   */
-	
 		}, {
 			key: 'setStickyPageNav',
 			value: function setStickyPageNav(e) {
@@ -73905,18 +73505,8 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	/*
-	 *
-	 *
-	 */
-	
 	var NewBase = (function (_SaveBase) {
 		_inherits(NewBase, _SaveBase);
-	
-		/*
-	  *
-	  *
-	  */
 	
 		function NewBase(props) {
 			_classCallCheck(this, NewBase);
@@ -73929,11 +73519,6 @@
 			return _this;
 		}
 	
-		/*
-	  *
-	  *
-	  */
-	
 		_createClass(NewBase, [{
 			key: 'componentWillMount',
 			value: function componentWillMount() {
@@ -73942,34 +73527,16 @@
 					this.setState({ model: new Model() });
 				}
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'getCrudMethodName',
 			value: function getCrudMethodName() {
 				return 'new';
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'getSubmitButtonText',
 			value: function getSubmitButtonText() {
 				return 'Create ' + this.getResourceName();
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'addModelTimeStamp',
 			value: function addModelTimeStamp() {
@@ -73977,12 +73544,6 @@
 	
 				model.set('created_at', new Date().toISOString());
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'saveModel',
 			value: function saveModel(formData) {
@@ -74070,11 +73631,6 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // This component is used generically for crud forms on any resource.
 	
-	/*
-	 *
-	 *
-	 */
-	
 	var SaveBaseModal = (function (_BaseStatusModal) {
 		_inherits(SaveBaseModal, _BaseStatusModal);
 	
@@ -74086,11 +73642,6 @@
 	
 		_createClass(SaveBaseModal, [{
 			key: 'renderSuccessContent',
-	
-			/*
-	   *
-	   *
-	   */
 			value: function renderSuccessContent() {
 				return _react2.default.createElement(
 					'div',
@@ -74107,12 +73658,6 @@
 					)
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderFailureContent',
 			value: function renderFailureContent() {
@@ -74139,12 +73684,6 @@
 					)
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderPendingContent',
 			value: function renderPendingContent() {
@@ -74163,18 +73702,8 @@
 		return SaveBaseModal;
 	})(_base_status_modal2.default);
 	
-	/*
-	 *
-	 *
-	 */
-	
 	var SaveBase = (function (_Base) {
 		_inherits(SaveBase, _Base);
-	
-		/*
-	  *
-	  *
-	  */
 	
 		function SaveBase(props) {
 			_classCallCheck(this, SaveBase);
@@ -74189,11 +73718,6 @@
 			};
 			return _this2;
 		}
-	
-		/*
-	  *
-	  *
-	  */
 	
 		_createClass(SaveBase, [{
 			key: 'render',
@@ -74211,12 +73735,6 @@
 					this.renderModal()
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderModal',
 			value: function renderModal() {
@@ -74233,12 +73751,6 @@
 					reactivateForm: this.reactivateForm
 				});
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderTitleBarContent',
 			value: function renderTitleBarContent() {
@@ -74253,12 +73765,6 @@
 					this.renderLinks()
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderLinks',
 			value: function renderLinks() {
@@ -74304,12 +73810,6 @@
 					deleteLink
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderPageNavContent',
 			value: function renderPageNavContent() {
@@ -74323,12 +73823,6 @@
 					)
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderPageContent',
 			value: function renderPageContent() {
@@ -74368,12 +73862,6 @@
 			value: function getSubmitButtonText() {
 				return 'Submit';
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'saveModel',
 			value: function saveModel(formData) {
@@ -74404,12 +73892,6 @@
 					_this3.setState({ saveResponseStatus: 'error' });
 				});
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'reactivateForm',
 			value: function reactivateForm() {
@@ -74458,18 +73940,8 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // Form component backed by a Backbone model.
 	
-	/*
-	 * Generic form component.
-	 *
-	 */
-	
 	var Form = (function (_React$Component) {
 		_inherits(Form, _React$Component);
-	
-		/*
-	  *
-	  *
-	  */
 	
 		function Form(props) {
 			_classCallCheck(this, Form);
@@ -74479,11 +73951,6 @@
 			_this.state = {};
 			return _this;
 		}
-	
-		/*
-	  *
-	  *
-	  */
 	
 		_createClass(Form, [{
 			key: 'render',
@@ -74507,12 +73974,6 @@
 					})
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderFormComponents',
 			value: function renderFormComponents() {
@@ -74531,14 +73992,7 @@
 						initialValue: _this2.props.model.get(id)
 					}));
 				});
-				return _react2.default.createElement('input', null);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'saveDataFromChild',
 			value: function saveDataFromChild(childData) {
@@ -74564,12 +74018,6 @@
 	
 				this.forceUpdate();
 			}
-	
-			/*
-	   * Run method passed down from parent.
-	   *
-	   */
-	
 		}, {
 			key: 'sendFormDataToParent',
 			value: function sendFormDataToParent(e) {
@@ -74608,15 +74056,6 @@
 	  enumerable: true,
 	  get: function get() {
 	    return _text_area.default;
-	  }
-	});
-	
-	var _upload = __webpack_require__(616);
-	
-	Object.defineProperty(exports, 'Upload', {
-	  enumerable: true,
-	  get: function get() {
-	    return _upload.default;
 	  }
 	});
 	
@@ -74699,10 +74138,6 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _base = __webpack_require__(614);
-	
-	var _base2 = _interopRequireDefault(_base);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -74711,8 +74146,8 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var Text = (function (_Base) {
-		_inherits(Text, _Base);
+	var Text = (function (_React$Component) {
+		_inherits(Text, _React$Component);
 	
 		function Text() {
 			_classCallCheck(this, Text);
@@ -74722,11 +74157,6 @@
 	
 		_createClass(Text, [{
 			key: 'render',
-	
-			/*
-	   *
-	   *
-	   */
 			value: function render() {
 				return _react2.default.createElement(
 					'div',
@@ -74752,12 +74182,6 @@
 					})
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'saveDataOnParent',
 			value: function saveDataOnParent(e) {
@@ -74769,61 +74193,12 @@
 		}]);
 	
 		return Text;
-	})(_base2.default);
+	})(_react2.default.Component);
 	
 	exports.default = Text;
 
 /***/ },
-/* 614 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _react = __webpack_require__(196);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // Base form component - add shared behavior here.
-	
-	var Base = (function (_React$Component) {
-		_inherits(Base, _React$Component);
-	
-		function Base() {
-			_classCallCheck(this, Base);
-	
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(Base).apply(this, arguments));
-		}
-	
-		_createClass(Base, [{
-			key: 'render',
-	
-			/*
-	   *
-	   *
-	   */
-			value: function render() {
-				return _react2.default.createElement('div', null);
-			}
-		}]);
-	
-		return Base;
-	})(_react2.default.Component);
-	
-	exports.default = Base;
-
-/***/ },
+/* 614 */,
 /* 615 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -74839,10 +74214,6 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _base = __webpack_require__(614);
-	
-	var _base2 = _interopRequireDefault(_base);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -74851,8 +74222,8 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var TextArea = (function (_Base) {
-		_inherits(TextArea, _Base);
+	var TextArea = (function (_React$Component) {
+		_inherits(TextArea, _React$Component);
 	
 		function TextArea() {
 			_classCallCheck(this, TextArea);
@@ -74897,174 +74268,12 @@
 		}]);
 	
 		return TextArea;
-	})(_base2.default);
+	})(_react2.default.Component);
 	
 	exports.default = TextArea;
 
 /***/ },
-/* 616 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _react = __webpack_require__(196);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _base = __webpack_require__(614);
-	
-	var _base2 = _interopRequireDefault(_base);
-	
-	var _loader = __webpack_require__(438);
-	
-	var _loader2 = _interopRequireDefault(_loader);
-	
-	var _moment = __webpack_require__(505);
-	
-	var _moment2 = _interopRequireDefault(_moment);
-	
-	var _jquery = __webpack_require__(435);
-	
-	var _jquery2 = _interopRequireDefault(_jquery);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // Uploads file to S3 bucket.
-	
-	var Upload = (function (_Base) {
-		_inherits(Upload, _Base);
-	
-		/*
-	  *
-	  *
-	  */
-	
-		function Upload(props) {
-			_classCallCheck(this, Upload);
-	
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Upload).call(this, props));
-	
-			_this.state = {
-				upload: 'initial'
-			};
-			return _this;
-		}
-	
-		/*
-	  *
-	  *
-	  */
-	
-		_createClass(Upload, [{
-			key: 'render',
-			value: function render() {
-				if (FileReader == null) {
-					return _react2.default.createElement(
-						'div',
-						{ className: 'form__wrapper' },
-						_react2.default.createElement(
-							'p',
-							null,
-							'This form component is not supported in your browser. Please reopen the file in a newer version of Chrome, Safari or Firefox.'
-						)
-					);
-				}
-				return _react2.default.createElement(
-					'div',
-					{ className: 'form__wrapper' },
-					_react2.default.createElement(
-						'label',
-						{ htmlFor: this.props.id },
-						this.props.labelText
-					),
-					_react2.default.createElement(
-						'p',
-						{ className: 'form__hint' },
-						this.props.hint
-					),
-					this.state.upload === 'pending' ? _react2.default.createElement(_loader2.default, null) : null,
-					_react2.default.createElement('input', {
-						type: 'file',
-						onChange: this.processUpload.bind(this),
-						disabled: !this.props.isEnabled,
-						name: this.props.id,
-						id: this.props.id,
-						filename: this.props.initialValue,
-						placeholder: this.props.placeholder
-					})
-				);
-			}
-	
-			/*
-	   *
-	   *
-	   */
-	
-		}, {
-			key: 'processUpload',
-			value: function processUpload(e) {
-				var _this2 = this;
-	
-				var file = e.target.files[0];
-	
-				var reader = new FileReader();
-	
-				var fileName = file.name;
-	
-				var timeStamp = (0, _moment2.default)(new Date()).format('YYYY-MM-DD-HH-mm-ss');
-	
-				fileName = fileName.slice(0, fileName.indexOf('.')) + '-' + timeStamp + fileName.slice(fileName.indexOf('.'));
-	
-				var params = {
-					Key: '' + this.props.model.getUploadPath() + fileName,
-					ContentType: file.type
-				};
-	
-				this.setState({
-					upload: 'pending'
-				});
-	
-				reader.onload = function (res) {
-	
-					params.Body = reader.result;
-	
-					_jquery2.default.ajax({
-						url: '/static/upload',
-						data: params,
-						method: 'post',
-						success: function success(data) {
-							_this2.setState({ upload: 'success' });
-							_this2.props.saveDataOnParent({
-								id: _this2.props.id,
-								value: fileName
-							});
-						},
-						error: function error(data) {
-							_this2.setState({ upload: 'error' });
-						}
-					});
-				};
-	
-				reader.readAsText(file);
-			}
-		}]);
-	
-		return Upload;
-	})(_base2.default);
-	
-	exports.default = Upload;
-
-/***/ },
+/* 616 */,
 /* 617 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -75080,10 +74289,6 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _base = __webpack_require__(614);
-	
-	var _base2 = _interopRequireDefault(_base);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -75092,13 +74297,13 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var Radio = (function (_Base) {
-		_inherits(Radio, _Base);
+	var Radio = (function (_React$Component) {
+		_inherits(Radio, _React$Component);
 	
-		function Radio(props) {
+		function Radio() {
 			_classCallCheck(this, Radio);
 	
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(Radio).call(this, props));
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(Radio).apply(this, arguments));
 		}
 	
 		_createClass(Radio, [{
@@ -75177,7 +74382,7 @@
 		}]);
 	
 		return Radio;
-	})(_base2.default);
+	})(_react2.default.Component);
 	
 	exports.default = Radio;
 
@@ -75201,10 +74406,6 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _base = __webpack_require__(614);
-	
-	var _base2 = _interopRequireDefault(_base);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -75213,13 +74414,8 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	/*
-	 *
-	 *
-	 */
-	
-	var SelectizeText = (function (_Base) {
-		_inherits(SelectizeText, _Base);
+	var SelectizeText = (function (_React$Component) {
+		_inherits(SelectizeText, _React$Component);
 	
 		function SelectizeText() {
 			_classCallCheck(this, SelectizeText);
@@ -75229,11 +74425,6 @@
 	
 		_createClass(SelectizeText, [{
 			key: 'render',
-	
-			/*
-	   *
-	   *
-	   */
 			value: function render() {
 				return _react2.default.createElement(
 					'div',
@@ -75259,12 +74450,6 @@
 					})
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'componentDidMount',
 			value: function componentDidMount() {
@@ -75277,24 +74462,12 @@
 					}
 				}).on('change', this.saveDataOnParent.bind(this));
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'componentWillUnmount',
 			value: function componentWillUnmount() {
 				var $el = $(_reactDom2.default.findDOMNode(this.refs.input));
 				$el[0].selectize.destroy();
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'saveDataOnParent',
 			value: function saveDataOnParent(e) {
@@ -75306,7 +74479,7 @@
 		}]);
 	
 		return SelectizeText;
-	})(_base2.default);
+	})(_react2.default.Component);
 	
 	exports.default = SelectizeText;
 
@@ -75326,10 +74499,6 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _base = __webpack_require__(614);
-	
-	var _base2 = _interopRequireDefault(_base);
-	
 	var _loader = __webpack_require__(438);
 	
 	var _loader2 = _interopRequireDefault(_loader);
@@ -75342,13 +74511,8 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // Spreadsheet file component that does not upload the spreadsheet but processes its contents to JSON.
 	
-	var SpreadsheetFile = (function (_Base) {
-		_inherits(SpreadsheetFile, _Base);
-	
-		/*
-	  *
-	  *
-	  */
+	var SpreadsheetFile = (function (_React$Component) {
+		_inherits(SpreadsheetFile, _React$Component);
 	
 		function SpreadsheetFile(props) {
 			_classCallCheck(this, SpreadsheetFile);
@@ -75360,11 +74524,6 @@
 			};
 			return _this;
 		}
-	
-		/*
-	  *
-	  *
-	  */
 	
 		_createClass(SpreadsheetFile, [{
 			key: 'render',
@@ -75397,12 +74556,6 @@
 					})
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderSummary',
 			value: function renderSummary() {
@@ -75414,12 +74567,6 @@
 					);
 				}
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'componentDidMount',
 			value: function componentDidMount() {
@@ -75429,12 +74576,6 @@
 					_this2.setState({ isParserLoaded: true });
 				});
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'parseWorkBook',
 			value: function parseWorkBook(workbook) {
@@ -75447,12 +74588,6 @@
 				console.log(obj);
 				return obj;
 			}
-	
-			/*
-	   * Use HTML5 FileReader API.
-	   *
-	   */
-	
 		}, {
 			key: 'saveDataOnParent',
 			value: function saveDataOnParent(e) {
@@ -75475,7 +74610,7 @@
 		}]);
 	
 		return SpreadsheetFile;
-	})(_base2.default);
+	})(_react2.default.Component);
 	
 	exports.default = SpreadsheetFile;
 
@@ -75495,20 +74630,16 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _base = __webpack_require__(614);
-	
-	var _base2 = _interopRequireDefault(_base);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // Image file form component that does not process uploads, but sets an image field as base64 encoded.
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var ImageFile = (function (_Base) {
-		_inherits(ImageFile, _Base);
+	var ImageFile = (function (_React$Component) {
+		_inherits(ImageFile, _React$Component);
 	
 		function ImageFile() {
 			_classCallCheck(this, ImageFile);
@@ -75518,11 +74649,6 @@
 	
 		_createClass(ImageFile, [{
 			key: 'render',
-	
-			/*
-	   *
-	   *
-	   */
 			value: function render() {
 				return _react2.default.createElement(
 					'div',
@@ -75549,12 +74675,6 @@
 					})
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderThumbnail',
 			value: function renderThumbnail() {
@@ -75564,12 +74684,6 @@
 					return _react2.default.createElement('div', { style: { width: '100%', paddingTop: '75%', backgroundSize: 'cover', backgroundImage: "url('data:image/png;base64," + encoded + "')" } });
 				}
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'saveDataOnParent',
 			value: function saveDataOnParent(e) {
@@ -75578,9 +74692,9 @@
 				var file = e.target.files[0];
 				var reader = new FileReader();
 	
-				var removeBase64Header = function removeBase64Header(s) {
-					return s.slice(s.indexOf('base64') + 7);
-				};
+				function removeBase64Header(imageDataUrl) {
+					return imageDataUrl.slice(imageDataUrl.indexOf('base64') + 7);
+				}
 	
 				reader.onload = function () {
 					var b64 = removeBase64Header(reader.result);
@@ -75595,7 +74709,7 @@
 		}]);
 	
 		return ImageFile;
-	})(_base2.default);
+	})(_react2.default.Component);
 	
 	exports.default = ImageFile;
 
@@ -75615,10 +74729,6 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _base = __webpack_require__(614);
-	
-	var _base2 = _interopRequireDefault(_base);
-	
 	var _loader = __webpack_require__(438);
 	
 	var _loader2 = _interopRequireDefault(_loader);
@@ -75633,24 +74743,14 @@
 	
 	var EDITOR_PATH = '/assets/vendor/ckeditor/';
 	
-	var CKEditor = (function (_Base) {
-		_inherits(CKEditor, _Base);
+	var CKEditor = (function (_React$Component) {
+		_inherits(CKEditor, _React$Component);
 	
-		/*
-	  *
-	  *
-	  */
-	
-		function CKEditor(props) {
+		function CKEditor() {
 			_classCallCheck(this, CKEditor);
 	
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(CKEditor).call(this, props));
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(CKEditor).apply(this, arguments));
 		}
-	
-		/*
-	  *
-	  *
-	  */
 	
 		_createClass(CKEditor, [{
 			key: 'render',
@@ -75677,12 +74777,6 @@
 					})
 				);
 			}
-	
-			/*
-	   * Run CKEditor configuration.
-	   *
-	   */
-	
 		}, {
 			key: 'configureEditor',
 			value: function configureEditor() {
@@ -75693,12 +74787,6 @@
 				CKEDITOR.config.toolbar = [['Source', '-', 'Undo', 'Redo', 'Cut', 'Copy', 'Paste', '-', 'Find', 'Replace', 'Timestamp'], ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'Link', 'Unlink', '-', 'Format', '-', 'TextColor', 'BGColor']];
 				CKEDITOR.config.height = '500px';
 			}
-	
-			/*
-	   * Create CKEditor instance.
-	   *
-	   */
-	
 		}, {
 			key: 'componentDidMount',
 			value: function componentDidMount() {
@@ -75715,12 +74803,6 @@
 					});
 				});
 			}
-	
-			/*
-	   * Destroy CKEditor instance.
-	   *
-	   */
-	
 		}, {
 			key: 'componentWillUnmount',
 			value: function componentWillUnmount() {
@@ -75729,7 +74811,7 @@
 		}]);
 	
 		return CKEditor;
-	})(_base2.default);
+	})(_react2.default.Component);
 	
 	exports.default = CKEditor;
 
@@ -75768,16 +74850,11 @@
 	var ForeignCollectionRadio = (function (_ForeignCollectionBas) {
 		_inherits(ForeignCollectionRadio, _ForeignCollectionBas);
 	
-		function ForeignCollectionRadio(props) {
+		function ForeignCollectionRadio() {
 			_classCallCheck(this, ForeignCollectionRadio);
 	
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(ForeignCollectionRadio).call(this, props));
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(ForeignCollectionRadio).apply(this, arguments));
 		}
-	
-		/*
-	  *
-	  *
-	  */
 	
 		_createClass(ForeignCollectionRadio, [{
 			key: 'render',
@@ -75798,12 +74875,6 @@
 					this.renderOptions()
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderOptions',
 			value: function renderOptions() {
@@ -75837,24 +74908,12 @@
 					);
 				});
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'componentDidMount',
 			value: function componentDidMount() {
 				// If there was no initial value passed to the component, pass back the first option to the parent.
 				this.fetchForeignCollection();
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'isOptionChecked',
 			value: function isOptionChecked(option, i) {
@@ -75863,12 +74922,6 @@
 				}
 				return false;
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'saveDataOnParent',
 			value: function saveDataOnParent(e) {
@@ -75900,10 +74953,6 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _base = __webpack_require__(614);
-	
-	var _base2 = _interopRequireDefault(_base);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -75912,40 +74961,25 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var ForeignCollectionBase = (function (_Base) {
-		_inherits(ForeignCollectionBase, _Base);
-	
-		/*
-	  *
-	  *
-	  */
+	var ForeignCollectionBase = (function (_React$Component) {
+		_inherits(ForeignCollectionBase, _React$Component);
 	
 		function ForeignCollectionBase(props) {
 			_classCallCheck(this, ForeignCollectionBase);
 	
 			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ForeignCollectionBase).call(this, props));
 	
-			_this.state = _this.state || {};
-			_this.state.foreignCollection = null;
+			_this.state = {
+				foreignCollection: null
+			};
 			return _this;
 		}
-	
-		/*
-	  *
-	  *
-	  */
 	
 		_createClass(ForeignCollectionBase, [{
 			key: 'render',
 			value: function render() {
 				return _react2.default.createElement('div', null);
 			}
-	
-			/*
-	   * Fetch foreign collection if one is not passed down through props.
-	   *
-	   */
-	
 		}, {
 			key: 'fetchForeignCollection',
 			value: function fetchForeignCollection() {
@@ -75964,12 +74998,6 @@
 					console.log(err.stack);
 				});
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'navigateToForeignModelEdit',
 			value: function navigateToForeignModelEdit(foreignModel) {
@@ -75981,12 +75009,6 @@
 					this.props.history.pushState(null, url);
 				}
 			}
-	
-			/*
-	   * The foreign collection is either passed down directly through props or fetched to state.
-	   *
-	   */
-	
 		}, {
 			key: 'getForeignCollection',
 			value: function getForeignCollection() {
@@ -75995,12 +75017,6 @@
 				}
 				return this.state.foreignCollection;
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'getForeignCollectionDisplayField',
 			value: function getForeignCollectionDisplayField() {
@@ -76009,7 +75025,7 @@
 		}]);
 	
 		return ForeignCollectionBase;
-	})(_base2.default);
+	})(_react2.default.Component);
 	
 	exports.default = ForeignCollectionBase;
 
@@ -76052,16 +75068,11 @@
 	var ForeignCollectionCheckBox = (function (_ForeignCollectionBas) {
 		_inherits(ForeignCollectionCheckBox, _ForeignCollectionBas);
 	
-		function ForeignCollectionCheckBox(props) {
+		function ForeignCollectionCheckBox() {
 			_classCallCheck(this, ForeignCollectionCheckBox);
 	
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(ForeignCollectionCheckBox).call(this, props));
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(ForeignCollectionCheckBox).apply(this, arguments));
 		}
-	
-		/*
-	  *
-	  *
-	  */
 	
 		_createClass(ForeignCollectionCheckBox, [{
 			key: 'render',
@@ -76082,19 +75093,13 @@
 					this.renderOptions()
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderOptions',
 			value: function renderOptions() {
 				var _this2 = this;
 	
-				var foreignColl = this.getForeignCollection(),
-				    field = this.getForeignCollectionDisplayField();
+				var foreignColl = this.getForeignCollection();
+				var field = this.getForeignCollectionDisplayField();
 				if (!foreignColl || foreignColl.length === 0) {
 					return _react2.default.createElement(_loader2.default, null);
 				}
@@ -76121,12 +75126,6 @@
 					);
 				});
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'componentDidMount',
 			value: function componentDidMount() {
@@ -76136,12 +75135,6 @@
 					this.props.saveDataOnParent({ id: this.props.id, value: [] });
 				}
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'isOptionChecked',
 			value: function isOptionChecked(option, i) {
@@ -76151,12 +75144,6 @@
 				}
 				return false;
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'saveDataOnParent',
 			value: function saveDataOnParent(e) {
@@ -76212,30 +75199,15 @@
 		_createClass(Base, [{
 			key: 'render',
 	
-			/*
-	   * Customize on subclass.
-	   *
-	   */
+			// This is a dummy, and should always be set on the subclass.
 			value: function render() {
 				return _react2.default.createElement('div', null);
 			}
-	
-			/*
-	   * Customize on subclass.
-	   *
-	   */
-	
 		}, {
 			key: 'getResourceConstructor',
 			value: function getResourceConstructor() {
 				return Backbone.Model;
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'getResourceName',
 			value: function getResourceName() {
@@ -76277,11 +75249,6 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // Base class for a modal window that pops up when a model is saved.
 	
-	/*
-	 *
-	 *
-	 */
-	
 	var BaseStatusModal = (function (_Modal) {
 		_inherits(BaseStatusModal, _Modal);
 	
@@ -76293,11 +75260,6 @@
 	
 		_createClass(BaseStatusModal, [{
 			key: 'renderContent',
-	
-			/*
-	   *
-	   *
-	   */
 			value: function renderContent() {
 				var status = this.props.status;
 	
@@ -76309,12 +75271,6 @@
 				}
 				return this.renderPendingContent();
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderSuccessContent',
 			value: function renderSuccessContent() {
@@ -76334,12 +75290,6 @@
 					)
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderLinks',
 			value: function renderLinks() {
@@ -76361,12 +75311,6 @@
 					);
 				});
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderFailureContent',
 			value: function renderFailureContent() {
@@ -76393,12 +75337,6 @@
 					)
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderPendingContent',
 			value: function renderPendingContent() {
@@ -76412,12 +75350,6 @@
 					)
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'reactivateForm',
 			value: function reactivateForm(e) {
@@ -76455,11 +75387,6 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	/*
-	 *
-	 *
-	 */
-	
 	var Modal = (function (_React$Component) {
 		_inherits(Modal, _React$Component);
 	
@@ -76471,11 +75398,6 @@
 	
 		_createClass(Modal, [{
 			key: 'render',
-	
-			/*
-	   *
-	   *
-	   */
 			value: function render() {
 				return _react2.default.createElement(
 					'div',
@@ -76491,12 +75413,6 @@
 					)
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderContent',
 			value: function renderContent() {
@@ -76547,18 +75463,8 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	/*
-	 *
-	 *
-	 */
-	
 	var EditBase = (function (_SaveBase) {
 		_inherits(EditBase, _SaveBase);
-	
-		/*
-	  *
-	  *
-	  */
 	
 		function EditBase(props) {
 			_classCallCheck(this, EditBase);
@@ -76569,22 +75475,11 @@
 			return _this;
 		}
 	
-		/*
-	  *
-	  *
-	  */
-	
 		_createClass(EditBase, [{
 			key: 'getCrudMethodName',
 			value: function getCrudMethodName() {
 				return 'edit';
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'componentWillMount',
 			value: function componentWillMount() {
@@ -76592,12 +75487,6 @@
 					this.fetchModel();
 				}
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'fetchModel',
 			value: function fetchModel() {
@@ -76616,12 +75505,6 @@
 					console.log(err.stack);
 				});
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'addModelTimeStamp',
 			value: function addModelTimeStamp() {
@@ -76629,12 +75512,6 @@
 	
 				model.set('updated_at', new Date().toISOString());
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'saveModel',
 			value: function saveModel() {
@@ -76721,11 +75598,6 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	/*
-	 *
-	 *
-	 */
-	
 	var FormModal = (function (_BaseStatusModal) {
 		_inherits(FormModal, _BaseStatusModal);
 	
@@ -76737,11 +75609,6 @@
 	
 		_createClass(FormModal, [{
 			key: 'renderSuccessContent',
-	
-			/*
-	   *
-	   *
-	   */
 			value: function renderSuccessContent() {
 				var resourceName = this.props.model.resourceName;
 	
@@ -76756,12 +75623,6 @@
 					this.renderLinks()
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderFailureContent',
 			value: function renderFailureContent() {
@@ -76778,12 +75639,6 @@
 					this.renderLinks()
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderPendingContent',
 			value: function renderPendingContent() {
@@ -76797,12 +75652,6 @@
 					)
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderLinks',
 			value: function renderLinks() {
@@ -76830,18 +75679,8 @@
 		return FormModal;
 	})(_base_status_modal2.default);
 	
-	/*
-	 *
-	 *
-	 */
-	
 	var DeleteBase = (function (_Base) {
 		_inherits(DeleteBase, _Base);
-	
-		/*
-	  *
-	  *
-	  */
 	
 		function DeleteBase(props) {
 			_classCallCheck(this, DeleteBase);
@@ -76853,11 +75692,6 @@
 			};
 			return _this2;
 		}
-	
-		/*
-	  *
-	  *
-	  */
 	
 		_createClass(DeleteBase, [{
 			key: 'render',
@@ -76874,12 +75708,6 @@
 					this.renderModal()
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderModal',
 			value: function renderModal() {
@@ -76891,12 +75719,6 @@
 					});
 				}
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderTitleBarContent',
 			value: function renderTitleBarContent() {
@@ -76938,12 +75760,6 @@
 					)
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'getViewUrl',
 			value: function getViewUrl() {
@@ -76952,12 +75768,6 @@
 				}
 				return this.state.model.getViewUrl();
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'getEditUrl',
 			value: function getEditUrl() {
@@ -76966,12 +75776,6 @@
 				}
 				return this.state.model.getEditUrl();
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderPageNavContent',
 			value: function renderPageNavContent() {
@@ -76985,12 +75789,6 @@
 					)
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderPageContent',
 			value: function renderPageContent() {
@@ -77001,12 +75799,6 @@
 					bulk
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'renderSummary',
 			value: function renderSummary() {
@@ -77035,23 +75827,11 @@
 					)
 				);
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'reactivateForm',
 			value: function reactivateForm() {
 				this.setState({ saveResponseStatus: null });
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'componentDidMount',
 			value: function componentDidMount() {
@@ -77059,12 +75839,6 @@
 					this.fetchModel();
 				}
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'fetchModel',
 			value: function fetchModel() {
@@ -77081,24 +75855,12 @@
 					_this3.setState({ model: model });
 				});
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'handleDeleteClick',
 			value: function handleDeleteClick(e) {
 				e.preventDefault();
 				this.deleteModel();
 			}
-	
-			/*
-	   *
-	   *
-	   */
-	
 		}, {
 			key: 'deleteModel',
 			value: function deleteModel() {
@@ -112730,6 +111492,51 @@
 		_chartistHtml2.default.config.chartOptions.bar.options.base.seriesBarDistance = 28;
 		_chartistHtml2.default.config.labelOffsetCoefficient = 5;
 	})();
+
+/***/ },
+/* 678 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _react = __webpack_require__(196);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var ImagePreloader = (function (_React$Component) {
+		_inherits(ImagePreloader, _React$Component);
+	
+		function ImagePreloader() {
+			_classCallCheck(this, ImagePreloader);
+	
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(ImagePreloader).apply(this, arguments));
+		}
+	
+		_createClass(ImagePreloader, [{
+			key: 'render',
+			value: function render() {
+				return _react2.default.createElement('div', null);
+			}
+		}]);
+	
+		return ImagePreloader;
+	})(_react2.default.Component);
+	
+	exports.default = ImagePreloader;
 
 /***/ }
 /******/ ]);

@@ -1,12 +1,8 @@
-import React from 'react';
-import Base from './base.jsx';
+import React from 'react'
 
-class Text extends Base {
 
-	/*
-	 *
-	 *
-	 */
+export default class Text extends React.Component {
+
 	render() {
 		return (
 			<div className='form__wrapper'>
@@ -25,11 +21,6 @@ class Text extends Base {
 		);
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	saveDataOnParent(e) {
 		this.props.saveDataOnParent({
 			id: this.props.id,
@@ -38,5 +29,3 @@ class Text extends Base {
 	}
 
 }
-
-export default Text;

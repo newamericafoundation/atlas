@@ -6,26 +6,13 @@ import _ from 'underscore'
 import * as Subcomponents from './subcomponents/index.js'
 
 
-/*
- * Generic form component.
- *
- */
-class Form extends React.Component {
+export default class Form extends React.Component {
 
-	/*
-	 *
-	 *
-	 */
 	constructor(props) {
 		super(props)
 		this.state = {}
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	render() {
 		var style = this.props.isEnabled ? {} : { opacity: 0.5 }
 		var { isEnabled, submitButtonText } = this.props
@@ -44,11 +31,6 @@ class Form extends React.Component {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderFormComponents() {
 		return this.props.model.fields.map((field, i) => {
 			var FormComp = Subcomponents[field.formComponentName] || Subcomponents.Text
@@ -66,14 +48,8 @@ class Form extends React.Component {
 				/>
 			)
 		})
-		return <input />
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	saveDataFromChild(childData) {
 
 		var { model } = this.props
@@ -99,16 +75,9 @@ class Form extends React.Component {
 		
 	}
 
-	
-	/*
-	 * Run method passed down from parent.
-	 *
-	 */
 	sendFormDataToParent(e) {
 		e.preventDefault()
 		this.props.onSubmit(this.props.model)
 	}
 
 }
-
-export default Form
