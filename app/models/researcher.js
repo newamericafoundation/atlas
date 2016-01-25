@@ -9,19 +9,10 @@ export class Model extends Backbone.Model {
 
 	get dbCollection() { return 'atlas_researchers' }
 
-
-	/*
-	 *
-	 */
 	isDomainAuthorized() {
 		return (AUTHORIZED_DOMAINS.indexOf(this.get('domain')) > -1)
 	}
 
-
-	/*
-     *
-     *
-     */
 	parse(raw) {
 		if (raw._id) {
 			raw.id = raw._id
@@ -30,11 +21,6 @@ export class Model extends Backbone.Model {
 		return raw
 	}
 
-
-    /*
-     *
-     *
-     */
 	toMongoJSON() {
 		var json = this.toJSON()
 		json._id = json.id
@@ -42,20 +28,10 @@ export class Model extends Backbone.Model {
 		return json
 	}
 
-
-    /*
-     *
-     *
-     */
 	toSessionJSON() {
 		return { id: this.get('id') }
 	}
 
-
-    /*
-     *
-     *
-     */
 	toClientJSON() {
 		return {
 			displayName: this.get('displayName'),
@@ -64,11 +40,6 @@ export class Model extends Backbone.Model {
 		}
 	}
 
-
-    /*
-     *
-     *
-     */
 	getSavePromise() {
 
 		return new Promise((resolve, reject) => {
@@ -91,11 +62,6 @@ export class Model extends Backbone.Model {
 		
 	}
 
-
-    /*
-     *
-     *
-     */
 	getRetrievePromise() {
 
 		return new Promise((resolve, reject) => {
@@ -111,7 +77,7 @@ export class Model extends Backbone.Model {
 					this.set(this.parse(json[0]))
 					resolve(this)
 
-				});
+				})
 
 			}, (err) => { reject(err) })
 

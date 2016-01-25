@@ -10,12 +10,12 @@ import * as variable from './../variable.js'
 import * as variableGroup from './../variable_group.js'
 import * as item from './../item/index.js'
 
-import defaults from './defaults.json'
+import models from './../index.js'
 
-/*
- *
- *
- */
+import defaults from './defaults.json'
+import fields from './fields.json'
+
+
 export class Model extends base.Model {
 
     get resourceName() { return 'project' }
@@ -28,166 +28,24 @@ export class Model extends base.Model {
 
     get defaults() { return defaults }
 
-
-    /*
-     * Form fields.
-     *
-     */
     get fields() {
-        return [
 
-            {
-                formComponentName: 'Text',
-                formComponentProps: {
-                    id: 'title',
-                    labelText: 'Project Title',
-                    hint: '',
-                    placeholder: 'Enter Project Title'
-                }
-            },
-
-            {
-                formComponentName: 'Text',
-                formComponentProps: {
-                    id: 'atlas_url',
-                    labelText: 'Atlas Url',
-                    hint: 'The Url the project will live under, such as atlas.newamerica.org/my-pretty-url',
-                    placeholder: 'Enter Atlas Url'
-                }
-            },
-
-            {
-                formComponentName: 'Text',
-                formComponentProps: {
-                    id: 'author',
-                    labelText: 'Author',
-                    hint: '',
-                    placeholder: 'Enter Author'
-                }
-            },
-
-            {
-                formComponentName: 'Text',
-                formComponentProps: {
-                    id: 'short_description',
-                    labelText: 'Short description',
-                    hint: '',
-                    placeholder: 'Enter Short Description'
-                }
-            },
-
-            {
-                formComponentName: 'Radio',
-                formComponentProps: {
-                    id: 'is_section_overview',
-                    labelText: 'Is section overview.',
-                    hint: 'Each section has one overview project - check if this is one of them:',
-                    options: [ 'Yes', 'No' ],
-                    defaultOption: 'Yes'
-                }
-            },
-
-            {
-                formComponentName: 'Radio',
-                formComponentProps: {
-                    id: 'is_live',
-                    labelText: 'Is live.',
-                    hint: 'Please specify whether this project is viewable on the live site. Changes take effect immediately.',
-                    options: [ 'Yes', 'No' ],
-                    defaultOption: 'Yes'
-                }
-            },
-
-            {
-                name: 'Project Sections',
-                formComponentName: 'ForeignCollectionCheckBox',
-                formComponentProps: {
-                    id: 'project_section_ids',
-                    foreignCollection: new projectSection.Collection(),
-                    foreignCollectionDisplayField: 'name',
-                    labelText: 'Project Sections',
-                    hint: ''
-                }
-            },
-
-            {
-                formComponentName: 'ForeignCollectionRadio',
-                formComponentProps: {
-                    id: 'project_template_id',
-                    foreignCollection: new projectTemplate.Collection(),
-                    foreignCollectionDisplayField: 'name',
-                    labelText: 'Project Template',
-                    hint: 'The template will determine the way your project is visualized - select from below:'
-                }
-            },
-
-            {
-                formComponentName: 'SelectizeText',
-                formComponentProps: {
-                    id: 'tags',
-                    labelText: 'Tags',
-                    hint: 'Enter tags separated by commas:'
-                }
-            },
-
-            {
-                formComponentName: 'CKEditor',
-                formComponentProps: {
-                    id: 'body_text',
-                    labelText: 'Body Text'
-                }
-            },
-
-            {
-                formComponentName: 'SpreadsheetFile',
-                formComponentProps: {
-                    id: 'data',
-                    labelText: 'Data file',
-                    hint: '',
-                    worksheets: [ 'data', 'variables', 'variable groups' ]
-                }
-            },
-
-            {
-                formComponentName: 'ImageFile',
-                formComponentProps: {
-                    id: 'encoded_image',
-                    labelText: 'Image File',
-                    hint: 'Size limit: 3MB.'
-                }
-            },
-
-            {
-                formComponentName: 'Text',
-                formComponentProps: {
-                    id: 'image_credit',
-                    labelText: 'Image Credit',
-                    hint: "Single URL or Markdown, e.g. '[Shutterstock](http://www.shutterstock.com/imageurl)'",
-                    placeholder: 'Image Credit'
-                }
+        // If there is a foreign collection defined
+        return fields.map((field) => {
+            var { foreignCollectionName } = field.formComponentProps
+            if (foreignCollectionName != null) {
+                field.formComponentProps.foreignCollection = new models[foreignCollectionName].Collection()
             }
+            return field
+        })
 
-        ]
     }
 
-
-
-
-    /** 
-     * Conversts model object to json
-     * Checks if it has mandatory fields (id and more than one key). 
-     * returns {boolean} - Whether madatory fields exist
-     */
     exists() {
         var keyCount = Object.keys(this.toJSON()).length
         return (keyCount > 1)
     }
 
-
-    /*
-     * Returns image url.
-     *
-     */
     getImageUrl() {
         var encodedImage = this.get('encoded_image')
         if (encodedImage == null) { return }
@@ -195,7 +53,6 @@ export class Model extends base.Model {
         if (encodedImage.indexOf('base64') > -1) { return `url(${encodedImage})` }
         return `url('data:image/png;base64,${encodedImage}')`
     }
-
 
     /** 
      * Filters a project by two filterable collections that it belongs to.
@@ -209,7 +66,6 @@ export class Model extends base.Model {
         var filter = sectionsFilter && templatesFilter
         return filter
     }
-
 
     /*
      * Custom query method to find related projects based on tags.
@@ -233,7 +89,6 @@ export class Model extends base.Model {
         return false
     }
 
-
     /**
      * Filter collection by its foreign key.
      * @param {object} collection
@@ -247,21 +102,11 @@ export class Model extends base.Model {
         return true
     }
 
-
-    /*
-     * Get imgage attribution html. 
-     *
-     */
     getImageAttributionHtml() {
         var cred = this.get('image_credit')
         return formatters.markdown(cred)
     }
 
-
-    /*
-     * Process entry spreadsheet data.
-     *
-     */
     beforeSave() {
 
         var varModel = new variable.Model()
@@ -288,8 +133,7 @@ export class Model extends base.Model {
 
     }
 
-
-    /** 
+    /*
      * If there is a data field, convert to appropriate collections.
      *
      */
@@ -365,7 +209,7 @@ export class Model extends base.Model {
     }
 
 
-    /**
+    /*
      * Prepares model on the client.
      * @param {object} App - Marionette application instance. 
      */
@@ -375,11 +219,6 @@ export class Model extends base.Model {
         this.embedForeignModelNames()
     }
 
-
-    /*
-     *
-     *
-     */
     embedForeignModelNames() {
         var templates = new projectTemplate.Collection()
         var sections = new projectSection.Collection()
@@ -411,13 +250,6 @@ export class Collection extends base.Collection {
 
     get model() { return Model }
 
-
-    /**
-     * Used to compare two models when sorting.
-     * @param {object} model1
-     * @param {object} model2
-     * @returns {number} comparator - A comparator whose sign determines the sorting order.
-     */
     comparator(model1, model2) {
         var i1 = model1.get('is_section_overview') === 'Yes' ? 10 : 0
         var i2 = model2.get('is_section_overview') === 'Yes' ? 10 : 0
@@ -428,7 +260,6 @@ export class Collection extends base.Collection {
         }
         return i2 - i1
     }
-
 
     /** 
      * Filter all children by project sections and templates.
@@ -446,22 +277,13 @@ export class Collection extends base.Collection {
         return this
     }
 
-
-    /**
-     * Recognize and process server response.
-     * @param {object} resp - Server response.
-     * @returns {object} resp - Modified response.
-     */
     parse(resp) {
         if (exports.Model.prototype.parse == null) { return resp }
         return resp.map(item => exports.Model.prototype.parse(item))
     }
 
 
-    /*
-     * API query filter.
-     *
-     */
+    // API query filter.
     related_to(id) {
 
         var resp = []

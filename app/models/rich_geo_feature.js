@@ -3,35 +3,28 @@
 import _ from 'underscore'
 import Backbone from 'backbone'
 
-var Model = Backbone.Model.extend({})
+class Model extends Backbone.Model {
 
-var Collection = Backbone.Collection.extend({
+}
 
-	model: Model,
+class Collection extends Backbone.Collection {
 
-	/*
-     *
-     *
-     */
-	initialize: function() {
-		_.extend(this, Backbone.Events)
+	constructor(args) {
+		super(args)
 		this.type = 'FeatureCollection'
-		return this.features = []
-	},
+		this.features = []
+	}
 
+	get model() { return Model }
 
-    /*
-     *
-     *
-     */
-	onReady: function(next) {
+	onReady(next) {
 		if (this.features.length > 0) {
 			return next()
 		}
 		return this.on('sync', next)
 	}
 	
-})
+}
 
 
 export default {
