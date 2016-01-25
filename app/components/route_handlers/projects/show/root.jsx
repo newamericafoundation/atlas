@@ -10,7 +10,7 @@ import Explainer from './explainer/root.jsx'
 import Loader from './../../../general/loader.jsx'
 import SideBar from './../../../general/side_bar/root.jsx'
 
-import * as project from './../../../../models/project.js'
+import models from './../../../../models/index.js'
 import buttonsDataGenerator from './buttons_data_generator.js'
 
 /*
@@ -207,7 +207,7 @@ class Show extends React.Component {
 
 		var prj = this.getProject()
 
-		new project.Collection()
+		new models.project.Collection()
 			.getClientFetchPromise({ 
 				related_to: prj.get('id'),
 				special_query_params: 'related_to'
@@ -231,7 +231,7 @@ class Show extends React.Component {
 
 		var { atlas_url } = this.props.params
 
-		return new project.Collection()
+		return new models.project.Collection()
 			.getClientFetchPromise({ atlas_url: atlas_url })
 			.then((coll) => {
 				var project = coll.models[0]

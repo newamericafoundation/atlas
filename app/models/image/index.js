@@ -2,24 +2,15 @@ import * as base from './../base.js'
 import marked from 'marked'
 
 import fields from './fields.json'
+import defaults from './defaults.json'
 
 export class Model extends base.Model {
 	
 	get resourceName() { return 'image' }
-
-	get defaults() {
-
-		return {
-			name: 'image',
-			encoded: '',
-			credit: ''
-		}
-
-	}
-
+	
+	get defaults() { return defaults }
 
 	get fields() { return fields }
-
 
 	getViewUrl() { return null }
 

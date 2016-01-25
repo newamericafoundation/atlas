@@ -5,8 +5,6 @@ import { Link } from 'react-router'
 
 import { image } from './../../../../models/index.js'
 
-console.log(image)
-
 /*
  *
  *

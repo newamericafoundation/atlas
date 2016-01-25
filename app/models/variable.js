@@ -18,7 +18,7 @@ export class Model extends base.Model {
      */
     parse(resp) {
         for(let key in resp) {
-            let value = resp[key];
+            let value = resp[key]
             let newKey = key.toLowerCase().replace(/ /g, '_')
             if (['variable name', 'name'].indexOf(key.toLowerCase()) > -1) { newKey = 'id' }
             if (['variable group name', 'group name', 'group'].indexOf(key.toLowerCase()) > -1) { newKey = 'variable_group_id' }

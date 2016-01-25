@@ -10,69 +10,24 @@ import * as baseComposite from './base_composite.js'
  */
 class LocalBaseModel extends baseComposite.Model {
 
-    /*
-     *
-     *
-     */
-    isActive() {
-        return this.get('_isActive')
-    }
+    isActive() { return this.get('_isActive') }
 
+    activate() { return this.set('_isActive', true) }
 
-    /*
-     *
-     *
-     */
-    activate() {
-        this.set('_isActive', true)
-        return this
-    }
+    deactivate() { return this.set('_isActive', false) }
 
+    toggle() { return this.set('_isActive', !this.isActive()) }
 
-    /*
-     *
-     *
-     */
-    deactivate() {
-        this.set('_isActive', false)
-        return this
-    }
-
-
-    /*
-     *
-     *
-     */
-    toggle() {
-        this.set('_isActive', !this.isActive())
-        return this
-    }
-
-
-    /*
-     *
-     *
-     */
     activateAllChildren() {
         this.children.forEach((child) => { child.activate() })
         return this
     }
 
-
-    /*
-     *
-     *
-     */
     deactivateAllChildren() {
         this.children.forEach((child) => { child.deactivate() })
         return this
     }
 
-
-    /*
-     *
-     *
-     */
     toggleAllChildren() {
         this.children.forEach((child) => { child.toggle() })
         return this
@@ -85,7 +40,7 @@ class LocalBaseModel extends baseComposite.Model {
      */
     deactivateSiblings() {
         if (!this.parent) { return }
-        var siblingsIncludingSelf = this.parent.children;
+        var siblingsIncludingSelf = this.parent.children
         siblingsIncludingSelf.forEach((sibling) => {
             if (sibling !== this) { sibling.deactivate() }
         })
@@ -138,22 +93,18 @@ export class FilterValue extends LocalBaseModel {
      *
      */
     test(d, options) {
-        var j, key, len, res, val, value;
         if (d == null) { return false; }
         if ((!this.get('_isActive')) && (!((options != null) && options.ignoreState))) {
-            return false;
+            return false
         }
-        res = false;
-        key = this.parent.get('variable').get('id');
-        value = d[key];
-        if (!_.isArray(value)) {
-            value = [ value ];
+        var result = false
+        var key = this.parent.get('variable').get('id')
+        var value = d[key]
+        var values = _.isArray(value) ? value : [ value ]
+        for (let singleValue of values) {
+            result = result || this.testValue(singleValue)
         }
-        for (j = 0, len = value.length; j < len; j++) {
-            val = value[j];
-            res = res || this.testValue(val);
-        }
-        return res;
+        return result
     }
 
 

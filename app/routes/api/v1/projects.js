@@ -1,7 +1,7 @@
 import express from 'express'
 import csv from 'csv'
 
-import * as project from './../../../models/project.js'
+import * as project from './../../../models/project/index.js'
 import * as base from './../../../models/base.js'
 
 import { ensureAuthenticated, ensureNothing } from './../../../middleware/auth.js'

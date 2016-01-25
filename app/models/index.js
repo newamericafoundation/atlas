@@ -1,5 +1,5 @@
 import * as base from './base.js'
-import * as project from './project.js'
+import * as project from './project/index.js'
 import * as projectSection from './project_section.js'
 import * as projectTemplate from './project_template.js'
 import * as image from './image/index.js'

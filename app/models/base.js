@@ -2,6 +2,7 @@ import Backbone from 'backbone'
 import _ from 'underscore'
 import $ from 'jquery'
 import marked from 'marked'
+
 import * as baseCrud from './base_crud.js'
 
 
@@ -11,10 +12,10 @@ import * as baseCrud from './base_crud.js'
  */
 export class Model extends baseCrud.Model {
 
-	get resourceName() { return 'resource'; }
+	get resourceName() { return 'resource' }
 
 	// Generic plural
-	get resourceNamePlural() { return this.resourceName + 's'; }
+	get resourceNamePlural() { return `${this.resourceName}s` }
 
 	/*
 	 * Custom get function, accommodating a suffix, e.g. status_2012.
@@ -23,9 +24,9 @@ export class Model extends baseCrud.Model {
 	 * @returns {} value
 	 */
 	get(field, suffix) {
-		var getFnc = Backbone.Model.prototype.get;
-		if (suffix == null) { return getFnc.apply(this, [ field ]); }
-		return getFnc.apply(this, [ field + '_' + suffix ]);
+		var getMethod = Backbone.Model.prototype.get
+		if (suffix == null) { return getMethod.apply(this, [ field ]) }
+		return getMethod.apply(this, [ field + '_' + suffix ])
 	}
 
 
@@ -34,7 +35,7 @@ export class Model extends baseCrud.Model {
 	 *
 	 */
 	getUploadPath() {
-		return `uploads/${this.resourceNamePlural}/`;
+		return `uploads/${this.resourceNamePlural}/`
 	}
 
 
@@ -48,37 +49,35 @@ export class Model extends baseCrud.Model {
 	 */
 	addForeignField(foreignIdKey, foreignCollection, fieldKey) {
 
-		var newKey, 
-			foreignModel, foreignIds,
-			singleForeignIdKey, // if foreignIdKey holds an array
-			foreignFields = [];
-
 		// belongs_to relationship with a single reference id
 		if (foreignIdKey.slice(-2) === 'id') {
 
-			newKey = foreignIdKey.slice(0, -2) + fieldKey;
-			foreignModel = foreignCollection.findWhere({id: this.get(foreignIdKey)});
-			this.set(newKey, foreignModel.get(fieldKey));
+			let newKey = foreignIdKey.slice(0, -2) + fieldKey
+			let foreignModel = foreignCollection.findWhere({id: this.get(foreignIdKey)})
+			this.set(newKey, foreignModel.get(fieldKey))
 
 		// has_many relationship with id references embedded in an array field
 		} else if (foreignIdKey.slice(-3) === 'ids') {
 
-			foreignIds = this.get(foreignIdKey);
+			let newKey = foreignIdKey.slice(0, -3) + fieldKey + 's'
+
+			let foreignFields = []
+
+			let foreignIds = this.get(foreignIdKey)
 
 			foreignIds.forEach(function(foreignId) {
 				// simple pluralization
-				newKey = foreignIdKey.slice(0, -3) + fieldKey + 's';
-				foreignModel = foreignCollection.findWhere({id: foreignId});
+				var foreignModel = foreignCollection.findWhere({id: foreignId})
 				if (foreignModel != null) {
-					foreignFields.push(foreignModel.get(fieldKey));
+					foreignFields.push(foreignModel.get(fieldKey))
 				}
-			});
+			})
 
-			this.set(newKey, foreignFields);
+			this.set(newKey, foreignFields)
 
 		}
 
-		return this;
+		return this
 
 	}
 	
@@ -114,34 +113,33 @@ export class Model extends baseCrud.Model {
 	 */
 	setHtmlToc(key, saveKey) {
 
-		var html, $containedHtml, arr;
+		saveKey = saveKey || key
 
-		saveKey = saveKey || key;
+		var html = this.get(key)
 
-		html = this.get(key);
-		if (html == null) { return; }
+		if (html == null) { return }
 
-		arr = [];
+		var arr = []
 
-		$containedHtml = $('<div></div>').append($(html));
+		var $containedHtml = $('<div></div>').append($(html))
 
 		$containedHtml.children().each(function() {
 
-			var $el = $(this),
-				tagName = $el.prop('tagName'),
-				content = $el.html(),
-				tocId = content.replace(/[^a-z0-9]/ig, ' ').replace(/\s+/g, '-').toLowerCase();
+			var $el = $(this)
+			var tagName = $el.prop('tagName')
+			var content = $el.html()
+			var tocId = content.replace(/[^a-z0-9]/ig, ' ').replace(/\s+/g, '-').toLowerCase()
 
 			if (tagName.toLowerCase == null) { return; } 
 			tagName = tagName.toLowerCase(); 
 
 			if (['h1', 'h2'].indexOf(tagName) > -1) {
-				$('<span id="toc-' + tocId + '"></span>').insertBefore($el);
+				$(`<span id='toc-${tocId}'></span>`).insertBefore($el)
 				arr.push({
 					id: tocId,
 					tagName: tagName,
 					content: content 
-				});
+				})
 			}
 
 		})

@@ -8,7 +8,7 @@ import * as Icons from './../../../../../general/icons.jsx'
 
 import { image } from './../../../../../../models/index.js'
 
-import Base from './base.jsx'
+import models from './../../../../../../models/index.js'
 
 
 /*
@@ -258,7 +258,7 @@ class InfoBox extends Static {
 		
 		if (!activeItem.image) {
 			let imageName = activeItem.getImageName()
-			let coll = new image.Collection()
+			let coll = new models.image.Collection()
 			coll.getClientFetchPromise({ name: imageName })
 				.then((coll) => {
 					var img = coll.models[0]
