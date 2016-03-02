@@ -80,7 +80,7 @@ export class Model extends baseCrud.Model {
 		return this
 
 	}
-	
+
 
 	/**
 	 * Finds and replaces key.
@@ -113,39 +113,47 @@ export class Model extends baseCrud.Model {
 	 */
 	setHtmlToc(key, saveKey) {
 
-		saveKey = saveKey || key
+		saveKey = saveKey || key;
 
-		var html = this.get(key)
+		var html = this.get(key);
 
-		if (html == null) { return }
+		if (html == null) { return; }
 
-		var arr = []
+		var arr = [];
 
-		var $containedHtml = $('<div></div>').append($(html))
+		var $html;
+
+		try {
+			$html = $(html);
+		} catch(e) {
+			$html = $(`<p>${html}</p>`);
+		}
+
+		var $containedHtml = $('<div></div>').append($html);
 
 		$containedHtml.children().each(function() {
 
-			var $el = $(this)
-			var tagName = $el.prop('tagName')
-			var content = $el.html()
-			var tocId = content.replace(/[^a-z0-9]/ig, ' ').replace(/\s+/g, '-').toLowerCase()
+			var $el = $(this);
+			var tagName = $el.prop('tagName');
+			var content = $el.html();
+			var tocId = content.replace(/[^a-z0-9]/ig, ' ').replace(/\s+/g, '-').toLowerCase();
 
-			if (tagName.toLowerCase == null) { return; } 
-			tagName = tagName.toLowerCase(); 
+			if (tagName.toLowerCase == null) { return; }
+			tagName = tagName.toLowerCase();
 
 			if (['h1', 'h2'].indexOf(tagName) > -1) {
-				$(`<span id='toc-${tocId}'></span>`).insertBefore($el)
+				$(`<span id='toc-${tocId}'></span>`).insertBefore($el);
 				arr.push({
 					id: tocId,
 					tagName: tagName,
-					content: content 
-				})
+					content: content
+				});
 			}
 
 		})
 
-		this.set(saveKey, $containedHtml.html())
-		this.set(saveKey + '_toc', arr)
+		this.set(saveKey, $containedHtml.html());
+		this.set(saveKey + '_toc', arr);
 
 	}
 
@@ -158,7 +166,7 @@ export class Model extends baseCrud.Model {
  *
  */
 export class Collection extends baseCrud.Collection {
-	
+
 	get model() { return Model }
 
 

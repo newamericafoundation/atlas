@@ -20,7 +20,7 @@ export class Model extends base.Model {
 
     get resourceName() { return 'project' }
 
-    // API queries that need to be handled custom. For every key, there is a this.is_#{key} method that filters a model. 
+    // API queries that need to be handled custom. For every key, there is a this.is_#{key} method that filters a model.
     get customQueryKeys() { return [ 'related_to' ] }
 
     getIndexUrl() { return '/menu' }
@@ -54,7 +54,7 @@ export class Model extends base.Model {
         return `url('data:image/png;base64,${encodedImage}')`
     }
 
-    /** 
+    /**
      * Filters a project by two filterable collections that it belongs to.
      * @param {object} projectSections
      * @param {object} projectTemplates
@@ -154,7 +154,7 @@ export class Model extends base.Model {
     /*
      * Build filter tree by taking each variable the display items are filtered by, and finding every possible value for each variable.
      * E.g. if the items are filtered by marital status and preferred pet, the return value of this method is schematically represented as follows:
-     * { "marital_status": [ "single", "married", "divourced five times" ], "preferred_pet": [ "hamster", "comodo dragon", "lama" ] } 
+     * { "marital_status": [ "single", "married", "divourced five times" ], "preferred_pet": [ "hamster", "comodo dragon", "lama" ] }
      */
     buildFilterTree() {
 
@@ -184,8 +184,8 @@ export class Model extends base.Model {
                 o.values = variable.getNumericalFilter(formatter)
             } else {
                 o.values = _.map(items.getValueList(variable), function(item) {
-                    return { 
-                        value: formatter ? formatter(item) : item 
+                    return {
+                        value: formatter ? formatter(item) : item
                     }
                 })
             }
@@ -211,12 +211,12 @@ export class Model extends base.Model {
 
     /*
      * Prepares model on the client.
-     * @param {object} App - Marionette application instance. 
+     * @param {object} App - Marionette application instance.
      */
     prepOnClient() {
-        this.buildData()
-        this.setHtmlToc('body_text')
-        this.embedForeignModelNames()
+        this.buildData();
+        this.setHtmlToc('body_text');
+        this.embedForeignModelNames();
     }
 
     embedForeignModelNames() {
@@ -261,7 +261,7 @@ export class Collection extends base.Collection {
         return i2 - i1
     }
 
-    /** 
+    /**
      * Filter all children by project sections and templates.
      * @param {collection} projectSections
      * @param {collection} projectTemplates

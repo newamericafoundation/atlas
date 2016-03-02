@@ -38,7 +38,7 @@ export default class Show extends React.Component {
 	render() {
 		return (
 			<div className={ this.getClassName() }>
-				<SideBar 
+				<SideBar
 					radio={ this.props.radio }
 					project={ this.getProject() }
 					sendMessageToParent={ this.handleMessageFromButtons.bind(this) }
@@ -58,11 +58,11 @@ export default class Show extends React.Component {
 		return (
 			<Comp
 				app={this.props.app}
-				radio={this.props.radio} 
-				uiState={ this.state.ui } 
-				setUiState={ this.setUiState.bind(this) } 
-				project={ project } 
-				related={ this.state.related } 
+				radio={this.props.radio}
+				uiState={ this.state.ui }
+				setUiState={ this.setUiState.bind(this) }
+				project={ project }
+				related={ this.state.related }
 			/>
 		)
 	}
@@ -76,7 +76,7 @@ export default class Show extends React.Component {
 	}
 
 	handleMessageFromButtons(message) {
-		
+
 		switch(message) {
 			case 'toggle-search-bar':
 				this.setUiState({ isSearchBarActive: !this.state.ui.isSearchBarActive })
@@ -146,7 +146,7 @@ export default class Show extends React.Component {
 		var prj = this.getProject()
 
 		new models.project.Collection()
-			.getClientFetchPromise({ 
+			.getClientFetchPromise({
 				related_to: prj.get('id'),
 				special_query_params: 'related_to'
 			}, {
@@ -162,12 +162,12 @@ export default class Show extends React.Component {
 
 	fetchData() {
 
-		var { atlas_url } = this.props.params
+		const { atlas_url } = this.props.params;
 
 		return new models.project.Collection()
 			.getClientFetchPromise({ atlas_url: atlas_url })
 			.then((coll) => {
-				var project = coll.models[0]
+				var project = coll.models[0];
 				if (project && project.exists()) {
 					project.prepOnClient()
 					this.props.dispatch({ type: 'FETCH_PROJECT_SUCCESS', data: project })
@@ -179,11 +179,11 @@ export default class Show extends React.Component {
 						type: 'SET_FLASH_MESSAGE',
 						data: 'The page you are looking for is not available.'
 					})
-					setTimeout(() => { 
+					setTimeout(() => {
 						this.props.dispatch({ type: 'REMOVE_FLASH_MESSAGE' })
-					}, 3500)
+					}, 3500);
 				}
-			}).catch((err) => {  console.error('Project error: ', err.stack) })
+			}).catch((err) => {  console.error('Project error: ', err.stack) });
 
 	}
 
