@@ -6,14 +6,17 @@
   "scripts": {
     "server": "node app.js",
     "spec": "NODE_ENV=test mocha --compilers js:babel-core/register app/**/*_spec.js db/**/*_spec.js __spec/**/*_spec.js",
-    "build-clean": "rm -f public/assets/scripts/*",
+    "build-clean": "rm -rf public/assets/scripts && mkdir -p public/assets/scripts",
     "dev": "npm run build-clean && webpack --config webpack.config.development.js --watch",
     "build": "npm run spec && npm run build-clean && webpack --config webpack.config.production.js",
     "postinstall": "bower install && npm run build"
   },
   "repository": "",
-  "author": "",
+  "author": "Peter Szerzo",
   "license": "ISC",
+  "engines": {
+    "node": "6.3.1"
+  },
   "devDependencies": {
     "assets-webpack-plugin": "^3.2.0",
     "babel-loader": "^6.2.0",
@@ -45,7 +48,6 @@
     "webpack": "^1.12.6"
   },
   "dependencies": {
-    "aws-sdk": "^2.2.15",
     "babel-core": "^6.2.1",
     "babel-polyfill": "^6.2.0",
     "babel-preset-es2015": "^6.1.18",
