@@ -1,0 +1,53 @@
+[
+
+			{
+	            "formComponentName": "Text",
+	            "formComponentProps": {
+	                "id": "name",
+	                "labelText": "Image Name",
+	                "hint": "Enter simple image name - no need to add a .jpg extension.",
+	                "placeholder": "Enter Image Name"
+	            }
+	        },
+
+	        {
+	            "formComponentName": "ImageFile",
+	            "formComponentProps": {
+	                "id": "encoded",
+	                "labelText": "Direct image upload",
+	                "hint": "Size limit: 3MB."
+	            }
+	        },
+
+	        {
+	            "formComponentName": "Radio",
+	            "formComponentProps": {
+	                "id": "stock_type",
+	                "labelText": "Stock photo platform.",
+	                "options": [ "shutterstock", "unsplash" ],
+	                "hint": "Stock photo platform",
+	                "placeholder": "Image Credit"
+	            }
+	        },
+
+	        {
+	            "formComponentName": "Text",
+	            "formComponentProps": {
+	                "id": "stock_id",
+	                "labelText": "Stock photo identifier.",
+	                "hint": "Stock photo id.",
+	                "placeholder": "Id"
+	            }
+	        },
+
+	        {
+	            "formComponentName": "Upload",
+	            "formComponentProps": {
+	                "id": "file",
+	                "labelText": "Stock photo identifier.",
+	                "hint": "Upload file here.",
+	                "placeholder": "Id"
+	            }
+	        }
+
+		]

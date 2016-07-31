@@ -1,0 +1,1 @@
+Don't ever return 0 in the sort function. If may leave most of the array untouched.

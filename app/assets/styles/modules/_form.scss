@@ -1,0 +1,84 @@
+form {
+    @media print {
+        display: none;
+    }
+    width: 90%;
+    max-width: 900px;
+    margin: auto auto 30px auto;
+    padding-top: 30px;
+    display: block;
+    text-align: center;
+
+}
+
+.form__wrapper {
+    margin: 30px 0;
+    padding: 25px;
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.form__hint {
+    text-align: left;
+    margin: 5px 0;
+    opacity: 0.7;
+}
+
+.form__radio {
+    @extend %clearfix;
+    p, input {
+        display: inline-block;
+        float: left;
+    }
+    input {
+        width: 15px;
+        padding-top: 5px;
+    }
+    p {
+        margin-left: 8px;
+    }
+
+}
+
+input, select, textarea {
+
+    width: 100%;
+    display: block;
+
+    color: palette-get(grey);
+    background-color: rgba(0, 0, 0, 0.03);
+
+    padding: 0px 14px;
+
+    cursor: auto;
+    border: 0px;
+
+    font-family: 'Simplon';
+    @include font-size(18px);
+    line-height: 100%;
+
+    &:focus {
+        background-color: rgba(0, 0, 0, 0.05);
+        border: none;
+        outline: 0;
+    }
+    
+}
+
+input, select {
+    height: 50px;
+}
+
+textarea {
+    padding-top: 15px;
+    height: 300px;
+}
+
+label {
+    display: inline-block;
+    margin-bottom: 14px;
+    overflow: visible;
+    color: palette-get(grey);
+    width: 100%;
+    @include font-size(24px);
+    text-align: left;
+}

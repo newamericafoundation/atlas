@@ -1,0 +1,57 @@
+/*
+ * Stylesheets are organized into folders as explained below.
+ * Each folder and subfolder contains a manifest file that imports everything in that folder.
+ * BEM naming convention and SMACSS stylesheet structure guides the way styles are organized.
+ * Things are not factored the best right now, so if something does not make sense to you, you're probably right :).
+ *
+ */
+
+/*
+ * Normalize
+ *
+ */
+@import "../../../node_modules/normalize.css/normalize.css";
+
+/*
+ * Variables for sizes, margins, colors etc.
+ *
+ */
+@import "variables/manifest";
+
+/*
+ * Mixins for animation, transitions, clearfix etc.
+ *
+ */
+@import "mixins/manifest";
+
+/*
+ * Base styles: typeface declaration, normalize tweaks, utilities.
+ *
+ */
+@import "base/manifest";
+
+/*
+ * Small UI elements such as buttons, icons, links or the loader.
+ * Generally, element classes are responsible for the elements' inner workings (padding), but not their relation to their neighbors (margin).
+ */
+@import "elements/manifest";
+
+/*
+ * Large UI modules containing elements.
+ * The relation of elements to their neighbors is generally specified here (.module .element { margin: 15px; }).
+ * This goes against current trends that would add separate class names for this.
+ */
+@import "modules/manifest";
+
+/*
+ * Vendor styles along with their configurations.
+ *
+ */
+// Leaflet's styles cause a url resolution conflict with webpack, as it references images from a relative path. Since we're not using the images, I copied the stylesheet from node_modules and commented out the url references.
+// TODO: fix url resolution issues and replace this with leaflet stylesheet from node modules.
+@import "vendor/leaflet"; 
+// @import "../../../node_modules/leaflet/dist/leaflet"; 
+@import "vendor/chartist-config";
+@import "../../../node_modules/chartist/dist/scss/chartist";
+@import "vendor/selectize-config";
+@import "../../../bower_components/selectize-scss/src/selectize.scss";

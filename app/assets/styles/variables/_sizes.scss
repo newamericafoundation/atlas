@@ -1,0 +1,22 @@
+// ~~~~~~~~~~~~
+//  1 geometry
+// ~~~~~~~~~~~~
+
+// Non-namespaced size variables may be overridden if visualizations are ported to other sites.
+$top-bar-height: 75px;
+$icon-size: 20px;
+$top-strip-thickness: 3px;
+$side-bar-width: 75px;
+$border-radius-standard: 7px;
+$border-radius-small: 2px;
+
+// atl-namespaced size variables should stay the same regardless of where the visualization is.
+$atl-settings-bar-width: 340px + 20px;
+$atl-settings-bar-padding: 30px;
+
+$atl-main-width-large: 800px;
+$atl-main-width-small: 650px;
+$atl-side-width: 300px;
+$atl-padding: 45px;
+$atl-bp-unstack: 2 * $atl-side-width + $atl-main-width-small;
+$atl-bp-spacious: 2 * $atl-side-width + $atl-main-width-large;

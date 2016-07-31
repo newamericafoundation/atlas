@@ -1,0 +1,27 @@
+.hex-button {
+
+	$c: palette-get(offwhite);
+
+	cursor: pointer;
+
+	&.hex-button--feature {
+
+		& .hex-button {
+			&__border { stroke-width: 3px; }
+			&__yes, &__no, &__left, &__up, &__down { display: none; }
+			&__right { stroke: none; fill: $c; }
+		}
+
+		margin: auto;
+		display: block;
+		fill: none;
+		stroke: $c;
+		width: 60px;
+		height: 60px;
+
+		opacity: 0.8;
+		&:hover { opacity: 1; }
+
+	}
+
+}

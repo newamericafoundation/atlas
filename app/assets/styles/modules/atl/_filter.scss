@@ -1,0 +1,105 @@
+.atl__filter {
+    
+    position: relative;
+
+    &__keys {
+        max-width: 400px; 
+        position: relative;
+        padding: 10px 20px;
+        
+        .button {
+            vertical-align: top;
+            margin: 6px 6px 0 0;
+        }
+
+        @mixin collapsed {
+            padding-left: 40px;
+            padding-top: 10px;
+            @include bp-w-sm {
+                padding-left: 20px;
+            }
+            @include bp-unstack-map-settings-bar {
+                padding-left: 40px;
+            }
+        }
+
+        @mixin expanded {
+            padding: 10px 20px 10px 20px;
+        }
+
+        @include collapsed;
+        .atl--collapsed & { @include collapsed; } 
+        @include bp-unstack-map-settings-bar { @include expanded; }
+
+    }
+
+    &__values {
+        position: relative;
+        padding: 10px 20px;
+        display: none;
+        @include bp-unstack-map-settings-bar { display: block; }
+        .atl--collapsed & { display: none; }
+
+        &__heading > p {
+            color: palette-get(offwhite);
+            @include font-size(16px);
+            font-family: 'Meta Serif'; 
+            opacity: 0.7;
+        }
+        
+
+        a {
+            @include link;
+            @include font-size(16px);
+            color: palette-get(offwhite);
+            border-bottom: 2px solid palette-get(offwhite);
+            font-family: 'Simplon';
+        }
+
+        opacity: 1;
+    }
+
+    .toggle-button__text p {
+        color: palette-get(offwhite);
+    }
+
+    &__var-group {
+
+        h1 { color: palette-get(offwhite); }
+
+        position: relative;
+
+        &__description {
+            p, li {
+                font-family: 'Meta Serif';
+                color: palette-get(offwhite);
+                margin: 10px 0;
+                a {
+                    font-family: 'Meta Serif';
+                    display: inline;
+                    color: palette-get(grey, light);
+                    border-bottom: 2px solid palette-get(grey, light);
+                    opacity: 0.7;
+                    &:hover { opacity: 1; }
+                }
+            }
+        }
+
+        ul {
+            line-height: 70%;
+        }
+
+        &__toggle-icon {
+            cursor: pointer;
+            opacity: 0.8;
+            &:hover { opacity: 1; }
+            top: 3px;
+            left: -35px;
+            width: $icon-size;
+            height: $icon-size;
+            fill: palette-get(offwhite);
+            position: absolute; 
+        }
+    }
+
+}

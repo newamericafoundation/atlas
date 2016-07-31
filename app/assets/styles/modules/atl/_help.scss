@@ -1,0 +1,78 @@
+.atl__help {
+
+	$tip-size: 25px;
+	$width: 210px;
+
+	padding: 20px;
+	border-radius: $border-radius-standard;
+	position: absolute;
+	right: -150px;
+	top: 0px;
+	@include font-size(17px);
+	line-height: 100%;
+	width: $width;
+	overflow-x: visible;
+	overflow-y: visible;
+	background-color: palette-get(offwhite);
+	opacity: 1;
+	
+	b {
+		font-family: 'Simplon';
+		font-weight: bold;
+	}
+
+	@mixin atl__help__pointy {
+
+		content: ' ';
+		height: 0; 
+		position: absolute; 
+		width: 0; 
+		top: 27%;
+		overflow: visible; 
+		line-height: 100%;
+
+		border-top-color: transparent;
+		border-top-style: solid;
+		border-top-width: #{$tip-size / 2};
+		//border-right-color: transparent;
+		border-right-style: solid;
+		border-right-width: #{$tip-size / 2};
+		border-bottom-color: transparent;
+		border-bottom-style: solid;
+		border-bottom-width: #{$tip-size / 2};
+		//border-left-color: transparent;
+		border-left-style: solid;
+		border-left-width: #{$tip-size / 2};
+
+	}
+
+	&--right {
+		right: - ($width + $tip-size / 2);
+		&:before {
+			@include atl__help__pointy;
+			margin-left: -$tip-size;
+			left: +2px;  
+			border-right-color: palette-get(offwhite);
+			border-left-color: transparent;
+			z-index: 10; 
+		}
+	}
+
+	&--left {
+		left: - ($width + $tip-size / 2);
+		&:after {
+			@include atl__help__pointy;
+			margin-left: 0;
+			right: -$tip-size+2px;
+			border-left-color: palette-get(offwhite);
+			border-right-color: transparent;
+			z-index: 10; 
+		}
+	}
+
+	display: none;
+	.atl--help & {
+		display: block;
+	}
+
+}

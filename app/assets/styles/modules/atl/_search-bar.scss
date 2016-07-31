@@ -1,0 +1,34 @@
+.atl__search { 
+	z-index: 12;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.92);
+	
+	input {
+		padding: 30px;
+		height: 60px;
+		@include font-size(40px);
+		@include bp-expand-menu {
+			height: 100px;
+			@include font-size(80px);
+		}
+		font-family: 'Platform';
+		font-weight: bold;
+		color: palette-get(offwhite);
+	}
+
+	&__close {
+		position: absolute;
+		top: 25px;
+		right: 25px;
+		width: 20px;
+		height: 20px;
+		svg { fill: palette-get(offwhite); }
+		opacity: 0.7;
+		&:hover { opacity: 1; }
+	}
+
+}

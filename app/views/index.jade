@@ -1,0 +1,26 @@
+extend layout
+
+block content
+
+	script(src="/assets/scripts/#{js}")
+
+	div(class='fill-parent', id='site')
+		div(class="wrapper")
+			div(class="loader")
+				img(src="/assets/images/spinner.gif")
+			
+	//- Set an active user if authenticated.
+	- if (user || (process.env.NODE_ENV === 'development')) {
+		script(type='text/javascript').
+			window.STATE_FROM_SERVER = {
+				app: {
+					authenticatedResearcher: !{JSON.stringify(user || { image: { url: '' }, name: {} })}
+				}
+			}
+	- }
+
+	//- Start client-side app.
+	script(type='text/javascript').
+		$(function() { 
+			window.startAtlas();
+		});

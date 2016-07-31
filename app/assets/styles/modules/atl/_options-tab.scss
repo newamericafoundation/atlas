@@ -1,0 +1,69 @@
+.atl__options-tab {
+
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+
+	overflow-y: scroll;
+
+	background-color: rgba(27,27,27,0.83);
+
+	z-index: 100;
+
+	padding: 30px;
+
+	&__close {
+		position: fixed;
+		top: 2 * $top-bar-height + 38px + 25px;
+
+		@include bp-unstack-map-settings-bar {
+			top: $top-bar-height + 25px;
+			.atl--collapsed & {
+				top: 2 * $top-bar-height + 25px;
+			}
+		}
+
+		right: 25px;
+		width: 20px;
+		height: 20px;
+		svg {
+			fill: palette-get(offwhite);
+		}
+		opacity: 0.7;
+		&:hover { opacity: 1; }
+	}
+
+	&__content {
+		margin: auto;
+		width: 90%;
+		max-width: 700px;
+	}
+
+	.button { margin: 3px 3px; }
+
+	.title {
+		@include font-size(32px);
+		text-align: left;
+		margin: 40px 0 15px 0;
+	}
+
+	& li:first-child .title {
+		margin-top: 0px;
+	}
+
+	left: 0;
+	top: $top-bar-height + 38px;
+
+	@include bp-unstack-map-settings-bar {
+		top: 0;
+		left: $atl-settings-bar-width;
+		border-left: 2px solid palette-get(grey, light);
+		.atl--collapsed & {
+			top: $top-bar-height;
+			left: 0;
+		}
+	}
+
+}

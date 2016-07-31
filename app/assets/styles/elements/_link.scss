@@ -1,0 +1,14 @@
+@mixin link() {
+	color: palette-get(grey); 
+	border-bottom: 2px solid palette-get(grey);
+	opacity: 0.4;
+	display: inline;
+	&:hover {
+		outline: 0; 
+		opacity: 1;
+	}
+}
+
+.link {
+	@include link;
+}

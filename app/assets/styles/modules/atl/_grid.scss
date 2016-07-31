@@ -1,0 +1,44 @@
+// Grid for static pages.
+
+.atl-grid {
+	margin: 0;
+	padding: 0;
+	position: static;
+	@extend %clearfix;
+	width: 100%;
+	margin: auto;
+	&__1-3, &__2-3, &__3-3 {
+		min-height: 5px;
+		height: 100%;
+		width: 100%;
+	}
+	&__1-3 { padding-left: 15px; }
+	&__2-3 { padding: 0 15px; }
+	&__3-3 { padding-right: 15px; }
+	@media screen and (min-width: 900px) {
+		&__1-3 { padding-left: 15%; }
+		&__2-3 { padding: 0 15%; }
+		&__3-3 { padding-right: 15%; }
+	}
+	@include bp-atl-grid-unstack {
+		padding: 0;
+		&__1-3, &__2-3, &__3-3 { float: left; }
+		&__1-3 { padding-left: $atl-padding; }
+		&__2-3 { padding: 0 $atl-padding; }
+		&__3-3 { padding-right: $atl-padding; }
+		&__1-3, &__3-3 {
+			width: calc(50% - #{$atl-main-width-small / 2});
+		}
+		&__2-3 {
+			width: $atl-main-width-small;
+		}
+	}
+	@include bp-atl-grid-spacious {
+		&__1-3, &__3-3 {
+			width: calc(50% - #{$atl-main-width-large / 2});
+		}
+		&__2-3 {
+			width: $atl-main-width-large;
+		}
+	}
+}

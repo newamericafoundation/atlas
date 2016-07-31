@@ -1,0 +1,55 @@
+.atl__settings-bar {
+
+	z-index: 7;
+
+	width: 100%;
+	position: absolute;
+	overflow: visible;
+
+	top: 0;
+
+	&__item-summary {
+		padding: 0 20px;
+		display: block;
+		p {
+			&:first-child {
+				font-weight: bold;
+			}
+			margin: 0;
+			padding: 5px;
+		}
+	}
+
+	opacity: 1;
+	transition: 0.2s; 
+
+	@mixin expanded {
+		display: block;
+		background-color: rgba(27,27,27,0.83);
+		padding: 20px 0;
+	}
+
+	@mixin collapsed {
+		display: none;
+	}
+
+	input {
+		height: 35px;
+		@include font-size(16px);
+		border-radius: $border-radius-standard;
+		background-color: palette-get(grey, light);
+		color: palette-get(offwhite);
+	}
+
+	@include collapsed;
+	.atl--collapsed & { @include collapsed; }
+
+	@include bp-unstack-map-settings-bar {
+		@include expanded;
+		padding: 20px 0; 
+		width: $atl-settings-bar-width;
+		top: 0;
+		height: 100%;
+	}
+
+}

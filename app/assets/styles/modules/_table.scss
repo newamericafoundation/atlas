@@ -1,0 +1,18 @@
+table {
+    margin: 0 auto 18px;
+    color: rgba(51,50,50,0.9);
+    overflow-x: scroll;
+}
+
+td, th { 
+    vertical-align: middle; 
+    border: 1px solid rgba(51,50,50,0.1); 
+    border-width: 0px 0px 1px; 
+    text-align: left; 
+    padding: 20px 5px; 
+    font-size: 13px;
+    @include bp-w-sm {
+        @include font-size(17px);
+    }
+    color: rgba(51,50,50,0.9); 
+}

@@ -1,0 +1,22 @@
+{
+  "name": "Atlas",
+  "version": "1.0.0",
+  "homepage": "https://github.com/pickled-plugins/atlas",
+  "authors": [
+    "Peter Szerzo <szerzo@newamerica.org>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "spec"
+  ],
+  "dependencies": {
+    "ckeditor": "~4.5.3",
+    "js-xlsx": "~0.8.0",
+    "leaflet": "~0.7.3",
+    "selectize-scss": "~0.8.9"
+  }
+}

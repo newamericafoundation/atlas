@@ -1,0 +1,14 @@
+.icons {
+
+	&__icon {
+		cursor: pointer;
+		width: $top-bar-height;
+		height: $top-bar-height;
+		padding: 25px;
+		opacity: 0.7;
+		&:hover, &--active {
+			opacity: 1;
+		}
+	}
+
+}

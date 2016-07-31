@@ -1,0 +1,163 @@
+.atl__top-bar {
+
+	z-index: 6;
+
+	display: inline-block;
+
+	@include bp-unstack-map-settings-bar {
+		display: none;
+	}
+
+	.atl--collapsed & {
+		display: inline-block;
+	}
+
+	position: absolute;
+	top: 0;
+	width: 100%;
+
+	&__content {
+		position: relative;
+		width: 100%;
+		height: $top-bar-height + 38px;
+		overflow: hidden;
+		@include bp-expand-menu {
+			height: $top-bar-height;
+		}
+		transition: all 0.2s;
+	}
+
+	padding-left: 0;
+
+	&__title, &__summary {
+		
+		float: none;
+		@include bp-expand-menu {
+			display: block;
+		}
+		
+	}
+
+	&__title {
+
+		display: block;
+		padding: 20px 0 0 25px;
+		margin: 0;
+
+		@include bp-expand-menu {
+			float: left;
+			padding: 0 0 0 25px;
+			height: $top-bar-height;
+		}
+
+		div {
+			height: 100%;
+			display: table;
+			h1 {
+				color: palette-get(offwhite);
+				display: table-cell;
+				vertical-align: middle;
+				margin: 0;
+				padding: 0;
+				font-family: 'Platform';
+				font-weight: bold;
+				text-transform: uppercase;
+				@include font-size(20px);
+			}
+		}
+
+	}
+
+	&__summary {
+
+		display: inline;
+		width: 100%;
+		padding-right: 20px;
+
+		@include bp-expand-menu {
+			display: inline;
+			float: right;
+			max-width: 600px;
+			width: auto;
+		}
+
+		.button {
+			margin-top: 0px;
+		}
+
+		&__item {
+			display: block;
+			
+
+
+			text-align: left;
+			min-width: 30px;
+			padding: 0 20px 0 25px;
+
+			@include font-size(18px);
+
+			@include bp-expand-menu {
+				float: right;
+				padding: 23px 20px 0 25px;
+			}
+
+			.button { 
+				vertical-align: top;
+				margin-right: 6px; 
+			}
+
+			&:last-child > p {
+				font-weight: bold;
+			}
+
+			& > p {
+				padding: 4px 0 0 0;
+				margin: 0;
+			}
+		}
+
+	}
+
+	&__icons {
+		float: left;
+		display: inline;
+		width: auto;
+		.icons {
+			height: $top-bar-height;
+
+			li {
+				float: left;
+				fill: palette-get(offwhite);
+			}
+
+		}
+
+	}
+
+	&__timeline {
+		width: 300px;
+		position: absolute;
+		top: 0px;
+		padding-top: 37px;
+		left: 400px;
+
+		.atl__slider {
+
+			height: 3px;
+			
+			.ui-slider-handle {
+				cursor: pointer;
+				text-align: center;
+				padding-top: 2px;
+				top: -12px;
+				width: 45px;
+				height: 25px;
+			}
+
+		}
+
+	}
+
+
+
+}

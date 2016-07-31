@@ -1,0 +1,80 @@
+.toggle-button {
+
+    $icon-width: 40px;
+    $text-width: 85px;
+    $text-padding: 10px;
+    $width: $icon-width + $text-width + $text-padding;
+
+    $height: 50px;
+
+    width: $width;
+    height: $height;
+    cursor: pointer;
+    margin: 3px 5px 3px 0;
+    display: inline-block;
+    opacity: 0.9;
+    &:hover { opacity: 1; }
+    & > * { float: left; }
+
+    &__icon {
+        display: inline-block;
+        margin-top: ($height - $icon-width) / 2 - 2px;
+        height: $icon-width; 
+        width: $icon-width;
+        
+        .hexicon__hex {
+            stroke: none;
+        }
+        .hexicon__yes { 
+            fill: palette-get(offwhite);
+        }
+        .hexicon__no { 
+            fill: none;
+        }
+
+        .toggle-button--white & {
+            .hexicon__hex { fill: palette-get(offwhite); }
+            .hexicon__yes { fill: black; }
+        }
+
+        .toggle-button--black & {
+            .hexicon__hex { fill: black; }
+            .hexicon__yes { fill: palette-get(offwhite); }
+        }
+
+        .toggle-button--inactive & {
+            .hexicon__hex {
+                fill: none;
+                stroke-width: 5px;
+                stroke: palette-get(grey, extra-light);
+            }
+            .hexicon__yes { fill: none; }
+            .hexicon__no { fill: palette-get(grey, extra-light); }
+        }
+
+    }
+
+    &__text {
+
+        display: table;
+        width: $text-width + $text-padding;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: normal;
+        height: 100%;
+        padding-left: $text-padding;
+
+        p {
+            line-height: 97%;
+            @include font-size(14px);
+            text-align: left;
+            width: $text-width;
+            height: auto;
+            display: table-cell;
+            text-overflow: ellipsis;
+            vertical-align: middle;
+        }
+
+    }
+
+}

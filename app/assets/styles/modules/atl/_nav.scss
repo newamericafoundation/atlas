@@ -1,0 +1,54 @@
+.atl__nav {
+	.title {
+		text-align: center;
+	}
+	padding: 30px 0;
+	position: relative;
+	width: 100%;
+	min-height: 160px;
+	
+	@include bp-unstack-listings-page {
+		float: left;
+		width: $atl-settings-bar-width;
+		height: 100%;
+		padding: $atl-settings-bar-padding;
+		overflow-y: scroll;
+		.title { text-align: left; }
+	}
+}
+
+.atl {
+
+	&__project-template-filter, &__project-section-filter {
+		width: 100%;
+		margin: 0;
+		padding: 10px 0;
+		opacity: 1;
+
+		text-align: center;
+
+		@include bp-unstack-listings-page {
+			text-align: left;
+		}
+	}
+
+	&__project-template-filter {
+
+		padding-top: 5px;
+		& > * {
+			margin: 5px auto;
+			display: block;
+			@include bp-unstack-listings-page {
+				margin: 0;
+			}
+		}
+		
+	}
+
+	&__project-section-filter {
+		& > * { 
+			display: inline-block; 
+		}
+	}
+
+}

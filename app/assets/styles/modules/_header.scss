@@ -1,0 +1,123 @@
+.header {
+
+	svg { fill: palette-get(offwhite); }
+
+	overflow: visible;
+	height: $top-bar-height;
+	width: 100%;
+	position: fixed;
+	top: 0;
+	z-index: 101;
+
+	& > div, & > a { float: left; } 
+
+	&__main {
+
+		height: 100%;
+		padding-top: 6px;
+
+		&__site-name, &__cursive-prefix, &__title { 
+			display: inline-block;
+			color: palette-get(offwhite);
+			float: left; 
+		} 
+
+		&__site-name {
+			text-transform: uppercase;
+		}
+
+		&__cursive-prefix {
+			font-family: 'BlackJack' !important;
+			@include font-size(20px);
+			margin-right: 2px;
+		}
+
+		h1 {
+			@include font-size(20px);
+			font-family: 'Platform';
+			font-weight: bold;
+			margin: 20px 0 0 0;
+			opacity: 1;
+		}
+
+	}
+
+	&__corner {
+
+		width: $side-bar-width;
+		height: 100%;
+		padding-top: 1px;
+
+		// override general icon-size for main header logo
+		$icon-size: 25px;
+
+		a, div {
+			width: $icon-size;
+			height: $icon-size;
+			$m: $top-bar-height / 2 - $icon-size / 2;
+			margin-left: $m;
+			margin-top: $m;
+		}
+		
+	}
+
+	&__auth {
+
+		cursor: pointer;
+		position: relative;
+		height: 100%;
+		width: 180px;
+		padding-top: 18px;
+		margin-left: 25px;
+		& > * {
+			display: inline-block;
+			float: left;
+		}
+		img {
+			width: 40px;
+			height: 40px;
+			border-radius: 100%;
+		}
+
+		p, &__logout {
+			@include font-size(15px);
+			color: palette-get(offwhite);
+		}
+
+		p {
+			margin: 12px 0 0 8px;
+		}
+
+		&__logout {
+			display: none;
+			position: absolute;
+			text-align: left;
+			padding-top: 30px;
+			padding-left: 55px;
+			width: 100%;
+			height: $top-bar-height;
+			top: 100%;
+			left: -10px;
+			background-color: palette-get(turquoise);
+
+			opacity: 0.8;
+
+			.header__auth:hover & {
+				display: block;
+				opacity: 1;
+			}
+
+		}
+
+	}
+
+	&__strip {
+		left: 0;
+		width: 100%;
+		height: 3px;
+		top: $top-bar-height;
+		position: absolute;
+		transition: all 0.2s;
+	}
+
+}

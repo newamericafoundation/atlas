@@ -1,0 +1,50 @@
+.login {
+
+	width: 100%;
+	height: 100%;
+	display: table;
+
+	&__container {
+		display: table-cell;
+		vertical-align: middle;
+	}
+
+	background-color: palette-get(turquoise);
+
+	&__title {
+		text-align: center;
+		
+		span {
+			@include font-size(36px);
+			font-family: 'Platform Web';
+		}
+		em {
+			@include font-size(48px);
+			margin-right: 5px;
+			font-family: 'BlackJack';
+		}
+
+		margin-bottom: 15px;
+
+	}
+
+	&__button {
+		margin: auto;
+		width: 200px;
+		height: 30px;
+		padding-top: 8px;
+		background-color: palette-get(offwhite);
+		font-family: 'Simplon';
+		p {
+			margin: 0;
+			color: palette-get(turquoise);
+			text-align: center;
+			@include font-size(14px);
+		}
+
+		border-radius: $border-radius-small;
+		opacity: 0.8;
+		&:hover { opacity: 1; }
+	}
+
+}

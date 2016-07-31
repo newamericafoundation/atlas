@@ -1,0 +1,142 @@
+.atl__side-bar {
+
+	@media print { display: none; }
+
+	position: fixed;
+	top: 0;
+	right: 0;
+	height: $top-bar-height;
+	width: $top-bar-height;
+
+	&__toggler {
+		position: absolute;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		svg {
+			fill: palette-get(offwhite);
+		}
+	}
+
+	cursor: pointer;
+
+	opacity: 0.9;
+
+	overflow: hidden;
+
+	&:hover, &--active { 
+		overflow: visible;
+	}
+
+	padding-top: $top-bar-height;
+
+	@include bp-expand-menu {
+		padding-top: 0;
+		width: auto;
+		&__toggler {
+			display: none;
+		}
+	}
+
+	z-index: 200;
+
+	&__title {
+		position: absolute;
+		width: 400px;
+		text-align: right;
+		left: -420px;
+		top: 28px;
+		color: palette-get(offwhite);
+	}
+
+	&__icons {
+		overflow: visible;
+	}
+
+	&__icon, &__toggler {
+		& > * {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: $side-bar-width / 2 - $icon-size / 2;
+		}
+	}
+
+	&__icon {
+
+		width:  $side-bar-width;
+		height: $side-bar-width;
+
+		position: relative;
+		float: left;
+		cursor: pointer;
+		opacity: 1;
+
+		&--active {
+			background-color: palette-get(offwhite);
+			svg { fill: palette-get(grey) !important; }
+		}
+
+		div, a { position: relative; }
+
+		form {
+	        position: relative;
+	        opacity: 1;
+	        margin: 0;
+	        width: 100%;
+	        height: 100%;
+	        &:hover { opacity: 0.9; }
+	        input[type="hidden"] { display: none; }
+	        input[type="submit"] {
+	            width: 75px;
+	            height: 75px;
+	            position: absolute;
+	            left: 0;
+	            top: 0;
+	            opacity: 0;
+	            margin: 0;
+	            padding: 0;
+	            @include font-size(2px);
+	        }
+	    }
+
+	    // background and icon colors - regular theme
+		$c-bg-0: palette-get(grey);
+		$c-ic-0: palette-get(offwhite);
+
+		// background and icon colors - naf green theme
+		$c-bg-1: palette-get(turquoise);
+		$c-ic-1: palette-get(offwhite);
+
+	    /* initial color setup */
+	    background-color: $c-bg-0;
+		.atl__side-bar--naf-green & {
+			background-color: $c-bg-1;
+		}
+
+		svg {
+			fill: $c-ic-0;
+			.atl__side-bar--naf-green & {
+				fill: $c-ic-1;
+			}
+		}
+
+		&:hover {
+
+			/* inverted color setup */
+		    background-color: $c-ic-0;
+			.atl__side-bar--naf-green & {
+				background-color: $c-ic-1;
+			}
+
+			svg {
+				fill: $c-bg-0;
+				.atl__side-bar--naf-green & {
+					fill: $c-bg-1;
+				}
+			}
+
+		}
+	}
+
+}

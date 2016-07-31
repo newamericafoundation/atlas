@@ -1,0 +1,1 @@
+Safari animations tend to not work when the animated element is not block-positioned.

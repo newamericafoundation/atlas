@@ -1,0 +1,42 @@
+.icon-button {
+
+	@extend %clearfix;
+
+	$w: 180px;
+	$wi: 25px;
+	$gap: 10px;
+	$wt: $w - $wi - $gap;
+
+	padding: 10px 0;
+	width: $w;
+	display: block;
+	cursor: pointer;
+	clear: both;
+	margin: auto;
+
+	& > * { display: inline-block; float: left; }
+
+	&__icon {
+		width: $wi;
+		height: $wi;
+	}
+
+	&__text {
+		font-family: 'Simplon';
+		font-weight: bold;
+		padding-top: 3px;
+		margin: 0 0 0 $gap;
+		width: $wt;
+		height: 20px;
+		text-align: left;
+	}
+
+	@include bp-w-sm() {
+		margin-left: 0;
+	}
+
+	opacity: 0.7;
+
+	&:hover, &--active { opacity: 1; }
+
+}

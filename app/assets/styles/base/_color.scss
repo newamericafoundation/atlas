@@ -1,0 +1,32 @@
+@for $i from 1 through 15 {
+
+	.bg-c-#{$i} {
+		$color: nth($palette-scheme, $i);
+		background-color: $color;
+		fill: $color;
+	}
+
+	.c-#{$i} {
+		$color: nth($palette-scheme, $i);
+		color: $color;
+		stroke: $color;
+	}
+
+}
+
+.bg-c-off-white {
+	$color: palette-get(offwhite);
+	background-color: $color;
+}
+
+.bg-c-grey--base {
+	background-color: palette-get(grey);
+}
+
+.bg-c-grey--light {
+	background-color: palette-get(grey, light);
+}
+
+.bg-c-naf-green {
+	background-color: palette-get(turquoise);
+}

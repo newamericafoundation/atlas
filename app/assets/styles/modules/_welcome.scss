@@ -1,0 +1,126 @@
+.welcome {
+
+	@include animation(fadein 1s);
+
+	svg {
+		fill: palette-get(offwhite);
+	}
+
+	&__title, &__subtitle, &__strip, &__main-nav {
+		position: relative;
+		z-index: 1;
+	}
+
+	&__title {
+
+		margin-top: 12vh;
+		text-align: center;
+
+		@include bp-h(600px) {
+			margin-top: 25vh;
+		}
+
+		&__name, &__alias {
+			line-height: 100%;
+			display: inline-block;
+			@include font-size(72px);
+			margin: 0;
+			padding: 0;
+			@include bp-w-sm {
+				@include font-size(102px);
+				margin: auto;
+				padding: auto;
+			}
+		}
+
+		&__name {
+			font-family: 'Platform';
+			color: palette-get(offwhite);
+			font-weight: bold;
+			text-align: center;
+		}
+
+		&__alias {
+			font-family: 'Platform Hairline';
+			@include animation(color 10s ease-in-out infinite alternate);
+		}
+
+	}
+
+	&__subtitle {
+		display: block;
+		margin: 0 auto 20px auto;
+		@include font-size(18px);
+		padding: 0 30px;
+		text-align: center;
+
+		color: palette-get(offwhite);
+
+		@include bp-w-sm {
+			@include font-size(24px);
+		}
+	}
+
+	&__strip {
+		width: 100%;
+		height: 3px;
+		margin: 0px auto 20px auto;
+		@include animation(background-color 10s ease-in-out infinite alternate);
+		
+	}
+
+	&__nav {
+
+		display: block;
+		position: absolute;
+		bottom: 25px;
+		width: 100%;
+
+		@include bp-h(600px) {
+			bottom: 10%;
+		}
+
+		a {
+			margin: auto;
+			width: 40px;
+			height: 40px;
+			opacity: 0.7;
+			&:hover { opacity: 1; }
+		}
+
+		p {
+			@include font-size(16px);
+			color: palette-get(offwhite);
+			margin-top: 15px;
+			text-align: center;
+		}
+
+		@include bp-w-sm {
+			a { width: 50px; height: 50px; }
+			p { font-size: auto; }
+		}
+
+	}
+
+	&__background, &__terrain {
+		position: fixed;
+		pointer-events: none;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 0;
+	}
+
+	&__background {
+		background-color: darken(palette-get(grey), 3);
+	}
+
+	&__terrain {
+		background-size: cover;
+		background-position: 50% 50%;
+		opacity: 0.5;
+	}
+
+}
+

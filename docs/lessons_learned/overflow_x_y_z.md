@@ -1,0 +1,1 @@
+The [W3C spec](http://www.w3.org/TR/css3-box/#overflow-x) says that though overflow-x and overflow-y values may be different, combinations with visible are not possible.

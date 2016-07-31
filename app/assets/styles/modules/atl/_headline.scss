@@ -1,0 +1,68 @@
+.atl__headline {
+
+	padding: 0 20px 20px 20px;
+
+	.link {
+		color: palette-get(offwhite);
+		border-bottom: 2px solid palette-get(offwhite);
+	}
+
+	&__title, &__sections, &__description {
+		color: palette-get(offwhite);
+	}
+
+	&__title {
+
+		cursor: pointer;
+		opacity: 0.9;
+		&:hover { opacity: 1; }
+		font-family: 'Platform';
+		font-weight: bold;
+		text-transform: uppercase;
+		line-height: 85%; 
+		margin: 0;
+
+		@mixin collapsed {
+			display: none;
+		}
+		
+		@include collapsed;
+		.atl--collapsed & { @include collapsed; }
+
+		@include bp-unstack-map-settings-bar {
+			display: block;
+			@include font-size(42px);
+			color: palette-get(offwhite);
+			padding-left: 0;
+			padding-top: 0;
+		}
+		
+	}
+
+	&__sections, &__description {
+		display: none;
+		.atl--collapsed & { display: none; }
+		@include bp-unstack-map-settings-bar { display: block; }
+	}
+
+	&__sections {
+		@include font-size(16px);
+		margin: 14px auto 25px auto;
+		font-family: 'Simplon';
+		text-transform: uppercase;
+		opacity: 0.4;
+		letter-spacing: 2px;
+	}
+
+	&__description { 
+		margin: 25px 0 0 0 ;
+		padding: 0;
+		@include font-size(17px);
+		line-height: 110%;
+		a { 
+			@include font-size(17px);
+			margin-left: 5px; 
+		}
+	}
+
+}

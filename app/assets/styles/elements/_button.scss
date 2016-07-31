@@ -1,0 +1,58 @@
+@mixin button() {
+
+    $main-color: palette-get(offwhite);
+    $secondary-color: palette-get(grey);
+    $font-size: 16px;
+    $is-solid: false;
+
+    line-height: 60%;
+	position: relative;
+    display: inline-block;
+    padding: 2px 5px 0px 5px;
+    
+    border-radius: $border-radius-standard;
+    cursor: pointer;
+    border: 2px solid;
+
+    text-align: center;
+
+    p {
+        width: 100%;
+        display: inline-block;
+        text-align: center;
+        width: auto;
+        @include font-size($font-size);
+        position: static;
+        margin: 0 0 0 0;
+        pointer-events: none;
+        font-family: 'Simplon';
+
+    }
+
+    opacity: 0.5;
+
+    border-color: $main-color;
+    p { color: $main-color; }
+    svg {
+        fill: $main-color;
+        height: $font-size + 4px;
+        width: $font-size + 4px;
+    }
+
+    
+    &:hover, &--active { 
+
+        opacity: 0.9;
+
+        border-color: $main-color;
+        background-color: $main-color;
+        p { color: $secondary-color; }
+        svg {
+            fill: $secondary-color;
+        }
+
+    }
+
+}
+
+.button { @include button; }
