@@ -32,8 +32,6 @@ global.selectize = selectize
 
 // App entry point.
 global.startAtlas = () => {
-	// Developer signature :).
-	console.log('Hi, Mom!')
 	var clientRouter = getClientRouter()
 	var container = global.document.getElementById('site')
 	render(clientRouter, container)

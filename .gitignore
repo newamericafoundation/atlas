@@ -1,8 +1,9 @@
+.DS_Store
 .env
 .sass-cache
 **/*.pem
 node_modules
 npm-debug.log
 bower_components
-services/lambda/dist
+public/assets/scripts
 temp
