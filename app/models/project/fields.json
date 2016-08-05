@@ -41,6 +41,16 @@
     },
 
     {
+        "formComponentName": "Text",
+        "formComponentProps": {
+            "id": "redirect_url",
+            "labelText": "Redirect URL",
+            "hint": "If this is present, navigating to this project inside of Atlas will automatically redirect to the specified page",
+            "placeholder": "E.g. https://newamerica.org/myproject"
+        }
+    },
+
+    {
         "formComponentName": "Radio",
         "formComponentProps": {
             "id": "is_section_overview",
@@ -57,6 +67,17 @@
             "id": "is_live",
             "labelText": "Is live.",
             "hint": "Please specify whether this project is viewable on the live site. Changes take effect immediately.",
+            "options": ["Yes", "No"],
+            "defaultOption": "Yes"
+        }
+    },
+
+    {
+        "formComponentName": "Radio",
+        "formComponentProps": {
+            "id": "is_in_navigation",
+            "labelText": "Is in navigation?",
+            "hint": "Please specify if the navigation includes the link to this project.",
             "options": ["Yes", "No"],
             "defaultOption": "Yes"
         }

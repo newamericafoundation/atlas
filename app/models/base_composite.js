@@ -2,15 +2,10 @@ import Backbone from 'backbone'
 import _ from 'underscore'
 import $ from 'jquery'
 
-/*
- *
- *
- */
 export class Model extends Backbone.Model {
 
     /*
      * Find key that holds array values within model.
-     *
      */
     getChildrenKey() {
         var key, ref, value
@@ -23,11 +18,6 @@ export class Model extends Backbone.Model {
         }
     }
 
-
-    /*
-     *
-     *
-     */
     makeComposite() {
         var ChildModel, childModel, childrenKey, results;
 
@@ -53,31 +43,16 @@ export class Model extends Backbone.Model {
 
     }
 
-
-    /*
-     *
-     *
-     */
     getChildIndex() {
         if (this.parent) { return this.parent.children.indexOf(this) }
         return -1
     }
 
-
-    /*
-     *
-     *
-     */
     getSiblingCount() {
         if (this.parent) { return this.parent.children.length }
         return -1
     }
 
-
-    /*
-     *
-     *
-     */
     getNextSibling() {
         var ci = this.getChildIndex()
         var sc = this.getSiblingCount()
@@ -86,11 +61,6 @@ export class Model extends Backbone.Model {
         }
     }
 
-
-    /*
-     *
-     *
-     */
     getPreviousSibling() {
         var ci = this.getChildIndex()
         var sc = this.getSiblingCount()
