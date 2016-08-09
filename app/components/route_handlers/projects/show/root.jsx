@@ -169,6 +169,10 @@ export default class Show extends React.Component {
 			.then((coll) => {
 				var project = coll.models[0];
 				if (project && project.exists()) {
+					let redirectUrl = project.get('redirect_url');
+					if (redirectUrl) {
+						window.location = redirectUrl;
+					}
 					project.prepOnClient()
 					this.props.dispatch({ type: 'FETCH_PROJECT_SUCCESS', data: project })
 					this.fetchRelatedProjects()

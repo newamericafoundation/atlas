@@ -18,8 +18,8 @@ var defaultButtons = [
 		contentType: 'outer-link',
 		method: 'comment',
 		url: 'mailto:atlas@newamerica.org',
-		reactIconNames: [ 'Comment' ], 
-		isToggleable: false 
+		reactIconNames: [ 'Comment' ],
+		isToggleable: false
 	}
 ]
 
@@ -42,28 +42,28 @@ export default class Index extends React.Component {
 					<div className="atl__main">
 						<div className="atl__nav bg-c-off-white">
 							<h1 className="title title--compact">Explore Atlas</h1>
-							<ProjectTemplates 
+							{/* <ProjectTemplates
 								radio={this.props.radio}
 								projectTemplates={projectTemplates}
 								updateProjectsIndex={this.forceUpdate}
-							/>
-							<ProjectSections 
+							/> */}
+							<ProjectSections
 								radio={this.props.radio}
 								projectSections={projectSections}
 								updateProjectsIndex={this.forceUpdate}
 							/>
 						</div>
-						<Projects 
+						<Projects
 							radio={this.props.radio}
-							projects={projects} 
-							projectTemplates={projectTemplates} 
+							projects={projects}
+							projectTemplates={projectTemplates}
 							projectSections={projectSections}
 							updateProjectsIndex={this.forceUpdate}
 						/>
 					</div>
 				</div>
 			</div>
-		)	
+		)
 	}
 
 	componentDidMount() {
@@ -81,8 +81,8 @@ export default class Index extends React.Component {
 		var coll = new project.Collection()
 		coll.getClientFetchPromise({}, { data: 0, body_text: 0, encoded_image: 0 }).then((coll) => {
 			this.props.dispatch({ type: 'FETCH_PROJECT_SUMMARIES_SUCCESS', data: coll })
-		}).catch((err) => { 
-			window.location.assign('/menu') 
+		}).catch((err) => {
+			window.location.assign('/menu')
 		})
 	}
 
@@ -93,8 +93,8 @@ export default class Index extends React.Component {
 			this.props.dispatch({ type: 'FETCH_PROJECT_SECTIONS_SUCCESS', data: coll })
 			this.setState({ projectSections: coll })
 		}).catch((err) => {
-			window.location.assign('/menu') 
-			console.log(err.stack) 
+			window.location.assign('/menu')
+			console.log(err.stack)
 		})
 	}
 
@@ -104,9 +104,9 @@ export default class Index extends React.Component {
 			coll.initializeActiveStates()
 			this.props.dispatch({ type: 'FETCH_PROJECT_TEMPLATES_SUCCESS', data: coll })
 			this.setState({ projectTemplates: coll })
-		}).catch((err) => { 
-			window.location.assign('/menu') 
-			console.log(err.stack) 
+		}).catch((err) => {
+			window.location.assign('/menu')
+			console.log(err.stack)
 		})
 	}
 

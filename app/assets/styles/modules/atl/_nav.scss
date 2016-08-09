@@ -6,7 +6,7 @@
 	position: relative;
 	width: 100%;
 	min-height: 160px;
-	
+
 	@include bp-unstack-listings-page {
 		float: left;
 		width: $atl-settings-bar-width;
@@ -22,7 +22,7 @@
 	&__project-template-filter, &__project-section-filter {
 		width: 100%;
 		margin: 0;
-		padding: 10px 0;
+		padding: 20px 0;
 		opacity: 1;
 
 		text-align: center;
@@ -42,12 +42,12 @@
 				margin: 0;
 			}
 		}
-		
+
 	}
 
 	&__project-section-filter {
-		& > * { 
-			display: inline-block; 
+		& > * {
+			display: inline-block;
 		}
 	}
 
