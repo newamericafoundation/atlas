@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "server": "node app.js",
-    "spec": "NODE_ENV=test mocha --compilers js:babel-core/register app/**/*_spec.js db/**/*_spec.js __spec/**/*_spec.js",
+    "spec": "NODE_ENV=test mocha --compilers js:babel-core/register app/**/*_spec.js",
     "build-clean": "rm -rf public/assets/scripts && mkdir -p public/assets/scripts",
     "dev": "npm run build-clean && webpack --config webpack.config.development.js --watch",
     "build": "npm run spec && npm run build-clean && webpack --config webpack.config.production.js",
