@@ -6,25 +6,8 @@ import { DropdownUp, DropdownDown } from './../icons.jsx'
 
 import SideBarButton from './button.jsx'
 
-
-/*
- * The SideBar component renders a list of buttons with the same appearance but different markup - buttons, links, forms - and functionality - navigate to an inner route, to an outer route, trigger a download through a form, or simple send a custom message to SideBar's parent.
- * It does so by taking an object for each button using the following syntax:
- * obj = {
- *   title: 'Explore Atlas',
- *   contentType: 'inner-link', // options: inner-link (react-router's Link component), outer-link or form
- *   url: '/menu', // if content type is a link, this is the url it will point to
- *   reactIconName: 'Grid',
- *   clickMessage: 'delete-project', // message sent to SideBar's parent which can then handle the click event accordingly.
- *   isToggleable: false 
- * };
- */
 class SideBar extends React.Component {
 
-	/*
-	 *
-	 *
-	 */
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -32,11 +15,6 @@ class SideBar extends React.Component {
 		}
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	render() {
 		var className = classNames({
 			'atl__side-bar': true,
@@ -53,44 +31,24 @@ class SideBar extends React.Component {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderDropdownIcon() {
 		return this.state.isActive ? <DropdownUp /> : <DropdownDown />
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	setHoveredButtonTitle(title) {
 		this.setState({ hoveredButtonTitle: title })
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	toggle() {
 		this.setState({ isActive: !this.state['isActive'] })
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderButtons() {
 		if (this.props.buttons == null) { return }
 		var list = this.props.buttons.map((options, i) => {
 			if (options.isHidden) { return; }
 			return (
-				<SideBarButton 
+				<SideBarButton
 					{...this.props}
 					options={options}
 					setHoveredButtonTitle={this.setHoveredButtonTitle.bind(this)}
