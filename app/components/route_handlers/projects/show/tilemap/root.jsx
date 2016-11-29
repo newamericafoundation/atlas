@@ -10,16 +10,8 @@ import List from './subcomponents/list.jsx'
 import Search from './subcomponents/search.jsx'
 import OptionsTab from './subcomponents/options_tab/root.jsx'
 
-/*
- *
- *
- */
-class Tilemap extends React.Component {
-	
-	/*
-	 *
-	 *
-	 */
+export default class Tilemap extends React.Component {
+
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -28,19 +20,14 @@ class Tilemap extends React.Component {
 		}
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	render() {
-		if (!this.isHealthy()) { 
-			return <div className='bg-c-off-white'><p className='title'>Project data is invalid.</p></div> 
+		if (!this.isHealthy()) {
+			return <div className='bg-c-off-white'><p className='title'>Project data is invalid.</p></div>
 		}
 		return (
 			<div className='atl__main fill-parent'>
 				{ this.renderItems() }
-				<TopBar {...this.props} />			
+				<TopBar {...this.props} />
 				<SettingsBar {...this.props} uiDimensions={this.props.app.ui.dimensions} />
 				<Popup {...this.props} />
 				{ this.props.uiState.isSearchBarActive ? <Search {...this.props} /> : null }
@@ -50,11 +37,6 @@ class Tilemap extends React.Component {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	componentWillMount() {
 		var { radio } = this.props
 		radio.commands.setHandler('update:tilemap', (args = {}) => {
@@ -62,21 +44,11 @@ class Tilemap extends React.Component {
 		})
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	componentWillUnmount() {
 		var { radio } = this.props
 		radio.commands.removeHandler('update:tilemap')
 	}
 
-
-	/*
-	 * Determines whether the project is healthy.
-	 *
-	 */
 	isHealthy() {
 		var { project } = this.props
 		if (!project) { return false }
@@ -85,11 +57,6 @@ class Tilemap extends React.Component {
 		return true
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderOptionsTab() {
 		if (!this.props.uiState.isOptionsTabActive) { return }
 		var { project } = this.props
@@ -98,11 +65,6 @@ class Tilemap extends React.Component {
 		return (<OptionsTab {...this.props} filter={filter} />);
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderItems() {
 		if (this.props.uiState.itemsDisplayMode === 'map') {
 			return <Map {...this.props} ignoreMapItemsOnUpdate={this.state.ignoreMapItemsOnUpdate} />
@@ -111,15 +73,7 @@ class Tilemap extends React.Component {
 		}
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	getActiveItem() {
 		return this.props.project.get('data').items.active
 	}
-
 }
-
-export default Tilemap

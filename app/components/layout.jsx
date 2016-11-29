@@ -8,27 +8,21 @@ import Setup from './general/setup/root.jsx'
 import Header from './general/header.jsx'
 
 import Backbone from 'backbone'
-import 'backbone.wreqr'
+import Wreqr from 'backbone.wreqr'
 
-/*
- * Create radio object with the same fields as a Marionette Application object.
- * This is a temporary setup to support the Marionette transition.
- */
 function createRadio() {
 	var radio = {}
-	radio.vent = new Backbone.Wreqr.EventAggregator()
-	radio.reqres = new Backbone.Wreqr.RequestResponse()
-	radio.commands = new Backbone.Wreqr.Commands()
+	radio.vent = new Wreqr.EventAggregator()
+	radio.reqres = new Wreqr.RequestResponse()
+	radio.commands = new Wreqr.Commands()
 	return radio
 }
-
 
 class Layout extends React.Component {
 
 	constructor(props) {
 		super(props)
 		this.setUiDimensions = this.setUiDimensions.bind(this)
-		// Create a new radio instance.
 		this.state = { radio: createRadio() }
 	}
 
@@ -38,15 +32,15 @@ class Layout extends React.Component {
 		return (
 			<div className={this.getClassName()}>
 				<Setup radio={radio} />
-				<Header 
-					radio={radio} 
-					title={this.getHeaderTitle()} 
+				<Header
+					radio={radio}
+					title={this.getHeaderTitle()}
 					isTransparent={this.isHeaderTransparent()}
 					authenticatedResearcher={authenticatedResearcher}
 				/>
 				{ this.renderFlash() }
-				{ React.cloneElement(this.props.children, { 
-					radio: radio, 
+				{ React.cloneElement(this.props.children, {
+					radio: radio,
 					authenticatedResearcher: authenticatedResearcher,
 					routing: this.props.routing,
 					app: this.props.app,
@@ -107,7 +101,7 @@ class Layout extends React.Component {
 
 }
 
-export default connect(state => ({ 
+export default connect(state => ({
 	routing: state.routing,
 	app: state.app
 }))(Layout)

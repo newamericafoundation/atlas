@@ -4,36 +4,18 @@ import classNames from 'classnames'
 
 import Help from './../../../../../../general/help.jsx'
 import { More } from './../../../../../../general/icons.jsx'
-
 import Base from './../base.jsx'
-
 import formatters from './../../../../../../../utilities/formatters.js'
-
 import FilterKey from './key.jsx'
 import FilterValue from './value.jsx'
 
+export default class Filter extends Base {
 
-/*
- *
- *
- */
-class Filter extends Base {
-
-	/*
-	 *
-	 *
-	 */
 	constructor(props) {
 		super(props)
 		this.toggleOptionsTab = this.toggleOptionsTab.bind(this)
-		this.maxHeight = 0
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	render() {
 		return (
 			<div className='atl__filter' ref='root'>
@@ -60,11 +42,6 @@ class Filter extends Base {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	renderValues() {
 		var activeChild = this.props.filter.getActiveChild()
 		if (!activeChild) { return }
@@ -76,42 +53,10 @@ class Filter extends Base {
 		})
 	}
 
-
-	/*
-	 *
-	 *
-	 */
-	getHeight() {
-		var $el = $(findDOMNode(this.refs.root))
-		var height = $el.height()
-		if (height > this.maxHeight) { this.maxHeight = height }
-		else { height = this.maxHeight }
-		return height
-	}
-
-
-	/*
-	 *
-	 *
-	 */
 	toggleOptionsTab() {
 		this.props.setUiState({ isOptionsTabActive: !this.props.uiState.isOptionsTabActive })
 	}
 
-
-	/*
-	 *
-	 *
-	 */
-	componentDidUpdate() {
-		this.props.cacheHeight(this.getHeight())
-	}
-
-
-	/*
-	 * Render only three around the current active key.
-	 *
-	 */
 	renderKeys() {
 		var keys = this.props.filter.children
 		var activeKey = this.props.filter.getActiveChild()
@@ -124,11 +69,6 @@ class Filter extends Base {
 		})
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	getKeyDescriptionHtml() {
 		var keys = this.props.filter.children
 		var activeKey = this.props.filter.getActiveChild()
@@ -138,6 +78,3 @@ class Filter extends Base {
 	}
 
 }
-
-
-export default Filter

@@ -1,11 +1,9 @@
 .atl__settings-bar {
-
 	z-index: 7;
-
 	width: 100%;
 	position: absolute;
-	overflow: visible;
-
+	overflow-x: hidden;
+	overflow-y: scroll;
 	top: 0;
 
 	&__item-summary {
@@ -21,7 +19,7 @@
 	}
 
 	opacity: 1;
-	transition: 0.2s; 
+	transition: 0.2s;
 
 	@mixin expanded {
 		display: block;
@@ -46,7 +44,7 @@
 
 	@include bp-unstack-map-settings-bar {
 		@include expanded;
-		padding: 20px 0; 
+		padding: 20px 0;
 		width: $atl-settings-bar-width;
 		top: 0;
 		height: 100%;

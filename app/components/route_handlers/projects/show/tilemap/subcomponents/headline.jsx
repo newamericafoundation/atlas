@@ -1,31 +1,16 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-
 import classNames from 'classnames'
 
 import Base from './base.jsx'
 
+export default class Headline extends Base {
 
-/*
- *
- *
- */
-class Headline extends Base {
-
-	/*
-	 *
-	 *
-	 */
 	constructor(props) {
 		super(props)
 		this.maxHeight = 0
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	render() {
 		return (
 			<div className='atl__headline' ref='root'>
@@ -39,42 +24,6 @@ class Headline extends Base {
 		)
 	}
 
-
-	/*
-	 *
-	 *
-	 */
-	componentDidMount() {
-		this.props.cacheHeight(this.getHeight())
-	}
-
-
-	/*
-	 *
-	 *
-	 */
-	componentDidUpdate() {
-		this.props.cacheHeight(this.getHeight())
-	}
-
-
-	/*
-	 *
-	 *
-	 */
-	getHeight() {
-		var $el = $(ReactDOM.findDOMNode(this.refs.root))
-		var height = $el.height()
-		if (height > this.maxHeight) { this.maxHeight = height }
-		else { height = this.maxHeight }
-		return height
-	}
-
-
-	/*
-	 *
-	 *
-	 */
 	openInfoBox(e) {
 		var { project } = this.props
 		if (!project) { return }
@@ -83,22 +32,12 @@ class Headline extends Base {
 		this.props.setUiState({ isInfoBoxActive: true })
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	getShortDescription() {
 		var { project } = this.props
 		if (!project) { return }
 		return project.get('short_description')
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	getSectionText() {
 		var { project } = this.props
 		var projectSectionNames
@@ -108,11 +47,6 @@ class Headline extends Base {
 		return projectSectionNames.join(',<br>').toUpperCase()
 	}
 
-
-	/*
-	 *
-	 *
-	 */
 	getTitle() {
 		var { project } = this.props
 		if (project == null) { return }
@@ -120,5 +54,3 @@ class Headline extends Base {
 	}
 
 }
-
-export default Headline
