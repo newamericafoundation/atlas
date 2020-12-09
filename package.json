@@ -77,7 +77,7 @@
     "marked": "^0.3.5",
     "method-override": "^2.3.5",
     "moment": "^2.10.6",
-    "mongodb": "^2.2.12",
+    "mongodb": "^3.6.0",
     "nice-json2csv": "^0.2.0",
     "normalize.css": "^3.0.3",
     "numeral": "^1.5.3",
