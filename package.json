@@ -92,6 +92,6 @@
     "redux-simple-router": "^1.0.1",
     "selectize": "^0.12.1",
     "topojson": "^1.6.19",
-    "underscore": "^1.8.3"
+    "underscore": "^1.12.1"
   }
 }
