@@ -92,7 +92,8 @@ class RootView {
 	 */
 	render() {
 		L.mapbox.accessToken = 'pk.eyJ1Ijoicm9zc3ZhbmRlcmxpbmRlIiwiYSI6ImRxc0hRR28ifQ.XwCYSPHrGbRvofTV-CIUqw'
-		this.map = L.mapbox.map(this.elId, 'rossvanderlinde.874ab107', this.getMapOptions())
+		this.map = L.mapbox.map(this.elId, '', this.getMapOptions())
+			.addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/light-v10'))
 		this.props.setMap(this.map)
 		this.setupMap()
 		this.hideAttribution()

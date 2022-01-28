@@ -1,7 +1,7 @@
 // Model used to handle geo shape files, from download and geojson conversion to fetching once the app is running.
 import _ from 'underscore'
 import $ from 'jquery'
-import topojson from 'topojson'
+import * as topojson from 'topojson'
 
 import * as base from './base.js'
 import seed from './../../db/seeds/shape_files.json'
